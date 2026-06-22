@@ -1,0 +1,227 @@
+<div>
+    <div style="display:flex; justify-content:space-between; align-items:center">
+        <h1>{{ $productId ? 'Редагувати товар' : 'Новий товар' }}</h1>
+        <a href="{{ route('admin.products.index') }}" wire:navigate>← До списку</a>
+    </div>
+
+    <form wire:submit="save" style="max-width:760px">
+
+        {{-- ── Основне ─────────────────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Основне</strong></legend>
+
+            <div>
+                <label>Артикул *</label><br>
+                <input wire:model="sku" type="text">
+                @error('sku') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label>Тип товару *</label><br>
+                <select wire:model="product_type_id">
+                    <option value="">— Оберіть —</option>
+                    @foreach($productTypes as $pt)
+                        <option value="{{ $pt->id }}">{{ $pt->name }}</option>
+                    @endforeach
+                </select>
+                @error('product_type_id') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label>Найменування *</label><br>
+                <input wire:model="name" type="text" style="width:100%">
+                @error('name') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label>Виробник</label><br>
+                <select wire:model="brand_id">
+                    <option value="">— Не вказано —</option>
+                    @foreach($brands as $b)
+                        <option value="{{ $b->id }}">{{ $b->name }}</option>
+                    @endforeach
+                </select>
+                @error('brand_id') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label>Протектор / модель</label><br>
+                <input wire:model="model" type="text">
+            </div>
+        </fieldset>
+
+        {{-- ── Типорозмір ──────────────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Типорозмір та характеристики</strong></legend>
+
+            <div>
+                <label>Типорозмір (як є)</label><br>
+                <input wire:model="size_raw" type="text" placeholder="710/70R38">
+            </div>
+
+            <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+                <div>
+                    <label>Ширина</label><br>
+                    <input wire:model="size_width" type="text" style="width:90px">
+                    @error('size_width') <span style="color:red">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label>Профіль</label><br>
+                    <input wire:model="size_profile" type="text" style="width:90px">
+                    @error('size_profile') <span style="color:red">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label>Посадковий діаметр</label><br>
+                    <input wire:model="rim_diameter" type="text" style="width:120px">
+                    @error('rim_diameter') <span style="color:red">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label>R/D</label><br>
+                    <select wire:model="rd_type" style="width:70px">
+                        <option value="">—</option>
+                        <option value="R">R</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+                <div>
+                    <label>TT/TL</label><br>
+                    <select wire:model="tube_type" style="width:80px">
+                        <option value="">—</option>
+                        <option value="TT">TT</option>
+                        <option value="TL">TL</option>
+                    </select>
+                </div>
+                <div>
+                    <label>PR</label><br>
+                    <input wire:model="ply_rating" type="text" style="width:80px">
+                </div>
+                <div>
+                    <label>LI/SS (індекс)</label><br>
+                    <input wire:model="load_speed_index" type="text" style="width:140px">
+                </div>
+            </div>
+
+            <div>
+                <label>Специфікація</label><br>
+                <input wire:model="specification" type="text" placeholder="STEEL BELTED..." style="width:100%">
+            </div>
+        </fieldset>
+
+        {{-- ── Наявність та ціна ───────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Наявність та ціна</strong></legend>
+
+            <div>
+                <label>Наявність</label><br>
+                <select wire:model="stock_status">
+                    <option value="in_stock">В наявності</option>
+                    <option value="on_order">Під замовлення</option>
+                    <option value="inquiry">Уточнюйте</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Режим ціни</label><br>
+                <select wire:model.live="price_mode">
+                    <option value="fixed">Є ціна</option>
+                    <option value="from">Ціна від</option>
+                    <option value="inquiry">Уточнюйте ціну</option>
+                </select>
+            </div>
+
+            @if($price_mode !== 'inquiry')
+                <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+                    <div>
+                        <label>{{ $price_mode === 'from' ? 'Ціна від *' : 'Ціна *' }}</label><br>
+                        <input wire:model="price" type="text" style="width:140px">
+                        @error('price') <span style="color:red">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label>Валюта</label><br>
+                        <select wire:model="currency" style="width:90px">
+                            <option value="UAH">UAH</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                        </select>
+                        @error('currency') <span style="color:red">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label>Курс (опц.)</label><br>
+                        <input wire:model="exchange_rate" type="text" style="width:100px">
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+                    <div>
+                        <label>Знижка</label><br>
+                        <input wire:model="discount_value" type="text" style="width:100px">
+                    </div>
+                    <div>
+                        <label>Тип знижки</label><br>
+                        <select wire:model="discount_type" style="width:120px">
+                            <option value="">—</option>
+                            <option value="percent">Відсоток</option>
+                            <option value="amount">Сума</option>
+                        </select>
+                    </div>
+                </div>
+            @else
+                <p style="color:#666">Ціна не показується — клієнт надсилає заявку менеджеру.</p>
+            @endif
+
+            <div style="margin-top:.5rem">
+                <label>
+                    <input wire:model="merchant_enabled" type="checkbox">
+                    Передавати в Google Merchant (фід)
+                </label>
+            </div>
+        </fieldset>
+
+        {{-- ── Категорії ───────────────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Категорії (мультивибір)</strong></legend>
+            <select wire:model="categoryIds" multiple size="8" style="width:100%">
+                @foreach($categories as $c)
+                    <option value="{{ $c->id }}">
+                        {{ str_repeat('— ', max(0, $c->level - 1)) }}{{ $c->name }}
+                    </option>
+                @endforeach
+            </select>
+            <small style="color:#666">Ctrl/Cmd + клік — обрати декілька.</small>
+            @error('categoryIds') <span style="color:red">{{ $message }}</span> @enderror
+        </fieldset>
+
+        {{-- ── SEO ─────────────────────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>SEO</strong></legend>
+            <div>
+                <label>Title</label><br>
+                <input wire:model="seo_title" type="text" style="width:100%">
+            </div>
+            <div>
+                <label>Description</label><br>
+                <textarea wire:model="seo_description" rows="2" style="width:100%"></textarea>
+            </div>
+            <div>
+                <label>H1</label><br>
+                <input wire:model="seo_h1" type="text" style="width:100%">
+            </div>
+        </fieldset>
+
+        <div style="margin:1rem 0">
+            <label>
+                <input wire:model="is_active" type="checkbox"> Активний (показувати на сайті)
+            </label>
+        </div>
+
+        <div style="margin-bottom:2rem">
+            <button type="submit">Зберегти</button>
+            <a href="{{ route('admin.products.index') }}" wire:navigate>
+                <button type="button">Скасувати</button>
+            </a>
+        </div>
+    </form>
+</div>

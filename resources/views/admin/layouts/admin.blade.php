@@ -10,12 +10,12 @@
 <body>
     <nav>
         <a href="{{ route('admin.dashboard') }}">Головна</a>
+        <a href="{{ route('admin.products.index') }}">Товари</a>
         <a href="{{ route('admin.brands.index') }}">Бренди</a>
 
         {{-- Тимчасово ховаємо те, чого ще немає --}}
         {{-- <a href="{{ route('admin.categories.index') }}">Категорії</a> --}}
         {{-- <a href="{{ route('admin.attributes.index') }}">Характеристики</a> --}}
-        {{-- <a href="{{ route('admin.products.index') }}">Товари</a> --}}
 
         <form method="POST" action="{{ route('logout') }}" style="display:inline">
             @csrf

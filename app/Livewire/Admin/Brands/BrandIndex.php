@@ -4,6 +4,8 @@
 namespace App\Livewire\Admin\Brands;
 
 use App\Models\Brand;
+use App\Support\Translit;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -56,7 +58,7 @@ class BrandIndex extends Component
             ['id' => $this->editingId],
             [
                 'name'      => $this->name,
-                'slug'      => \Str::slug($this->name),
+                'slug'      => Str::slug(Translit::uk($this->name)),
                 'country'   => $this->country ?: null,
                 'is_active' => $this->is_active,
             ]
