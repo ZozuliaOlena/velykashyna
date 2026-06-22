@@ -6,13 +6,19 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <p style="color:green">{{ session('success') }}</p>
-    @endif
+    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
+    @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
     {{-- Фільтри --}}
     <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin:1rem 0">
-        <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, назва, розмір...">
+        <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, розмір (710/70R38)...">
+
+        <select wire:model.live="size">
+            <option value="">— Типорозмір —</option>
+            @foreach($sizes as $s)
+                <option value="{{ $s }}">{{ $s }}</option>
+            @endforeach
+        </select>
 
         <select wire:model.live="type">
             <option value="">— Тип товару —</option>
@@ -49,14 +55,47 @@
 
     {{-- Панель масових дій --}}
     @if(count($selected))
-        <div style="background:#eef; padding:.5rem; margin-bottom:.5rem; display:flex; gap:.5rem; flex-wrap:wrap; align-items:center">
+        <div class="bulk-bar">
             <strong>Вибрано: {{ count($selected) }}</strong>
-            <button wire:click="bulkSetActive(true)">Активувати</button>
-            <button wire:click="bulkSetActive(false)">Деактивувати</button>
-            <button wire:click="bulkSetMerchant(true)">Merchant ON</button>
-            <button wire:click="bulkSetMerchant(false)">Merchant OFF</button>
-            <button wire:click="bulkDelete" wire:confirm="Видалити вибрані товари?"
-                style="color:red">Видалити</button>
+
+            {{-- Наявність --}}
+            <span class="bulk-group">
+                <select wire:model="bulkStock">
+                    <option value="">Наявність…</option>
+                    <option value="in_stock">В наявності</option>
+                    <option value="on_order">Під замовлення</option>
+                    <option value="inquiry">Уточнюйте</option>
+                </select>
+                <button wire:click="bulkSetStock">Застосувати</button>
+            </span>
+
+            {{-- Ціна / режим ціни --}}
+            <span class="bulk-group">
+                <select wire:model.live="bulkPriceMode">
+                    <option value="">Режим ціни…</option>
+                    <option value="fixed">Є ціна</option>
+                    <option value="from">Ціна від</option>
+                    <option value="inquiry">Уточнюйте</option>
+                </select>
+                @if($bulkPriceMode === 'fixed' || $bulkPriceMode === 'from')
+                    <input wire:model="bulkPrice" type="text" placeholder="Ціна" style="width:90px">
+                @endif
+                <button wire:click="bulkSetPrice">Застосувати</button>
+            </span>
+
+            {{-- Merchant --}}
+            <span class="bulk-group">
+                <button wire:click="bulkSetMerchant(true)">Merchant ON</button>
+                <button wire:click="bulkSetMerchant(false)">Merchant OFF</button>
+            </span>
+
+            {{-- Активність --}}
+            <span class="bulk-group">
+                <button wire:click="bulkSetActive(true)">Активувати</button>
+                <button wire:click="bulkSetActive(false)">Деактивувати</button>
+            </span>
+
+            <button wire:click="bulkDelete" wire:confirm="Видалити вибрані товари?">Видалити</button>
         </div>
     @endif
 
@@ -65,14 +104,13 @@
             <tr>
                 <th><input type="checkbox" wire:model.live="selectPage"></th>
                 <th>Артикул</th>
-                <th>Назва</th>
-                <th>Тип</th>
+                <th>Найменування</th>
+                <th>Типорозмір</th>
                 <th>Виробник</th>
-                <th>Розмір</th>
-                <th>Ціна</th>
                 <th>Наявність</th>
-                <th>Активний</th>
+                <th>Ціна</th>
                 <th>Merchant</th>
+                <th>Активний</th>
                 <th>Дії</th>
             </tr>
         </thead>
@@ -82,9 +120,15 @@
                 <td><input type="checkbox" wire:model.live="selected" value="{{ $product->id }}"></td>
                 <td>{{ $product->sku }}</td>
                 <td>{{ $product->name }}</td>
-                <td>{{ $product->productType?->name ?? '—' }}</td>
-                <td>{{ $product->brand?->name ?? '—' }}</td>
                 <td>{{ $product->size_raw ?? '—' }}</td>
+                <td>{{ $product->brand?->name ?? '—' }}</td>
+                <td>
+                    @switch($product->stock_status)
+                        @case('in_stock') В наявності @break
+                        @case('on_order') Під замовлення @break
+                        @default Уточнюйте
+                    @endswitch
+                </td>
                 <td>
                     @if($product->price_mode === 'inquiry')
                         Уточнюйте
@@ -95,20 +139,15 @@
                     @endif
                 </td>
                 <td>
-                    @switch($product->stock_status)
-                        @case('in_stock') В наявності @break
-                        @case('on_order') Під замовлення @break
-                        @default Уточнюйте
-                    @endswitch
-                </td>
-                <td>
-                    <button wire:click="toggleActive({{ $product->id }})">
-                        {{ $product->is_active ? 'Так' : 'Ні' }}
+                    <button wire:click="toggleMerchant({{ $product->id }})"
+                        class="row-toggle {{ $product->merchant_enabled ? 'is-on' : 'is-off' }}">
+                        {{ $product->merchant_enabled ? 'ON' : 'OFF' }}
                     </button>
                 </td>
                 <td>
-                    <button wire:click="toggleMerchant({{ $product->id }})">
-                        {{ $product->merchant_enabled ? 'ON' : 'OFF' }}
+                    <button wire:click="toggleActive({{ $product->id }})"
+                        class="row-toggle {{ $product->is_active ? 'is-on' : 'is-off' }}">
+                        {{ $product->is_active ? 'Так' : 'Ні' }}
                     </button>
                 </td>
                 <td>
@@ -118,7 +157,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="11" style="text-align:center">Товарів не знайдено</td></tr>
+            <tr><td colspan="10" style="text-align:center">Товарів не знайдено</td></tr>
             @endforelse
         </tbody>
     </table>

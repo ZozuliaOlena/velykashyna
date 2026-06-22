@@ -332,6 +332,48 @@ body.admin-body {
             &:hover { text-decoration: underline; }
         }
 
+        // ── Панель масових дій ───────────────────────────────────────────
+        .bulk-bar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            background: #fff7f7;
+            border: 1px solid rgba(211, 47, 47, 0.25);
+            border-left: 4px solid $primary-red;
+            border-radius: 10px;
+        }
+
+        .bulk-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding-right: 14px;
+            border-right: 1px solid $border-color;
+
+            &:last-of-type { border-right: none; }
+        }
+
+        // ── Перемикачі в рядку таблиці (Merchant / Активний) ─────────────
+        .row-toggle {
+            min-width: 54px;
+            font-weight: 700;
+
+            &.is-on {
+                background: #e8f5e9;
+                color: #2e7d32;
+                border-color: #a5d6a7;
+            }
+
+            &.is-off {
+                background: #f3f4f6;
+                color: $text-light;
+                border-color: $border-color;
+            }
+        }
+
         // ── Пагінація (Laravel/Tailwind) — легке вирівнювання ────────────
         nav[role="navigation"] {
             margin-top: 16px;

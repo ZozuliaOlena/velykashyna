@@ -20,6 +20,8 @@ class ProductIndex extends Component
     #[Url]
     public string $type = '';
     #[Url]
+    public string $size = '';
+    #[Url]
     public string $brand = '';
     #[Url]
     public string $category = '';
@@ -31,6 +33,11 @@ class ProductIndex extends Component
     public array $selected = [];
     public bool $selectPage = false;
 
+    // поля масових дій
+    public string $bulkStock = '';
+    public string $bulkPriceMode = '';
+    public ?string $bulkPrice = null;
+
     protected function queryString(): array
     {
         return [];
@@ -39,7 +46,7 @@ class ProductIndex extends Component
     public function updating($name): void
     {
         // будь-яка зміна фільтра/пошуку скидає пагінацію та вибір
-        if (in_array($name, ['search', 'type', 'brand', 'category', 'stock'])) {
+        if (in_array($name, ['search', 'type', 'size', 'brand', 'category', 'stock'])) {
             $this->resetPage();
             $this->reset('selected', 'selectPage');
         }
@@ -47,7 +54,7 @@ class ProductIndex extends Component
 
     public function resetFilters(): void
     {
-        $this->reset('search', 'type', 'brand', 'category', 'stock');
+        $this->reset('search', 'type', 'size', 'brand', 'category', 'stock');
         $this->resetPage();
     }
 
@@ -80,21 +87,73 @@ class ProductIndex extends Component
     // ── масові дії ───────────────────────────────────────────────
     public function bulkSetActive(bool $active): void
     {
+        if (empty($this->selected)) {
+            return;
+        }
         Product::whereIn('id', $this->selected)->update(['is_active' => $active]);
         $this->afterBulk();
     }
 
     public function bulkSetMerchant(bool $enabled): void
     {
+        if (empty($this->selected)) {
+            return;
+        }
         Product::whereIn('id', $this->selected)->update(['merchant_enabled' => $enabled]);
         $this->afterBulk();
     }
 
+    public function bulkSetStock(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+        if (! in_array($this->bulkStock, ['in_stock', 'on_order', 'inquiry'], true)) {
+            session()->flash('error', 'Оберіть наявність для масової зміни');
+            return;
+        }
+
+        Product::whereIn('id', $this->selected)->update(['stock_status' => $this->bulkStock]);
+        $this->afterBulk();
+        $this->reset('bulkStock');
+        session()->flash('success', 'Наявність оновлено');
+    }
+
+    public function bulkSetPrice(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+        if (! in_array($this->bulkPriceMode, ['fixed', 'from', 'inquiry'], true)) {
+            session()->flash('error', 'Оберіть режим ціни');
+            return;
+        }
+
+        $data = ['price_mode' => $this->bulkPriceMode];
+
+        if ($this->bulkPriceMode === 'inquiry') {
+            // "Уточнюйте" — ціна не зберігається
+            $data['price'] = null;
+        } else {
+            if (! is_numeric($this->bulkPrice) || (float) $this->bulkPrice < 0) {
+                session()->flash('error', 'Вкажіть коректну ціну');
+                return;
+            }
+            $data['price'] = $this->bulkPrice;
+        }
+
+        Product::whereIn('id', $this->selected)->update($data);
+        $this->afterBulk();
+        $this->reset('bulkPrice', 'bulkPriceMode');
+        session()->flash('success', 'Ціни оновлено');
+    }
+
     public function bulkDelete(): void
     {
+        $count = count($this->selected ?? []);
         Product::whereIn('id', $this->selected)->delete();
         $this->afterBulk();
-        session()->flash('success', 'Видалено товарів: ' . count($this->selected ?? []));
+        session()->flash('success', 'Видалено товарів: ' . $count);
     }
 
     private function afterBulk(): void
@@ -115,6 +174,7 @@ class ProductIndex extends Component
                     ->orWhere('size_raw', 'like', $term));
             })
             ->when($this->type !== '', fn ($q) => $q->where('product_type_id', $this->type))
+            ->when($this->size !== '', fn ($q) => $q->where('size_raw', $this->size))
             ->when($this->brand !== '', fn ($q) => $q->where('brand_id', $this->brand))
             ->when($this->stock !== '', fn ($q) => $q->where('stock_status', $this->stock))
             ->when($this->category !== '', fn ($q) => $q->whereHas(
@@ -131,6 +191,8 @@ class ProductIndex extends Component
             'productTypes' => ProductType::orderBy('name')->get(),
             'brands'       => Brand::orderBy('name')->get(),
             'categories'   => Category::orderBy('level')->orderBy('name')->get(),
+            'sizes'        => Product::whereNotNull('size_raw')->where('size_raw', '!=', '')
+                ->distinct()->orderBy('size_raw')->pluck('size_raw'),
         ])->layout('admin.layouts.admin');
     }
 }
