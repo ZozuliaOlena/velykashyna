@@ -6,11 +6,16 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductType;
+use App\Support\Translit;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ProductForm extends Component
 {
+    use WithFileUploads;
+
     public ?int $productId = null;
 
     // ── основне ──────────────────────────────────────────────
@@ -46,6 +51,7 @@ class ProductForm extends Component
     public ?string $seo_title = null;
     public ?string $seo_description = null;
     public ?string $seo_h1 = null;
+    public ?string $slug = null;
 
     public bool $is_active = true;
 
@@ -53,13 +59,21 @@ class ProductForm extends Component
     /** @var array<int> */
     public array $categoryIds = [];
 
+    // ── супутні товари ───────────────────────────────────────
+    /** @var array<int> */
+    public array $relatedIds = [];
+
+    // ── фото ─────────────────────────────────────────────────
+    public $mainPhoto = null;        // одне основне
+    public array $galleryPhotos = []; // кілька додаткових
+
     public function mount(?int $id = null): void
     {
         if (! $id) {
             return;
         }
 
-        $product = Product::with('categories')->findOrFail($id);
+        $product = Product::with(['categories', 'relatedProducts'])->findOrFail($id);
 
         $this->productId        = $product->id;
         $this->sku              = $product->sku;
@@ -87,8 +101,10 @@ class ProductForm extends Component
         $this->seo_title        = $product->seo_title;
         $this->seo_description  = $product->seo_description;
         $this->seo_h1           = $product->seo_h1;
+        $this->slug             = $product->slug;
         $this->is_active        = $product->is_active;
         $this->categoryIds      = $product->categories->pluck('id')->toArray();
+        $this->relatedIds       = $product->relatedProducts->pluck('id')->toArray();
     }
 
     protected function rules(): array
@@ -125,9 +141,17 @@ class ProductForm extends Component
             'seo_title'       => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string'],
             'seo_h1'          => ['nullable', 'string', 'max:255'],
+            'slug'            => ['nullable', 'string', 'max:255'],
 
             'categoryIds'   => ['array'],
             'categoryIds.*' => ['exists:categories,id'],
+
+            'relatedIds'   => ['array'],
+            'relatedIds.*' => ['exists:products,id'],
+
+            'mainPhoto'        => ['nullable', 'image', 'max:5120'],
+            'galleryPhotos'    => ['nullable', 'array'],
+            'galleryPhotos.*'  => ['image', 'max:5120'],
         ];
     }
 
@@ -144,24 +168,89 @@ class ProductForm extends Component
             ? Product::findOrFail($this->productId)
             : new Product();
 
-        $product->fill(collect($data)->except('categoryIds')->toArray());
+        $scalar = collect($data)
+            ->except(['categoryIds', 'relatedIds', 'mainPhoto', 'galleryPhotos', 'slug'])
+            ->toArray();
+
+        $product->fill($scalar);
         $product->merchant_enabled = $this->merchant_enabled;
         $product->is_active = $this->is_active;
+        // ручний slug; порожній → з назви. Завжди унікалізуємо самі.
+        $product->slug = $this->buildUniqueSlug($this->slug ?: $this->name, $this->productId);
         $product->save();
 
         $product->categories()->sync($this->categoryIds);
+        $product->relatedProducts()->sync($this->relatedIds);
+
+        // фото
+        if ($this->mainPhoto) {
+            $product->addMedia($this->mainPhoto->getRealPath())
+                ->usingFileName($this->uploadName($this->mainPhoto))
+                ->toMediaCollection('main');
+        }
+
+        foreach ($this->galleryPhotos as $photo) {
+            $product->addMedia($photo->getRealPath())
+                ->usingFileName($this->uploadName($photo))
+                ->toMediaCollection('gallery');
+        }
+
+        $this->reset('mainPhoto', 'galleryPhotos');
 
         session()->flash('success', 'Товар збережено');
 
-        return $this->redirectRoute('admin.products.index', navigate: true);
+        // лишаємось на формі товару (зручно одразу керувати фото)
+        return $this->redirectRoute('admin.products.edit', ['id' => $product->id], navigate: true);
+    }
+
+    public function deleteMedia(int $mediaId): void
+    {
+        if (! $this->productId) {
+            return;
+        }
+
+        Product::findOrFail($this->productId)->deleteMedia($mediaId);
+        session()->flash('success', 'Фото видалено');
+    }
+
+    private function uploadName($file): string
+    {
+        return Str::random(24) . '.' . $file->getClientOriginalExtension();
+    }
+
+    /** Унікальний slug (укр. транслітерація), з суфіксом -2, -3… при колізії. */
+    private function buildUniqueSlug(string $source, ?int $ignoreId): string
+    {
+        $base = Str::slug(Translit::uk($source)) ?: 'tovar';
+        $slug = $base;
+        $i = 1;
+
+        while (
+            Product::withTrashed()
+                ->where('slug', $slug)
+                ->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . (++$i);
+        }
+
+        return $slug;
     }
 
     public function render()
     {
+        $product = $this->productId
+            ? Product::with('media')->find($this->productId)
+            : null;
+
         return view('admin.products.product-form', [
             'productTypes' => ProductType::orderBy('name')->get(),
             'brands'       => Brand::orderBy('name')->get(),
             'categories'   => Category::orderBy('level')->orderBy('name')->get(),
+            'allProducts'  => Product::when($this->productId, fn ($q) => $q->whereKeyNot($this->productId))
+                ->orderBy('name')->get(['id', 'sku', 'name']),
+            'mainMedia'    => $product?->getFirstMedia('main'),
+            'galleryMedia' => $product ? $product->getMedia('gallery') : collect(),
         ])->layout('admin.layouts.admin');
     }
 }

@@ -194,6 +194,18 @@
             @error('categoryIds') <span style="color:red">{{ $message }}</span> @enderror
         </fieldset>
 
+        {{-- ── Супутні товари ──────────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Супутні товари</strong></legend>
+            <select wire:model="relatedIds" multiple size="8" style="width:100%">
+                @foreach($allProducts as $p)
+                    <option value="{{ $p->id }}">{{ $p->sku }} — {{ $p->name }}</option>
+                @endforeach
+            </select>
+            <small style="color:#666">Пов'язані позиції (камери, диски, аналоги). Ctrl/Cmd + клік — декілька.</small>
+            @error('relatedIds') <span style="color:red">{{ $message }}</span> @enderror
+        </fieldset>
+
         {{-- ── SEO ─────────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>SEO</strong></legend>
@@ -209,6 +221,56 @@
                 <label>H1</label><br>
                 <input wire:model="seo_h1" type="text" style="width:100%">
             </div>
+            <div>
+                <label>URL (slug)</label><br>
+                <input wire:model="slug" type="text" style="width:100%" placeholder="залиште порожнім — згенерується з назви">
+                @error('slug') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+        </fieldset>
+
+        {{-- ── Фото ────────────────────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Фото</strong></legend>
+
+            @unless($productId)
+                <p style="color:#666">Фото завантажаться разом зі збереженням товару.</p>
+            @endunless
+
+            {{-- Основне фото --}}
+            <div style="margin-bottom:1rem">
+                <label>Основне фото</label><br>
+                @if($mainMedia)
+                    <div class="photo-thumb">
+                        <img src="{{ $mainMedia->hasGeneratedConversion('thumb') ? $mainMedia->getUrl('thumb') : $mainMedia->getUrl() }}" alt="">
+                        <button type="button" class="photo-del" wire:click="deleteMedia({{ $mainMedia->id }})"
+                            wire:confirm="Видалити основне фото?">×</button>
+                    </div>
+                @endif
+                <input wire:model="mainPhoto" type="file" accept="image/*">
+                <div wire:loading wire:target="mainPhoto" style="color:#666">Завантаження…</div>
+                @error('mainPhoto') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            {{-- Додаткові фото --}}
+            <div>
+                <label>Додаткові фото</label><br>
+                @if($galleryMedia->count())
+                    <div class="photo-grid">
+                        @foreach($galleryMedia as $m)
+                            <div class="photo-thumb" wire:key="media-{{ $m->id }}">
+                                <img src="{{ $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl() }}" alt="">
+                                <button type="button" class="photo-del" wire:click="deleteMedia({{ $m->id }})"
+                                    wire:confirm="Видалити фото?">×</button>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+                <input wire:model="galleryPhotos" type="file" accept="image/*" multiple>
+                <div wire:loading wire:target="galleryPhotos" style="color:#666">Завантаження…</div>
+                @error('galleryPhotos.*') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <small style="color:#666">Розмір/пропорція уніфікуються автоматично при завантаженні.</small>
         </fieldset>
 
         <div style="margin:1rem 0">
