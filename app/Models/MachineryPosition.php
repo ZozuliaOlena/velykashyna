@@ -1,10 +1,17 @@
 <?php
 
+// app/Models/MachineryPosition.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MachineryPosition extends Model
 {
-    //
+    protected $fillable = ['name'];
+
+    public function compatibility(): HasMany
+    {
+        return $this->hasMany(ProductMachineryCompatibility::class, 'position_id');
+    }
 }
