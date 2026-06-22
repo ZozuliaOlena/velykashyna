@@ -2,7 +2,7 @@
     <div style="display:flex; justify-content:space-between; align-items:center">
         <h1>Товари</h1>
         <a href="{{ route('admin.products.create') }}">
-            <button>+ Додати товар</button>
+            <button class="btn-primary">+ Додати товар</button>
         </a>
     </div>
 

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Attributes\AttributeIndex;
 use App\Livewire\Admin\Brands\BrandIndex;
 use App\Livewire\Admin\Categories\CategoryIndex;
@@ -19,9 +20,7 @@ Route::prefix('admin')
     ->middleware(['auth', 'verified', 'admin'])
     ->name('admin.')
     ->group(function () {
-        Route::get('/', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('/', Dashboard::class)->name('dashboard');
 
         // Каталог
         Route::get('/products', ProductIndex::class)->name('products.index');

@@ -4,40 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Адмін панель — Велика Шина</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/admin.scss', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body>
-    <nav style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; padding:.75rem; border-bottom:1px solid #ccc">
-        <a href="{{ route('admin.dashboard') }}">Головна</a>
+<body class="admin-body">
+    <nav class="admin-topbar">
+        <a class="admin-topbar__brand" href="{{ route('admin.dashboard') }}">Велика Шина</a>
 
-        <span style="color:#999">|</span>
-        <strong>Каталог:</strong>
-        <a href="{{ route('admin.products.index') }}">Товари</a>
-        <a href="{{ route('admin.categories.index') }}">Категорії</a>
-        <a href="{{ route('admin.attributes.index') }}">Характеристики</a>
-        <a href="{{ route('admin.brands.index') }}">Бренди</a>
-        <a href="{{ route('admin.product-types.index') }}">Типи товарів</a>
+        <div class="admin-topbar__group">
+            <span class="admin-topbar__label">Каталог</span>
+            <a href="{{ route('admin.products.index') }}">Товари</a>
+            <a href="{{ route('admin.categories.index') }}">Категорії</a>
+            <a href="{{ route('admin.attributes.index') }}">Характеристики</a>
+            <a href="{{ route('admin.brands.index') }}">Бренди</a>
+            <a href="{{ route('admin.product-types.index') }}">Типи товарів</a>
+        </div>
 
-        <span style="color:#999">|</span>
-        <strong>Техніка:</strong>
-        <a href="{{ route('admin.machinery-types.index') }}">Типи</a>
-        <a href="{{ route('admin.machinery-brands.index') }}">Виробники</a>
-        <a href="{{ route('admin.machinery-models.index') }}">Моделі</a>
-        <a href="{{ route('admin.machinery-positions.index') }}">Позиції</a>
+        <div class="admin-topbar__group">
+            <span class="admin-topbar__label">Техніка</span>
+            <a href="{{ route('admin.machinery-types.index') }}">Типи</a>
+            <a href="{{ route('admin.machinery-brands.index') }}">Виробники</a>
+            <a href="{{ route('admin.machinery-models.index') }}">Моделі</a>
+            <a href="{{ route('admin.machinery-positions.index') }}">Позиції</a>
+        </div>
 
-        <span style="color:#999">|</span>
-        <a href="{{ route('admin.leads.index') }}">Заявки</a>
-        <a href="{{ route('admin.users.index') }}">Користувачі</a>
-        <a href="{{ route('admin.settings.index') }}">Налаштування</a>
+        <div class="admin-topbar__group">
+            <a href="{{ route('admin.leads.index') }}">Заявки</a>
+            <a href="{{ route('admin.users.index') }}">Користувачі</a>
+            <a href="{{ route('admin.settings.index') }}">Налаштування</a>
+        </div>
 
-        <form method="POST" action="{{ route('logout') }}" style="display:inline; margin-left:auto">
+        <form class="admin-topbar__logout" method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit">Вийти</button>
         </form>
     </nav>
 
-    <main>
+    <main class="admin-main">
         {{ $slot }}
     </main>
 
