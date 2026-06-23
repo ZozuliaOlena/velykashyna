@@ -1,1716 +1,2290 @@
-// Змінні кольорів
-$primary-red: #d32f2f;
-$red-hover: #b71c1c;
-$text-dark: #121212;
-$text-light: #555;
-$bg-body: #ffffff;
-$bg-white: #ffffff;
-$border-color: #e0e0e0;
-$glass-bg: rgba(18, 18, 18, 0.75);
-$glass-border: rgba(255, 255, 255, 0.1);
+// =====================================================================
+//  ВЕЛИКА ШИНА — дизайн-система фронтенду (головна сторінка + лейаут)
+//  Десктоп-first, адаптив через max-width медіазапити.
+// =====================================================================
 
-// Breakpoints для адаптиву (мобільні пристрої, планшети, невеликі ноутбуки)
+// --- Кольори ---------------------------------------------------------
+$red: #e31e24;
+$red-dark: #c4161b;
+$red-soft: #fdecec;
+
+$ink: #1a1a1a; // основний текст / темні блоки
+$ink-2: #15171a; // майже чорний (футер, банери)
+$text: #1f2329;
+$muted: #6b7280;
+$muted-2: #9aa0a8;
+
+$bg: #ffffff;
+$bg-soft: #f5f6f8;
+$bg-card: #ffffff;
+$line: #e6e8ec;
+$line-dark: rgba(255, 255, 255, 0.1);
+
+$ok: #1f9d55;
+
+// --- Типографіка -----------------------------------------------------
+$font-head: "Montserrat", sans-serif;
+$font-body: "Arimo", sans-serif;
+
+// --- Брейкпоінти -----------------------------------------------------
 $bp-xl: 1200px;
 $bp-lg: 992px;
 $bp-md: 768px;
 $bp-sm: 576px;
 
-// Базові налаштування
-* {
+// --- Радіуси / тіні --------------------------------------------------
+$radius: 12px;
+$radius-sm: 8px;
+$radius-lg: 18px;
+$shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 12px 30px rgba(0, 0, 0, 0.08);
+
+// =====================================================================
+//  БАЗА
+// =====================================================================
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: "Arimo", sans-serif;
-    color: $text-dark;
-    background-color: $bg-body;
+    font-family: $font-body;
+    color: $text;
+    background: $bg;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+ul {
+    list-style: none;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
 }
 
 .container {
-    max-width: 1240px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 24px;
+
+    @media (max-width: $bp-sm) {
+        padding: 0 16px;
+    }
 }
 
-.header-wrapper {
-    background-color: $bg-white;
-    width: 100%;
-    position: sticky; // Закріплення шапки
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); // Легка тінь
+[x-cloak] {
+    display: none !important;
 }
-// Шапка сайту
-.top-header {
-    display: flex;
-    justify-content: space-between;
+
+// Іконка з SVG-файлу, перефарбована у поточний колір (uniform color).
+// Використання: <span class="mask-ico" style="--m:url('/images/svg/...')"></span>
+.mask-ico {
+    display: inline-block;
+    background-color: currentColor;
+    -webkit-mask: var(--m) center / contain no-repeat;
+    mask: var(--m) center / contain no-repeat;
+}
+
+// --- Кнопки ----------------------------------------------------------
+.btn {
+    display: inline-flex;
     align-items: center;
-    padding: 20px 0;
-    transition: padding 0.3s;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 28px;
+    font-family: $font-head;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border: 2px solid transparent;
+    border-radius: $radius-sm;
+    transition: all 0.25s ease;
+    white-space: nowrap;
 
-    @media (max-width: $bp-lg) {
-        padding: 15px 0; // Менше відступів на телефоні
+    svg {
+        width: 18px;
+        height: 18px;
     }
 
-    .logo-area {
-        display: flex;
-        align-items: center;
-        gap: 25px;
+    &--primary {
+        background: $red;
+        color: #fff;
 
-        @media (max-width: $bp-sm) {
-            gap: 10px;
-        }
-
-        img {
-            max-height: 45px;
-            @media (max-width: $bp-sm) {
-                max-height: 35px; // Зменшуємо лого на мобільному
-            }
-        }
-
-        .divider,
-        .slogan {
-            @media (max-width: $bp-lg) {
-                display: none; // Ховаємо слоган і лінію на мобільному екрані
-            }
-        }
-
-        .divider {
-            width: 2px;
-            height: 22px;
-            background-color: $primary-red;
-        }
-
-        .slogan {
-            font-family: "Montserrat", sans-serif;
-            font-weight: 600;
-            font-size: 13px;
-            color: $text-light;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        &:hover {
+            background: $red-dark;
+            box-shadow: 0 8px 20px rgba(227, 30, 36, 0.3);
         }
     }
 
-    .contact-area {
-        display: flex;
-        align-items: center;
-        gap: 40px;
+    &--outline {
+        background: transparent;
+        color: $red;
+        border-color: $red;
 
-        @media (max-width: $bp-lg) {
-            gap: 20px;
-        }
-
-        .phones {
-            @media (max-width: $bp-lg) {
-                display: none; // Ховаємо десктопний телефон, він буде в меню
-            }
-
-            a {
-                color: $text-dark;
-                text-decoration: none;
-                font-family: "Montserrat", sans-serif;
-                font-size: 22px;
-                font-weight: 800;
-                transition: color 0.3s;
-
-                &:hover {
-                    color: $primary-red;
-                }
-            }
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 25px;
-
-            @media (max-width: $bp-sm) {
-                gap: 15px;
-            }
-
-            .header-icon {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 5px;
-                font-size: 11px;
-                font-weight: 600;
-                color: $text-light;
-                cursor: pointer;
-                text-transform: uppercase;
-                transition: all 0.3s ease;
-
-                svg {
-                    width: 22px;
-                    height: 22px;
-                    color: $text-dark;
-                }
-
-                &:hover {
-                    color: $primary-red;
-                    svg {
-                        color: $primary-red;
-                    }
-                }
-
-                &.hide-on-mobile {
-                    @media (max-width: $bp-lg) {
-                        display: none;
-                    }
-                }
-            }
-
-            // Стиль для бургер-меню
-            .burger-menu {
-                display: none; // Ховаємо на десктопі
-
-                @media (max-width: $bp-lg) {
-                    display: flex;
-                }
-
-                svg {
-                    color: $primary-red; // Робимо бургер акцентним
-                }
-            }
+        &:hover {
+            background: $red;
+            color: #fff;
         }
     }
-}
 
-// Навігація
-.main-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0 20px 0;
-    transition: all 0.3s ease;
+    &--light {
+        background: #fff;
+        color: $ink;
+        border-color: $line;
 
-    .mobile-only-phone {
-        display: none;
+        &:hover {
+            border-color: $ink;
+        }
     }
 
-    // Мобільне виїзне меню
-    @media (max-width: $bp-lg) {
-        position: fixed;
-        top: 75px; // Висота шапки
-        left: -100%; // Сховане зліва
+    &--ghost-light {
+        background: transparent;
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.35);
+
+        &:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+    }
+
+    &--block {
         width: 100%;
-        height: calc(100vh - 75px);
-        background: $bg-white;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        padding: 30px 20px;
-        z-index: 990;
-        overflow-y: auto;
-        opacity: 0;
-
-        &.active {
-            left: 0;
-            opacity: 1;
-        }
-
-        .mobile-only-phone {
-            display: block;
-            margin-bottom: 30px;
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid $border-color;
-
-            a {
-                font-family: "Montserrat", sans-serif;
-                font-size: 24px;
-                font-weight: 800;
-                color: $primary-red;
-                text-decoration: none;
-            }
-        }
-    }
-
-    .nav-links {
-        display: flex;
-        gap: 35px;
-        list-style: none;
-
-        @media (max-width: $bp-lg) {
-            flex-direction: column;
-            gap: 20px;
-            margin-bottom: 30px;
-            align-items: center;
-        }
-
-        a {
-            text-decoration: none;
-            color: $text-dark;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 14px;
-            position: relative;
-
-            @media (max-width: $bp-lg) {
-                font-size: 18px; // Більший шрифт для мобільного кліку
-            }
-
-            &::after {
-                content: "";
-                position: absolute;
-                width: 0;
-                height: 2px;
-                bottom: -5px;
-                left: 0;
-                background-color: $primary-red;
-                transition: width 0.3s ease;
-            }
-
-            &.active::after,
-            &:hover::after {
-                width: 100%;
-            }
-
-            &.active {
-                color: $primary-red;
-            }
-        }
-    }
-
-    .sub-nav {
-        display: flex;
-        background: #f1f1f1;
-        border-radius: 8px;
-        overflow: hidden;
-
-        @media (max-width: $bp-lg) {
-            flex-direction: column;
-            background: transparent;
-            gap: 10px;
-        }
-
-        a {
-            padding: 12px 20px;
-            text-decoration: none;
-            color: $text-dark;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-right: 1px solid #e0e0e0;
-            transition: background-color 0.3s;
-
-            @media (max-width: $bp-lg) {
-                background: #f8f9fa;
-                border: 1px solid $border-color !important;
-                border-radius: 8px;
-                padding: 15px;
-                justify-content: center;
-                font-size: 15px;
-            }
-
-            svg,
-            img {
-                width: 18px;
-                height: 18px;
-                color: $primary-red;
-            }
-
-            &:hover {
-                background-color: #e4e4e4;
-            }
-
-            &:last-child {
-                border-right: none;
-            }
-        }
     }
 }
-// Ефекти скла
-.glass-panel {
-    background: $glass-bg;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid $glass-border;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
 
-// Головний банер (Hero)
-.hero {
-    background: url("/images/back.png") no-repeat center center / cover;
-    background-color: #2c2c2c;
-    min-height: 550px;
-    display: flex;
-    align-items: center;
-    padding: 60px 0;
+// --- Заголовок секції ------------------------------------------------
+.section {
+    padding: 70px 0;
 
     @media (max-width: $bp-md) {
-        padding: 40px 0;
-    }
-
-    .hero-inner {
-        position: relative;
-        width: 100%;
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 40px;
-        align-items: center; // Было 'end', меняем на 'center'
-
-        @media (max-width: $bp-lg) {
-            grid-template-columns: 1fr;
-            gap: 30px;
-        }
-    }
-
-    .filter-box {
-        padding: 40px;
-        width: 100%;
-        max-width: 850px;
-
-        @media (max-width: $bp-md) {
-            padding: 25px;
-        }
-
-        .hero-title {
-            color: #fff;
-            font-family: "Montserrat", sans-serif;
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 30px;
-
-            @media (max-width: $bp-sm) {
-                font-size: 22px;
-                text-align: center;
-            }
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-
-            @media (max-width: $bp-md) {
-                flex-direction: column; // Фільтри стовпчиком на мобільному
-                gap: 15px;
-            }
-
-            .filter-group {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-
-                label {
-                    color: rgba(255, 255, 255, 0.8);
-                    font-size: 13px;
-                    margin-bottom: 8px;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-
-                .custom-select {
-                    position: relative;
-
-                    select {
-                        width: 100%;
-                        padding: 15px 20px;
-                        background: rgba(255, 255, 255, 0.1);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        border-radius: 8px;
-                        color: #fff;
-                        font-family: "Arimo", sans-serif;
-                        font-weight: 600;
-                        font-size: 15px;
-                        appearance: none;
-                        cursor: pointer;
-                        outline: none;
-                        transition: all 0.3s;
-
-                        &:focus,
-                        &:hover {
-                            background: rgba(255, 255, 255, 0.2);
-                            border-color: #fff;
-                        }
-
-                        option {
-                            color: $text-dark;
-                        }
-                    }
-
-                    .chevron {
-                        position: absolute;
-                        right: 15px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        width: 18px;
-                        height: 18px;
-                        color: #fff;
-                        pointer-events: none;
-                    }
-                }
-            }
-
-            .btn-submit {
-                background: $primary-red;
-                color: #fff;
-                border: none;
-                padding: 0 35px;
-                font-family: "Montserrat", sans-serif;
-                font-weight: 700;
-                font-size: 15px;
-                border-radius: 8px;
-                cursor: pointer;
-                margin-top: 26px;
-                transition: all 0.3s ease;
-                text-transform: uppercase;
-
-                @media (max-width: $bp-md) {
-                    margin-top: 10px;
-                    padding: 18px; // Велика зручна кнопка на мобільному
-                }
-
-                &:hover {
-                    background: $red-hover;
-                    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
-                }
-            }
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 8px;
-            padding: 5px 5px 5px 20px;
-
-            @media (max-width: $bp-sm) {
-                padding: 5px 5px 5px 15px;
-            }
-
-            input {
-                flex: 1;
-                border: none;
-                padding: 15px 0;
-                font-size: 15px;
-                outline: none;
-                font-family: "Arimo", sans-serif;
-
-                @media (max-width: $bp-sm) {
-                    font-size: 13px;
-                }
-            }
-
-            button {
-                background: $primary-red;
-                border: none;
-                width: 48px;
-                height: 48px;
-                border-radius: 6px;
-                color: #fff;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: background 0.3s;
-                flex-shrink: 0;
-
-                svg {
-                    width: 22px;
-                    height: 22px;
-                }
-
-                &:hover {
-                    background: $red-hover;
-                }
-            }
-        }
-    }
-
-    .features {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-
-        @media (max-width: $bp-lg) {
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 20px;
-            color: #fff;
-
-            @media (max-width: $bp-lg) {
-                flex: 1 1 250px; // Переваги розтягуються в рядку
-                justify-content: center;
-            }
-
-            svg,
-            img {
-                width: 32px;
-                height: 32px;
-                color: $primary-red;
-            }
-
-            span {
-                font-family: "Montserrat", sans-serif;
-                font-size: 14px;
-                font-weight: 600;
-                line-height: 1.4;
-                letter-spacing: 0.5px;
-            }
-        }
+        padding: 48px 0;
     }
 }
 
-// Іконки техніки (Machinery Bar)
-.machinery-bar {
+.section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 36px;
+
+    @media (max-width: $bp-md) {
+        margin-bottom: 24px;
+    }
+}
+
+.section-title {
+    font-family: $font-head;
+    font-weight: 800;
+    font-size: 30px;
+    text-transform: uppercase;
+    color: $ink;
+    line-height: 1.15;
+
+    @media (max-width: $bp-md) {
+        font-size: 22px;
+    }
+
+    span {
+        color: $red;
+    }
+}
+
+.section-link {
+    font-family: $font-head;
+    font-weight: 700;
+    font-size: 13px;
+    color: $red;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:hover {
+        gap: 10px;
+    }
+}
+
+// =====================================================================
+//  ШАПКА
+// =====================================================================
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     background: #fff;
-    padding: 40px 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    margin-top: -30px;
-    position: relative;
-    z-index: 10;
-    border-radius: 16px 16px 0 0;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
+}
 
-    @media (max-width: $bp-sm) {
-        padding: 30px 0;
+// --- Десктопна шапка (верхній ярус: лого + навігація + телефон) ------
+.header-top {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 14px 0 12px;
+
+    @media (max-width: $bp-lg) {
+        display: none;
+    }
+}
+
+.header-logo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-shrink: 0;
+
+    img {
+        height: 40px;
+        width: auto;
     }
 
-    .machinery-grid {
-        display: flex;
-        justify-content: center;
-        gap: 60px;
+    .h-tagline {
+        font-family: $font-head;
+        font-weight: 500;
+        font-size: 11px;
+        color: $muted;
+        white-space: nowrap;
+    }
+}
 
-        @media (max-width: $bp-md) {
-            gap: 30px;
-            flex-wrap: wrap; // Перенос на новий рядок
+// Видимий рядок пошуку в шапці (стандарт e-commerce)
+.header-search {
+    flex: 1;
+    max-width: 560px;
+    display: flex;
+    margin: 0 auto;
+
+    input {
+        flex: 1;
+        min-width: 0;
+        border: 1px solid $line;
+        border-right: none;
+        border-radius: $radius-sm 0 0 $radius-sm;
+        padding: 12px 16px;
+        font-family: $font-body;
+        font-size: 14px;
+        outline: none;
+
+        &::placeholder {
+            color: $muted-2;
         }
 
-        .machinery-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-            color: $text-dark;
-            transition: all 0.3s;
+        &:focus {
+            border-color: $red;
+        }
+    }
 
-            @media (max-width: $bp-sm) {
-                width: calc(50% - 15px); // Два в ряд на смартфонах
-                text-align: center;
-            }
+    button {
+        border: none;
+        background: $red;
+        color: #fff;
+        padding: 0 20px;
+        border-radius: 0 $radius-sm $radius-sm 0;
+        display: inline-flex;
+        align-items: center;
 
-            svg,
-            img {
-                width: 48px;
-                height: 48px;
-                color: $text-light;
-                transition: all 0.3s;
-            }
+        svg {
+            width: 20px;
+            height: 20px;
+        }
 
-            span {
-                font-family: "Montserrat", sans-serif;
-                font-weight: 700;
-                font-size: 14px;
-                text-transform: uppercase;
-                transition: color 0.3s;
-
-                @media (max-width: $bp-sm) {
-                    font-size: 12px;
-                }
-            }
-
-            &:hover {
-                transform: translateY(-5px);
-
-                svg,
-                img {
-                    color: $primary-red;
-                }
-                span {
-                    color: $primary-red;
-                }
-            }
+        &:hover {
+            background: $red-dark;
         }
     }
 }
 
-// Секція каталогу
-.catalog-section {
-    padding: 60px 0 80px 0;
+// Нижній ярус: навігація + стрічка категорій
+.header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 4px 0 12px;
+    border-top: 1px solid $line;
 
-    @media (max-width: $bp-sm) {
-        padding: 40px 0;
+    @media (max-width: $bp-lg) {
+        display: none;
     }
+}
 
-    .section-title {
-        font-family: "Montserrat", sans-serif;
-        font-size: 26px;
-        font-weight: 800;
-        color: $text-dark;
-        margin-bottom: 40px;
+.header-nav {
+    display: flex;
+    gap: 28px;
+
+    a {
+        font-family: $font-head;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: $ink;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
         position: relative;
-        padding-left: 20px;
+        padding: 8px 0;
+        transition: color 0.2s;
 
-        @media (max-width: $bp-sm) {
-            font-size: 22px;
-            margin-bottom: 25px;
-        }
-
-        &::before {
+        &::after {
             content: "";
             position: absolute;
             left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 24px;
-            background-color: $primary-red;
-            border-radius: 2px;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: $red;
+            transition: width 0.25s ease;
+        }
+
+        &:hover,
+        &.is-active {
+            color: $red;
+        }
+
+        &:hover::after,
+        &.is-active::after {
+            width: 100%;
         }
     }
+}
 
-    .catalog-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 30px;
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
 
-        @media (max-width: $bp-sm) {
-            grid-template-columns: 1fr; // Одна колонка на мобільних
-            gap: 20px;
-        }
-    }
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 
-    .product-card {
-        background: #fff;
-        border-radius: 16px;
-        overflow: hidden;
-        text-decoration: none;
-        color: $text-dark;
-        border: 1px solid $border-color;
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
+    .h-icon {
         position: relative;
+        color: $ink;
+        transition: color 0.2s;
+
+        svg {
+            width: 23px;
+            height: 23px;
+        }
 
         &:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-            border-color: transparent;
+            color: $red;
+        }
 
-            @media (max-width: $bp-md) {
-                transform: translateY(0); // Вимикаємо стрибки на тач-екранах
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            background: $red;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
+
+.header-phone {
+    text-align: right;
+    line-height: 1.25;
+    flex-shrink: 0;
+
+    .hp-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: flex-end;
+
+        svg {
+            width: 20px;
+            height: 20px;
+            color: $red;
+        }
+
+        a {
+            font-family: $font-head;
+            font-weight: 800;
+            font-size: 20px;
+            color: $red;
+            white-space: nowrap;
+        }
+    }
+
+    .hp-note {
+        display: block;
+        margin-top: 2px;
+        font-size: 12px;
+        color: $muted;
+        white-space: nowrap;
+    }
+}
+
+// --- Стрічка категорій (праворуч у нижньому ярусі) -------------------
+.header-cats {
+    display: flex;
+    gap: 10px;
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        background: $bg-soft;
+        border-radius: $radius-sm;
+        font-family: $font-head;
+        font-weight: 600;
+        font-size: 13px;
+        color: $ink;
+        transition: background 0.2s;
+
+        svg {
+            width: 18px;
+            height: 18px;
+            color: $red;
+        }
+
+        &:hover {
+            background: #ececf0;
+        }
+    }
+}
+
+// --- Мобільна шапка --------------------------------------------------
+.header-mobile {
+    display: none;
+
+    @media (max-width: $bp-lg) {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+    }
+
+    .hm-logo {
+        justify-self: center;
+
+        img {
+            height: 30px;
+            width: auto;
+        }
+    }
+
+    .hm-side {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        justify-self: end;
+    }
+
+    .hm-btn {
+        position: relative;
+        display: inline-flex;
+        color: $ink;
+        background: none;
+        border: none;
+        padding: 0;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .badge {
+            position: absolute;
+            top: -7px;
+            right: -7px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 5px;
+            background: $red;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
+
+// =====================================================================
+//  МОБІЛЬНЕ МЕНЮ (повноекранне)
+// =====================================================================
+.mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    &.is-open {
+        transform: translateX(0);
+    }
+
+    .mm-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid $line;
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 2;
+
+        img {
+            height: 30px;
+        }
+
+        .mm-close,
+        .mm-call {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+
+            svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        .mm-close {
+            background: $bg-soft;
+            border: none;
+            padding: 0;
+            border-radius: 50%;
+            color: $ink;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+            &:hover,
+            &:active {
+                background: $red;
+                color: #fff;
+                transform: rotate(90deg);
             }
 
-            .tire-image {
-                transform: scale(1.05);
+            &:focus {
+                outline: none;
+            }
+
+            &:focus-visible {
+                outline: 2px solid $red;
+                outline-offset: 2px;
+            }
+        }
+
+        .mm-call svg {
+            color: $red;
+        }
+    }
+
+    // Пошук у меню
+    .mm-search {
+        display: flex;
+        padding: 16px;
+        border-bottom: 1px solid $line;
+
+        input {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid $line;
+            border-right: none;
+            border-radius: $radius-sm 0 0 $radius-sm;
+            padding: 14px 16px;
+            font-family: $font-body;
+            font-size: 15px;
+            outline: none;
+
+            &:focus {
+                border-color: $red;
+            }
+        }
+
+        button {
+            border: none;
+            background: $red;
+            color: #fff;
+            border-radius: 0 $radius-sm $radius-sm 0;
+            padding: 0 18px;
+            display: inline-flex;
+            align-items: center;
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
+
+    // Заголовок групи
+    .mm-label {
+        padding: 22px 16px 6px;
+        font-family: $font-head;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: $muted-2;
+    }
+
+    .mm-links {
+        padding: 0 8px;
+
+        a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 19px 12px;
+            font-family: $font-head;
+            font-weight: 600;
+            font-size: 18px;
+            color: $ink;
+            border-bottom: 1px solid $line;
+            border-radius: $radius-sm;
+            transition: background 0.15s;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:active {
+                background: $bg-soft;
+            }
+
+            .chev {
+                width: 22px;
+                height: 22px;
+                color: $red;
+            }
+        }
+    }
+
+    .mm-secondary {
+        padding: 0 8px;
+
+        a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 12px;
+            font-family: $font-head;
+            font-weight: 500;
+            font-size: 17px;
+            color: $ink;
+            border-bottom: 1px solid $line;
+            border-radius: $radius-sm;
+            transition: background 0.15s;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:active {
+                background: $bg-soft;
+            }
+
+            svg {
+                width: 24px;
+                height: 24px;
+                color: $red;
+            }
+        }
+    }
+
+    .mm-contacts {
+        margin-top: auto;
+        padding: 22px 16px calc(22px + env(safe-area-inset-bottom));
+        background: $bg-soft;
+
+        .mm-phone {
+            display: block;
+            font-family: $font-head;
+            font-weight: 800;
+            font-size: 24px;
+            color: $red;
+        }
+
+        .mm-note {
+            font-size: 13px;
+            color: $muted;
+            margin: 4px 0 16px;
+        }
+    }
+}
+
+// =====================================================================
+//  HERO
+// =====================================================================
+.hero {
+    position: relative;
+    background: #fff;
+    color: $ink;
+    overflow: hidden;
+
+    // ПК: вертикально центруємо контент і задаємо висоту,
+    // щоб ліва частина не виглядала порожньою на широких екранах.
+    @media (min-width: 769px) {
+        display: flex;
+        align-items: center;
+        min-height: 600px;
+
+        .container {
+            width: 100%;
+        }
+    }
+}
+
+.hero-media {
+    // ПК: фото праворуч, ліва межа розчиняється в білому фоні.
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 56%;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    -webkit-mask: linear-gradient(90deg, transparent 0, #000 34%);
+    mask: linear-gradient(90deg, transparent 0, #000 34%);
+
+    @media (max-width: $bp-lg) {
+        width: 48%;
+    }
+
+    // Мобільний: фото — банер угорі, розчиняється зверху та знизу.
+    @media (max-width: $bp-md) {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        width: 100%;
+        height: 320px;
+        -webkit-mask: linear-gradient(180deg, transparent 0, #000 16%, #000 84%, transparent 100%);
+        mask: linear-gradient(180deg, transparent 0, #000 16%, #000 84%, transparent 100%);
+    }
+
+    @media (max-width: $bp-sm) {
+        height: 250px;
+    }
+}
+
+.hero-inner {
+    position: relative;
+    z-index: 2;
+    padding: 52px 0 96px;
+    max-width: 620px;
+
+    @media (max-width: $bp-lg) {
+        padding: 44px 0 92px;
+        max-width: 480px;
+    }
+
+    @media (max-width: $bp-md) {
+        padding: 22px 0 30px;
+        max-width: none;
+    }
+}
+
+.hero-title {
+    font-family: $font-head;
+    font-weight: 800;
+    font-size: 52px;
+    line-height: 1.05;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+
+    span {
+        color: $red;
+    }
+
+    @media (min-width: 1280px) {
+        font-size: 58px;
+    }
+
+    @media (max-width: $bp-lg) {
+        font-size: 40px;
+    }
+
+    @media (max-width: $bp-sm) {
+        font-size: 30px;
+    }
+}
+
+.hero-sub {
+    font-size: 18px;
+    color: $muted;
+    max-width: 460px;
+    margin-bottom: 34px;
+
+    @media (max-width: $bp-sm) {
+        font-size: 15px;
+        margin-bottom: 26px;
+    }
+}
+
+// Лічильник досвіду роботи (біла картка)
+.hero-stats {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: $radius;
+    padding: 18px 24px;
+    box-shadow: $shadow-md;
+    margin-bottom: 28px;
+
+    @media (max-width: $bp-sm) {
+        display: block;
+        padding: 16px;
+    }
+
+    .hero-stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, auto);
+        gap: 28px;
+        justify-content: start;
+
+        @media (max-width: $bp-sm) {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+    }
+
+    .stat {
+        text-align: center;
+
+        .stat-num {
+            font-family: $font-head;
+            font-weight: 800;
+            font-size: 34px;
+            line-height: 1;
+            color: $ink;
+
+            @media (max-width: $bp-sm) {
+                font-size: 24px;
+            }
+        }
+
+        &.stat--accent .stat-num {
+            color: $red;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 12px;
+            color: $muted;
+            margin-top: 6px;
+            text-transform: lowercase;
+
+            @media (max-width: $bp-sm) {
+                font-size: 10px;
+            }
+        }
+    }
+
+    .hero-stats-caption {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid $line;
+        text-align: center;
+        font-family: $font-head;
+        font-weight: 600;
+        font-size: 14px;
+        color: $ink;
+
+        b {
+            color: $red;
+        }
+    }
+}
+
+.hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: nowrap;
+
+    @media (max-width: $bp-sm) {
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        @media (max-width: $bp-sm) {
+            flex: 1 1 100%;
+        }
+    }
+}
+
+// =====================================================================
+//  ПАНЕЛЬ ФІЛЬТРА (накладається на hero)
+// =====================================================================
+.filter-bar-wrap {
+    position: relative;
+    z-index: 3;
+    margin-top: -64px;
+
+    // На мобільному hero світлий і в звичайному потоці — не перекриваємо.
+    @media (max-width: $bp-md) {
+        margin-top: 4px;
+    }
+}
+
+.filter-bar {
+    background: $ink-2;
+    border-radius: $radius;
+    padding: 18px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 14px;
+    align-items: end;
+
+    @media (max-width: $bp-lg) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: $bp-sm) {
+        grid-template-columns: 1fr;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .select {
+            position: relative;
+
+            select {
+                width: 100%;
+                appearance: none;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                color: #fff;
+                font-family: $font-body;
+                font-size: 14px;
+                padding: 13px 38px 13px 14px;
+                border-radius: $radius-sm;
+                cursor: pointer;
+                outline: none;
+
+                option {
+                    color: $ink;
+                }
+
+                &:focus {
+                    border-color: $red;
+                }
+            }
+
+            svg {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 16px;
+                height: 16px;
+                color: rgba(255, 255, 255, 0.7);
+                pointer-events: none;
+            }
+        }
+    }
+
+    .filter-submit {
+        height: 46px;
+    }
+}
+
+// =====================================================================
+//  КАТЕГОРІЇ (плитки каталогу)
+// =====================================================================
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+
+    @media (max-width: $bp-lg) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: $bp-sm) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+.cat-card {
+    border: 1px solid $line;
+    border-radius: $radius;
+    padding: 18px 16px 20px;
+    text-align: center;
+    transition: all 0.25s ease;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .cat-img {
+        height: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+
+        img {
+            max-height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            transition: transform 0.3s ease;
+        }
+    }
+
+    .cat-name {
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 15px;
+        color: $ink;
+        margin-bottom: 4px;
+    }
+
+    .cat-count {
+        font-size: 13px;
+        color: $muted;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        svg {
+            width: 15px;
+            height: 15px;
+            color: $red;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+    }
+
+    &:hover {
+        border-color: transparent;
+        box-shadow: $shadow-md;
+        transform: translateY(-4px);
+
+        .cat-img img {
+            transform: scale(1.06);
+        }
+
+        .cat-count svg {
+            opacity: 1;
+        }
+    }
+}
+
+// =====================================================================
+//  КАРТКИ ТОВАРІВ (популярні моделі / каталог)
+// =====================================================================
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+
+    @media (max-width: $bp-sm) {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    // Дуже вузькі екрани — одна колонка на всю ширину,
+    // щоб лого бренду та плашку наявності було чітко видно.
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+.product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: $radius;
+    overflow: hidden;
+    transition: all 0.25s ease;
+
+    .product-image-wrapper {
+        position: relative;
+        height: 230px;
+        background: $bg-soft;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 20px;
+        border-bottom: 1px solid $line;
+
+        @media (max-width: $bp-sm) {
+            height: 180px;
+            padding: 24px 16px;
+        }
+
+        @media (max-width: 480px) {
+            height: 240px;
+        }
+
+        .brand-logo {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 2;
+            height: 22px;
+            max-width: 104px;
+            object-fit: contain;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 13px;
+            right: 13px;
+            z-index: 2;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            box-shadow: $shadow-sm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b5b9c0;
+            transition: all 0.2s;
+
+            svg {
+                width: 17px;
+                height: 17px;
+                transition: all 0.2s;
+            }
+
+            &:hover {
+                color: $red;
+            }
+
+            &.active {
+                color: $red;
+
+                svg {
+                    fill: $red;
+                }
+            }
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 14px;
+            left: 16px;
+            z-index: 2;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: $font-head;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+
+            &.in-stock {
+                background: #e7f6ec;
+                color: $ok;
+            }
+        }
+
+        .tire-image {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            transition: transform 0.35s ease;
+        }
+    }
+
+    .product-info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 18px 18px 20px;
+
+        @media (max-width: $bp-sm) {
+            padding: 14px 14px 16px;
+        }
+
+        .product-size {
+            font-family: $font-head;
+            font-weight: 800;
+            font-size: 19px;
+            color: $ink;
+            margin-bottom: 4px;
+
+            .size-alt {
+                font-size: 13px;
+                color: $muted;
+                font-weight: 500;
+            }
+        }
+
+        .product-model {
+            font-size: 13px;
+            color: $muted;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .product-footer {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-top: 1px solid $line;
+            padding-top: 14px;
+
+            .product-price {
+                font-family: $font-head;
+                font-weight: 800;
+                font-size: 20px;
+                color: $ink;
+
+                .currency {
+                    font-size: 13px;
+                    color: $muted;
+                    font-weight: 600;
+                }
+
+                &.status-ask {
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #fff;
+                    background: $red;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.4px;
+                }
             }
 
             .product-arrow {
-                background-color: $primary-red;
+                flex-shrink: 0;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: $bg-soft;
+                color: $ink;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+
+                svg {
+                    width: 17px;
+                    height: 17px;
+                }
+            }
+        }
+    }
+
+    &:hover {
+        border-color: transparent;
+        box-shadow: $shadow-md;
+        transform: translateY(-4px);
+
+        .tire-image {
+            transform: scale(1.05);
+        }
+
+        .product-arrow {
+            background: $red;
+            color: #fff;
+        }
+    }
+}
+
+// =====================================================================
+//  ПЕРЕВАГИ
+// =====================================================================
+.features {
+    background: $bg-soft;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 28px;
+
+    @media (max-width: $bp-lg) {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    @media (max-width: $bp-sm) {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .f-icon {
+        width: 44px;
+        height: 44px;
+        color: $red;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .f-title {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: $ink;
+    }
+
+    .f-text {
+        font-size: 13.5px;
+        color: $muted;
+        line-height: 1.5;
+    }
+
+    // Мобільний: кожна перевага — окрема картка з іконкою-бейджем.
+    @media (max-width: $bp-md) {
+        background: #fff;
+        border: 1px solid $line;
+        border-radius: $radius;
+        padding: 18px 16px;
+        gap: 12px;
+
+        .f-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: $red-soft;
+            border-radius: 50%;
+
+            svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        .f-title {
+            font-size: 13px;
+        }
+
+        .f-text {
+            font-size: 13px;
+        }
+    }
+}
+
+// =====================================================================
+//  CTA БАНЕР (темний, фон — протектор)
+// =====================================================================
+.cta-band {
+    position: relative;
+    background: $ink-2;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    color: #fff;
+    padding: 48px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+
+    @media (max-width: $bp-md) {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        padding: 32px 24px;
+    }
+
+    .cta-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.18;
+        }
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1;
+        max-width: 560px;
+
+        h3 {
+            font-family: $font-head;
+            font-weight: 800;
+            font-size: 26px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+
+            @media (max-width: $bp-sm) {
+                font-size: 20px;
+            }
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+
+            b {
                 color: #fff;
             }
         }
+    }
 
-        .product-image-wrapper {
-            background: #f8f9fa;
-            padding: 40px 20px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 260px;
-            border-bottom: 1px solid #f0f0f0;
+    .cta-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 14px;
+        flex-shrink: 0;
 
-            .brand-logo {
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                height: 30px;
-                width: auto;
-                max-width: 140px;
-                object-fit: contain;
-                transform-origin: top left;
-            }
+        @media (max-width: $bp-sm) {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+}
 
-            .status-badge {
-                position: absolute;
-                bottom: 15px;
-                left: 20px;
-                padding: 5px 10px;
-                border-radius: 4px;
-                font-family: "Montserrat", sans-serif;
-                font-size: 11px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                z-index: 2;
+// =====================================================================
+//  ЧОМУ ВЕЛИКА ШИНА
+// =====================================================================
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
 
-                &.in-stock {
-                    background: #e8f5e9;
-                    color: #2e7d32;
-                    border: 1px solid #c8e6c9;
-                }
-            }
+    @media (max-width: $bp-md) {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+}
 
-            .favorite-btn {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                width: 36px;
-                height: 36px;
-                background: #fff;
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: #999;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
-                z-index: 2;
-                cursor: pointer;
+.why-card {
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: $radius-lg;
+    padding: 34px 26px 30px;
+    text-align: center;
+    transition: all 0.28s ease;
 
-                svg {
-                    width: 18px;
-                    height: 18px;
-                    transition: all 0.3s ease;
-                }
+    // Червоний акцент-смужка зверху (з'являється на hover)
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: $red;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
 
-                @media (hover: hover) {
-                    &:hover {
-                        color: $primary-red;
-                        transform: scale(1.1);
-                        box-shadow: 0 4px 12px rgba(227, 24, 55, 0.2);
-                    }
-                }
+    .why-icon {
+        width: 66px;
+        height: 66px;
+        margin: 0 auto 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: $red-soft;
+        color: $red;
+        transition: all 0.28s ease;
 
-                &.active {
-                    color: $primary-red;
-                    svg {
-                        fill: $primary-red;
-                    }
-                }
-            }
+        svg,
+        .mask-ico {
+            width: 30px;
+            height: 30px;
+        }
+    }
 
-            .tire-image {
-                max-height: 100%;
-                max-width: 100%;
-                object-fit: contain;
-                transition: transform 0.4s ease;
-                mix-blend-mode: multiply;
+    .why-title {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 18px;
+        text-transform: uppercase;
+        color: $ink;
+        margin-bottom: 10px;
+        line-height: 1.2;
+
+        span {
+            color: $red;
+        }
+    }
+
+    .why-text {
+        font-size: 14px;
+        color: $muted;
+        line-height: 1.6;
+    }
+
+    &:hover {
+        border-color: transparent;
+        box-shadow: $shadow-md;
+        transform: translateY(-6px);
+
+        &::before {
+            transform: scaleX(1);
+        }
+
+        .why-icon {
+            background: $red;
+            color: #fff;
+        }
+    }
+
+    @media (max-width: $bp-sm) {
+        padding: 24px 16px 22px;
+
+        .why-icon {
+            width: 56px;
+            height: 56px;
+            margin-bottom: 14px;
+        }
+
+        .why-title {
+            font-size: 15px;
+        }
+    }
+}
+
+// =====================================================================
+//  ЯК МИ ПРАЦЮЄМО
+// =====================================================================
+.steps {
+    background: $bg-soft;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    counter-reset: step;
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: $bp-sm) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.step {
+    position: relative;
+    background: #fff;
+    border-radius: $radius;
+    padding: 28px 24px;
+    box-shadow: $shadow-sm;
+    counter-increment: step;
+
+    &::before {
+        content: counter(step);
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 40px;
+        color: $red;
+        opacity: 0.12;
+    }
+
+    .step-icon {
+        width: 42px;
+        height: 42px;
+        color: $red;
+        margin-bottom: 14px;
+
+        svg,
+        .mask-ico {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .step-title {
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 16px;
+        color: $ink;
+        margin-bottom: 6px;
+    }
+
+    .step-text {
+        font-size: 14px;
+        color: $muted;
+    }
+}
+
+// =====================================================================
+//  ФУТЕР
+// =====================================================================
+.footer {
+    background: $ink-2;
+    color: $muted-2;
+    padding-top: 56px;
+}
+
+// CTA-картка над футером
+.footer-cta {
+    background: $bg-soft;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    margin-bottom: 56px;
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: 1fr;
+    }
+
+    .fc-text {
+        padding: 44px 48px;
+
+        @media (max-width: $bp-md) {
+            padding: 32px 24px;
+        }
+
+        .fc-line {
+            width: 48px;
+            height: 4px;
+            background: $red;
+            border-radius: 2px;
+            margin-bottom: 18px;
+        }
+
+        h3 {
+            font-family: $font-head;
+            font-weight: 800;
+            font-size: 26px;
+            text-transform: uppercase;
+            color: $ink;
+            margin-bottom: 12px;
+
+            @media (max-width: $bp-sm) {
+                font-size: 20px;
             }
         }
 
-        .product-info {
-            padding: 25px 20px;
+        p {
+            color: $muted;
+            font-size: 15px;
+            margin-bottom: 24px;
+
+            b {
+                color: $ink;
+            }
+        }
+
+        .fc-actions {
             display: flex;
-            flex-direction: column;
-            flex-grow: 1;
+            gap: 14px;
 
-            .product-size {
-                font-family: "Montserrat", sans-serif;
-                font-size: 20px;
-                font-weight: 800;
-                margin-bottom: 6px;
+            @media (max-width: $bp-sm) {
+                flex-direction: column;
+            }
+        }
+    }
 
-                .size-alt {
-                    font-size: 14px;
-                    color: $text-light;
-                    font-weight: 500;
-                }
+    .fc-media {
+        align-self: stretch;
+        min-height: 240px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: $bp-md) {
+            min-height: 180px;
+        }
+    }
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr 1.1fr;
+    gap: 32px;
+    padding-bottom: 40px;
+
+    @media (max-width: $bp-lg) {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 28px;
+    }
+
+    @media (max-width: $bp-md) {
+        display: none; // на мобільному — акордеон
+    }
+}
+
+.footer-brand {
+    .f-logo {
+        height: 34px;
+        margin-bottom: 18px;
+    }
+
+    .f-desc {
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 280px;
+        margin-bottom: 18px;
+    }
+}
+
+// Оцінка клієнтів (зірки)
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+
+    .rating-stars {
+        display: inline-flex;
+        gap: 2px;
+        color: #ffb400;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .rating-text {
+        font-size: 13px;
+        color: $muted-2;
+
+        b {
+            color: #fff;
+            font-weight: 700;
+        }
+    }
+}
+
+.footer-contact-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        color: $red;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .fc-strong {
+        font-family: $font-head;
+        font-weight: 800;
+        color: #fff;
+        font-size: 16px;
+    }
+
+    .fc-note {
+        color: $muted-2;
+        font-size: 12.5px;
+    }
+
+    a:hover {
+        color: #fff;
+    }
+}
+
+.footer-col {
+    .fcol-title {
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: #fff;
+        margin-bottom: 18px;
+        letter-spacing: 0.5px;
+    }
+
+    ul li {
+        margin-bottom: 11px;
+    }
+
+    a {
+        font-size: 14px;
+        color: $muted-2;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s;
+
+        svg {
+            width: 16px;
+            height: 16px;
+            color: $red;
+        }
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+.footer-socials {
+    display: flex;
+    gap: 12px;
+
+    a {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        transition: all 0.25s;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        &:hover {
+            background: $red;
+            transform: translateY(-3px);
+        }
+    }
+}
+
+.footer-bottom {
+    border-top: 1px solid $line-dark;
+    padding: 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 13px;
+    flex-wrap: wrap;
+
+    a:hover {
+        color: #fff;
+    }
+
+    .fb-made {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    @media (max-width: $bp-md) {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+// --- Мобільний футер (акордеон + картка) -----------------------------
+.footer-mobile {
+    display: none;
+
+    @media (max-width: $bp-md) {
+        display: block;
+    }
+
+    .fm-card {
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: $radius;
+        padding: 24px;
+        margin-bottom: 24px;
+
+        .f-logo {
+            height: 30px;
+            margin-bottom: 14px;
+        }
+
+        .f-desc {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+    }
+
+    .fm-accordion {
+        border-bottom: 1px solid $line-dark;
+
+        .fm-acc-head {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #fff;
+            font-family: $font-head;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            padding: 18px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            svg {
+                width: 18px;
+                height: 18px;
+                transition: transform 0.25s;
+                color: $muted-2;
             }
 
-            .product-model {
+            &.is-open svg {
+                transform: rotate(180deg);
+            }
+        }
+
+        .fm-acc-body {
+            padding-bottom: 16px;
+
+            a {
+                display: block;
+                padding: 8px 0;
                 font-size: 14px;
-                color: $text-light;
-                margin-bottom: 25px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                font-weight: 600;
-            }
-
-            .product-footer {
-                margin-top: auto;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-top: 1px solid #f0f0f0;
-                padding-top: 15px;
-
-                @media (max-width: $bp-sm) {
-                    // Якщо текст не влазить на дуже вузьких екранах
-                    flex-wrap: wrap;
-                    gap: 15px;
-                }
-
-                .product-price {
-                    font-family: "Montserrat", sans-serif;
-                    font-size: 22px;
-                    font-weight: 800;
-                    color: $text-dark;
-                    display: flex;
-                    align-items: baseline;
-                    gap: 4px;
-
-                    @media (max-width: $bp-sm) {
-                        font-size: 20px;
-                    }
-
-                    .currency {
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: $text-light;
-                    }
-
-                    &.status-ask {
-                        font-size: 13px;
-                        color: #fff;
-                        background: $primary-red;
-                        padding: 8px 14px;
-                        border-radius: 6px;
-                        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.25);
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-
-                        @media (max-width: $bp-sm) {
-                            font-size: 12px;
-                            padding: 8px 10px;
-                        }
-                    }
-                }
-
-                .product-arrow {
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 50%;
-                    background-color: #f1f1f1;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    color: $text-dark;
-                    transition: all 0.3s;
-                    flex-shrink: 0;
-
-                    svg {
-                        width: 18px;
-                        height: 18px;
-                    }
-                }
+                color: $muted-2;
             }
         }
     }
 }
-// ==========================================
-// Анімована панель пошуку
-// ==========================================
+
+// =====================================================================
+//  ПЛАВАЮЧА КНОПКА ЗВ'ЯЗКУ (FAB)
+// =====================================================================
+.fab {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    bottom: calc(22px + env(safe-area-inset-bottom));
+    z-index: 950;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: $red;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-align: center;
+    box-shadow: 0 10px 26px rgba(227, 30, 36, 0.45);
+    animation: fab-pulse 2.4s infinite;
+    transition: transform 0.2s;
+
+    svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .fab-label {
+        font-size: 8px;
+        font-weight: 600;
+        line-height: 1.1;
+        max-width: 58px;
+    }
+
+    &:hover {
+        transform: scale(1.06);
+        animation-play-state: paused;
+    }
+
+    @media (max-width: $bp-sm) {
+        width: 58px;
+        height: 58px;
+
+        .fab-label {
+            display: none;
+        }
+    }
+}
+
+@keyframes fab-pulse {
+    0% {
+        box-shadow: 0 10px 26px rgba(227, 30, 36, 0.45), 0 0 0 0 rgba(227, 30, 36, 0.5);
+    }
+
+    70% {
+        box-shadow: 0 10px 26px rgba(227, 30, 36, 0.45), 0 0 0 16px rgba(227, 30, 36, 0);
+    }
+
+    100% {
+        box-shadow: 0 10px 26px rgba(227, 30, 36, 0.45), 0 0 0 0 rgba(227, 30, 36, 0);
+    }
+}
+
+// =====================================================================
+//  ОВЕРЛЕЙ ПОШУКУ
+// =====================================================================
 .search-overlay {
-    position: absolute;
-    top: 100%; // Виїжджає рівно з-під шапки
-    left: 0;
-    width: 100%;
-    background: $bg-white;
-    padding: 35px 0;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
-    z-index: 995;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-15px);
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    border-top: 1px solid $border-color;
-    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background: rgba(15, 17, 20, 0.55);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 14vh 20px 20px;
 
-    // Стан, коли пошук відкритий
-    &.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+    .search-box {
+        width: min(680px, 100%);
+        background: #fff;
+        border-radius: $radius;
+        padding: 22px;
+        box-shadow: $shadow-md;
     }
 
-    .search-overlay-inner {
-        position: relative;
+    .search-head {
         display: flex;
         align-items: center;
-        gap: 30px;
+        justify-content: space-between;
+        margin-bottom: 14px;
 
-        @media (max-width: $bp-sm) {
-            gap: 15px;
-        }
-    }
-
-    .search-form {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        border-bottom: 2px solid #ccc;
-        padding-bottom: 8px;
-        transition: border-color 0.3s;
-        position: relative;
-        z-index: 2;
-
-        &:focus-within {
-            border-color: $primary-red; // Акцент при кліку
-        }
-
-        input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-family: "Arimo", sans-serif;
-            font-size: 22px;
-            font-weight: 600;
-            color: $text-dark;
-            background: transparent;
-
-            @media (max-width: $bp-sm) {
-                font-size: 15px;
-            }
-
-            &::placeholder {
-                color: #999;
-                font-weight: 400;
-            }
+        span {
+            font-family: $font-head;
+            font-weight: 700;
+            font-size: 16px;
+            text-transform: uppercase;
+            color: $ink;
         }
 
         button {
             background: none;
             border: none;
-            color: $primary-red;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 10px;
+            color: $muted;
+            display: inline-flex;
 
             svg {
-                width: 30px;
-                height: 30px;
-                transition: transform 0.3s;
-
-                @media (max-width: $bp-sm) {
-                    width: 24px;
-                    height: 24px;
-                }
+                width: 24px;
+                height: 24px;
             }
 
-            &:hover svg {
-                transform: scale(1.15);
+            &:hover {
+                color: $red;
             }
         }
     }
 
-    .close-search {
-        cursor: pointer;
-        color: $text-light;
-        transition: all 0.3s;
-        z-index: 2;
-        padding: 5px;
+    form {
+        display: flex;
+        gap: 10px;
+
+        input {
+            flex: 1;
+            border: 1px solid $line;
+            border-radius: $radius-sm;
+            padding: 14px 16px;
+            font-family: $font-body;
+            font-size: 16px;
+            outline: none;
+
+            &:focus {
+                border-color: $red;
+            }
+        }
+
+        button {
+            border: none;
+            background: $red;
+            color: #fff;
+            border-radius: $radius-sm;
+            padding: 0 20px;
+            display: inline-flex;
+            align-items: center;
+
+            svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            &:hover {
+                background: $red-dark;
+            }
+        }
+    }
+
+    .search-hint {
+        margin-top: 12px;
+        font-size: 13px;
+        color: $muted;
+    }
+}
+
+// =====================================================================
+//  КАРУСЕЛЬ ТЕХНІКИ ("Підберемо для вашої техніки")
+// =====================================================================
+.machinery {
+    // Стрілки прокрутки каруселі
+    .mach-nav {
+        display: flex;
+        gap: 8px;
+    }
+
+    .mach-arrow {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid $line;
+        background: #fff;
+        color: $ink;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
 
         svg {
-            width: 28px;
-            height: 28px;
+            width: 20px;
+            height: 20px;
         }
 
         &:hover {
-            color: $primary-red;
-            transform: rotate(90deg); // Ефектний поворот хрестика
-        }
-    }
-
-    // Декоративне колесо на фоні
-    .search-decoration {
-        position: absolute;
-        right: 8%;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0.04; // Дуже легкий напівпрозорий слід
-        pointer-events: none; // Щоб не заважало клікати
-        z-index: 1;
-
-        img {
-            width: 180px;
-            height: 180px;
-            animation: spin-slow 20s linear infinite; // Повільне обертання
-        }
-    }
-}
-
-// Анімація для водяного знака
-@keyframes spin-slow {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-// ==========================================
-// Секція "Про нас"
-// ==========================================
-.about-section {
-    background-color: #f8f9fa; // Світло-сірий фон для контрасту з білим каталогом
-    padding: 80px 0;
-    border-top: 1px solid $border-color;
-
-    @media (max-width: $bp-sm) {
-        padding: 50px 0;
-    }
-
-    .about-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 60px;
-
-        @media (max-width: $bp-lg) {
-            flex-direction: column;
-            gap: 40px;
-        }
-    }
-
-    .about-content {
-        flex: 1;
-        max-width: 700px;
-
-        .about-title {
-            font-family: "Montserrat", sans-serif;
-            font-size: 26px;
-            font-weight: 800;
-            color: $text-dark;
-            margin-bottom: 20px;
-            line-height: 1.3;
-
-            @media (max-width: $bp-sm) {
-                font-size: 22px;
-            }
-        }
-
-        .title-divider {
-            width: 60px;
-            height: 4px;
-            background-color: $primary-red;
-            border-radius: 2px;
-            margin-bottom: 25px;
-        }
-
-        .about-text {
-            font-size: 16px;
-            line-height: 1.7;
-            color: $text-light;
-            margin-bottom: 15px;
-
-            strong {
-                color: $text-dark;
-                font-weight: 700;
-            }
-        }
-    }
-
-    .about-visual {
-        flex-shrink: 0;
-        width: 300px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #fff;
-        padding: 40px;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-
-        @media (max-width: $bp-lg) {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .about-logo {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            opacity: 0.7;
-            transition: all 0.3s;
-
-            &:hover {
-                filter: grayscale(0%);
-                opacity: 1;
-            }
-        }
-    }
-}
-
-// ==========================================
-// Футер
-// ==========================================
-.site-footer {
-    background-color: #121212; // Преміальний темний фон
-    color: #a0a0a0;
-    padding: 80px 0 30px 0;
-    font-family: "Arimo", sans-serif;
-
-    @media (max-width: $bp-sm) {
-        padding: 60px 0 30px 0;
-    }
-
-    .footer-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1.5fr;
-        gap: 40px;
-        margin-bottom: 60px;
-
-        @media (max-width: $bp-lg) {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        @media (max-width: $bp-sm) {
-            grid-template-columns: 1fr;
-            gap: 40px;
-        }
-    }
-
-    .footer-title {
-        color: #fff;
-        font-family: "Montserrat", sans-serif;
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 25px;
-        text-transform: uppercase;
-    }
-
-    // Колонка бренду
-    .brand-col {
-        .footer-logo {
-            max-height: 40px;
-            margin-bottom: 20px;
-            height: 45px; // Трохи збільшив для кращої читабельності
-            width: auto;
-            margin-bottom: 20px;
-
-            // Додаємо білу плашку, щоб чорні елементи не губилися на темному фоні
-            background-color: #ffffff;
-            padding: 6px 12px;
-            border-radius: 8px;
-            display: inline-block;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .footer-desc {
-            line-height: 1.6;
-            font-size: 14px;
-            margin-bottom: 25px;
-            max-width: 300px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-
-            a {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 40px;
-                height: 40px;
-                background: rgba(255, 255, 255, 0.05);
-                border-radius: 50%;
-                color: #fff;
-                transition: all 0.3s;
-
-                svg {
-                    width: 18px;
-                    height: 18px;
-                }
-
-                &:hover {
-                    background: $primary-red;
-                    transform: translateY(-3px);
-                }
-            }
-        }
-    }
-
-    // Колонки меню
-    .links-col {
-        ul {
-            list-style: none;
-
-            li {
-                margin-bottom: 12px;
-
-                a {
-                    color: #a0a0a0;
-                    text-decoration: none;
-                    font-size: 14px;
-                    transition:
-                        color 0.3s,
-                        padding-left 0.3s;
-
-                    &:hover {
-                        color: $primary-red;
-                        padding-left: 5px; // Легкий рух вправо при наведенні
-                    }
-                }
-            }
-        }
-    }
-
-    // Колонка контактів
-    .contacts-col {
-        .contact-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 20px;
-
-            svg {
-                width: 20px;
-                height: 20px;
-                color: $primary-red;
-                flex-shrink: 0;
-                margin-top: 2px;
-            }
-
-            a {
-                display: block;
-                color: #a0a0a0;
-                text-decoration: none;
-                font-size: 15px;
-                margin-bottom: 5px;
-                transition: color 0.3s;
-
-                &:hover {
-                    color: #fff;
-                }
-            }
-        }
-    }
-
-    // Низ футера (Копірайт)
-    .footer-bottom {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 13px;
-
-        @media (max-width: $bp-sm) {
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-        }
-
-        a {
+            background: $red;
+            border-color: $red;
             color: #fff;
-            text-decoration: none;
-            transition: color 0.3s;
-
-            &:hover {
-                color: $primary-red;
-            }
-        }
-    }
-}
-// ==========================================
-// Сторінка Товару (Product Page)
-// ==========================================
-.product-page {
-    padding: 30px 0 80px 0;
-    background-color: #fcfcfc; // Дуже легкий сірий фон для контрасту з картками
-
-    // Хлібні крихти
-    .breadcrumbs {
-        font-size: 13px;
-        color: $text-light;
-        margin-bottom: 30px;
-        font-weight: 500;
-
-        a {
-            color: $text-light;
-            text-decoration: none;
-            transition: color 0.2s;
-
-            &:hover {
-                color: $primary-red;
-            }
-        }
-
-        .separator {
-            margin: 0 8px;
-            color: #ccc;
-        }
-
-        .current {
-            color: $text-dark;
-            font-weight: 600;
         }
     }
 
-    // Головний контейнер товару
-    .product-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 50px;
-        background: #fff;
-        border-radius: 16px;
-        padding: 40px;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.03);
-        margin-bottom: 40px;
-        border: 1px solid $border-color;
+    .mach-track {
+        display: flex;
+        gap: 28px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
 
-        @media (max-width: $bp-lg) {
-            grid-template-columns: 1fr;
-            gap: 30px;
-            padding: 30px 20px;
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: $line;
+            border-radius: 4px;
         }
     }
 
-    // Зона Фото
-    .product-gallery {
-        .main-image-box {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 40px;
-            height: 450px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border: 1px solid #eee;
-
-            @media (max-width: $bp-sm) {
-                height: 300px;
-                padding: 20px;
-            }
-
-            .main-image {
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: contain;
-                mix-blend-mode: multiply;
-            }
-
-            .status-badge {
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                padding: 6px 12px;
-                border-radius: 4px;
-                font-family: "Montserrat", sans-serif;
-                font-size: 12px;
-                font-weight: 700;
-                text-transform: uppercase;
-
-                &.in-stock {
-                    background: #e8f5e9;
-                    color: #2e7d32;
-                    border: 1px solid #c8e6c9;
-                }
-            }
-
-            .favorite-btn {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                width: 44px;
-                height: 44px;
-                background: #fff;
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: #999;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-                cursor: pointer;
-                transition: all 0.3s;
-
-                svg {
-                    width: 22px;
-                    height: 22px;
-                    transition: all 0.3s;
-                }
-
-                &:hover,
-                &.active {
-                    color: $primary-red;
-                    transform: scale(1.1);
-                    svg {
-                        fill: $primary-red;
-                    }
-                }
-            }
-        }
-    }
-
-    // Інформація праворуч
-    .product-info-panel {
+    .mach-item {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
         display: flex;
         flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        min-width: 96px;
+        color: $ink;
+        text-align: center;
 
-        .product-brand-logo {
-            height: 35px;
-            max-width: 150px;
-            object-fit: contain;
-            transform-origin: left center;
-            margin-bottom: 20px;
+        .mach-ico {
+            width: 54px;
+            height: 54px;
+            color: $ink;
+            transition: color 0.25s, transform 0.25s;
         }
 
-        .product-title {
-            font-family: "Montserrat", sans-serif;
-            font-size: 32px;
-            font-weight: 800;
-            color: $text-dark;
-            margin-bottom: 10px;
-            line-height: 1.2;
-
-            @media (max-width: $bp-sm) {
-                font-size: 26px;
-            }
-        }
-
-        .product-type {
-            font-size: 15px;
-            color: $text-light;
-            text-transform: uppercase;
+        span {
+            font-size: 12px;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            margin-bottom: 30px;
+            color: $text;
         }
 
-        // Блок іконок-характеристик
-        .quick-specs {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #eee;
-
-            @media (max-width: $bp-sm) {
-                gap: 15px;
-            }
-
-            .q-spec-item {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-
-                svg {
-                    width: 32px;
-                    height: 32px;
-                    color: $primary-red;
-                }
-
-                .q-label {
-                    display: block;
-                    font-size: 12px;
-                    color: $text-light;
-                    text-transform: uppercase;
-                    margin-bottom: 2px;
-                }
-
-                .q-value {
-                    display: block;
-                    font-family: "Montserrat", sans-serif;
-                    font-weight: 800;
-                    font-size: 18px;
-                    color: $text-dark;
-                }
-            }
-        }
-
-        // Ціна та Кнопки
-        .action-box {
-            margin-top: auto;
-
-            .price-block {
-                margin-bottom: 25px;
-
-                .price-current {
-                    font-family: "Montserrat", sans-serif;
-                    font-size: 38px;
-                    font-weight: 800;
-                    color: $text-dark;
-                    display: flex;
-                    align-items: baseline;
-                    gap: 8px;
-
-                    .currency {
-                        font-size: 18px;
-                        font-weight: 600;
-                        color: $text-light;
-                    }
-                }
-
-                .price-ask {
-                    display: inline-block;
-                    font-family: "Montserrat", sans-serif;
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: #fff;
-                    background: $primary-red;
-                    padding: 10px 20px;
-                    border-radius: 8px;
-                }
-            }
-
-            .buttons-row {
-                display: flex;
-                gap: 15px;
-
-                @media (max-width: $bp-sm) {
-                    flex-direction: column;
-                }
-
-                .btn {
-                    padding: 18px 30px;
-                    font-family: "Montserrat", sans-serif;
-                    font-size: 16px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                    flex: 1;
-                    text-align: center;
-
-                    &.btn-primary {
-                        background-color: $primary-red;
-                        color: #fff;
-                        border: none;
-
-                        &:hover {
-                            background-color: $red-hover;
-                            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
-                        }
-                    }
-
-                    &.btn-outline {
-                        background-color: transparent;
-                        color: $text-dark;
-                        border: 2px solid $border-color;
-
-                        &:hover {
-                            border-color: $text-dark;
-                            background-color: #f9f9f9;
-                        }
-                    }
-                }
-            }
+        &:hover .mach-ico {
+            color: $red;
+            transform: translateY(-4px);
         }
     }
+}
 
-    // Таблиця Характеристик
-    .product-details-tabs {
-        background: #fff;
-        border-radius: 16px;
-        padding: 40px;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.03);
-        border: 1px solid $border-color;
+// Соцмережі на світлому фоні (контактний блок мобільного меню)
+.mm-contacts .footer-socials a {
+    background: #f1f2f4;
+    color: $ink;
 
-        @media (max-width: $bp-sm) {
-            padding: 25px 20px;
-        }
-
-        .details-title {
-            font-family: "Montserrat", sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            color: $text-dark;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .specs-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-
-            tr {
-                border-bottom: 1px solid #f0f0f0;
-
-                &:last-child {
-                    border-bottom: none;
-                }
-
-                td {
-                    padding: 15px 10px;
-                    font-size: 15px;
-                    color: $text-light;
-
-                    &:first-child {
-                        width: 40%;
-                    }
-
-                    strong {
-                        color: $text-dark;
-                        font-weight: 600;
-                        font-family: "Montserrat", sans-serif;
-                    }
-
-                    .spec-note-link {
-                        color: $primary-red;
-                        font-weight: 800;
-                        margin-left: 5px;
-                    }
-                }
-            }
-        }
-
-        // Зноски
-        // Нові красиво оформлені зноски
-        .specs-footnotes {
-            background: #fcfcfc;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #eee;
-            border-left: 4px solid $primary-red;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-
-            .footnote-group {
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-
-                .asterisk {
-                    color: $primary-red;
-                    font-weight: 800;
-                    font-size: 20px;
-                    line-height: 1;
-                    margin-top: 4px;
-                }
-
-                .footnote-list {
-                    list-style: none;
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 15px 25px; // відступи між елементами
-                    align-items: center;
-
-                    li {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        font-size: 14px;
-                        color: $text-light;
-                        font-weight: 500;
-
-                        .badge {
-                            background: #fff;
-                            border: 1px solid $border-color;
-                            padding: 4px 8px;
-                            border-radius: 6px;
-                            font-weight: 700;
-                            color: $text-dark;
-                            font-family: "Montserrat", sans-serif;
-                            font-size: 12px;
-                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
-                            letter-spacing: 0.5px;
-                        }
-                    }
-                }
-            }
-        }
+    &:hover {
+        background: $red;
+        color: #fff;
     }
 }
