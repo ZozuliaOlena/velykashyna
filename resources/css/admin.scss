@@ -1,0 +1,472 @@
+// ==========================================================================
+// Тема адмін-панелі «Велика Шина»
+// Кольорова гама узгоджена з фронтендом (resources/css/app.scss).
+// Підключається разом з Tailwind (app.css), стилі scope-нуті під
+// body.admin-body, тому перебивають Tailwind preflight.
+// ==========================================================================
+
+$primary-red: #d32f2f;
+$red-hover: #b71c1c;
+$text-dark: #121212;
+$text-light: #555;
+$bg-white: #ffffff;
+$border-color: #e0e0e0;
+$bg-app: #f4f5f7;
+$radius: 8px;
+
+body.admin-body {
+    margin: 0;
+    font-family: "Arimo", system-ui, "Segoe UI", sans-serif;
+    color: $text-dark;
+    background: $bg-app;
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    // ── Верхня панель навігації ──────────────────────────────────────────
+    .admin-topbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        padding: 12px 24px;
+        background: $bg-white;
+        border-bottom: 3px solid $primary-red;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+
+        &__brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 17px;
+            color: $text-dark;
+            text-decoration: none;
+            margin-right: 8px;
+
+            &::before {
+                content: "";
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: $primary-red;
+            }
+        }
+
+        &__group {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 16px;
+            border-left: 1px solid $border-color;
+        }
+
+        &__label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: $text-light;
+        }
+
+        a {
+            position: relative;
+            color: $text-dark;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 4px 0;
+            transition: color 0.2s;
+
+            &::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -2px;
+                width: 0;
+                height: 2px;
+                background: $primary-red;
+                transition: width 0.2s ease;
+            }
+
+            &:hover {
+                color: $primary-red;
+                &::after { width: 100%; }
+            }
+        }
+
+        &__logout {
+            margin-left: auto;
+
+            button {
+                background: $primary-red;
+                border: 1px solid $primary-red;
+                color: #fff;
+                padding: 7px 16px;
+                border-radius: $radius;
+                font-weight: 700;
+                font-size: 13px;
+                cursor: pointer;
+                transition: background 0.2s;
+
+                &:hover { background: $red-hover; }
+            }
+        }
+    }
+
+    // ── Контентна область ────────────────────────────────────────────────
+    .admin-main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 28px 24px 60px;
+
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: $text-dark;
+            margin: 0 0 20px;
+            padding-left: 14px;
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 4px;
+                height: 22px;
+                border-radius: 2px;
+                background: $primary-red;
+            }
+        }
+
+        h2 {
+            font-size: 19px;
+            font-weight: 800;
+            margin: 0 0 16px;
+        }
+
+        h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0 0 10px;
+        }
+
+        // ── Повідомлення (flash) ────────────────────────────────────────
+        // у Blade колір заданий інлайном; підкладемо плашку
+        p[style*="green"] {
+            background: #e8f5e9;
+            color: #2e7d32 !important;
+            border: 1px solid #c8e6c9;
+            padding: 10px 14px;
+            border-radius: $radius;
+        }
+        p[style*="red"] {
+            background: #fdecea;
+            color: $primary-red !important;
+            border: 1px solid #f5c6c2;
+            padding: 10px 14px;
+            border-radius: $radius;
+        }
+
+        // ── Поля форм ────────────────────────────────────────────────────
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: $text-light;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input:not([type]),
+        select,
+        textarea {
+            padding: 9px 11px;
+            border: 1px solid $border-color;
+            border-radius: $radius;
+            font-family: inherit;
+            font-size: 14px;
+            color: $text-dark;
+            background: $bg-white;
+            transition: border-color 0.15s, box-shadow 0.15s;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-red;
+                box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
+            }
+
+            &[readonly] {
+                background: #f3f4f6;
+                color: $text-light;
+            }
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        fieldset {
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            padding: 16px;
+            background: $bg-white;
+
+            > div { margin-bottom: 10px; }
+        }
+
+        legend {
+            font-weight: 700;
+            font-size: 14px;
+            color: $text-dark;
+            padding: 0 6px;
+        }
+
+        // ── Кнопки ───────────────────────────────────────────────────────
+        button {
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: $radius;
+            border: 1px solid $border-color;
+            background: $bg-white;
+            color: $text-dark;
+            transition: all 0.15s;
+
+            &:hover {
+                background: #f3f4f6;
+                border-color: #cfcfcf;
+            }
+        }
+
+        // Первинні дії: зберегти / додати
+        button[type="submit"],
+        button[wire\:click="save"],
+        button[wire\:click="openCreate"],
+        button[wire\:click="addOption"],
+        .btn-primary {
+            background: $primary-red;
+            border-color: $primary-red;
+            color: #fff;
+
+            &:hover {
+                background: $red-hover;
+                border-color: $red-hover;
+            }
+        }
+
+        // Небезпечні дії: усе з підтвердженням (видалення)
+        button[wire\:confirm] {
+            background: $bg-white;
+            color: $primary-red;
+            border-color: rgba(211, 47, 47, 0.45);
+
+            &:hover {
+                background: $primary-red;
+                color: #fff;
+                border-color: $primary-red;
+            }
+        }
+
+        // ── Таблиці ──────────────────────────────────────────────────────
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: $bg-white;
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: none;
+            border-bottom: 1px solid #eee;
+            padding: 11px 12px;
+            text-align: left;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        thead th {
+            background: #fafafa;
+            color: $text-light;
+            text-transform: uppercase;
+            font-size: 11.5px;
+            letter-spacing: 0.4px;
+            font-weight: 700;
+        }
+
+        tbody tr {
+            transition: background 0.12s;
+            &:hover { background: #fafafb; }
+            &:last-child td { border-bottom: none; }
+        }
+
+        // Дрібні кнопки/посилання в комірках дій
+        td button {
+            padding: 5px 10px;
+            font-size: 13px;
+        }
+
+        td a {
+            color: $primary-red;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            margin-right: 8px;
+
+            &:hover { text-decoration: underline; }
+        }
+
+        // ── Панель масових дій ───────────────────────────────────────────
+        .bulk-bar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            background: #fff7f7;
+            border: 1px solid rgba(211, 47, 47, 0.25);
+            border-left: 4px solid $primary-red;
+            border-radius: 10px;
+        }
+
+        .bulk-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding-right: 14px;
+            border-right: 1px solid $border-color;
+
+            &:last-of-type { border-right: none; }
+        }
+
+        // ── Перемикачі в рядку таблиці (Merchant / Активний) ─────────────
+        .row-toggle {
+            min-width: 54px;
+            font-weight: 700;
+
+            &.is-on {
+                background: #e8f5e9;
+                color: #2e7d32;
+                border-color: #a5d6a7;
+            }
+
+            &.is-off {
+                background: #f3f4f6;
+                color: $text-light;
+                border-color: $border-color;
+            }
+        }
+
+        // ── Фото-прев'ю у формі товару ───────────────────────────────────
+        .photo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .photo-thumb {
+            position: relative;
+            display: inline-block;
+            width: 110px;
+            height: 110px;
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            background: #f8f9fa;
+            overflow: hidden;
+            margin-bottom: 10px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain; // уніфікований вигляд незалежно від пропорцій
+            }
+
+            .photo-del {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                line-height: 1;
+                border-radius: 50%;
+                background: $primary-red;
+                color: #fff;
+                border: none;
+                font-size: 16px;
+                font-weight: 700;
+                cursor: pointer;
+
+                &:hover { background: $red-hover; }
+            }
+        }
+
+        // ── Пагінація (Laravel/Tailwind) — легке вирівнювання ────────────
+        nav[role="navigation"] {
+            margin-top: 16px;
+        }
+
+        // ── Плитки статистики (dashboard) ────────────────────────────────
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 18px;
+        }
+
+        .admin-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 22px;
+            background: $bg-white;
+            border: 1px solid $border-color;
+            border-radius: 12px;
+            text-decoration: none;
+            color: $text-dark;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: transform 0.15s, box-shadow 0.15s;
+
+            &:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            }
+
+            &__value {
+                font-size: 34px;
+                font-weight: 800;
+                line-height: 1;
+            }
+
+            &__label {
+                font-size: 13px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: $text-light;
+            }
+
+            &--accent {
+                border-left: 4px solid $primary-red;
+                .admin-stat__value { color: $primary-red; }
+            }
+        }
+    }
+}

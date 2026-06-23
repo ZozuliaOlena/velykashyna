@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Support\Translit;
+use Spatie\Image\Enums\Fit;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\MediaLibrary\HasMedia;
@@ -37,20 +39,40 @@ class Product extends Model implements HasMedia
 
     public function getSlugOptions(): SlugOptions
     {
+        // Авто-генерація з назви лише при створенні (якщо slug не заданий явно).
+        // На оновленні slug не чіпаємо — ним керує форма (редагований URL).
         return SlugOptions::create()
-            ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug');
+            ->generateSlugsFrom(fn (self $model) => Translit::uk($model->name))
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('catalog_photos');
-        $this->addMediaCollection('live_photos');
+        // одне основне фото
+        $this->addMediaCollection('main')->singleFile();
+        // кілька додаткових
+        $this->addMediaCollection('gallery');
     }
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumb')->width(400)->height(400);
+        // Уніфікація розміру/пропорції: вписуємо у квадрат на білому тлі.
+        // Реєструємо лише за наявності графічного драйвера (gd/imagick),
+        // щоб завантаження не падало в середовищах без нього.
+        if (! extension_loaded('gd') && ! extension_loaded('imagick')) {
+            return;
+        }
+
+        $this->addMediaConversion('uniform')
+            ->fit(Fit::Contain, 800, 800)
+            ->background('ffffff')
+            ->nonQueued();
+
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Contain, 300, 300)
+            ->background('ffffff')
+            ->nonQueued();
     }
 
     public function productType(): BelongsTo
