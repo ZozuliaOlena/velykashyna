@@ -22,12 +22,11 @@
         </thead>
         <tbody>
             @foreach($brands as $brand)
-            @php($logoMedia = $brand->getFirstMedia('logo'))
             <tr wire:key="brand-{{ $brand->id }}">
                 <td>
-                    @if($logoMedia)
-                        <img src="{{ $logoMedia->hasGeneratedConversion('thumb') ? $logoMedia->getUrl('thumb') : $logoMedia->getUrl() }}"
-                            alt="{{ $brand->name }}" style="height:38px; width:auto; object-fit:contain">
+                    @if($brand->logo)
+                        <img src="{{ $brand->logoUrl() }}" alt="{{ $brand->name }}"
+                            style="height:38px; width:auto; object-fit:contain">
                     @else
                         <span style="color:#bbb">—</span>
                     @endif
@@ -70,14 +69,20 @@
 
             <div style="margin-top:.5rem">
                 <label>Логотип</label><br>
-                @php($currentLogo = $editingBrand?->getFirstMedia('logo'))
-                @if($currentLogo)
+
+                {{-- прев'ю нового файлу або вже збереженого --}}
+                @if($logo)
                     <div class="photo-thumb">
-                        <img src="{{ $currentLogo->hasGeneratedConversion('thumb') ? $currentLogo->getUrl('thumb') : $currentLogo->getUrl() }}" alt="">
+                        <img src="{{ $logo->temporaryUrl() }}" alt="">
+                    </div>
+                @elseif($currentLogo)
+                    <div class="photo-thumb">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($currentLogo) }}" alt="">
                         <button type="button" class="photo-del" wire:click="deleteLogo({{ $editingId }})"
                             wire:confirm="Видалити логотип?">×</button>
                     </div>
                 @endif
+
                 <input wire:model="logo" type="file" accept="image/*">
                 <div wire:loading wire:target="logo" style="color:#666">Завантаження…</div>
                 @error('logo') <span style="color:red">{{ $message }}</span> @enderror

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Brands;
 
 use App\Models\Brand;
 use App\Support\Translit;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -23,7 +24,8 @@ class BrandIndex extends Component
     public string $name = '';
     public string $country = '';
     public bool $is_active = true;
-    public $logo = null; // завантаження логотипу
+    public $logo = null;            // новий файл логотипа (завантаження)
+    public ?string $currentLogo = null; // вже збережений шлях (для прев'ю)
 
     protected function rules(): array
     {
@@ -42,7 +44,7 @@ class BrandIndex extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['name', 'country', 'is_active', 'editingId', 'logo']);
+        $this->reset(['name', 'country', 'is_active', 'editingId', 'logo', 'currentLogo']);
         $this->is_active = true;
         $this->showModal = true;
     }
@@ -50,43 +52,51 @@ class BrandIndex extends Component
     public function openEdit(int $id): void
     {
         $brand = Brand::findOrFail($id);
-        $this->editingId = $id;
-        $this->name      = $brand->name;
-        $this->country   = $brand->country ?? '';
-        $this->is_active = $brand->is_active;
-        $this->logo      = null;
-        $this->showModal = true;
+        $this->editingId   = $id;
+        $this->name        = $brand->name;
+        $this->country     = $brand->country ?? '';
+        $this->is_active   = $brand->is_active;
+        $this->logo        = null;
+        $this->currentLogo = $brand->logo;
+        $this->showModal   = true;
     }
 
     public function save(): void
     {
         $this->validate();
 
-        $brand = Brand::updateOrCreate(
-            ['id' => $this->editingId],
-            [
-                'name'      => $this->name,
-                'slug'      => Str::slug(Translit::uk($this->name)),
-                'country'   => $this->country ?: null,
-                'is_active' => $this->is_active,
-            ]
-        );
+        $brand = $this->editingId ? Brand::findOrFail($this->editingId) : new Brand();
 
+        $brand->name      = $this->name;
+        $brand->slug      = Str::slug(Translit::uk($this->name));
+        $brand->country   = $this->country ?: null;
+        $brand->is_active = $this->is_active;
+
+        // новий логотип → кладемо у storage/app/public/brands, шлях у БД
         if ($this->logo) {
-            $brand->addMedia($this->logo->getRealPath())
-                ->usingFileName(Str::random(20) . '.' . $this->logo->getClientOriginalExtension())
-                ->toMediaCollection('logo');
+            if ($brand->logo) {
+                Storage::disk('public')->delete($brand->logo);
+            }
+            $brand->logo = $this->logo->store('brands', 'public');
         }
 
+        $brand->save();
+
         $this->showModal = false;
-        $this->reset(['name', 'country', 'editingId', 'logo']);
+        $this->reset(['name', 'country', 'editingId', 'logo', 'currentLogo']);
         session()->flash('success', 'Збережено');
     }
 
     public function deleteLogo(int $id): void
     {
         $brand = Brand::findOrFail($id);
-        $brand->clearMediaCollection('logo');
+
+        if ($brand->logo) {
+            Storage::disk('public')->delete($brand->logo);
+            $brand->update(['logo' => null]);
+        }
+
+        $this->currentLogo = null;
         session()->flash('success', 'Логотип видалено');
     }
 
@@ -98,22 +108,25 @@ class BrandIndex extends Component
 
     public function delete(int $id): void
     {
-        Brand::findOrFail($id)->delete();
+        $brand = Brand::findOrFail($id);
+
+        if ($brand->logo) {
+            Storage::disk('public')->delete($brand->logo);
+        }
+
+        $brand->delete();
     }
 
     public function render()
     {
         $brands = Brand::query()
-            ->with('media')
             ->when($this->search, fn ($q) =>
                 $q->where('name', 'like', '%' . $this->search . '%')
             )
             ->orderBy('name')
             ->paginate(20);
 
-        $editingBrand = $this->editingId ? Brand::with('media')->find($this->editingId) : null;
-
-        return view('admin.brands.brand-index', compact('brands', 'editingBrand'))
+        return view('admin.brands.brand-index', compact('brands'))
             ->layout('admin.layouts.admin');
     }
 }
