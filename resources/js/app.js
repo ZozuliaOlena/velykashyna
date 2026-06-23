@@ -29,6 +29,28 @@ document.addEventListener('alpine:init', () => {
     });
 
     /**
+     * Горизонтальна стрічка вкладок зі стрілками.
+     * Стрілки показуються лише коли контент не вміщується.
+     */
+    Alpine.data('tabsScroller', () => ({
+        canLeft: false,
+        canRight: false,
+        init() {
+            this.$nextTick(() => this.update());
+            window.addEventListener('resize', () => this.update());
+        },
+        update() {
+            const el = this.$refs.track;
+            if (!el) return;
+            this.canLeft = el.scrollLeft > 4;
+            this.canRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 4;
+        },
+        scroll(dir) {
+            this.$refs.track.scrollBy({ left: dir * 240, behavior: 'smooth' });
+        },
+    }));
+
+    /**
      * Лічильник досвіду роботи компанії.
      * Рахує точну кількість років / днів / годин / хвилин від дати
      * заснування і оновлюється щосекунди.
