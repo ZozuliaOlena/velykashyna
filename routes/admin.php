@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\ImportExport\ImportExport;
 use App\Livewire\Admin\Attributes\AttributeIndex;
 use App\Livewire\Admin\Brands\BrandIndex;
 use App\Livewire\Admin\Categories\CategoryIndex;
@@ -42,4 +43,5 @@ Route::prefix('admin')
         Route::get('/leads', LeadIndex::class)->name('leads.index');
         Route::get('/users', UserIndex::class)->name('users.index');
         Route::get('/settings', SettingIndex::class)->name('settings.index');
+        Route::get('/import-export', ImportExport::class)->name('import-export.index');
     });

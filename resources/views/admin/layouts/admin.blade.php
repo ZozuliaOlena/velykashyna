@@ -30,6 +30,7 @@
 
         <div class="admin-topbar__group">
             <a href="{{ route('admin.leads.index') }}">Заявки</a>
+            <a href="{{ route('admin.import-export.index') }}">Імпорт/Експорт</a>
             <a href="{{ route('admin.users.index') }}">Користувачі</a>
             <a href="{{ route('admin.settings.index') }}">Налаштування</a>
         </div>

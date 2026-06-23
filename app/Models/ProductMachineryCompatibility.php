@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductMachineryCompatibility extends Model
 {
+    protected $table = 'product_machinery_compatibility';
+
     protected $fillable = [
         'product_id', 'machinery_type_id', 'machinery_brand_id',
         'machinery_model_id', 'position_id', 'notes',
