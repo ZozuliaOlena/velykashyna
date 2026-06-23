@@ -569,6 +569,46 @@ body.admin-body {
     }
 
     // ── Глобальні тости (сповіщення після дій) ───────────────────────────
+    // ── Сторінка як єдина картка ─────────────────────────────────────────
+    // Кореневий <div> кожного Livewire-компонента стає чистою карткою.
+    .admin-main > div {
+        background: $bg-white;
+        border: 1px solid $border-color;
+        border-radius: 16px;
+        padding: 26px 28px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+        @media (max-width: 576px) {
+            padding: 18px 16px;
+            border-radius: 12px;
+        }
+    }
+
+    // дашборд (плитки) — без подвійної картки
+    .admin-main > div:has(> .admin-stats) {
+        background: none;
+        border: none;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    // таблиці всередині картки — легші (без власної тіні)
+    .admin-main table {
+        box-shadow: none;
+    }
+
+    // ── Модалки: скруглення, тінь, блюр тла ──────────────────────────────
+    .admin-main [style*="position:fixed"][style*="rgba(0,0,0,.5)"] {
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+
+        > div {
+            border-radius: 16px;
+            border: 1px solid $border-color;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        }
+    }
+
     .admin-toasts {
         position: fixed;
         bottom: 22px;
