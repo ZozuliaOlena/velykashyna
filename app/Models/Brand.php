@@ -12,10 +12,20 @@ class Brand extends Model
 
     protected $casts = ['is_active' => 'boolean'];
 
-    /** Повний URL логотипа (або null). Шлях у БД: "brands/xxx.png". */
+    /**
+     * URL логотипа (або null). Шлях у БД: "brands/xxx.png".
+     * Повертаємо корене-відносний шлях (/storage/...), щоб працювало
+     * незалежно від хоста/порту (localhost:8000, MAMP:8888, домен тощо).
+     */
     public function logoUrl(): ?string
     {
-        return $this->logo ? Storage::disk('public')->url($this->logo) : null;
+        if (! $this->logo) {
+            return null;
+        }
+
+        $url = Storage::disk('public')->url($this->logo);
+
+        return parse_url($url, PHP_URL_PATH) ?: $url;
     }
 
     public function products(): HasMany

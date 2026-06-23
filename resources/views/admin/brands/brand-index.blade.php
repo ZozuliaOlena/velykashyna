@@ -77,7 +77,7 @@
                     </div>
                 @elseif($currentLogo)
                     <div class="photo-thumb">
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($currentLogo) }}" alt="">
+                        <img src="/storage/{{ ltrim($currentLogo, '/') }}" alt="">
                         <button type="button" class="photo-del" wire:click="deleteLogo({{ $editingId }})"
                             wire:confirm="Видалити логотип?">×</button>
                     </div>
