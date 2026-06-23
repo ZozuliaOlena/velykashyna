@@ -61,10 +61,14 @@ class ProductsImportSheet implements ToCollection
                 continue;
             }
 
-            $product = Product::where('sku', $sku)->first();
+            $product = Product::withTrashed()->where('sku', $sku)->first();
             $isNew = false;
 
-            if (! $product) {
+            if ($product) {
+                if ($product->trashed()) {
+                    $product->restore();
+                }
+            } else {
                 $isNew = true;
                 $product = new Product(['sku' => $sku]);
 

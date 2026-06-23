@@ -13,6 +13,7 @@
     <table border="1" cellpadding="6" style="width:100%; margin-top:1rem">
         <thead>
             <tr>
+                <th>Лого</th>
                 <th>Назва</th>
                 <th>Країна</th>
                 <th>Активний</th>
@@ -21,7 +22,16 @@
         </thead>
         <tbody>
             @foreach($brands as $brand)
-            <tr>
+            @php($logoMedia = $brand->getFirstMedia('logo'))
+            <tr wire:key="brand-{{ $brand->id }}">
+                <td>
+                    @if($logoMedia)
+                        <img src="{{ $logoMedia->hasGeneratedConversion('thumb') ? $logoMedia->getUrl('thumb') : $logoMedia->getUrl() }}"
+                            alt="{{ $brand->name }}" style="height:38px; width:auto; object-fit:contain">
+                    @else
+                        <span style="color:#bbb">—</span>
+                    @endif
+                </td>
                 <td>{{ $brand->name }}</td>
                 <td>{{ $brand->country ?? '—' }}</td>
                 <td>
@@ -44,21 +54,36 @@
     {{-- Модальне вікно --}}
     @if($showModal)
     <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center">
-        <div style="background:#fff;padding:2rem;min-width:400px">
+        <div style="background:#fff;padding:2rem;min-width:420px">
             <h2>{{ $editingId ? 'Редагувати бренд' : 'Новий бренд' }}</h2>
 
             <div>
-                <label>Назва *</label>
-                <input wire:model="name" type="text">
+                <label>Назва *</label><br>
+                <input wire:model="name" type="text" style="width:100%">
                 @error('name') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
             <div>
-                <label>Країна</label>
-                <input wire:model="country" type="text">
+                <label>Країна</label><br>
+                <input wire:model="country" type="text" style="width:100%">
             </div>
 
-            <div>
+            <div style="margin-top:.5rem">
+                <label>Логотип</label><br>
+                @php($currentLogo = $editingBrand?->getFirstMedia('logo'))
+                @if($currentLogo)
+                    <div class="photo-thumb">
+                        <img src="{{ $currentLogo->hasGeneratedConversion('thumb') ? $currentLogo->getUrl('thumb') : $currentLogo->getUrl() }}" alt="">
+                        <button type="button" class="photo-del" wire:click="deleteLogo({{ $editingId }})"
+                            wire:confirm="Видалити логотип?">×</button>
+                    </div>
+                @endif
+                <input wire:model="logo" type="file" accept="image/*">
+                <div wire:loading wire:target="logo" style="color:#666">Завантаження…</div>
+                @error('logo') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div style="margin-top:.5rem">
                 <label>
                     <input wire:model="is_active" type="checkbox"> Активний
                 </label>
