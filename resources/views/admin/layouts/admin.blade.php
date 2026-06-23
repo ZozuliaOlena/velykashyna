@@ -45,6 +45,22 @@
         {{ $slot }}
     </main>
 
+    {{-- Глобальні сповіщення (тости) --}}
+    <div class="admin-toasts"
+         x-data="{ items: [] }"
+         x-on:notify.window="
+            const id = Date.now() + Math.random();
+            items.push({ id, message: $event.detail.message, type: $event.detail.type || 'success' });
+            setTimeout(() => { items = items.filter(i => i.id !== id) }, 3500);
+         ">
+        <template x-for="t in items" :key="t.id">
+            <div class="admin-toast" :class="'admin-toast--' + t.type"
+                 x-on:click="items = items.filter(i => i.id !== t.id)">
+                <span x-text="t.message"></span>
+            </div>
+        </template>
+    </div>
+
     @livewireScripts
 </body>
 </html>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Leads;
 
+use App\Livewire\Concerns\WithAdminToast;
 use App\Models\Lead;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -9,6 +10,7 @@ use Livewire\WithPagination;
 class LeadIndex extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     public const STATUSES = [
         'new'        => 'Нова',

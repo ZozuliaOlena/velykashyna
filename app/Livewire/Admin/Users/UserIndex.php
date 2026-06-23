@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Users;
 
 use App\Models\User;
+use App\Livewire\Concerns\WithAdminToast;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -11,6 +12,7 @@ use Livewire\WithPagination;
 class UserIndex extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     public string $search = '';
     public bool $showModal = false;

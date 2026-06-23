@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Attributes;
 use App\Models\Attribute;
 use App\Models\AttributeOption;
 use App\Models\ProductType;
+use App\Livewire\Concerns\WithAdminToast;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,6 +13,7 @@ use Livewire\WithPagination;
 class AttributeIndex extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     public string $search = '';
     public string $filterType = '';

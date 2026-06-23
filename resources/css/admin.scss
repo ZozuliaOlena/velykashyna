@@ -469,4 +469,41 @@ body.admin-body {
             }
         }
     }
+
+    // ── Глобальні тости (сповіщення після дій) ───────────────────────────
+    .admin-toasts {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        pointer-events: none;
+    }
+
+    .admin-toast {
+        pointer-events: auto;
+        min-width: 260px;
+        max-width: 520px;
+        padding: 14px 22px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        color: #fff;
+        text-align: center;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        animation: admin-toast-in 0.2s ease;
+
+        &--success { background: #2e7d32; }
+        &--error { background: $primary-red; }
+    }
+
+    @keyframes admin-toast-in {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 }

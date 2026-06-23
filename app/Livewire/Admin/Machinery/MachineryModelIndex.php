@@ -5,12 +5,14 @@ namespace App\Livewire\Admin\Machinery;
 use App\Models\MachineryBrand;
 use App\Models\MachineryModel;
 use App\Models\MachineryType;
+use App\Livewire\Concerns\WithAdminToast;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class MachineryModelIndex extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     public string $search = '';
     public string $filterBrand = '';

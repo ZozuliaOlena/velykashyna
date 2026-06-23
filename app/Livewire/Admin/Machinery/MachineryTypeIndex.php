@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Machinery;
 
+use App\Livewire\Concerns\WithAdminToast;
 use App\Models\MachineryType;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -9,6 +10,7 @@ use Livewire\WithPagination;
 class MachineryTypeIndex extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     public string $search = '';
     public bool $showModal = false;

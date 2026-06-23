@@ -3,6 +3,7 @@
 // app/Livewire/Admin/Brands/BrandIndex.php
 namespace App\Livewire\Admin\Brands;
 
+use App\Livewire\Concerns\WithAdminToast;
 use App\Models\Brand;
 use App\Support\Translit;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,7 @@ class BrandIndex extends Component
 {
     use WithPagination;
     use WithFileUploads;
+    use WithAdminToast;
 
     public string $search = '';
     public bool $showModal = false;

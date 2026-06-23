@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Settings;
 
 use App\Models\Setting;
+use App\Livewire\Concerns\WithAdminToast;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -10,6 +11,7 @@ use Livewire\WithPagination;
 class SettingIndex extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     public string $search = '';
     public bool $showModal = false;

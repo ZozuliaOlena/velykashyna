@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAttributeValue;
 use App\Models\ProductType;
+use App\Livewire\Concerns\WithAdminToast;
 use App\Support\Translit;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ use Livewire\WithFileUploads;
 class ProductForm extends Component
 {
     use WithFileUploads;
+    use WithAdminToast;
 
     public ?int $productId = null;
 
@@ -291,8 +293,8 @@ class ProductForm extends Component
 
         session()->flash('success', 'Товар збережено');
 
-        // лишаємось на формі товару (зручно одразу керувати фото)
-        return $this->redirectRoute('admin.products.edit', ['id' => $product->id], navigate: true);
+        // повертаємось до таблиці товарів
+        return $this->redirectRoute('admin.products.index', navigate: true);
     }
 
     public function deleteMedia(int $mediaId): void
