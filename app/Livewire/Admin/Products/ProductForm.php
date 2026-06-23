@@ -2,11 +2,14 @@
 
 namespace App\Livewire\Admin\Products;
 
+use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductAttributeValue;
 use App\Models\ProductType;
 use App\Support\Translit;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -63,6 +66,10 @@ class ProductForm extends Component
     /** @var array<int> */
     public array $relatedIds = [];
 
+    // ── гнучкі характеристики (EAV), ключ = attribute_id ─────
+    /** @var array<int, mixed> */
+    public array $attrValues = [];
+
     // ── фото ─────────────────────────────────────────────────
     public $mainPhoto = null;        // одне основне
     public array $galleryPhotos = []; // кілька додаткових
@@ -73,7 +80,7 @@ class ProductForm extends Component
             return;
         }
 
-        $product = Product::with(['categories', 'relatedProducts'])->findOrFail($id);
+        $product = Product::with(['categories', 'relatedProducts', 'attributeValues.attribute'])->findOrFail($id);
 
         $this->productId        = $product->id;
         $this->sku              = $product->sku;
@@ -105,6 +112,30 @@ class ProductForm extends Component
         $this->is_active        = $product->is_active;
         $this->categoryIds      = $product->categories->pluck('id')->toArray();
         $this->relatedIds       = $product->relatedProducts->pluck('id')->toArray();
+
+        foreach ($product->attributeValues as $v) {
+            $this->attrValues[$v->attribute_id] = match ($v->attribute?->data_type) {
+                'select'  => $v->option_id,
+                'number'  => $v->value_number !== null ? (string) $v->value_number : null,
+                'boolean' => $v->value_text === '1',
+                default   => $v->value_text,
+            };
+        }
+    }
+
+    /** Характеристики, доступні для обраного типу товару (власні + спільні). */
+    private function attributesForType(): Collection
+    {
+        if (! $this->product_type_id) {
+            return collect();
+        }
+
+        return Attribute::query()
+            ->where(fn ($q) => $q->whereNull('product_type_id')
+                ->orWhere('product_type_id', $this->product_type_id))
+            ->with('options')
+            ->orderBy('sort_order')->orderBy('name')
+            ->get();
     }
 
     protected function rules(): array
@@ -164,6 +195,20 @@ class ProductForm extends Component
             $data['price'] = null;
         }
 
+        // валідація числових характеристик до збереження
+        $attributes = $this->attributesForType();
+        foreach ($attributes as $attr) {
+            if ($attr->data_type === 'number') {
+                $raw = $this->attrValues[$attr->id] ?? null;
+                if ($raw !== null && $raw !== '' && ! is_numeric($raw)) {
+                    $this->addError("attrValues.{$attr->id}", 'Має бути числом');
+                }
+            }
+        }
+        if ($this->getErrorBag()->isNotEmpty()) {
+            return;
+        }
+
         $product = $this->productId
             ? Product::findOrFail($this->productId)
             : new Product();
@@ -181,6 +226,53 @@ class ProductForm extends Component
 
         $product->categories()->sync($this->categoryIds);
         $product->relatedProducts()->sync($this->relatedIds);
+
+        // гнучкі характеристики (EAV)
+        foreach ($attributes as $attr) {
+            $raw = $this->attrValues[$attr->id] ?? null;
+            $payload = ['value_text' => null, 'value_number' => null, 'option_id' => null];
+            $empty = false;
+
+            switch ($attr->data_type) {
+                case 'number':
+                    if ($raw === null || $raw === '') {
+                        $empty = true;
+                    } else {
+                        $payload['value_number'] = $raw;
+                    }
+                    break;
+                case 'select':
+                    if (empty($raw)) {
+                        $empty = true;
+                    } else {
+                        $payload['option_id'] = $raw;
+                    }
+                    break;
+                case 'boolean':
+                    if (! empty($raw)) {
+                        $payload['value_text'] = '1';
+                    } else {
+                        $empty = true;
+                    }
+                    break;
+                default: // text
+                    if ($raw === null || $raw === '') {
+                        $empty = true;
+                    } else {
+                        $payload['value_text'] = $raw;
+                    }
+            }
+
+            if ($empty) {
+                ProductAttributeValue::where('product_id', $product->id)
+                    ->where('attribute_id', $attr->id)->delete();
+            } else {
+                ProductAttributeValue::updateOrCreate(
+                    ['product_id' => $product->id, 'attribute_id' => $attr->id],
+                    $payload
+                );
+            }
+        }
 
         // фото
         if ($this->mainPhoto) {
@@ -251,6 +343,7 @@ class ProductForm extends Component
                 ->orderBy('name')->get(['id', 'sku', 'name']),
             'mainMedia'    => $product?->getFirstMedia('main'),
             'galleryMedia' => $product ? $product->getMedia('gallery') : collect(),
+            'attributes'   => $this->attributesForType(),
         ])->layout('admin.layouts.admin');
     }
 }

@@ -18,7 +18,7 @@
 
             <div>
                 <label>Тип товару *</label><br>
-                <select wire:model="product_type_id">
+                <select wire:model.live="product_type_id">
                     <option value="">— Оберіть —</option>
                     @foreach($productTypes as $pt)
                         <option value="{{ $pt->id }}">{{ $pt->name }}</option>
@@ -108,6 +108,45 @@
                 <label>Специфікація</label><br>
                 <input wire:model="specification" type="text" placeholder="STEEL BELTED..." style="width:100%">
             </div>
+        </fieldset>
+
+        {{-- ── Гнучкі характеристики (за типом товару) ─────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Характеристики</strong></legend>
+
+            @if(! $product_type_id)
+                <p style="color:#666">Оберіть тип товару, щоб з'явились його характеристики.</p>
+            @elseif($attributes->isEmpty())
+                <p style="color:#666">Для цього типу ще немає характеристик. Додайте їх у розділі «Характеристики».</p>
+            @else
+                @foreach($attributes as $attr)
+                    <div wire:key="attr-{{ $attr->id }}">
+                        <label>
+                            {{ $attr->name }}@if($attr->unit) <small style="color:#888">({{ $attr->unit }})</small>@endif
+                            @if($attr->product_type_id === null) <small style="color:#888">· спільна</small>@endif
+                        </label><br>
+                        @switch($attr->data_type)
+                            @case('select')
+                                <select wire:model="attrValues.{{ $attr->id }}">
+                                    <option value="">—</option>
+                                    @foreach($attr->options as $opt)
+                                        <option value="{{ $opt->id }}">{{ $opt->value }}</option>
+                                    @endforeach
+                                </select>
+                                @break
+                            @case('boolean')
+                                <label><input type="checkbox" wire:model="attrValues.{{ $attr->id }}"> Так</label>
+                                @break
+                            @case('number')
+                                <input type="text" wire:model="attrValues.{{ $attr->id }}" style="width:160px">
+                                @break
+                            @default
+                                <input type="text" wire:model="attrValues.{{ $attr->id }}" style="width:100%">
+                        @endswitch
+                        @error('attrValues.'.$attr->id) <span style="color:red">{{ $message }}</span> @enderror
+                    </div>
+                @endforeach
+            @endif
         </fieldset>
 
         {{-- ── Наявність та ціна ───────────────────────────── --}}
