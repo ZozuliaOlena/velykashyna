@@ -32,13 +32,14 @@ body.admin-body {
         min-height: 100vh;
     }
 
+    [x-cloak] { display: none !important; }
+
     .admin-sidebar {
-        width: 248px;
+        width: 252px;
         flex-shrink: 0;
         position: fixed;
         inset: 0 auto 0 0;
-        background: $bg-white;
-        border-right: 1px solid $border-color;
+        background: #15171c;
         overflow-y: auto;
         z-index: 1000;
         display: flex;
@@ -48,14 +49,13 @@ body.admin-body {
         &__brand {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 18px 20px;
+            gap: 11px;
+            padding: 20px;
             font-weight: 800;
             font-size: 17px;
-            color: $text-dark;
+            color: #fff;
             text-decoration: none;
-            border-top: 3px solid $primary-red;
-            border-bottom: 1px solid $border-color;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 
             &::before {
                 content: "";
@@ -64,49 +64,81 @@ body.admin-body {
                 border-radius: 50%;
                 background: $primary-red;
                 flex-shrink: 0;
+                box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.25);
             }
         }
     }
 
     .admin-nav {
-        padding: 10px 0 24px;
+        padding: 12px 12px 28px;
         display: flex;
         flex-direction: column;
-        gap: 1px;
+        gap: 2px;
 
-        &__group {
-            margin-top: 12px;
-        }
-
-        &__label {
-            display: block;
-            padding: 6px 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: $text-light;
-        }
-
-        a {
-            display: block;
-            padding: 9px 20px;
-            color: $text-dark;
+        &__item,
+        &__head {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 9px;
+            color: #c9cdd4;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
-            border-left: 3px solid transparent;
-            transition: background 0.15s, color 0.15s, border-color 0.15s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.15s, color 0.15s;
+
+            svg {
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+                opacity: 0.85;
+            }
 
             &:hover {
-                background: #f6f7f9;
-                color: $primary-red;
+                background: rgba(255, 255, 255, 0.06);
+                color: #fff;
             }
 
             &.is-active {
-                color: $primary-red;
-                background: rgba(211, 47, 47, 0.08);
-                border-left-color: $primary-red;
+                background: linear-gradient(90deg, rgba(211, 47, 47, 0.24), rgba(211, 47, 47, 0.08));
+                color: #fff;
+                box-shadow: inset 3px 0 0 $primary-red;
+
+                svg { opacity: 1; color: #ff6b6b; }
+            }
+        }
+
+        &__chev {
+            margin-left: auto;
+            font-size: 10px;
+            opacity: 0.55;
+            transition: transform 0.2s;
+
+            &.is-open { transform: rotate(90deg); }
+        }
+
+        &__group { margin-top: 8px; }
+
+        &__sub {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            margin-top: 2px;
+
+            .admin-nav__item {
+                padding-left: 42px;
+                font-weight: 500;
+                font-size: 13.5px;
+                color: #9aa0aa;
+
+                &:hover { color: #fff; }
+                &.is-active { color: #fff; }
             }
         }
     }
