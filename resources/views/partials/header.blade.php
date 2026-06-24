@@ -54,15 +54,15 @@
 
             <div class="header-cats">
                 <a href="#">
-                    <span class="mask-ico" style="--m:url('/images/svg/tehnics/loaders.svg');width:18px;height:18px;color:#e31e24"></span>
+                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/loaders.svg');mask-image:url('/images/svg/tehnics/loaders.svg');width:18px;height:18px;color:#e31e24"></span>
                     Спецтехніка
                 </a>
                 <a href="#">
-                    <span class="mask-ico" style="--m:url('/images/svg/tehnics/tractor.svg');width:18px;height:18px;color:#e31e24"></span>
+                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/tractor.svg');mask-image:url('/images/svg/tehnics/tractor.svg');width:18px;height:18px;color:#e31e24"></span>
                     Агрошини
                 </a>
                 <a href="#">
-                    <span class="mask-ico" style="--m:url('/images/svg/tehnics/truck.svg');width:18px;height:18px;color:#e31e24"></span>
+                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/truck.svg');mask-image:url('/images/svg/tehnics/truck.svg');width:18px;height:18px;color:#e31e24"></span>
                     Вантажні
                 </a>
             </div>

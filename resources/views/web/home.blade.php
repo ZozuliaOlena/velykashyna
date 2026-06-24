@@ -156,7 +156,7 @@
             ])
             @foreach ($machinery as $m)
             <a href="{{ route('catalog') }}" class="mach-item">
-                <span class="mach-ico mask-ico" style="--m:url('/images/svg/tehnics/{{ $m[1] }}')"></span>
+                <span class="mach-ico mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/{{ $m[1] }}');mask-image:url('/images/svg/tehnics/{{ $m[1] }}')"></span>
                 <span>{{ $m[0] }}</span>
             </a>
             @endforeach
@@ -296,11 +296,11 @@
             <p style="color:#6b7280"><b style="color:#e31e24">ВЕЛИКА</b> — не тільки про розмір шини.</p>
         </div>
         @php($why = [
-        ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/star.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/user-shield.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/handshake.svg\')"></span>'],
+        ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/star.svg\');mask-image:url(\'/images/svg/others/star.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/user-shield.svg\');mask-image:url(\'/images/svg/others/user-shield.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Порядність', 'd' => 'Чесно радимо те, що дійсно підходить і працює.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/><path d="M9.5 8l1.7 1.7L14.5 6.5"/></svg>'],
-        ['p' => 'Велика', 't' => 'Допомога', 'd' => 'Допомагаємо до, під час і після покупки.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/help.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Допомога', 'd' => 'Допомагаємо до, під час і після покупки.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/help.svg\');mask-image:url(\'/images/svg/others/help.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Надійність', 'd' => 'Гарантуємо якість та результат.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'],
         ])
         <div class="why-grid">

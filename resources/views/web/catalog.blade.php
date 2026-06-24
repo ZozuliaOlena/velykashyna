@@ -60,7 +60,7 @@
             <div class="catalog-tabs" x-ref="track" @scroll.passive="update()">
                 @foreach ($tabs as $t)
                 <a href="#" class="cat-tab {{ $t[2] ? 'is-active' : '' }}">
-                    <span class="mask-ico" style="--m:url('/images/svg/tehnics/{{ $t[1] }}')"></span>
+                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/{{ $t[1] }}');mask-image:url('/images/svg/tehnics/{{ $t[1] }}')"></span>
                     {{ $t[0] }}
                 </a>
                 @endforeach
