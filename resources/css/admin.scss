@@ -144,7 +144,7 @@ body.admin-body {
     }
 
     .admin-content {
-        margin-left: 248px;
+        margin-left: 252px;
         flex: 1;
         min-width: 0;
         display: flex;
@@ -288,17 +288,22 @@ body.admin-body {
         input:not([type]),
         select,
         textarea {
-            padding: 9px 11px;
+            padding: 10px 12px;
             border: 1px solid $border-color;
             border-radius: $radius;
             font-family: inherit;
             font-size: 14px;
             color: $text-dark;
-            background: $bg-white;
-            transition: border-color 0.15s, box-shadow 0.15s;
+            background: #f7f8fa;
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+
+            &::placeholder { color: #9aa0aa; }
+
+            &:hover { background: #f1f2f5; }
 
             &:focus {
                 outline: none;
+                background: $bg-white;
                 border-color: $primary-red;
                 box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
             }
@@ -357,10 +362,12 @@ body.admin-body {
             background: $primary-red;
             border-color: $primary-red;
             color: #fff;
+            box-shadow: 0 2px 8px rgba(211, 47, 47, 0.28);
 
             &:hover {
                 background: $red-hover;
                 border-color: $red-hover;
+                box-shadow: 0 4px 12px rgba(211, 47, 47, 0.35);
             }
         }
 
@@ -383,34 +390,36 @@ body.admin-body {
             border-collapse: collapse;
             background: $bg-white;
             border: 1px solid $border-color;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            margin-top: 10px;
+            margin-top: 14px;
         }
 
         th,
         td {
             border: none;
-            border-bottom: 1px solid #eee;
-            padding: 11px 12px;
+            border-bottom: 1px solid #eef0f2;
+            padding: 13px 16px;
             text-align: left;
             font-size: 14px;
             vertical-align: middle;
         }
 
         thead th {
-            background: #fafafa;
+            background: #f7f8fa;
             color: $text-light;
             text-transform: uppercase;
-            font-size: 11.5px;
-            letter-spacing: 0.4px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
             font-weight: 700;
+            border-bottom: 2px solid $border-color;
+            white-space: nowrap;
         }
 
         tbody tr {
             transition: background 0.12s;
-            &:hover { background: #fafafb; }
+            &:nth-child(even) { background: #fcfcfd; }
+            &:hover { background: #f4f6f9; }
             &:last-child td { border-bottom: none; }
         }
 
@@ -576,11 +585,20 @@ body.admin-body {
         border: 1px solid $border-color;
         border-radius: 16px;
         padding: 26px 28px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.03);
 
         @media (max-width: 576px) {
             padding: 18px 16px;
             border-radius: 12px;
+        }
+
+        // шапка сторінки: «Заголовок + кнопка дії»
+        > div[style*="justify-content:space-between"]:first-child {
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid $border-color;
+
+            h1 { margin-bottom: 0; }
         }
     }
 
