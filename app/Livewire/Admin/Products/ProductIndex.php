@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductType;
+use App\Livewire\Concerns\WithAdminToast;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -13,6 +14,7 @@ use Livewire\WithPagination;
 class ProductIndex extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     // фільтри (зберігаються в URL — зручно ділитись/повертатись)
     #[Url(as: 'q')]

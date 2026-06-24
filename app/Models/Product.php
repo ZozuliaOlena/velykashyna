@@ -124,4 +124,28 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(LeadItem::class);
     }
+
+    /**
+     * Ціна з урахуванням знижки на поточний момент.
+     * Для режиму «за запитом» (inquiry) або без ціни повертає null —
+     * саме це значення фіксується в заявці як price_at_request.
+     */
+    public function effectivePrice(): ?float
+    {
+        if ($this->price_mode === 'inquiry' || $this->price === null) {
+            return null;
+        }
+
+        $price = (float) $this->price;
+
+        if ($this->discount_value) {
+            if ($this->discount_type === 'percent') {
+                $price -= $price * ((float) $this->discount_value) / 100;
+            } elseif ($this->discount_type === 'amount') {
+                $price -= (float) $this->discount_value;
+            }
+        }
+
+        return round(max(0, $price), 2);
+    }
 }

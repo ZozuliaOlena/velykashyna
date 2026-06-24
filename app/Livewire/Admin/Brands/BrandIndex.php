@@ -3,15 +3,20 @@
 // app/Livewire/Admin/Brands/BrandIndex.php
 namespace App\Livewire\Admin\Brands;
 
+use App\Livewire\Concerns\WithAdminToast;
 use App\Models\Brand;
 use App\Support\Translit;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class BrandIndex extends Component
 {
     use WithPagination;
+    use WithFileUploads;
+    use WithAdminToast;
 
     public string $search = '';
     public bool $showModal = false;
@@ -21,11 +26,17 @@ class BrandIndex extends Component
     public string $name = '';
     public string $country = '';
     public bool $is_active = true;
+    public $logo = null;            // новий файл логотипа (завантаження)
+    public ?string $currentLogo = null; // вже збережений шлях (для прев'ю)
 
-    protected $rules = [
-        'name'    => 'required|string|max:255',
-        'country' => 'nullable|string|max:255',
-    ];
+    protected function rules(): array
+    {
+        return [
+            'name'    => 'required|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'logo'    => 'nullable|image|max:5120',
+        ];
+    }
 
     // скидаємо пагінацію при пошуку
     public function updatingSearch(): void
@@ -35,7 +46,7 @@ class BrandIndex extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['name', 'country', 'is_active', 'editingId']);
+        $this->reset(['name', 'country', 'is_active', 'editingId', 'logo', 'currentLogo']);
         $this->is_active = true;
         $this->showModal = true;
     }
@@ -43,30 +54,52 @@ class BrandIndex extends Component
     public function openEdit(int $id): void
     {
         $brand = Brand::findOrFail($id);
-        $this->editingId = $id;
-        $this->name      = $brand->name;
-        $this->country   = $brand->country ?? '';
-        $this->is_active = $brand->is_active;
-        $this->showModal = true;
+        $this->editingId   = $id;
+        $this->name        = $brand->name;
+        $this->country     = $brand->country ?? '';
+        $this->is_active   = $brand->is_active;
+        $this->logo        = null;
+        $this->currentLogo = $brand->logo;
+        $this->showModal   = true;
     }
 
     public function save(): void
     {
         $this->validate();
 
-        Brand::updateOrCreate(
-            ['id' => $this->editingId],
-            [
-                'name'      => $this->name,
-                'slug'      => Str::slug(Translit::uk($this->name)),
-                'country'   => $this->country ?: null,
-                'is_active' => $this->is_active,
-            ]
-        );
+        $brand = $this->editingId ? Brand::findOrFail($this->editingId) : new Brand();
+
+        $brand->name      = $this->name;
+        $brand->slug      = Str::slug(Translit::uk($this->name));
+        $brand->country   = $this->country ?: null;
+        $brand->is_active = $this->is_active;
+
+        // новий логотип → кладемо у storage/app/public/brands, шлях у БД
+        if ($this->logo) {
+            if ($brand->logo) {
+                Storage::disk('public')->delete($brand->logo);
+            }
+            $brand->logo = $this->logo->store('brands', 'public');
+        }
+
+        $brand->save();
 
         $this->showModal = false;
-        $this->reset(['name', 'country', 'editingId']);
+        $this->reset(['name', 'country', 'editingId', 'logo', 'currentLogo']);
         session()->flash('success', 'Збережено');
+    }
+
+    public function deleteLogo(int $id): void
+    {
+        $brand = Brand::findOrFail($id);
+
+        if ($brand->logo) {
+            Storage::disk('public')->delete($brand->logo);
+            $brand->update(['logo' => null]);
+        }
+
+        $this->currentLogo = null;
+        session()->flash('success', 'Логотип видалено');
     }
 
     public function toggleActive(int $id): void
@@ -77,13 +110,19 @@ class BrandIndex extends Component
 
     public function delete(int $id): void
     {
-        Brand::findOrFail($id)->delete();
+        $brand = Brand::findOrFail($id);
+
+        if ($brand->logo) {
+            Storage::disk('public')->delete($brand->logo);
+        }
+
+        $brand->delete();
     }
 
     public function render()
     {
         $brands = Brand::query()
-            ->when($this->search, fn($q) =>
+            ->when($this->search, fn ($q) =>
                 $q->where('name', 'like', '%' . $this->search . '%')
             )
             ->orderBy('name')

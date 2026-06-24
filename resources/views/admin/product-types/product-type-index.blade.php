@@ -7,7 +7,9 @@
     @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
     @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
-    <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
+    <div class="admin-filters">
+        <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
+    </div>
 
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
         <thead>
@@ -16,10 +18,10 @@
         <tbody>
             @forelse($types as $type)
             <tr wire:key="ptype-{{ $type->id }}">
-                <td>{{ $type->code }}</td>
-                <td>{{ $type->name }}</td>
-                <td>{{ $type->products_count }}</td>
-                <td>
+                <td data-label="Код">{{ $type->code }}</td>
+                <td data-label="Назва">{{ $type->name }}</td>
+                <td data-label="Товарів">{{ $type->products_count }}</td>
+                <td class="cell-actions">
                     <button wire:click="openEdit({{ $type->id }})">Редагувати</button>
                     <button wire:click="delete({{ $type->id }})" wire:confirm="Видалити тип?">Видалити</button>
                 </td>
@@ -33,24 +35,22 @@
     <div style="margin-top:1rem">{{ $types->links() }}</div>
 
     @if($showModal)
-    <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center">
-        <div style="background:#fff;padding:2rem;min-width:400px">
-            <h2>{{ $editingId ? 'Редагувати тип' : 'Новий тип' }}</h2>
-            <div>
-                <label>Код *</label><br>
-                <input wire:model="code" type="text" placeholder="tire, tube, disk...">
-                @error('code') <span style="color:red">{{ $message }}</span> @enderror
-            </div>
-            <div>
-                <label>Назва *</label><br>
-                <input wire:model="name" type="text">
-                @error('name') <span style="color:red">{{ $message }}</span> @enderror
-            </div>
-            <div style="margin-top:1rem">
-                <button wire:click="save">Зберегти</button>
-                <button wire:click="$set('showModal', false)">Скасувати</button>
-            </div>
+    <x-admin.modal :title="$editingId ? 'Редагувати тип' : 'Новий тип'">
+        <div>
+            <label>Код *</label>
+            <input wire:model="code" type="text" placeholder="tire, tube, disk..." style="width:100%">
+            @error('code') <span style="color:red">{{ $message }}</span> @enderror
         </div>
-    </div>
+        <div>
+            <label>Назва *</label>
+            <input wire:model="name" type="text" style="width:100%">
+            @error('name') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+
+        <x-slot:footer>
+            <button wire:click="save">Зберегти</button>
+            <button wire:click="$set('showModal', false)">Скасувати</button>
+        </x-slot:footer>
+    </x-admin.modal>
     @endif
 </div>

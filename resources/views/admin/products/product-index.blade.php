@@ -10,7 +10,7 @@
     @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
     {{-- Фільтри --}}
-    <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin:1rem 0">
+    <div class="admin-filters">
         <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, розмір (710/70R38)...">
 
         <select wire:model.live="size">
@@ -117,19 +117,19 @@
         <tbody>
             @forelse($products as $product)
             <tr wire:key="product-{{ $product->id }}">
-                <td><input type="checkbox" wire:model.live="selected" value="{{ $product->id }}"></td>
-                <td>{{ $product->sku }}</td>
-                <td>{{ $product->name }}</td>
-                <td>{{ $product->size_raw ?? '—' }}</td>
-                <td>{{ $product->brand?->name ?? '—' }}</td>
-                <td>
+                <td data-label="Вибір"><input type="checkbox" wire:model.live="selected" value="{{ $product->id }}"></td>
+                <td data-label="Артикул">{{ $product->sku }}</td>
+                <td data-label="Найменування">{{ $product->name }}</td>
+                <td data-label="Типорозмір">{{ $product->size_raw ?? '—' }}</td>
+                <td data-label="Виробник">{{ $product->brand?->name ?? '—' }}</td>
+                <td data-label="Наявність">
                     @switch($product->stock_status)
                         @case('in_stock') В наявності @break
                         @case('on_order') Під замовлення @break
                         @default Уточнюйте
                     @endswitch
                 </td>
-                <td>
+                <td data-label="Ціна">
                     @if($product->price_mode === 'inquiry')
                         Уточнюйте
                     @elseif($product->price_mode === 'from')
@@ -138,19 +138,19 @@
                         {{ $product->price }} {{ $product->currency }}
                     @endif
                 </td>
-                <td>
+                <td data-label="Merchant">
                     <button wire:click="toggleMerchant({{ $product->id }})"
                         class="row-toggle {{ $product->merchant_enabled ? 'is-on' : 'is-off' }}">
                         {{ $product->merchant_enabled ? 'ON' : 'OFF' }}
                     </button>
                 </td>
-                <td>
+                <td data-label="Активний">
                     <button wire:click="toggleActive({{ $product->id }})"
                         class="row-toggle {{ $product->is_active ? 'is-on' : 'is-off' }}">
                         {{ $product->is_active ? 'Так' : 'Ні' }}
                     </button>
                 </td>
-                <td>
+                <td class="cell-actions">
                     <a href="{{ route('admin.products.edit', $product->id) }}">Редагувати</a>
                     <button wire:click="delete({{ $product->id }})"
                         wire:confirm="Видалити товар?">Видалити</button>

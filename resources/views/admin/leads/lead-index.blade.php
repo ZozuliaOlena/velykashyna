@@ -1,9 +1,12 @@
 <div>
-    <h1>Заявки</h1>
+    <div style="display:flex; justify-content:space-between; align-items:center">
+        <h1>Заявки</h1>
+        <button wire:click="openCreate">+ Додати заявку</button>
+    </div>
 
     @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
 
-    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin:1rem 0">
+    <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: ім'я, телефон...">
         <select wire:model.live="filterStatus">
             <option value="">— Усі статуси —</option>
@@ -20,15 +23,15 @@
         <tbody>
             @forelse($leads as $lead)
             <tr wire:key="lead-{{ $lead->id }}">
-                <td>{{ $lead->id }}</td>
-                <td>{{ $lead->customer_name }}</td>
-                <td>{{ $lead->phone }}</td>
-                <td>{{ $lead->contact_method ?? '—' }}</td>
-                <td>{{ $lead->items_count }}</td>
-                <td>{{ $statuses[$lead->status] ?? $lead->status }}</td>
-                <td>{{ $lead->created_at?->format('d.m.Y H:i') }}</td>
-                <td>
-                    <button wire:click="openView({{ $lead->id }})">Переглянути</button>
+                <td data-label="#">{{ $lead->id }}</td>
+                <td data-label="Клієнт">{{ $lead->customer_name }}</td>
+                <td data-label="Телефон">{{ $lead->phone }}</td>
+                <td data-label="Спосіб">{{ $lead->contact_method ?? '—' }}</td>
+                <td data-label="Позицій">{{ $lead->items_count }}</td>
+                <td data-label="Статус">{{ $statuses[$lead->status] ?? $lead->status }}</td>
+                <td data-label="Дата">{{ $lead->created_at?->format('d.m.Y H:i') }}</td>
+                <td class="cell-actions">
+                    <button wire:click="openView({{ $lead->id }})">Редагувати</button>
                     <button wire:click="delete({{ $lead->id }})" wire:confirm="Видалити заявку?">Видалити</button>
                 </td>
             </tr>
@@ -40,66 +43,106 @@
 
     <div style="margin-top:1rem">{{ $leads->links() }}</div>
 
-    @if($showModal && $current)
-    <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;overflow:auto">
-        <div style="background:#fff;padding:2rem;min-width:520px;max-height:90vh;overflow:auto">
-            <h2>Заявка #{{ $current->id }}</h2>
-
-            <div style="display:flex; gap:.5rem; flex-wrap:wrap">
-                <div>
-                    <label>Клієнт *</label><br>
-                    <input wire:model="customer_name" type="text">
-                    @error('customer_name') <span style="color:red">{{ $message }}</span> @enderror
-                </div>
-                <div>
-                    <label>Телефон *</label><br>
-                    <input wire:model="phone" type="text">
-                    @error('phone') <span style="color:red">{{ $message }}</span> @enderror
-                </div>
-                <div>
-                    <label>Спосіб зв'язку</label><br>
-                    <input wire:model="contact_method" type="text">
-                </div>
-            </div>
-
-            <div>
-                <label>Статус *</label><br>
-                <select wire:model="status">
-                    @foreach($statuses as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label>Коментар менеджера</label><br>
-                <textarea wire:model="manager_comment" rows="3" style="width:100%"></textarea>
-            </div>
-
-            <h3 style="margin-top:1rem">Позиції заявки</h3>
-            <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
-                <thead>
-                    <tr><th>Товар</th><th>Артикул</th><th>К-ть</th><th>Ціна на момент заявки</th></tr>
-                </thead>
-                <tbody>
-                    @forelse($current->items as $item)
-                    <tr wire:key="leaditem-{{ $item->id }}">
-                        <td>{{ $item->product?->name ?? '— видалений товар —' }}</td>
-                        <td>{{ $item->product?->sku ?? '—' }}</td>
-                        <td>{{ $item->qty }}</td>
-                        <td>{{ $item->price_at_request ?? '—' }}</td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="4" style="text-align:center">Без позицій</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <div style="margin-top:1rem">
-                <button wire:click="save">Зберегти</button>
-                <button wire:click="$set('showModal', false)">Закрити</button>
-            </div>
+    @if($showModal)
+    <x-admin.modal :title="$editingId ? 'Заявка #'.$current?->id : 'Нова заявка'" :wide="true">
+        <div>
+            <label>Клієнт *</label>
+            <input wire:model="customer_name" type="text" style="width:100%">
+            @error('customer_name') <span style="color:red">{{ $message }}</span> @enderror
         </div>
-    </div>
+        <div>
+            <label>Телефон *</label>
+            <input wire:model="phone" type="text" style="width:100%">
+            @error('phone') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+        <div>
+            <label>Спосіб зв'язку</label>
+            <input wire:model="contact_method" type="text" style="width:100%">
+        </div>
+        <div>
+            <label>Статус *</label>
+            <select wire:model="status" style="width:100%">
+                @foreach($statuses as $key => $label)
+                    <option value="{{ $key }}">{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        @if($current?->customer_comment)
+        <div class="is-full">
+            <label>Коментар клієнта</label>
+            <textarea rows="2" style="width:100%" readonly>{{ $current->customer_comment }}</textarea>
+        </div>
+        @endif
+
+        <div class="is-full">
+            <label>Коментар менеджера</label>
+            <textarea wire:model="manager_comment" rows="3" style="width:100%"></textarea>
+        </div>
+
+        <div class="is-full">
+            <h3>Позиції заявки</h3>
+
+            {{-- Пошук товару для додавання --}}
+            <div class="lead-product-search">
+                <input wire:model.live.debounce.300ms="productSearch" type="text"
+                       placeholder="Додати товар: назва або артикул...">
+                @if($productResults->isNotEmpty())
+                <div class="lead-product-results">
+                    @foreach($productResults as $p)
+                    <button type="button" class="lead-product-results__item"
+                            wire:key="pr-{{ $p->id }}" wire:click="addProduct({{ $p->id }})">
+                        <span>{{ $p->name }}</span>
+                        <small>{{ $p->sku ?? '—' }}</small>
+                    </button>
+                    @endforeach
+                </div>
+                @endif
+            </div>
+
+            <div class="lead-items">
+                <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
+                    <thead>
+                        <tr>
+                            <th>Товар</th><th>Артикул</th>
+                            <th style="width:84px">К-ть</th>
+                            <th style="width:120px">Ціна</th>
+                            <th style="width:44px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($items as $i => $item)
+                        <tr wire:key="item-{{ $item['product_id'] }}">
+                            <td>{{ $item['name'] }}</td>
+                            <td>{{ $item['sku'] ?? '—' }}</td>
+                            <td><input type="number" min="1" wire:model="items.{{ $i }}.qty"></td>
+                            <td><input type="number" step="0.01" min="0" wire:model="items.{{ $i }}.price" placeholder="за запитом"></td>
+                            <td>
+                                <button type="button" wire:click="removeItem({{ $i }})"
+                                        wire:confirm="Прибрати товар із заявки?">×</button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="5" style="text-align:center">Додайте товари через пошук вище</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @error('items.*.qty') <span style="color:red">{{ $message }}</span> @enderror
+            @error('items.*.product_id') <span style="color:red">{{ $message }}</span> @enderror
+
+            @php $total = collect($items)->sum(fn ($it) => (float) ($it['price'] ?? 0) * (int) ($it['qty'] ?? 0)); @endphp
+            @if($total > 0)
+            <div style="text-align:right; margin-top:.5rem; font-weight:700">
+                Разом: {{ number_format($total, 2, '.', ' ') }} грн
+            </div>
+            @endif
+        </div>
+
+        <x-slot:footer>
+            <button wire:click="save">Зберегти</button>
+            <button wire:click="$set('showModal', false)">Закрити</button>
+        </x-slot:footer>
+    </x-admin.modal>
     @endif
 </div>
