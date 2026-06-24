@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     // showFooterCta=false — на головній уже є власний CTA-банер, щоб не дублювати.
-    return view('web.home', ['showFooterCta' => false]);
+    // transparentHeader=true — шапка накладається на повноекранний слайдер.
+    return view('web.home', ['showFooterCta' => false, 'transparentHeader' => true]);
 })->name('home');
 
 // Заглушка каталогу — повноцінний каталог із фільтрами додається окремим етапом.
