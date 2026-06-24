@@ -29,6 +29,51 @@ document.addEventListener('alpine:init', () => {
     });
 
     /**
+     * Повноекранний hero-слайдер (відео/зображення) з автопрогортанням.
+     * Грає лише активне відео, решта — на паузі.
+     */
+    Alpine.data('heroSlider', (slides) => ({
+        slides,
+        active: 0,
+        timer: null,
+        init() {
+            this.$nextTick(() => this.playActive());
+            this.start();
+        },
+        start() {
+            this.stop();
+            this.timer = setInterval(() => this.next(), 6500);
+        },
+        stop() {
+            if (this.timer) clearInterval(this.timer);
+        },
+        next() {
+            this.active = (this.active + 1) % this.slides.length;
+            this.playActive();
+        },
+        go(i) {
+            this.active = i;
+            this.playActive();
+            this.start();
+        },
+        playActive() {
+            ['v0', 'v1'].forEach((ref, i) => {
+                const v = this.$refs[ref];
+                if (!v) return;
+                if (i === this.active) {
+                    try {
+                        v.currentTime = 0;
+                        const p = v.play();
+                        if (p) p.catch(() => {});
+                    } catch (e) {}
+                } else {
+                    v.pause();
+                }
+            });
+        },
+    }));
+
+    /**
      * Горизонтальна стрічка вкладок зі стрілками.
      * Стрілки показуються лише коли контент не вміщується.
      */

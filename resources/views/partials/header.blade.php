@@ -6,7 +6,9 @@
 @php($cartIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>')
 @php($heartIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>')
 
-<header class="site-header" x-data>
+<header class="site-header {{ ($transparentHeader ?? false) ? 'site-header--overlay' : '' }}"
+    x-data="{ scrolled: false }" @scroll.window.throttle.50ms="scrolled = window.scrollY > 80"
+    :class="{ 'is-scrolled': scrolled }">
     <div class="container">
         {{-- ============== ДЕСКТОП: верхній ярус ============== --}}
         <div class="header-top">
@@ -68,14 +70,6 @@
 
         {{-- ============== МОБІЛЬНИЙ ============== --}}
         <div class="header-mobile">
-            <button class="hm-btn hm-burger" type="button" aria-label="Меню" @click="$store.ui.toggleMenu()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
-            </button>
-
             <a href="{{ route('home') }}" class="hm-logo" aria-label="Велика Шина">
                 <img src="/images/logo.png" alt="Велика Шина" />
             </a>
@@ -84,13 +78,16 @@
                 <button class="hm-btn" type="button" aria-label="Пошук" @click="$store.ui.toggleSearch()">
                     {!! $searchIcon !!}
                 </button>
-                <a href="#" class="hm-btn" aria-label="Кошик">
-                    {!! $cartIcon !!}
-                    <span class="badge">2</span>
-                </a>
-                <a href="tel:{{ $c['phone_href'] }}" class="hm-btn" aria-label="Подзвонити" style="color:#e31e24">
+                <a href="tel:{{ $c['phone_href'] }}" class="hm-btn" aria-label="Подзвонити">
                     {!! $phoneIcon !!}
                 </a>
+                <button class="hm-btn hm-burger" type="button" aria-label="Меню" @click="$store.ui.toggleMenu()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
             </div>
         </div>
     </div>

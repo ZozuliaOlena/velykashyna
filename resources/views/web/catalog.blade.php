@@ -5,18 +5,18 @@
 
 {{-- Тимчасові дані. На етапі БД замінюються вибіркою з пагінацією. --}}
 @php($catalogProducts = [
-['size' => '710/70 R38', 'brand' => 'Michelin', 'model' => 'AxioBib 2', 'constr' => 'Радіальна (TL)', 'li' => '179D', 'app' => 'Трактори', 'stock' => true, 'img' => 'MICHELIN MEGAXBIB.jpg'],
-['size' => '800/65 R32', 'brand' => 'Trelleborg', 'model' => 'TM1000', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Трактори', 'stock' => true, 'img' => 'MICHELIN megaxbib1.jpg'],
-['size' => '600/70 R30', 'brand' => 'BKT', 'model' => 'Agrimax RT 765', 'constr' => 'Радіальна (TL)', 'li' => '152D', 'app' => 'Трактори', 'stock' => true, 'img' => 'continental AW-FARMER.jpg'],
-['size' => '405/70 R20', 'brand' => 'BKT', 'model' => 'Multimax MP 527', 'constr' => 'Радіальна (TL)', 'li' => '149A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'continental M 159.jpg'],
-['size' => '650/65 R42', 'brand' => 'Trelleborg', 'model' => 'TM900 HP', 'constr' => 'Радіальна (TL)', 'li' => '165D', 'app' => 'Трактори', 'stock' => false, 'img' => '1050-50R32.jpg'],
-['size' => 'VF 710/60 R30', 'brand' => 'Michelin', 'model' => 'AxioBib 2', 'constr' => 'Радіальна (TL)', 'li' => '165D', 'app' => 'Трактори', 'stock' => true, 'img' => 'Michelin XMCL.jpg'],
-['size' => '320/85 R28', 'brand' => 'Alliance', 'model' => 'Agriflex 372', 'constr' => 'Діагональна (TT)', 'li' => '123A8', 'app' => 'Обприскувачі', 'stock' => false, 'img' => 'MICHELIN MEGAXBIB.jpg'],
-['size' => '12.5/80-18', 'brand' => 'Galaxy', 'model' => 'Hulk Skidder', 'constr' => 'Діагональна (TT)', 'li' => '131A2', 'app' => 'Спецтехніка', 'stock' => true, 'img' => 'continental AW-FARMER.jpg'],
-['size' => '23.1-26', 'brand' => 'BKT', 'model' => 'TR 135', 'constr' => 'Діагональна (TT)', 'li' => '155A8', 'app' => 'Комбайни', 'stock' => true, 'img' => 'MICHELIN megaxbib1.jpg'],
-['size' => '500/70 R24', 'brand' => 'BKT', 'model' => 'RM 500', 'constr' => 'Радіальна (TL)', 'li' => '167A8', 'app' => 'Комбайни', 'stock' => false, 'img' => 'continental M 159.jpg'],
-['size' => '16.00-24', 'brand' => 'BKT', 'model' => 'Super Grader', 'constr' => 'Діагональна (TT)', 'li' => '160A8', 'app' => 'Грейдери', 'stock' => true, 'img' => '1050-50R32.jpg'],
-['size' => '315/80 R22.5', 'brand' => 'Rovelo', 'model' => 'Drive R2', 'constr' => 'Радіальна (TL)', 'li' => '156L', 'app' => 'Вантажівки', 'stock' => true, 'img' => 'Michelin XMCL.jpg'],
+['size' => '710/70 R38', 'brand' => 'Michelin', 'model' => 'AxioBib 2', 'constr' => 'Радіальна (TL)', 'li' => '179D', 'app' => 'Трактори', 'stock' => true, 'img' => 'MICHELIN MEGAXBIB.jpg', 'price_mode' => 'fixed', 'price' => 142500],
+['size' => '800/65 R32', 'brand' => 'Trelleborg', 'model' => 'TM1000', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Трактори', 'stock' => true, 'img' => 'MICHELIN megaxbib1.jpg', 'price_mode' => 'from', 'price' => 98000],
+['size' => '600/70 R30', 'brand' => 'BKT', 'model' => 'Agrimax RT 765', 'constr' => 'Радіальна (TL)', 'li' => '152D', 'app' => 'Трактори', 'stock' => true, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'fixed', 'price' => 64200],
+['size' => '405/70 R20', 'brand' => 'BKT', 'model' => 'Multimax MP 527', 'constr' => 'Радіальна (TL)', 'li' => '149A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'continental M 159.jpg', 'price_mode' => 'inquiry'],
+['size' => '650/65 R42', 'brand' => 'Trelleborg', 'model' => 'TM900 HP', 'constr' => 'Радіальна (TL)', 'li' => '165D', 'app' => 'Трактори', 'stock' => false, 'img' => '1050-50R32.jpg', 'price_mode' => 'from', 'price' => 156000],
+['size' => 'VF 710/60 R30', 'brand' => 'Michelin', 'model' => 'AxioBib 2', 'constr' => 'Радіальна (TL)', 'li' => '165D', 'app' => 'Трактори', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'inquiry'],
+['size' => '320/85 R28', 'brand' => 'Alliance', 'model' => 'Agriflex 372', 'constr' => 'Діагональна (TT)', 'li' => '123A8', 'app' => 'Обприскувачі', 'stock' => false, 'img' => 'MICHELIN MEGAXBIB.jpg', 'price_mode' => 'fixed', 'price' => 28900],
+['size' => '12.5/80-18', 'brand' => 'Galaxy', 'model' => 'Hulk Skidder', 'constr' => 'Діагональна (TT)', 'li' => '131A2', 'app' => 'Спецтехніка', 'stock' => true, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'fixed', 'price' => 18400],
+['size' => '23.1-26', 'brand' => 'BKT', 'model' => 'TR 135', 'constr' => 'Діагональна (TT)', 'li' => '155A8', 'app' => 'Комбайни', 'stock' => true, 'img' => 'MICHELIN megaxbib1.jpg', 'price_mode' => 'from', 'price' => 41000],
+['size' => '500/70 R24', 'brand' => 'BKT', 'model' => 'RM 500', 'constr' => 'Радіальна (TL)', 'li' => '167A8', 'app' => 'Комбайни', 'stock' => false, 'img' => 'continental M 159.jpg', 'price_mode' => 'inquiry'],
+['size' => '16.00-24', 'brand' => 'BKT', 'model' => 'Super Grader', 'constr' => 'Діагональна (TT)', 'li' => '160A8', 'app' => 'Грейдери', 'stock' => true, 'img' => '1050-50R32.jpg', 'price_mode' => 'fixed', 'price' => 52300],
+['size' => '315/80 R22.5', 'brand' => 'Rovelo', 'model' => 'Drive R2', 'constr' => 'Радіальна (TL)', 'li' => '156L', 'app' => 'Вантажівки', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 9800],
 ])
 
 @php($tabs = [

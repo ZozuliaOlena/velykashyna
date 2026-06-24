@@ -490,27 +490,23 @@ button {
     display: none;
 
     @media (max-width: $bp-lg) {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
+        display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 12px;
         padding: 12px 0;
     }
 
-    .hm-logo {
-        justify-self: center;
-
-        img {
-            height: 30px;
-            width: auto;
-        }
+    .hm-logo img {
+        height: 30px;
+        width: auto;
+        display: block;
     }
 
     .hm-side {
         display: flex;
         align-items: center;
         gap: 18px;
-        justify-self: end;
     }
 
     .hm-btn {
@@ -556,7 +552,7 @@ button {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    transform: translateX(-100%);
+    transform: translateX(100%);
     transition: transform 0.3s ease;
 
     &.is-open {
@@ -576,6 +572,12 @@ button {
 
         img {
             height: 30px;
+        }
+
+        .mm-top-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .mm-close,
@@ -970,11 +972,10 @@ button {
 .filter-bar-wrap {
     position: relative;
     z-index: 3;
-    margin-top: -64px;
+    padding-top: 48px;
 
-    // На мобільному hero світлий і в звичайному потоці — не перекриваємо.
     @media (max-width: $bp-md) {
-        margin-top: 4px;
+        padding-top: 32px;
     }
 }
 
@@ -2081,6 +2082,23 @@ button {
             display: none;
         }
     }
+
+    // Мобільний: ховаємо, поки користувач не прогорнув ~10% сторінки
+    // (щоб не перекривати кнопку «Консультація» у hero).
+    @media (max-width: $bp-md) {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(18px) scale(0.9);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+        pointer-events: none;
+
+        &.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+    }
 }
 
 @keyframes fab-pulse {
@@ -2827,44 +2845,28 @@ button {
         }
     }
 
-    // Плашка наявності — білий «пігулка» з кольоровим текстом і крапкою.
+    // Плашка наявності — кольоровий «пігулка» внизу зліва.
     &__stock {
         position: absolute;
-        top: 12px;
-        left: 12px;
+        bottom: 14px;
+        left: 14px;
         z-index: 3;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 5px 11px;
-        border-radius: 20px;
-        background: #fff;
-        box-shadow: $shadow-sm;
+        padding: 4px 10px;
+        border-radius: 6px;
         font-family: $font-head;
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 700;
-
-        &::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
 
         &.in {
+            background: #e7f6ec;
             color: $ok;
-
-            &::before {
-                background: $ok;
-            }
         }
 
         &.order {
+            background: #fdeede;
             color: #e0892b;
-
-            &::before {
-                background: #e0892b;
-            }
         }
     }
 
@@ -2905,31 +2907,25 @@ button {
         }
     }
 
-    // Шильдик бренду (лого або назва) — добре видно на сірій підкладці.
+    // Лого/назва бренду — прямо на підкладці зверху зліва (без рамки).
     &__brand {
         position: absolute;
-        bottom: 12px;
-        left: 12px;
+        top: 14px;
+        left: 14px;
         z-index: 3;
         display: inline-flex;
         align-items: center;
-        height: 30px;
-        padding: 0 12px;
-        background: #fff;
-        border: 1px solid $line;
-        border-radius: 8px;
-        box-shadow: $shadow-sm;
+        max-width: 60%;
         font-family: $font-head;
         font-weight: 800;
-        font-size: 12px;
+        font-size: 13px;
         color: $ink;
         text-transform: uppercase;
         letter-spacing: 0.3px;
-        max-width: 62%;
 
         img {
-            max-height: 16px;
-            max-width: 94px;
+            max-height: 26px;
+            max-width: 112px;
             object-fit: contain;
             display: block;
         }
@@ -2942,11 +2938,42 @@ button {
         padding: 16px 16px 18px;
     }
 
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
     &__size {
         font-family: $font-head;
         font-weight: 800;
         font-size: 18px;
         color: $ink;
+    }
+
+    // Плашка країни походження бренду.
+    &__country {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        flex-shrink: 0;
+        padding: 3px 9px;
+        background: $bg-soft;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: $muted;
+        white-space: nowrap;
+
+        .flag {
+            width: 18px;
+            height: 13px;
+            object-fit: cover;
+            border-radius: 2px;
+            display: block;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+        }
     }
 
     &__model {
@@ -2971,6 +2998,50 @@ button {
         b {
             color: $ink;
             font-weight: 700;
+        }
+    }
+
+    // Гнучка ціна: фіксована / «від» / «уточнюйте».
+    &__price {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+        min-height: 26px;
+        margin-bottom: 16px;
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 21px;
+        color: $ink;
+
+        .from {
+            align-self: center;
+            font-family: $font-body;
+            font-size: 12px;
+            font-weight: 600;
+            color: $muted;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .cur {
+            font-size: 13px;
+            font-weight: 700;
+            color: $muted;
+        }
+
+        &--inquiry .ask {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: $font-body;
+            font-size: 14px;
+            font-weight: 700;
+            color: $red;
+
+            svg {
+                width: 17px;
+                height: 17px;
+            }
         }
     }
 
@@ -3054,5 +3125,207 @@ button {
     .pg-dots {
         color: $muted-2;
         padding: 0 4px;
+    }
+}
+
+// =====================================================================
+//  HERO-СЛАЙДЕР (повноекранний, відео/зображення)
+// =====================================================================
+.hero-slider {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    overflow: hidden;
+    background: #0d0f12;
+
+    @supports (height: 100svh) {
+        height: 100svh;
+    }
+}
+
+.hs-bg {
+    position: absolute;
+    inset: 0;
+}
+
+.hs-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease;
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .hs-media {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+}
+
+.hs-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+        rgba(10, 12, 15, 0.5) 0%,
+        rgba(10, 12, 15, 0.1) 28%,
+        rgba(10, 12, 15, 0.45) 58%,
+        rgba(10, 12, 15, 0.97) 100%);
+
+    @media (max-width: $bp-md) {
+        background: linear-gradient(180deg,
+            rgba(10, 12, 15, 0.45) 0%,
+            rgba(10, 12, 15, 0.1) 24%,
+            rgba(10, 12, 15, 0.55) 60%,
+            rgba(10, 12, 15, 0.98) 100%);
+    }
+}
+
+.hs-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding-bottom: 48px;
+    color: #fff;
+
+    @media (max-width: $bp-sm) {
+        padding-bottom: 32px;
+    }
+}
+
+.hs-text {
+    margin-bottom: 24px;
+}
+
+.hs-title {
+    font-family: $font-head;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.96;
+    letter-spacing: -1px;
+    font-size: clamp(56px, 14vw, 96px);
+    text-shadow: 0 2px 22px rgba(0, 0, 0, 0.5);
+
+    span {
+        display: block;
+    }
+}
+
+.hs-sub {
+    margin-top: 12px;
+    font-size: clamp(18px, 5vw, 22px);
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+
+.hs-progress {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+
+    .hs-bar {
+        width: 40px;
+        height: 3px;
+        padding: 0;
+        border: none;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.35);
+        cursor: pointer;
+        transition: all 0.25s ease;
+
+        &.active {
+            width: 58px;
+            height: 4px;
+            background: $red;
+        }
+    }
+}
+
+.hs-actions {
+    display: flex;
+    gap: 14px;
+
+    .btn {
+        flex: 0 0 auto;
+    }
+
+    @media (max-width: $bp-sm) {
+        .btn {
+            flex: 1 1 0;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+    }
+}
+
+.btn--dark {
+    background: rgba(18, 18, 20, 0.82);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(4px);
+
+    &:hover {
+        background: #000;
+        border-color: #000;
+    }
+}
+
+// =====================================================================
+//  ШАПКА-ОВЕРЛЕЙ (скляна, поверх hero; твердне при скролі)
+// =====================================================================
+.site-header--overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &:not(.is-scrolled) {
+        background: rgba(16, 18, 22, 0.28);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: none;
+
+        .header-nav a,
+        .header-logo .h-tagline,
+        .hp-note,
+        .h-icon,
+        .hm-btn {
+            color: #fff;
+        }
+
+        .header-bar {
+            border-top-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .header-search input {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.32);
+            color: #fff;
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+        }
+
+        .header-cats a {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+
+            svg {
+                color: #fff;
+            }
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.22);
+            }
+        }
     }
 }
