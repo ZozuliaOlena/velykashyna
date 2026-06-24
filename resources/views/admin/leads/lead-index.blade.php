@@ -3,7 +3,7 @@
 
     @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
 
-    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin:1rem 0">
+    <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: ім'я, телефон...">
         <select wire:model.live="filterStatus">
             <option value="">— Усі статуси —</option>

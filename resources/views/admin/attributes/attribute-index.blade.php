@@ -7,7 +7,7 @@
     @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
     @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
-    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin:1rem 0">
+    <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: назва, код...">
         <select wire:model.live="filterType">
             <option value="">— Усі типи товарів —</option>

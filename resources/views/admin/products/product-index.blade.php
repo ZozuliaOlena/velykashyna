@@ -10,7 +10,7 @@
     @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
     {{-- Фільтри --}}
-    <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin:1rem 0">
+    <div class="admin-filters">
         <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, розмір (710/70R38)...">
 
         <select wire:model.live="size">

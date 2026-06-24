@@ -8,7 +8,9 @@
         <p style="color:green">{{ session('success') }}</p>
     @endif
 
-    <input wire:model.live="search" placeholder="Пошук по назві...">
+    <div class="admin-filters">
+        <input wire:model.live="search" placeholder="Пошук по назві...">
+    </div>
 
     <table border="1" cellpadding="6" style="width:100%; margin-top:1rem">
         <thead>

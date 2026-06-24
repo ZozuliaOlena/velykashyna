@@ -7,7 +7,9 @@
     @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
     @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
-    <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
+    <div class="admin-filters">
+        <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
+    </div>
 
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
         <thead>
