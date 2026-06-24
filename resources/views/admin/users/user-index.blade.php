@@ -18,10 +18,10 @@
         <tbody>
             @forelse($users as $user)
             <tr wire:key="user-{{ $user->id }}">
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->email }}</td>
-                <td>{{ $user->role === 'admin' ? 'Адміністратор' : 'Менеджер' }}</td>
-                <td>
+                <td data-label="Ім'я">{{ $user->name }}</td>
+                <td data-label="Email">{{ $user->email }}</td>
+                <td data-label="Роль">{{ $user->role === 'admin' ? 'Адміністратор' : 'Менеджер' }}</td>
+                <td class="cell-actions">
                     <button wire:click="openEdit({{ $user->id }})">Редагувати</button>
                     <button wire:click="delete({{ $user->id }})" wire:confirm="Видалити користувача?">Видалити</button>
                 </td>
@@ -35,39 +35,35 @@
     <div style="margin-top:1rem">{{ $users->links() }}</div>
 
     @if($showModal)
-    <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center">
-        <div style="background:#fff;padding:2rem;min-width:420px">
-            <h2>{{ $editingId ? 'Редагувати користувача' : 'Новий користувач' }}</h2>
-
-            <div>
-                <label>Ім'я *</label><br>
-                <input wire:model="name" type="text" style="width:100%">
-                @error('name') <span style="color:red">{{ $message }}</span> @enderror
-            </div>
-            <div>
-                <label>Email *</label><br>
-                <input wire:model="email" type="email" style="width:100%">
-                @error('email') <span style="color:red">{{ $message }}</span> @enderror
-            </div>
-            <div>
-                <label>Роль *</label><br>
-                <select wire:model="role">
-                    <option value="manager">Менеджер</option>
-                    <option value="admin">Адміністратор</option>
-                </select>
-                @error('role') <span style="color:red">{{ $message }}</span> @enderror
-            </div>
-            <div>
-                <label>Пароль {{ $editingId ? '(залиште порожнім, щоб не міняти)' : '*' }}</label><br>
-                <input wire:model="password" type="password" style="width:100%">
-                @error('password') <span style="color:red">{{ $message }}</span> @enderror
-            </div>
-
-            <div style="margin-top:1rem">
-                <button wire:click="save">Зберегти</button>
-                <button wire:click="$set('showModal', false)">Скасувати</button>
-            </div>
+    <x-admin.modal :title="$editingId ? 'Редагувати користувача' : 'Новий користувач'">
+        <div>
+            <label>Ім'я *</label>
+            <input wire:model="name" type="text" style="width:100%">
+            @error('name') <span style="color:red">{{ $message }}</span> @enderror
         </div>
-    </div>
+        <div>
+            <label>Email *</label>
+            <input wire:model="email" type="email" style="width:100%">
+            @error('email') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+        <div>
+            <label>Роль *</label>
+            <select wire:model="role" style="width:100%">
+                <option value="manager">Менеджер</option>
+                <option value="admin">Адміністратор</option>
+            </select>
+            @error('role') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+        <div>
+            <label>Пароль {{ $editingId ? '(залиште порожнім, щоб не міняти)' : '*' }}</label>
+            <input wire:model="password" type="password" style="width:100%">
+            @error('password') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+
+        <x-slot:footer>
+            <button wire:click="save">Зберегти</button>
+            <button wire:click="$set('showModal', false)">Скасувати</button>
+        </x-slot:footer>
+    </x-admin.modal>
     @endif
 </div>

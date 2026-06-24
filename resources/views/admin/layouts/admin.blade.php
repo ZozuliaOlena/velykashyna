@@ -4,13 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Адмін панель — Велика Шина</title>
-    @vite(['resources/css/app.css', 'resources/css/admin.scss', 'resources/js/app.js'])
+    {{-- Без resources/js/app.js: Alpine надає сам Livewire (@livewireScripts).
+         Підключення власного Alpine.start() конфліктує з вбудованим у Livewire
+         і ламає wire:click. AOS в адмінці не потрібен. --}}
+    @vite(['resources/css/app.css', 'resources/css/admin.scss'])
     @livewireStyles
 </head>
 <body class="admin-body" x-data="{ sidebar: false }">
 @php
     $nav = fn (...$p) => request()->routeIs(...$p) ? 'is-active' : '';
     $on = fn (...$p) => request()->routeIs(...$p);
+    // Кількість нових (необроблених) заявок — для бейджа в меню
+    $newLeads = \App\Models\Lead::where('status', 'new')->count();
     $icons = [
         'home'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
         'box'     => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>',
@@ -23,7 +28,7 @@
 @endphp
 
 <div class="admin-shell">
-    <aside class="admin-sidebar" :class="{ 'is-open': sidebar }" x-on:click.away="sidebar = false">
+    <aside class="admin-sidebar" :class="{ 'is-open': sidebar }">
         <a href="{{ route('admin.dashboard') }}" class="admin-sidebar__brand" wire:navigate>Велика Шина</a>
 
         <nav class="admin-nav">
@@ -35,6 +40,9 @@
             </a>
             <a href="{{ route('admin.leads.index') }}" class="admin-nav__item {{ $nav('admin.leads.*') }}" wire:navigate>
                 {!! $icons['inbox'] !!}<span>Заявки</span>
+                @if($newLeads > 0)
+                    <span class="admin-nav__badge">{{ $newLeads > 99 ? '99+' : $newLeads }}</span>
+                @endif
             </a>
             <a href="{{ route('admin.import-export.index') }}" class="admin-nav__item {{ $nav('admin.import-export.*') }}" wire:navigate>
                 {!! $icons['swap'] !!}<span>Імпорт / Експорт</span>
@@ -83,7 +91,7 @@
 
     <div class="admin-content">
         <header class="admin-header">
-            <button class="admin-burger" x-on:click="sidebar = !sidebar" aria-label="Меню">☰</button>
+            <button class="admin-burger" x-on:click.stop="sidebar = !sidebar" aria-label="Меню">☰</button>
             <span class="admin-header__title">Адмін-панель</span>
             <div class="admin-header__spacer"></div>
             <form class="admin-logout" method="POST" action="{{ route('logout') }}">
