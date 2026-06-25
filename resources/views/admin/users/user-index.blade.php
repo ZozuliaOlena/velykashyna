@@ -22,8 +22,8 @@
                 <td data-label="Email">{{ $user->email }}</td>
                 <td data-label="Роль">{{ $user->role === 'admin' ? 'Адміністратор' : 'Менеджер' }}</td>
                 <td class="cell-actions">
-                    <button wire:click="openEdit({{ $user->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $user->id }})" wire:confirm="Видалити користувача?">Видалити</button>
+                    <button class="icon-btn" wire:click="openEdit({{ $user->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $user->id }})" wire:confirm="Видалити користувача?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -48,10 +48,11 @@
         </div>
         <div>
             <label>Роль *</label>
-            <select wire:model="role" style="width:100%">
-                <option value="manager">Менеджер</option>
-                <option value="admin">Адміністратор</option>
-            </select>
+            <x-admin.select model="role" :live="false" :clearable="false"
+                :options="[
+                    ['value' => 'manager', 'label' => 'Менеджер'],
+                    ['value' => 'admin', 'label' => 'Адміністратор'],
+                ]" />
             @error('role') <span style="color:red">{{ $message }}</span> @enderror
         </div>
         <div>

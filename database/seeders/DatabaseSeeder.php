@@ -16,13 +16,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@velykashyna.com.ua',
-            'role' => 'admin',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-        ]);
+        // Адмін за замовчуванням. firstOrCreate — ідемпотентно:
+        // створюється при першому запуску й не дублюється/не скидається далі.
+        User::firstOrCreate(
+            ['email' => 'admin@velykashyna.com.ua'],
+            [
+                'name' => 'Admin',
+                'role' => 'admin',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+            ]
+        );
 
         $this->call([
             ProductTypeSeeder::class,

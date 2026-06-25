@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Адмін панель — Велика Шина</title>
     {{-- Без resources/js/app.js: Alpine надає сам Livewire (@livewireScripts).
-         Підключення власного Alpine.start() конфліктує з вбудованим у Livewire
-         і ламає wire:click. AOS в адмінці не потрібен. --}}
-    @vite(['resources/css/app.css', 'resources/css/admin.scss'])
+         admin.js не стартує Alpine — лише drag-and-drop (SortableJS). --}}
+    @vite(['resources/css/app.css', 'resources/css/admin.scss', 'resources/js/admin.js'])
     @livewireStyles
 </head>
 <body class="admin-body" x-data="{ sidebar: false }">

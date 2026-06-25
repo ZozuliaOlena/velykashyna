@@ -9,12 +9,11 @@
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: назва, код...">
-        <select wire:model.live="filterType">
-            <option value="">— Усі типи товарів —</option>
-            @foreach($productTypes as $pt)<option value="{{ $pt->id }}">{{ $pt->name }}</option>@endforeach
-        </select>
+        <x-admin.select model="filterType" placeholder="— Усі типи товарів —"
+            :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
     </div>
 
+    <div class="table-scroll">
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
             <tr><th>Назва</th><th>Код</th><th>Тип товару</th><th>Тип даних</th><th>Од.</th><th>Фільтр</th><th>Варіантів</th><th>Дії</th></tr>
@@ -30,8 +29,8 @@
                 <td data-label="Фільтр">{{ $attr->is_filterable ? 'Так' : 'Ні' }}</td>
                 <td data-label="Варіантів">{{ $attr->data_type === 'select' ? $attr->options_count : '—' }}</td>
                 <td class="cell-actions">
-                    <button wire:click="openEdit({{ $attr->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $attr->id }})" wire:confirm="Видалити характеристику?">Видалити</button>
+                    <button class="icon-btn" wire:click="openEdit({{ $attr->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $attr->id }})" wire:confirm="Видалити характеристику?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -39,6 +38,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div style="margin-top:1rem">{{ $attrs->links() }}</div>
 
@@ -46,10 +46,8 @@
     <x-admin.modal :title="$editingId ? 'Редагувати характеристику' : 'Нова характеристика'" :wide="true">
         <div>
             <label>Тип товару</label>
-            <select wire:model="product_type_id" style="width:100%">
-                <option value="">— Спільна для всіх типів —</option>
-                @foreach($productTypes as $pt)<option value="{{ $pt->id }}">{{ $pt->name }}</option>@endforeach
-            </select>
+            <x-admin.select model="product_type_id" placeholder="— Спільна для всіх типів —" :live="false"
+                :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
             @error('product_type_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>
 
@@ -67,12 +65,13 @@
 
         <div>
             <label>Тип даних *</label>
-            <select wire:model.live="data_type" style="width:100%">
-                <option value="text">Текст</option>
-                <option value="number">Число</option>
-                <option value="select">Список (варіанти)</option>
-                <option value="boolean">Так/Ні</option>
-            </select>
+            <x-admin.select model="data_type" :clearable="false"
+                :options="[
+                    ['value' => 'text', 'label' => 'Текст'],
+                    ['value' => 'number', 'label' => 'Число'],
+                    ['value' => 'select', 'label' => 'Список (варіанти)'],
+                    ['value' => 'boolean', 'label' => 'Так/Ні'],
+                ]" />
             @error('data_type') <span style="color:red">{{ $message }}</span> @enderror
         </div>
 

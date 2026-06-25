@@ -82,4 +82,36 @@
             </div>
         @endif
     </fieldset>
+
+    {{-- ── Каталожні фото за іменем (одне на кілька товарів) ── --}}
+    <fieldset style="margin-top:1rem">
+        <legend><strong>Каталожні фото (за іменем файлу)</strong></legend>
+        <p style="color:#666">
+            Для «не живих» (стокових) фото, спільних для кількох товарів. У колонці
+            <code>Каталожне фото</code> імпорту вкажіть імʼя файлу (напр. <code>agro-710.jpg</code>) —
+            однакове для всіх товарів з цим зображенням. Потім завантажте сюди самі файли:
+            вони звʼяжуться за іменем одразу з усіма такими товарами. Порядок не важливий
+            (можна спершу фото, потім імпорт). Пізніше кожному товару можна додати власні «живі» фото.
+        </p>
+
+        <input type="file" wire:model="catalogImages" accept="image/*,.svg" multiple>
+        <div wire:loading wire:target="catalogImages" style="color:#666">Завантаження…</div>
+        @error('catalogImages.*') <span style="color:red">{{ $message }}</span> @enderror
+
+        <div style="margin-top:.5rem">
+            <button wire:click="uploadCatalogImages" wire:loading.attr="disabled" wire:target="uploadCatalogImages">Завантажити каталожні фото</button>
+            <span wire:loading wire:target="uploadCatalogImages" style="color:#666">Обробка…</span>
+        </div>
+
+        @if($catalogImageReport)
+            <div style="margin-top:1rem; background:#f8f9fa; padding:12px; border-radius:8px">
+                <strong>Результат:</strong>
+                <ul>
+                    <li>Завантажено файлів: {{ $catalogImageReport['uploaded'] ?? 0 }}</li>
+                    <li>Створено нових записів: {{ $catalogImageReport['created'] ?? 0 }}</li>
+                    <li>Привʼязано до товарів: {{ $catalogImageReport['linked'] ?? 0 }}</li>
+                </ul>
+            </div>
+        @endif
+    </fieldset>
 </div>

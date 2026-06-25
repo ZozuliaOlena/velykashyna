@@ -28,7 +28,7 @@ class ProductsSheet implements FromArray, WithHeadings, WithTitle
             'Посадковий діаметр', 'R/D', 'Протектор', 'Специфікація',
             'TT/TL', 'PR', 'LI/SS', 'Наявність', 'Режим ціни', 'Ціна',
             'Валюта', 'Знижка', 'Тип знижки', 'Merchant', 'Активний',
-            'SEO Title', 'SEO Description', 'SEO H1', 'URL', 'Категорії', 'Фото',
+            'SEO Title', 'SEO Description', 'SEO H1', 'URL', 'Категорії', 'Фото', 'Каталожне фото',
         ], $this->attributes->pluck('name')->all());
     }
 
@@ -36,7 +36,7 @@ class ProductsSheet implements FromArray, WithHeadings, WithTitle
     {
         $products = Product::with([
             'productType', 'brand', 'categories.parent',
-            'attributeValues.option', 'media',
+            'attributeValues.option', 'media', 'catalogImage',
         ])->orderBy('sku')->get();
 
         $rows = [];
@@ -73,6 +73,7 @@ class ProductsSheet implements FromArray, WithHeadings, WithTitle
                 $p->slug,
                 $categories,
                 $p->getFirstMedia('main')?->file_name,
+                $p->catalogImage?->filename,
             ];
 
             // значення характеристик за attribute_id

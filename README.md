@@ -7,6 +7,47 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Велика Шина — швидкий старт
+
+Розгортання проєкту з нуля (для нового розробника):
+
+**1. Передумови**
+- PHP 8.3 з розширеннями: `openssl`, `pdo_mysql`, `mbstring`, `gd`, `zip`, `intl`, `fileinfo`, `curl`
+- Node.js 18+ та npm
+- MySQL (напр. MAMP). Створіть порожню базу `veluka_shina` (логін/пароль за замовчуванням: `root` / `root`)
+
+**2. Одна команда — встановлює все:**
+
+```bash
+composer setup
+```
+
+Ця команда: ставить PHP- та npm-залежності, копіює `.env`, генерує ключ, **застосовує всі міграції, заповнює базу (створює адміна), робить storage:link і збирає фронтенд**.
+
+> Якщо у вас інші доступи до MySQL — спершу відредагуйте `DB_*` у `.env`, потім запустіть `composer setup`.
+
+**3. Запуск:**
+
+```bash
+composer dev
+```
+
+(або окремо: `php artisan serve` + `npm run dev`)
+
+**Вхід в адмінку:** `/admin` → `admin@velykashyna.com.ua` / `password`
+
+### Після `git pull` (нові зміни від колеги)
+
+```bash
+composer install        # нові PHP-залежності
+npm install             # нові npm-залежності
+php artisan migrate --seed   # нові міграції + сидер
+```
+
+> Усі залежності зафіксовано в `composer.json` / `composer.lock` та `package.json` / `package-lock.json`.
+> Якщо додаєте бібліотеку — робіть це через `composer require ...` або `npm install ...`,
+> тоді колега підтягне її автоматично, і «забутих» залежностей не буде.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

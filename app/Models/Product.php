@@ -20,17 +20,19 @@ class Product extends Model implements HasMedia
     use SoftDeletes, HasSlug, InteractsWithMedia;
 
     protected $fillable = [
-        'sku', 'product_type_id', 'name', 'brand_id', 'model',
+        'sku', 'product_type_id', 'name', 'brand_id', 'model', 'catalog_image_id',
         'size_raw', 'size_width', 'size_profile', 'rim_diameter',
         'rd_type', 'tube_type', 'ply_rating', 'load_speed_index', 'specification',
         'stock_status', 'price_mode', 'price', 'currency', 'exchange_rate',
-        'discount_value', 'discount_type', 'merchant_enabled',
+        'discount_value', 'discount_type', 'is_promo', 'free_shipping', 'merchant_enabled',
         'seo_title', 'seo_description', 'seo_h1', 'slug', 'is_active',
     ];
 
     protected $casts = [
         'merchant_enabled' => 'boolean',
         'is_active' => 'boolean',
+        'is_promo' => 'boolean',
+        'free_shipping' => 'boolean',
         'price' => 'decimal:2',
         'size_width' => 'decimal:2',
         'size_profile' => 'decimal:2',
@@ -125,6 +127,29 @@ class Product extends Model implements HasMedia
         return $this->hasMany(LeadItem::class);
     }
 
+    public function catalogImage(): BelongsTo
+    {
+        return $this->belongsTo(CatalogImage::class);
+    }
+
+    /**
+     * URL прев'ю товару: спершу власне «живе» фото (main → gallery),
+     * інакше — спільне каталожне фото. null, якщо немає жодного.
+     */
+    public function thumbUrl(): ?string
+    {
+        $media = $this->getFirstMedia('main') ?: $this->getFirstMedia('gallery');
+        if ($media) {
+            return \App\Support\MediaUrl::rel(
+                $media->hasGeneratedConversion('thumb')
+                    ? $media->getUrl('thumb')
+                    : $media->getUrl()
+            );
+        }
+
+        return $this->catalogImage?->imageUrl('thumb');
+    }
+
     /**
      * Ціна з урахуванням знижки на поточний момент.
      * Для режиму «за запитом» (inquiry) або без ціни повертає null —
@@ -147,5 +172,39 @@ class Product extends Model implements HasMedia
         }
 
         return round(max(0, $price), 2);
+    }
+
+    /** Чи діє знижка (є ціна, валідний тип і ефективна ціна нижча за базову). */
+    public function hasDiscount(): bool
+    {
+        if ($this->price_mode === 'inquiry' || $this->price === null) {
+            return false;
+        }
+        if (! $this->discount_value || ! in_array($this->discount_type, ['percent', 'amount'], true)) {
+            return false;
+        }
+
+        $eff = $this->effectivePrice();
+        return $eff !== null && $eff < (float) $this->price;
+    }
+
+    /** Стара (закреслена) ціна — лише коли діє знижка. */
+    public function oldPrice(): ?float
+    {
+        return $this->hasDiscount() ? round((float) $this->price, 2) : null;
+    }
+
+    /** Підпис знижки: "-10%" або "-50 UAH". */
+    public function discountLabel(): ?string
+    {
+        if (! $this->hasDiscount()) {
+            return null;
+        }
+
+        $value = rtrim(rtrim(number_format((float) $this->discount_value, 2, '.', ''), '0'), '.');
+
+        return $this->discount_type === 'percent'
+            ? "-{$value}%"
+            : "-{$value} {$this->currency}";
     }
 }

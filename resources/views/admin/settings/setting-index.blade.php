@@ -20,8 +20,8 @@
                 <td data-label="Ключ">{{ $setting->key }}</td>
                 <td data-label="Значення" style="word-break:break-all">{{ \Illuminate\Support\Str::limit($setting->value, 80) }}</td>
                 <td class="cell-actions">
-                    <button wire:click="openEdit('{{ $setting->key }}')">Редагувати</button>
-                    <button wire:click="delete('{{ $setting->key }}')" wire:confirm="Видалити параметр?">Видалити</button>
+                    <button class="icon-btn" wire:click="openEdit('{{ $setting->key }}')" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete('{{ $setting->key }}')" wire:confirm="Видалити параметр?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty

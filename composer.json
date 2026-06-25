@@ -41,8 +41,9 @@
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
-            "@php artisan migrate --force",
-            "npm install --ignore-scripts",
+            "@php artisan migrate --seed --force",
+            "@php artisan storage:link",
+            "npm install",
             "npm run build"
         ],
         "dev": [

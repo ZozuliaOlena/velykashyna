@@ -5,6 +5,7 @@ namespace App\Imports\Sheets;
 use App\Imports\CatalogImport;
 use App\Models\Attribute;
 use App\Models\Brand;
+use App\Models\CatalogImage;
 use App\Models\Product;
 use App\Models\ProductAttributeValue;
 use App\Models\ProductType;
@@ -24,7 +25,7 @@ class ProductsImportSheet implements ToCollection
         'посадковий діаметр', 'r/d', 'протектор', 'специфікація',
         'tt/tl', 'pr', 'li/ss', 'наявність', 'режим ціни', 'ціна',
         'валюта', 'знижка', 'тип знижки', 'merchant', 'активний',
-        'seo title', 'seo description', 'seo h1', 'url', 'категорії', 'фото',
+        'seo title', 'seo description', 'seo h1', 'url', 'категорії', 'фото', 'каталожне фото',
     ];
 
     public function __construct(private CatalogImport $import)
@@ -156,6 +157,20 @@ class ProductsImportSheet implements ToCollection
         }
         if ($this->has('url') && ($v = $this->val($row, 'URL')) !== null) {
             $product->slug = $this->uniqueSlug($v, $product->id);
+        }
+
+        // Каталожне фото за іменем файлу: один файл — багато товарів.
+        // Створюємо запис CatalogImage за іменем (сам файл підвантажується масово окремо).
+        if ($this->has('каталожне фото')) {
+            $fname = trim((string) $this->val($row, 'Каталожне фото'));
+            if ($fname === '') {
+                $product->catalog_image_id = null;
+            } else {
+                $product->catalog_image_id = CatalogImage::firstOrCreate(
+                    ['filename' => $fname],
+                    ['label' => $fname]
+                )->id;
+            }
         }
     }
 

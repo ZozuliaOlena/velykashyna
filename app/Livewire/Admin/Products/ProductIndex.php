@@ -3,17 +3,22 @@
 namespace App\Livewire\Admin\Products;
 
 use App\Models\Brand;
+use App\Models\CatalogImage;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Livewire\Concerns\WithAdminToast;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class ProductIndex extends Component
 {
     use WithPagination;
+    use WithFileUploads;
     use WithAdminToast;
 
     // фільтри (зберігаються в URL — зручно ділитись/повертатись)
@@ -39,6 +44,8 @@ class ProductIndex extends Component
     public string $bulkStock = '';
     public string $bulkPriceMode = '';
     public ?string $bulkPrice = null;
+    public ?string $bulkPricePercent = null;
+    public $bulkCatalogPhoto = null; // каталожне фото для масового призначення
 
     protected function queryString(): array
     {
@@ -80,6 +87,18 @@ class ProductIndex extends Component
         $product->update(['merchant_enabled' => ! $product->merchant_enabled]);
     }
 
+    public function togglePromo(int $id): void
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['is_promo' => ! $product->is_promo]);
+    }
+
+    public function toggleFreeShipping(int $id): void
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['free_shipping' => ! $product->free_shipping]);
+    }
+
     public function delete(int $id): void
     {
         Product::findOrFail($id)->delete();
@@ -102,6 +121,24 @@ class ProductIndex extends Component
             return;
         }
         Product::whereIn('id', $this->selected)->update(['merchant_enabled' => $enabled]);
+        $this->afterBulk();
+    }
+
+    public function bulkSetPromo(bool $on): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+        Product::whereIn('id', $this->selected)->update(['is_promo' => $on]);
+        $this->afterBulk();
+    }
+
+    public function bulkSetFreeShipping(bool $on): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+        Product::whereIn('id', $this->selected)->update(['free_shipping' => $on]);
         $this->afterBulk();
     }
 
@@ -150,6 +187,62 @@ class ProductIndex extends Component
         session()->flash('success', 'Ціни оновлено');
     }
 
+    /** Масово підняти ціну на відсоток (наприклад, +10%). */
+    public function bulkRaisePrice(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+        if (! is_numeric($this->bulkPricePercent) || (float) $this->bulkPricePercent == 0.0) {
+            session()->flash('error', 'Вкажіть відсоток (наприклад, 10)');
+            return;
+        }
+
+        $percent = (float) $this->bulkPricePercent;
+        $factor  = 1 + $percent / 100;
+        if ($factor < 0) {
+            session()->flash('error', 'Відсоток некоректний — ціна стала б від’ємною');
+            return;
+        }
+
+        // лише товари з реальною ціною; "Уточнюйте" (inquiry) пропускаємо
+        $factorSql = number_format($factor, 6, '.', '');
+        $affected  = Product::whereIn('id', $this->selected)
+            ->whereNotNull('price')
+            ->where('price_mode', '!=', 'inquiry')
+            ->update(['price' => DB::raw("ROUND(price * {$factorSql}, 2)")]);
+
+        $this->afterBulk();
+        $this->reset('bulkPricePercent');
+        session()->flash('success', "Ціни змінено на {$percent}% (оновлено товарів: {$affected})");
+    }
+
+    /** Масово призначити одне каталожне (стокове) фото вибраним товарам. */
+    public function bulkSetCatalogPhoto(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $this->validate(
+            ['bulkCatalogPhoto' => ['required', 'image', 'max:5120']],
+            [],
+            ['bulkCatalogPhoto' => 'фото']
+        );
+
+        $catalogImage = CatalogImage::create(['label' => 'Каталожне фото']);
+        $catalogImage->addMedia($this->bulkCatalogPhoto->getRealPath())
+            ->usingFileName(Str::random(24) . '.' . $this->bulkCatalogPhoto->getClientOriginalExtension())
+            ->toMediaCollection('image');
+
+        $count = count($this->selected);
+        Product::whereIn('id', $this->selected)->update(['catalog_image_id' => $catalogImage->id]);
+
+        $this->afterBulk();
+        $this->reset('bulkCatalogPhoto');
+        session()->flash('success', "Каталожне фото застосовано до товарів: {$count}");
+    }
+
     public function bulkDelete(): void
     {
         $count = count($this->selected ?? []);
@@ -167,7 +260,7 @@ class ProductIndex extends Component
     private function productsQuery()
     {
         return Product::query()
-            ->with(['brand', 'productType'])
+            ->with(['brand', 'productType', 'media', 'catalogImage.media'])
             ->when($this->search !== '', function ($q) {
                 $term = '%' . $this->search . '%';
                 $q->where(fn ($sub) => $sub
@@ -192,7 +285,7 @@ class ProductIndex extends Component
             'products'     => $this->productsQuery()->paginate(25),
             'productTypes' => ProductType::orderBy('name')->get(),
             'brands'       => Brand::orderBy('name')->get(),
-            'categories'   => Category::orderBy('level')->orderBy('name')->get(),
+            'categories'   => Category::treeOrdered(),
             'sizes'        => Product::whereNotNull('size_raw')->where('size_raw', '!=', '')
                 ->distinct()->orderBy('size_raw')->pluck('size_raw'),
         ])->layout('admin.layouts.admin');

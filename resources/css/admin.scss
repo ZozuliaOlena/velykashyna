@@ -367,6 +367,126 @@ body.admin-body {
             option { color: $text-dark; }
         }
 
+        // ── Поле вибору файлу: оформлене, як зона завантаження ───────────
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            padding: 10px 12px;
+            font-size: 13.5px;
+            color: $text-light;
+            background: #f7f8fa;
+            border: 1px dashed #cdd2da;
+            border-radius: $radius;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+
+            &:hover { border-color: $primary-red; background: #fff; }
+
+            &::file-selector-button {
+                margin-right: 12px;
+                padding: 8px 14px;
+                border: 1px solid $border-color;
+                border-radius: $radius;
+                background: $bg-white;
+                color: $text-dark;
+                font-family: inherit;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background 0.15s, border-color 0.15s;
+            }
+
+            &:hover::file-selector-button {
+                background: $primary-red;
+                border-color: $primary-red;
+                color: #fff;
+            }
+
+            // Vendor-варіант для старіших WebKit
+            &::-webkit-file-upload-button {
+                margin-right: 12px;
+                padding: 8px 14px;
+                border: 1px solid $border-color;
+                border-radius: $radius;
+                background: $bg-white;
+                color: $text-dark;
+                font-weight: 700;
+                cursor: pointer;
+            }
+        }
+
+        // ── Кастомний випадний список (фільтри) ──────────────────────────
+        // Панель = ширині контролу → не вилазить за рамки на вузьких екранах.
+        .aselect {
+            position: relative;
+            flex: 1 1 170px;
+            min-width: 0;
+
+            &__control {
+                width: 100%;
+                min-height: 42px;
+                display: flex;
+                align-items: center;
+                padding: 10px 34px 10px 12px;
+                border: 1px solid $border-color;
+                border-radius: $radius;
+                background: #fff $select-arrow no-repeat right 13px center;
+                background-size: 12px;
+                font: inherit;
+                color: $text-dark;
+                text-align: left;
+                cursor: pointer;
+                transition: border-color 0.15s, box-shadow 0.15s;
+
+                &:hover { border-color: #cfcfcf; }
+                &.is-open {
+                    border-color: $primary-red;
+                    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
+                }
+            }
+
+            &__value {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            &__panel {
+                position: absolute;
+                z-index: 60;
+                top: calc(100% + 4px);
+                left: 0;
+                right: 0;            // ← рівно ширина контролу
+                max-height: 280px;
+                overflow-y: auto;
+                margin: 0;
+                padding: 4px;
+                list-style: none;
+                background: #fff;
+                border: 1px solid $border-color;
+                border-radius: 10px;
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+            }
+
+            &__opt {
+                display: block;
+                width: 100%;
+                padding: 9px 10px;
+                border: none;
+                border-radius: 6px;
+                background: none;
+                font: inherit;
+                color: $text-dark;
+                text-align: left;
+                white-space: normal;   // ← довгий текст переноситься, а не вилазить
+                cursor: pointer;
+
+                &:hover { background: #f4f6f9; }
+                &.is-active { background: rgba(211, 47, 47, 0.1); }
+            }
+        }
+
         // ── Панель фільтрів ──────────────────────────────────────────────
         .admin-filters {
             display: flex;
@@ -389,27 +509,30 @@ body.admin-body {
                 margin-right: 2px;
             }
 
+            // Усі контроли — рівномірні й здатні звужуватись (min-width:0),
+            // тому ніколи не вилазять і акуратно переносяться.
             input,
             select {
                 min-height: 42px;
                 background-color: #fff;
+                flex: 1 1 170px;
+                min-width: 0;
+                max-width: 100%;
 
                 &:hover,
                 &:focus { background-color: #fff; }
             }
 
+            // Пошук — трохи ширший за селекти
             input[type="text"],
             input:not([type]) {
-                flex: 1 1 240px;
-                min-width: 200px;
+                flex: 2 1 240px;
             }
 
-            select { flex: 0 0 auto; min-width: 168px; }
-
-            // «Скинути» — праворуч, як вторинна дія
-            button[wire\:click="resetFilters"] {
-                margin-left: auto;
+            button {
+                flex: 0 0 auto;
                 min-height: 42px;
+                white-space: nowrap;
             }
         }
 
@@ -490,6 +613,18 @@ body.admin-body {
             margin-top: 14px;
         }
 
+        // Обгортка для широких таблиць: горизонтальний скрол усередині блоку,
+        // щоб таблиця ніколи не вилазила за картку сторінки.
+        .table-scroll {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 14px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+
+            > table { margin-top: 0; }
+        }
+
         th,
         td {
             border: none;
@@ -532,6 +667,221 @@ body.admin-body {
             margin-right: 8px;
 
             &:hover { text-decoration: underline; }
+        }
+
+        // ── Іконки та кнопки-іконки (Редагувати / Видалити) ──────────────
+        .icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            margin: 0;
+            border-radius: 8px;
+            border: 1px solid $border-color;
+            background: $bg-white;
+            color: $text-light;
+            cursor: pointer;
+            transition: all 0.15s;
+
+            .icon { width: 17px; height: 17px; }
+
+            &:hover {
+                color: $text-dark;
+                background: #f3f4f6;
+                border-color: #cfcfcf;
+                text-decoration: none;
+            }
+        }
+
+        // Видалення (кнопка з підтвердженням) — червоний акцент
+        button.icon-btn[wire\:confirm] {
+            color: $primary-red;
+            border-color: rgba(211, 47, 47, 0.4);
+
+            &:hover {
+                background: $primary-red;
+                color: #fff;
+                border-color: $primary-red;
+            }
+        }
+
+        // Кілька іконок у комірці дій — рівний відступ
+        td .icon-btn + .icon-btn { margin-left: 6px; }
+
+        // ── Дерево категорій (згортуване + drag-and-drop) ────────────────
+        .cat-hint {
+            margin: 14px 0 10px;
+            font-size: 13px;
+            color: $text-light;
+
+            span { font-weight: 700; }
+        }
+
+        .cat-tree,
+        .cat-children {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cat-children {
+            padding-left: 28px; // відступ вкладеності
+        }
+
+        .cat-node { margin: 0; }
+
+        .cat-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            margin-bottom: 6px;
+            background: $bg-white;
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            transition: background 0.12s, box-shadow 0.12s;
+
+            &:hover { background: #f9fafb; }
+            &.is-inactive { opacity: 0.55; }
+        }
+
+        .cat-handle {
+            cursor: grab;
+            color: #b0b6bf;
+            font-size: 16px;
+            line-height: 1;
+            user-select: none;
+            padding: 0 2px;
+
+            &:active { cursor: grabbing; }
+        }
+
+        .cat-caret {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            background: none;
+            color: $text-light;
+            font-size: 10px;
+            cursor: pointer;
+            transition: transform 0.15s;
+
+            &.is-open { transform: rotate(90deg); }
+            &--leaf { visibility: hidden; cursor: default; }
+        }
+
+        .cat-name {
+            font-weight: 600;
+
+            // гілка (має дітей) — заголовок; лист — світліший
+            &.is-branch { font-weight: 800; }
+            &.is-leaf { font-weight: 500; color: $text-light; }
+        }
+
+        .cat-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #eef0f2;
+            color: $text-light;
+            white-space: nowrap;
+
+            &--muted {
+                background: transparent;
+                border: 1px solid $border-color;
+            }
+        }
+
+        .cat-spacer { flex: 1; }
+
+        // SortableJS — вигляд під час перетягування
+        .sortable-ghost { opacity: 0.35; }
+        .sortable-drag .cat-row { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18); }
+
+        @media (max-width: 640px) {
+            .cat-children { padding-left: 16px; }
+            .cat-row { flex-wrap: wrap; }
+            .cat-spacer { flex-basis: 100%; height: 0; }
+        }
+
+        // ── Прев'ю фото товару в таблиці ─────────────────────────────────
+        .product-thumb {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border: 1px solid $border-color;
+            border-radius: 8px;
+            background: #f8f9fa;
+            object-fit: contain;
+            overflow: hidden;
+
+            &--empty { color: #c2c6cc; font-size: 18px; }
+        }
+
+        // Бейдж знижки в таблиці
+        .badge-discount {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: $primary-red;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        // SVG-іконка типу техніки в таблиці
+        .mtype-icon {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        // ── Стилізований вибір файлу (каталожне фото) ────────────────────
+        .file-pick {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+
+            input[type="file"] {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                opacity: 0;
+                overflow: hidden;
+            }
+
+            > span {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 14px;
+                border: 1px solid $border-color;
+                border-radius: $radius;
+                background: $bg-white;
+                font-size: 14px;
+                font-weight: 600;
+
+                &:hover { background: #f3f4f6; border-color: #cfcfcf; }
+            }
         }
 
         // ── Панель масових дій ───────────────────────────────────────────
@@ -987,6 +1337,7 @@ body.admin-body {
 
             input,
             select,
+            .aselect,
             input[type="text"],
             input:not([type]) {
                 flex: 1 1 100%;

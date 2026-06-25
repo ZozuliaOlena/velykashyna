@@ -18,12 +18,8 @@
 
             <div>
                 <label>Тип товару *</label><br>
-                <select wire:model.live="product_type_id">
-                    <option value="">— Оберіть —</option>
-                    @foreach($productTypes as $pt)
-                        <option value="{{ $pt->id }}">{{ $pt->name }}</option>
-                    @endforeach
-                </select>
+                <x-admin.select model="product_type_id" placeholder="— Оберіть —"
+                    :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
                 @error('product_type_id') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
@@ -35,12 +31,8 @@
 
             <div>
                 <label>Виробник</label><br>
-                <select wire:model="brand_id">
-                    <option value="">— Не вказано —</option>
-                    @foreach($brands as $b)
-                        <option value="{{ $b->id }}">{{ $b->name }}</option>
-                    @endforeach
-                </select>
+                <x-admin.select model="brand_id" placeholder="— Не вказано —" :live="false"
+                    :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
                 @error('brand_id') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
@@ -155,20 +147,22 @@
 
             <div>
                 <label>Наявність</label><br>
-                <select wire:model="stock_status">
-                    <option value="in_stock">В наявності</option>
-                    <option value="on_order">Під замовлення</option>
-                    <option value="inquiry">Уточнюйте</option>
-                </select>
+                <x-admin.select model="stock_status" :live="false" :clearable="false"
+                    :options="[
+                        ['value' => 'in_stock', 'label' => 'В наявності'],
+                        ['value' => 'on_order', 'label' => 'Під замовлення'],
+                        ['value' => 'inquiry', 'label' => 'Уточнюйте'],
+                    ]" />
             </div>
 
             <div>
                 <label>Режим ціни</label><br>
-                <select wire:model.live="price_mode">
-                    <option value="fixed">Є ціна</option>
-                    <option value="from">Ціна від</option>
-                    <option value="inquiry">Уточнюйте ціну</option>
-                </select>
+                <x-admin.select model="price_mode" :clearable="false"
+                    :options="[
+                        ['value' => 'fixed', 'label' => 'Є ціна'],
+                        ['value' => 'from', 'label' => 'Ціна від'],
+                        ['value' => 'inquiry', 'label' => 'Уточнюйте ціну'],
+                    ]" />
             </div>
 
             @if($price_mode !== 'inquiry')
@@ -207,6 +201,11 @@
                         </select>
                     </div>
                 </div>
+
+                <div style="margin-top:.5rem; display:flex; gap:1.5rem; flex-wrap:wrap">
+                    <label><input wire:model="is_promo" type="checkbox"> Акція (бейдж на сайті)</label>
+                    <label><input wire:model="free_shipping" type="checkbox"> Безкоштовна доставка</label>
+                </div>
             @else
                 <p style="color:#666">Ціна не показується — клієнт надсилає заявку менеджеру.</p>
             @endif
@@ -224,9 +223,7 @@
             <legend><strong>Категорії (мультивибір)</strong></legend>
             <select wire:model="categoryIds" multiple size="8" style="width:100%">
                 @foreach($categories as $c)
-                    <option value="{{ $c->id }}">
-                        {{ str_repeat('— ', max(0, $c->level - 1)) }}{{ $c->name }}
-                    </option>
+                    <option value="{{ $c->id }}" style="{{ ($c->level === 1 || $c->is_branch) ? 'font-weight:700' : 'color:#6b7280' }}">{{ $c->tree_prefix }}{{ $c->name }}</option>
                 @endforeach
             </select>
             <small style="color:#666">Ctrl/Cmd + клік — обрати декілька.</small>
@@ -275,12 +272,21 @@
                 <p style="color:#666">Фото завантажаться разом зі збереженням товару.</p>
             @endunless
 
+            {{-- Спільне каталожне фото (призначається масово на сторінці товарів) --}}
+            @if($catalogImageUrl)
+                <div style="margin-bottom:1rem">
+                    <label>Каталожне фото (спільне)</label><br>
+                    <div class="photo-thumb"><img src="{{ $catalogImageUrl }}" alt=""></div>
+                    <small style="color:#666">Використовується, поки немає власних фото. Призначається масово на сторінці «Товари».</small>
+                </div>
+            @endif
+
             {{-- Основне фото --}}
             <div style="margin-bottom:1rem">
                 <label>Основне фото</label><br>
                 @if($mainMedia)
                     <div class="photo-thumb">
-                        <img src="{{ $mainMedia->hasGeneratedConversion('thumb') ? $mainMedia->getUrl('thumb') : $mainMedia->getUrl() }}" alt="">
+                        <img src="{{ \App\Support\MediaUrl::rel($mainMedia->hasGeneratedConversion('thumb') ? $mainMedia->getUrl('thumb') : $mainMedia->getUrl()) }}" alt="">
                         <button type="button" class="photo-del" wire:click="deleteMedia({{ $mainMedia->id }})"
                             wire:confirm="Видалити основне фото?">×</button>
                     </div>
@@ -297,7 +303,7 @@
                     <div class="photo-grid">
                         @foreach($galleryMedia as $m)
                             <div class="photo-thumb" wire:key="media-{{ $m->id }}">
-                                <img src="{{ $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl() }}" alt="">
+                                <img src="{{ \App\Support\MediaUrl::rel($m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl()) }}" alt="">
                                 <button type="button" class="photo-del" wire:click="deleteMedia({{ $m->id }})"
                                     wire:confirm="Видалити фото?">×</button>
                             </div>

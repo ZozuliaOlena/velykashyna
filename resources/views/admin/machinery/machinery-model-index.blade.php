@@ -8,14 +8,10 @@
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по назві...">
-        <select wire:model.live="filterBrand">
-            <option value="">— Виробник —</option>
-            @foreach($brands as $b)<option value="{{ $b->id }}">{{ $b->name }}</option>@endforeach
-        </select>
-        <select wire:model.live="filterType">
-            <option value="">— Тип техніки —</option>
-            @foreach($types as $t)<option value="{{ $t->id }}">{{ $t->name }}</option>@endforeach
-        </select>
+        <x-admin.select model="filterBrand" placeholder="— Виробник —"
+            :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
+        <x-admin.select model="filterType" placeholder="— Тип техніки —"
+            :options="$types->map(fn ($t) => ['value' => $t->id, 'label' => $t->name])->all()" />
     </div>
 
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
@@ -29,8 +25,8 @@
                 <td data-label="Виробник">{{ $item->brand?->name ?? '—' }}</td>
                 <td data-label="Тип техніки">{{ $item->type?->name ?? '—' }}</td>
                 <td class="cell-actions">
-                    <button wire:click="openEdit({{ $item->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $item->id }})" wire:confirm="Видалити модель?">Видалити</button>
+                    <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $item->id }})" wire:confirm="Видалити модель?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -45,18 +41,14 @@
     <x-admin.modal :title="$editingId ? 'Редагувати модель' : 'Нова модель'">
         <div>
             <label>Виробник техніки *</label>
-            <select wire:model="machinery_brand_id" style="width:100%">
-                <option value="">— Оберіть —</option>
-                @foreach($brands as $b)<option value="{{ $b->id }}">{{ $b->name }}</option>@endforeach
-            </select>
+            <x-admin.select model="machinery_brand_id" placeholder="— Оберіть —" :live="false"
+                :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
             @error('machinery_brand_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>
         <div>
             <label>Тип техніки *</label>
-            <select wire:model="machinery_type_id" style="width:100%">
-                <option value="">— Оберіть —</option>
-                @foreach($types as $t)<option value="{{ $t->id }}">{{ $t->name }}</option>@endforeach
-            </select>
+            <x-admin.select model="machinery_type_id" placeholder="— Оберіть —" :live="false"
+                :options="$types->map(fn ($t) => ['value' => $t->id, 'label' => $t->name])->all()" />
             @error('machinery_type_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>
         <div class="is-full">

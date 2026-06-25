@@ -11,46 +11,59 @@
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по назві...">
     </div>
 
-    <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
-        <thead>
-            <tr><th>Назва</th><th>Рівень</th><th>Батько</th><th>Підкат.</th><th>Товарів</th><th>Активна</th><th>Дії</th></tr>
-        </thead>
-        <tbody>
-            @forelse($categories as $cat)
-            <tr wire:key="cat-{{ $cat->id }}">
-                <td data-label="Назва">{{ str_repeat('— ', max(0, $cat->level - 1)) }}{{ $cat->name }}</td>
-                <td data-label="Рівень">{{ $cat->level }}</td>
-                <td data-label="Батько">{{ $cat->parent?->name ?? '—' }}</td>
-                <td data-label="Підкат.">{{ $cat->children_count }}</td>
-                <td data-label="Товарів">{{ $cat->products_count }}</td>
-                <td data-label="Активна">
-                    <button wire:click="toggleActive({{ $cat->id }})">{{ $cat->is_active ? 'Так' : 'Ні' }}</button>
-                </td>
-                <td class="cell-actions">
-                    <button wire:click="openEdit({{ $cat->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $cat->id }})" wire:confirm="Видалити категорію?">Видалити</button>
-                </td>
-            </tr>
-            @empty
-            <tr><td colspan="7" style="text-align:center">Нічого не знайдено</td></tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    <div style="margin-top:1rem">{{ $categories->links() }}</div>
+    @if($searching)
+        {{-- Пошук: плаский список знайдених категорій (без дерева) --}}
+        <div class="table-scroll">
+        <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
+            <thead>
+                <tr><th>Назва</th><th>Рівень</th><th>Батько</th><th>Підкат.</th><th>Товарів</th><th>Активна</th><th>Дії</th></tr>
+            </thead>
+            <tbody>
+                @forelse($tree as $cat)
+                <tr wire:key="catf-{{ $cat->id }}">
+                    <td data-label="Назва">{{ $cat->name }}</td>
+                    <td data-label="Рівень">{{ $cat->level }}</td>
+                    <td data-label="Батько">{{ $cat->parent?->name ?? '—' }}</td>
+                    <td data-label="Підкат.">{{ $cat->children_count }}</td>
+                    <td data-label="Товарів">{{ $cat->products_count }}</td>
+                    <td data-label="Активна">
+                        <button wire:click="toggleActive({{ $cat->id }})">{{ $cat->is_active ? 'Так' : 'Ні' }}</button>
+                    </td>
+                    <td class="cell-actions">
+                        <button class="icon-btn" wire:click="openEdit({{ $cat->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                        <button class="icon-btn" wire:click="delete({{ $cat->id }})" wire:confirm="Видалити категорію?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="7" style="text-align:center">Нічого не знайдено</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+        </div>
+    @else
+        {{-- Дерево: згортувані вузли + drag-and-drop сортування (тягнути за ⠿) --}}
+        <p class="cat-hint">Тягніть за <span>⠿</span>, щоб змінити порядок у межах одного батька. Клік по ▶ — згорнути/розгорнути.</p>
+        @if($tree->isEmpty())
+            <p style="text-align:center; color:#888; padding:1rem">Категорій ще немає</p>
+        @else
+            <ul class="cat-tree cat-sortable" data-parent="root">
+                @foreach($tree as $cat)
+                    @include('admin.categories._node', ['cat' => $cat])
+                @endforeach
+            </ul>
+        @endif
+    @endif
 
     @if($showModal)
     <x-admin.modal :title="$editingId ? 'Редагувати категорію' : 'Нова категорія'" :wide="true">
         <div>
             <label>Батьківська категорія</label>
-            <select wire:model="parent_id" style="width:100%">
-                <option value="">— Коренева (рівень 1) —</option>
-                @foreach($parents as $p)
-                    @if($p->id !== $editingId)
-                        <option value="{{ $p->id }}">{{ str_repeat('— ', max(0, $p->level - 1)) }}{{ $p->name }}</option>
-                    @endif
-                @endforeach
-            </select>
+            <x-admin.select model="parent_id" placeholder="— Коренева (рівень 1) —" :live="false"
+                :options="$parents->reject(fn ($p) => $p->id === $editingId)->map(fn ($p) => [
+                    'value' => $p->id,
+                    'label' => $p->tree_prefix . $p->name,
+                    'style' => ($p->level === 1 || $p->is_branch) ? 'font-weight:700' : 'color:#6b7280',
+                ])->values()->all()" />
             @error('parent_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>
 

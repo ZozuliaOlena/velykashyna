@@ -22,8 +22,8 @@
                 <td data-label="Назва">{{ $type->name }}</td>
                 <td data-label="Товарів">{{ $type->products_count }}</td>
                 <td class="cell-actions">
-                    <button wire:click="openEdit({{ $type->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $type->id }})" wire:confirm="Видалити тип?">Видалити</button>
+                    <button class="icon-btn" wire:click="openEdit({{ $type->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $type->id }})" wire:confirm="Видалити тип?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty

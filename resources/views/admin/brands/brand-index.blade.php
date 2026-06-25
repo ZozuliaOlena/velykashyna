@@ -41,9 +41,9 @@
                     </button>
                 </td>
                 <td class="cell-actions">
-                    <button wire:click="openEdit({{ $brand->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $brand->id }})"
-                        wire:confirm="Видалити бренд?">Видалити</button>
+                    <button class="icon-btn" wire:click="openEdit({{ $brand->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $brand->id }})"
+                        wire:confirm="Видалити бренд?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @endforeach

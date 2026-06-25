@@ -107,6 +107,17 @@ class CategoryIndex extends Component
         $cat->update(['is_active' => ! $cat->is_active]);
     }
 
+    /**
+     * Перевпорядкувати сусідні категорії (drag-and-drop).
+     * $orderedIds — id прямих дітей одного батька в новому порядку.
+     */
+    public function reorder(array $orderedIds): void
+    {
+        foreach (array_values($orderedIds) as $index => $id) {
+            Category::where('id', (int) $id)->update(['sort_order' => $index]);
+        }
+    }
+
     public function delete(int $id): void
     {
         $cat = Category::withCount('children')->findOrFail($id);
@@ -133,18 +144,24 @@ class CategoryIndex extends Component
 
     public function render()
     {
-        $categories = Category::query()
-            ->withCount(['children', 'products'])
-            ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
-            ->orderBy('level')->orderBy('sort_order')->orderBy('name')
-            ->paginate(50);
+        // Пошук — плаский список (дерево має сенс лише цілком);
+        // без пошуку — згортуване вкладене дерево з drag-and-drop.
+        $searching = $this->search !== '';
+
+        if ($searching) {
+            $tree = Category::query()
+                ->withCount(['children', 'products'])
+                ->where('name', 'like', "%{$this->search}%")
+                ->orderBy('name')
+                ->get();
+        } else {
+            $tree = Category::nestedTree(fn ($q) => $q->withCount(['children', 'products']));
+        }
 
         // для випадаючого списку батьків (рівень < 4, щоб дитина не вийшла за 4)
-        $parents = Category::where('level', '<', 4)
-            ->orderBy('level')->orderBy('name')
-            ->get();
+        $parents = Category::treeOrdered(fn ($q) => $q->where('level', '<', 4));
 
-        return view('admin.categories.category-index', compact('categories', 'parents'))
+        return view('admin.categories.category-index', compact('tree', 'parents', 'searching'))
             ->layout('admin.layouts.admin');
     }
 }

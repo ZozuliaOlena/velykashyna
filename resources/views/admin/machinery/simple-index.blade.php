@@ -4,6 +4,7 @@
     Очікує: $items, $title, $addLabel, опц. $countKey + $countLabel.
 --}}
 @php($countKey = $countKey ?? null)
+@php($withIcon = $withIcon ?? false)
 <div>
     <div style="display:flex; justify-content:space-between; align-items:center">
         <h1>{{ $title }}</h1>
@@ -20,6 +21,7 @@
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
         <thead>
             <tr>
+                @if($withIcon) <th>Іконка</th> @endif
                 <th>Назва</th>
                 @if($countKey) <th>{{ $countLabel ?? 'Використання' }}</th> @endif
                 <th>Дії</th>
@@ -28,15 +30,24 @@
         <tbody>
             @forelse($items as $item)
             <tr wire:key="item-{{ $item->id }}">
+                @if($withIcon)
+                <td data-label="Іконка">
+                    @if($item->iconUrl())
+                        <img src="{{ $item->iconUrl() }}" alt="" class="mtype-icon">
+                    @else
+                        <span style="color:#bbb">—</span>
+                    @endif
+                </td>
+                @endif
                 <td data-label="Назва">{{ $item->name }}</td>
                 @if($countKey) <td data-label="{{ $countLabel ?? 'Використання' }}">{{ $item->{$countKey} }}</td> @endif
                 <td class="cell-actions">
-                    <button wire:click="openEdit({{ $item->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $item->id }})" wire:confirm="Видалити запис?">Видалити</button>
+                    <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $item->id }})" wire:confirm="Видалити запис?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
-            <tr><td colspan="{{ $countKey ? 3 : 2 }}" style="text-align:center">Нічого не знайдено</td></tr>
+            <tr><td colspan="{{ ($countKey ? 3 : 2) + ($withIcon ? 1 : 0) }}" style="text-align:center">Нічого не знайдено</td></tr>
             @endforelse
         </tbody>
     </table>
@@ -50,6 +61,23 @@
             <input wire:model="name" type="text" style="width:100%">
             @error('name') <span style="color:red">{{ $message }}</span> @enderror
         </div>
+
+        @if($withIcon)
+        <div class="is-full">
+            <label>SVG-іконка</label><br>
+            @if($currentIcon)
+                <div class="photo-thumb">
+                    <img src="/storage/{{ ltrim($currentIcon, '/') }}" alt="">
+                    <button type="button" class="photo-del" wire:click="deleteIcon({{ $editingId }})"
+                        wire:confirm="Видалити іконку?">×</button>
+                </div>
+            @endif
+            <input wire:model="icon" type="file" accept=".svg,image/svg+xml">
+            <div wire:loading wire:target="icon" style="color:#666">Завантаження…</div>
+            @error('icon') <span style="color:red">{{ $message }}</span> @enderror
+            <small style="color:#666">Лише SVG, до 1 МБ.</small>
+        </div>
+        @endif
 
         <x-slot:footer>
             <button wire:click="save">Зберегти</button>

@@ -13,42 +13,28 @@
     <div class="admin-filters">
         <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, розмір (710/70R38)...">
 
-        <select wire:model.live="size">
-            <option value="">— Типорозмір —</option>
-            @foreach($sizes as $s)
-                <option value="{{ $s }}">{{ $s }}</option>
-            @endforeach
-        </select>
+        <x-admin.select model="size" placeholder="— Типорозмір —"
+            :options="collect($sizes)->map(fn ($s) => ['value' => $s, 'label' => $s])->all()" />
 
-        <select wire:model.live="type">
-            <option value="">— Тип товару —</option>
-            @foreach($productTypes as $pt)
-                <option value="{{ $pt->id }}">{{ $pt->name }}</option>
-            @endforeach
-        </select>
+        <x-admin.select model="type" placeholder="— Тип товару —"
+            :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
 
-        <select wire:model.live="brand">
-            <option value="">— Виробник —</option>
-            @foreach($brands as $b)
-                <option value="{{ $b->id }}">{{ $b->name }}</option>
-            @endforeach
-        </select>
+        <x-admin.select model="brand" placeholder="— Виробник —"
+            :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
 
-        <select wire:model.live="category">
-            <option value="">— Категорія —</option>
-            @foreach($categories as $c)
-                <option value="{{ $c->id }}">
-                    {{ str_repeat('— ', max(0, $c->level - 1)) }}{{ $c->name }}
-                </option>
-            @endforeach
-        </select>
+        <x-admin.select model="category" placeholder="— Категорія —"
+            :options="$categories->map(fn ($c) => [
+                'value' => $c->id,
+                'label' => $c->tree_prefix . $c->name,
+                'style' => ($c->level === 1 || $c->is_branch) ? 'font-weight:700' : 'color:#6b7280',
+            ])->all()" />
 
-        <select wire:model.live="stock">
-            <option value="">— Наявність —</option>
-            <option value="in_stock">В наявності</option>
-            <option value="on_order">Під замовлення</option>
-            <option value="inquiry">Уточнюйте</option>
-        </select>
+        <x-admin.select model="stock" placeholder="— Наявність —"
+            :options="[
+                ['value' => 'in_stock', 'label' => 'В наявності'],
+                ['value' => 'on_order', 'label' => 'Під замовлення'],
+                ['value' => 'inquiry', 'label' => 'Уточнюйте'],
+            ]" />
 
         <button wire:click="resetFilters">Скинути</button>
     </div>
@@ -83,6 +69,27 @@
                 <button wire:click="bulkSetPrice">Застосувати</button>
             </span>
 
+            {{-- Підняти ціну на відсоток --}}
+            <span class="bulk-group">
+                <input wire:model="bulkPricePercent" type="number" step="0.1"
+                    placeholder="%" style="width:80px" title="Напр. 10 = +10%, -5 = знижка">
+                <button wire:click="bulkRaisePrice"
+                    wire:confirm="Змінити ціну вибраних товарів на вказаний відсоток?">Змінити ціну на %</button>
+            </span>
+
+            {{-- Каталожне фото (одне на кілька товарів) --}}
+            <span class="bulk-group">
+                <label class="file-pick" title="Каталожне (стокове) фото для вибраних товарів">
+                    <input type="file" wire:model="bulkCatalogPhoto" accept="image/*">
+                    <span>📷 Каталожне фото…</span>
+                </label>
+                @if($bulkCatalogPhoto)
+                    <button wire:click="bulkSetCatalogPhoto">Застосувати</button>
+                @endif
+                <span wire:loading wire:target="bulkCatalogPhoto" style="color:#666">Завантаження…</span>
+                @error('bulkCatalogPhoto') <span style="color:red">{{ $message }}</span> @enderror
+            </span>
+
             {{-- Merchant --}}
             <span class="bulk-group">
                 <button wire:click="bulkSetMerchant(true)">Merchant ON</button>
@@ -95,20 +102,37 @@
                 <button wire:click="bulkSetActive(false)">Деактивувати</button>
             </span>
 
+            {{-- Акція --}}
+            <span class="bulk-group">
+                <button wire:click="bulkSetPromo(true)">Акція ON</button>
+                <button wire:click="bulkSetPromo(false)">Акція OFF</button>
+            </span>
+
+            {{-- Безкоштовна доставка --}}
+            <span class="bulk-group">
+                <button wire:click="bulkSetFreeShipping(true)">Доставка ON</button>
+                <button wire:click="bulkSetFreeShipping(false)">Доставка OFF</button>
+            </span>
+
             <button wire:click="bulkDelete" wire:confirm="Видалити вибрані товари?">Видалити</button>
         </div>
     @endif
 
+    <div class="table-scroll">
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
             <tr>
                 <th><input type="checkbox" wire:model.live="selectPage"></th>
+                <th>Фото</th>
                 <th>Артикул</th>
                 <th>Найменування</th>
                 <th>Типорозмір</th>
                 <th>Виробник</th>
                 <th>Наявність</th>
                 <th>Ціна</th>
+                <th>Знижка</th>
+                <th>Акція</th>
+                <th>Доставка</th>
                 <th>Merchant</th>
                 <th>Активний</th>
                 <th>Дії</th>
@@ -118,6 +142,14 @@
             @forelse($products as $product)
             <tr wire:key="product-{{ $product->id }}">
                 <td data-label="Вибір"><input type="checkbox" wire:model.live="selected" value="{{ $product->id }}"></td>
+                <td data-label="Фото">
+                    @php($thumb = $product->thumbUrl())
+                    @if($thumb)
+                        <img src="{{ $thumb }}" alt="" class="product-thumb">
+                    @else
+                        <span class="product-thumb product-thumb--empty">—</span>
+                    @endif
+                </td>
                 <td data-label="Артикул">{{ $product->sku }}</td>
                 <td data-label="Найменування">{{ $product->name }}</td>
                 <td data-label="Типорозмір">{{ $product->size_raw ?? '—' }}</td>
@@ -132,11 +164,34 @@
                 <td data-label="Ціна">
                     @if($product->price_mode === 'inquiry')
                         Уточнюйте
-                    @elseif($product->price_mode === 'from')
-                        від {{ $product->price }} {{ $product->currency }}
                     @else
-                        {{ $product->price }} {{ $product->currency }}
+                        @php($pref = $product->price_mode === 'from' ? 'від ' : '')
+                        @if($product->hasDiscount())
+                            <span style="text-decoration:line-through; color:#9aa0aa">{{ $pref }}{{ $product->oldPrice() }} {{ $product->currency }}</span><br>
+                            <strong style="color:#d32f2f">{{ $pref }}{{ $product->effectivePrice() }} {{ $product->currency }}</strong>
+                        @else
+                            {{ $pref }}{{ $product->price }} {{ $product->currency }}
+                        @endif
                     @endif
+                </td>
+                <td data-label="Знижка">
+                    @if($product->discountLabel())
+                        <span class="badge-discount">{{ $product->discountLabel() }}</span>
+                    @else
+                        <span style="color:#bbb">—</span>
+                    @endif
+                </td>
+                <td data-label="Акція">
+                    <button wire:click="togglePromo({{ $product->id }})"
+                        class="row-toggle {{ $product->is_promo ? 'is-on' : 'is-off' }}">
+                        {{ $product->is_promo ? 'Так' : 'Ні' }}
+                    </button>
+                </td>
+                <td data-label="Доставка">
+                    <button wire:click="toggleFreeShipping({{ $product->id }})"
+                        class="row-toggle {{ $product->free_shipping ? 'is-on' : 'is-off' }}">
+                        {{ $product->free_shipping ? 'Безкошт.' : 'Ні' }}
+                    </button>
                 </td>
                 <td data-label="Merchant">
                     <button wire:click="toggleMerchant({{ $product->id }})"
@@ -151,16 +206,17 @@
                     </button>
                 </td>
                 <td class="cell-actions">
-                    <a href="{{ route('admin.products.edit', $product->id) }}">Редагувати</a>
-                    <button wire:click="delete({{ $product->id }})"
-                        wire:confirm="Видалити товар?">Видалити</button>
+                    <a class="icon-btn" href="{{ route('admin.products.edit', $product->id) }}" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></a>
+                    <button class="icon-btn" wire:click="delete({{ $product->id }})"
+                        wire:confirm="Видалити товар?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
-            <tr><td colspan="10" style="text-align:center">Товарів не знайдено</td></tr>
+            <tr><td colspan="14" style="text-align:center">Товарів не знайдено</td></tr>
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div style="margin-top:1rem">
         {{ $products->links() }}

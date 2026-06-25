@@ -51,6 +51,8 @@ class ProductForm extends Component
     public ?string $discount_type = null;
 
     public bool $merchant_enabled = false;
+    public bool $is_promo = false;
+    public bool $free_shipping = false;
 
     // ── SEO ──────────────────────────────────────────────────
     public ?string $seo_title = null;
@@ -107,6 +109,8 @@ class ProductForm extends Component
         $this->discount_value   = $product->discount_value;
         $this->discount_type    = $product->discount_type;
         $this->merchant_enabled = $product->merchant_enabled;
+        $this->is_promo         = $product->is_promo;
+        $this->free_shipping    = $product->free_shipping;
         $this->seo_title        = $product->seo_title;
         $this->seo_description  = $product->seo_description;
         $this->seo_h1           = $product->seo_h1;
@@ -170,6 +174,8 @@ class ProductForm extends Component
             'exchange_rate'  => ['nullable', 'numeric', 'min:0'],
             'discount_value' => ['nullable', 'numeric', 'min:0'],
             'discount_type'  => ['nullable', 'in:percent,amount'],
+            'is_promo'       => ['boolean'],
+            'free_shipping'  => ['boolean'],
 
             'seo_title'       => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string'],
@@ -221,6 +227,8 @@ class ProductForm extends Component
 
         $product->fill($scalar);
         $product->merchant_enabled = $this->merchant_enabled;
+        $product->is_promo = $this->is_promo;
+        $product->free_shipping = $this->free_shipping;
         $product->is_active = $this->is_active;
         // ручний slug; порожній → з назви. Завжди унікалізуємо самі.
         $product->slug = $this->buildUniqueSlug($this->slug ?: $this->name, $this->productId);
@@ -334,17 +342,18 @@ class ProductForm extends Component
     public function render()
     {
         $product = $this->productId
-            ? Product::with('media')->find($this->productId)
+            ? Product::with(['media', 'catalogImage.media'])->find($this->productId)
             : null;
 
         return view('admin.products.product-form', [
             'productTypes' => ProductType::orderBy('name')->get(),
             'brands'       => Brand::orderBy('name')->get(),
-            'categories'   => Category::orderBy('level')->orderBy('name')->get(),
+            'categories'   => Category::treeOrdered(),
             'allProducts'  => Product::when($this->productId, fn ($q) => $q->whereKeyNot($this->productId))
                 ->orderBy('name')->get(['id', 'sku', 'name']),
             'mainMedia'    => $product?->getFirstMedia('main'),
             'galleryMedia' => $product ? $product->getMedia('gallery') : collect(),
+            'catalogImageUrl' => $product?->catalogImage?->imageUrl('thumb'),
             'attributes'   => $this->attributesForType(),
         ])->layout('admin.layouts.admin');
     }

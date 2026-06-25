@@ -8,14 +8,11 @@
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: ім'я, телефон...">
-        <select wire:model.live="filterStatus">
-            <option value="">— Усі статуси —</option>
-            @foreach($statuses as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
-            @endforeach
-        </select>
+        <x-admin.select model="filterStatus" placeholder="— Усі статуси —"
+            :options="collect($statuses)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
     </div>
 
+    <div class="table-scroll">
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
             <tr><th>#</th><th>Клієнт</th><th>Телефон</th><th>Спосіб</th><th>Позицій</th><th>Статус</th><th>Дата</th><th>Дії</th></tr>
@@ -31,8 +28,8 @@
                 <td data-label="Статус">{{ $statuses[$lead->status] ?? $lead->status }}</td>
                 <td data-label="Дата">{{ $lead->created_at?->format('d.m.Y H:i') }}</td>
                 <td class="cell-actions">
-                    <button wire:click="openView({{ $lead->id }})">Редагувати</button>
-                    <button wire:click="delete({{ $lead->id }})" wire:confirm="Видалити заявку?">Видалити</button>
+                    <button class="icon-btn" wire:click="openView({{ $lead->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $lead->id }})" wire:confirm="Видалити заявку?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -40,6 +37,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div style="margin-top:1rem">{{ $leads->links() }}</div>
 
@@ -61,11 +59,8 @@
         </div>
         <div>
             <label>Статус *</label>
-            <select wire:model="status" style="width:100%">
-                @foreach($statuses as $key => $label)
-                    <option value="{{ $key }}">{{ $label }}</option>
-                @endforeach
-            </select>
+            <x-admin.select model="status" :live="false" :clearable="false"
+                :options="collect($statuses)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
         </div>
 
         @if($current?->customer_comment)
