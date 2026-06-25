@@ -45,24 +45,24 @@
         {{-- ============== ДЕСКТОП: нижній ярус (навігація + категорії) ============== --}}
         <div class="header-bar">
             <nav class="header-nav">
-                <a href="{{ route('catalog') }}" class="is-active">Шини</a>
+                <a href="{{ route('catalog') }}" class="{{ request()->routeIs('catalog') ? 'is-active' : '' }}">Шини</a>
                 <a href="#">Камери</a>
                 <a href="#">Новини</a>
-                <a href="#">Про нас</a>
-                <a href="#">Контакти</a>
+                <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'is-active' : '' }}">Про нас</a>
+                <a href="{{ route('contacts') }}" class="{{ request()->routeIs('contacts') ? 'is-active' : '' }}">Контакти</a>
             </nav>
 
             <div class="header-cats">
                 <a href="#">
-                    <span class="mask-ico" style="--m:url('/images/svg/tehnics/loaders.svg');width:18px;height:18px;color:#e31e24"></span>
+                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/loaders.svg');mask-image:url('/images/svg/tehnics/loaders.svg');width:18px;height:18px;color:#e31e24"></span>
                     Спецтехніка
                 </a>
                 <a href="#">
-                    <span class="mask-ico" style="--m:url('/images/svg/tehnics/tractor.svg');width:18px;height:18px;color:#e31e24"></span>
+                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/tractor.svg');mask-image:url('/images/svg/tehnics/tractor.svg');width:18px;height:18px;color:#e31e24"></span>
                     Агрошини
                 </a>
                 <a href="#">
-                    <span class="mask-ico" style="--m:url('/images/svg/tehnics/truck.svg');width:18px;height:18px;color:#e31e24"></span>
+                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/truck.svg');mask-image:url('/images/svg/tehnics/truck.svg');width:18px;height:18px;color:#e31e24"></span>
                     Вантажні
                 </a>
             </div>

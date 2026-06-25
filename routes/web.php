@@ -12,3 +12,13 @@ Route::get('/', function () {
 Route::get('/catalog', function () {
     return view('web.catalog');
 })->name('catalog');
+
+// Про нас — власний CTA + прозора шапка поверх темного hero (як на головній).
+Route::get('/about', function () {
+    return view('web.about', ['showFooterCta' => false, 'transparentHeader' => true]);
+})->name('about');
+
+// Контакти — власний блок зв'язку/карти, стандартний CTA футера вимикаємо.
+Route::get('/contacts', function () {
+    return view('web.contacts', ['showFooterCta' => false]);
+})->name('contacts');

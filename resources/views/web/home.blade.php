@@ -156,7 +156,7 @@
             ])
             @foreach ($machinery as $m)
             <a href="{{ route('catalog') }}" class="mach-item">
-                <span class="mach-ico mask-ico" style="--m:url('/images/svg/tehnics/{{ $m[1] }}')"></span>
+                <span class="mach-ico mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/{{ $m[1] }}');mask-image:url('/images/svg/tehnics/{{ $m[1] }}')"></span>
                 <span>{{ $m[0] }}</span>
             </a>
             @endforeach
@@ -197,12 +197,12 @@
 
 {{-- ================== ПОПУЛЯРНІ МОДЕЛІ (товари) =============== --}}
 @php($products = [
-['brand' => 'Michelin', 'model' => 'XMCL', 'size' => '460/70 R24', 'constr' => 'Радіальна (TL)', 'li' => '159A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 47800],
+['brand' => 'Michelin', 'model' => 'XMCL', 'size' => '460/70 R24', 'constr' => 'Радіальна (TL)', 'li' => '159A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 47800, 'promos' => ['Акція', 'Безкоштовна доставка']],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '620/75 R30', 'constr' => 'Радіальна (TL)', 'li' => '170D', 'app' => 'Комбайни', 'stock' => false, 'img' => 'MICHELIN MEGAXBIB.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '800/65 R32', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Комбайни', 'stock' => true, 'img' => 'MICHELIN megaxbib1.jpg', 'price_mode' => 'from', 'price' => 132000],
 ['brand' => 'Continental', 'model' => 'AW-Farmer', 'size' => '10.0/75-12', 'constr' => 'Діагональна (TT)', 'li' => '123A8', 'app' => 'Причіпна', 'stock' => false, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Continental', 'model' => 'M 159', 'size' => '10.0/75-15.3', 'constr' => 'Діагональна (TT)', 'li' => '131A8', 'app' => 'Причіпна', 'stock' => true, 'img' => 'continental M 159.jpg', 'price_mode' => 'fixed', 'price' => 8900],
-['brand' => 'BKT', 'model' => 'Agrimax RT 600', 'size' => '710/70 R38', 'constr' => 'Радіальна (TL)', 'li' => '181A8', 'app' => 'Трактори', 'stock' => true, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'from', 'price' => 89000],
+['brand' => 'BKT', 'model' => 'Agrimax RT 600', 'size' => '710/70 R38', 'constr' => 'Радіальна (TL)', 'li' => '181A8', 'app' => 'Трактори', 'stock' => true, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'from', 'price' => 89000, 'promos' => ['Знижка']],
 ['brand' => 'BKT', 'model' => 'Earthmax SR41', 'size' => '1050/50 R32', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Спецтехніка', 'stock' => true, 'img' => '1050-50R32.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Trelleborg', 'model' => 'TM1000', 'size' => '540/65 R28', 'constr' => 'Радіальна (TL)', 'li' => '149D', 'app' => 'Трактори', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 54600],
 ])
@@ -219,7 +219,7 @@
         </div>
         <div class="product-grid">
             @foreach ($products as $p)
-            @include('partials.product-card', ['p' => $p])
+            @include('partials.product-card', ['p' => $p, 'showCountry' => false])
             @endforeach
         </div>
     </div>
@@ -296,11 +296,11 @@
             <p style="color:#6b7280"><b style="color:#e31e24">ВЕЛИКА</b> — не тільки про розмір шини.</p>
         </div>
         @php($why = [
-        ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/star.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/user-shield.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/handshake.svg\')"></span>'],
+        ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/star.svg\');mask-image:url(\'/images/svg/others/star.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/user-shield.svg\');mask-image:url(\'/images/svg/others/user-shield.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Порядність', 'd' => 'Чесно радимо те, що дійсно підходить і працює.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/><path d="M9.5 8l1.7 1.7L14.5 6.5"/></svg>'],
-        ['p' => 'Велика', 't' => 'Допомога', 'd' => 'Допомагаємо до, під час і після покупки.', 'ico' => '<span class="mask-ico" style="--m:url(\'/images/svg/others/help.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Допомога', 'd' => 'Допомагаємо до, під час і після покупки.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/help.svg\');mask-image:url(\'/images/svg/others/help.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Надійність', 'd' => 'Гарантуємо якість та результат.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'],
         ])
         <div class="why-grid">
