@@ -197,12 +197,12 @@
 
 {{-- ================== ПОПУЛЯРНІ МОДЕЛІ (товари) =============== --}}
 @php($products = [
-['brand' => 'Michelin', 'model' => 'XMCL', 'size' => '460/70 R24', 'constr' => 'Радіальна (TL)', 'li' => '159A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 47800],
+['brand' => 'Michelin', 'model' => 'XMCL', 'size' => '460/70 R24', 'constr' => 'Радіальна (TL)', 'li' => '159A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 47800, 'promos' => ['Акція', 'Безкоштовна доставка']],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '620/75 R30', 'constr' => 'Радіальна (TL)', 'li' => '170D', 'app' => 'Комбайни', 'stock' => false, 'img' => 'MICHELIN MEGAXBIB.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '800/65 R32', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Комбайни', 'stock' => true, 'img' => 'MICHELIN megaxbib1.jpg', 'price_mode' => 'from', 'price' => 132000],
 ['brand' => 'Continental', 'model' => 'AW-Farmer', 'size' => '10.0/75-12', 'constr' => 'Діагональна (TT)', 'li' => '123A8', 'app' => 'Причіпна', 'stock' => false, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Continental', 'model' => 'M 159', 'size' => '10.0/75-15.3', 'constr' => 'Діагональна (TT)', 'li' => '131A8', 'app' => 'Причіпна', 'stock' => true, 'img' => 'continental M 159.jpg', 'price_mode' => 'fixed', 'price' => 8900],
-['brand' => 'BKT', 'model' => 'Agrimax RT 600', 'size' => '710/70 R38', 'constr' => 'Радіальна (TL)', 'li' => '181A8', 'app' => 'Трактори', 'stock' => true, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'from', 'price' => 89000],
+['brand' => 'BKT', 'model' => 'Agrimax RT 600', 'size' => '710/70 R38', 'constr' => 'Радіальна (TL)', 'li' => '181A8', 'app' => 'Трактори', 'stock' => true, 'img' => 'continental AW-FARMER.jpg', 'price_mode' => 'from', 'price' => 89000, 'promos' => ['Знижка']],
 ['brand' => 'BKT', 'model' => 'Earthmax SR41', 'size' => '1050/50 R32', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Спецтехніка', 'stock' => true, 'img' => '1050-50R32.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Trelleborg', 'model' => 'TM1000', 'size' => '540/65 R28', 'constr' => 'Радіальна (TL)', 'li' => '149D', 'app' => 'Трактори', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 54600],
 ])
@@ -219,7 +219,7 @@
         </div>
         <div class="product-grid">
             @foreach ($products as $p)
-            @include('partials.product-card', ['p' => $p])
+            @include('partials.product-card', ['p' => $p, 'showCountry' => false])
             @endforeach
         </div>
     </div>

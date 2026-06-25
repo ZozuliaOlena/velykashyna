@@ -46,8 +46,8 @@
     <div class="mm-label">Інформація</div>
     <nav class="mm-links">
         <a href="#" @click="$store.ui.closeMenu()">Новини {!! $chev !!}</a>
-        <a href="#" @click="$store.ui.closeMenu()">Про нас {!! $chev !!}</a>
-        <a href="#" @click="$store.ui.closeMenu()">Контакти {!! $chev !!}</a>
+        <a href="{{ route('about') }}" @click="$store.ui.closeMenu()">Про нас {!! $chev !!}</a>
+        <a href="{{ route('contacts') }}" @click="$store.ui.closeMenu()">Контакти {!! $chev !!}</a>
     </nav>
 
     <div class="mm-label">Сервіси</div>

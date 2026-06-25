@@ -79,13 +79,13 @@
             <div class="footer-col">
                 <div class="fcol-title">Компанія</div>
                 <ul>
-                    <li><a href="#">Про нас</a></li>
+                    <li><a href="{{ route('about') }}">Про нас</a></li>
                     <li><a href="#">Новини</a></li>
                     <li><a href="#">Доставка і оплата</a></li>
                     <li><a href="#">Повернення та обмін</a></li>
                     <li><a href="#">Гарантія</a></li>
                     <li><a href="#">Відгуки</a></li>
-                    <li><a href="#">Контакти</a></li>
+                    <li><a href="{{ route('contacts') }}">Контакти</a></li>
                 </ul>
             </div>
 
