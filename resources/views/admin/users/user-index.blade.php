@@ -11,7 +11,8 @@
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: ім'я, email...">
     </div>
 
-    <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
+    <div class="table-scroll">
+    <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
             <tr><th>Ім'я</th><th>Email</th><th>Роль</th><th>Дії</th></tr>
         </thead>
@@ -23,7 +24,7 @@
                 <td data-label="Роль">{{ $user->role === 'admin' ? 'Адміністратор' : 'Менеджер' }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $user->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete({{ $user->id }})" wire:confirm="Видалити користувача?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $user->id }})" data-confirm="Ви дійсно хочете видалити користувача?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -31,8 +32,9 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
-    <div style="margin-top:1rem">{{ $users->links() }}</div>
+    <div style="margin-top:1rem">{{ $users->links('pagination.admin') }}</div>
 
     @if($showModal)
     <x-admin.modal :title="$editingId ? 'Редагувати користувача' : 'Новий користувач'">
@@ -62,7 +64,7 @@
         </div>
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Скасувати</button>
         </x-slot:footer>
     </x-admin.modal>

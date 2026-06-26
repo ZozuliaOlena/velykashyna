@@ -5,7 +5,10 @@
     <fieldset style="margin-top:1rem">
         <legend><strong>Експорт</strong></legend>
         <p style="color:#666">Повне вивантаження всіх товарів з характеристиками, категоріями та сумісністю (3 листи Excel).</p>
-        <button wire:click="export" class="btn-primary">Завантажити Excel</button>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+            <button wire:click="export" class="btn-primary" wire:loading.attr="disabled" wire:target="export">Завантажити Excel</button>
+            <span class="spinner-line" wire:loading wire:target="export"><span class="spinner"></span> Готуємо файл…</span>
+        </div>
     </fieldset>
 
     {{-- ── Імпорт товарів ──────────────────────────────────── --}}
@@ -18,12 +21,12 @@
         </p>
 
         <input type="file" wire:model="importFile" accept=".xlsx,.xls,.csv">
-        <div wire:loading wire:target="importFile" style="color:#666">Завантаження…</div>
+        <div wire:loading wire:target="importFile" style="margin-top:6px; color:#666; font-size:13px">Завантаження файлу…</div>
         @error('importFile') <span style="color:red">{{ $message }}</span> @enderror
 
-        <div style="margin-top:.5rem">
+        <div style="margin-top:.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
             <button wire:click="import" wire:loading.attr="disabled" wire:target="import">Імпортувати</button>
-            <span wire:loading wire:target="import" style="color:#666">Обробка…</span>
+            <span class="spinner-line" wire:loading wire:target="import"><span class="spinner"></span> Обробка…</span>
         </div>
 
         @if($importReport)
@@ -56,12 +59,12 @@
         </p>
 
         <input type="file" wire:model="photoArchive" accept=".zip">
-        <div wire:loading wire:target="photoArchive" style="color:#666">Завантаження…</div>
+        <div wire:loading wire:target="photoArchive" style="margin-top:6px; color:#666; font-size:13px">Завантаження файлу…</div>
         @error('photoArchive') <span style="color:red">{{ $message }}</span> @enderror
 
-        <div style="margin-top:.5rem">
+        <div style="margin-top:.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
             <button wire:click="uploadPhotos" wire:loading.attr="disabled" wire:target="uploadPhotos">Завантажити фото</button>
-            <span wire:loading wire:target="uploadPhotos" style="color:#666">Обробка…</span>
+            <span class="spinner-line" wire:loading wire:target="uploadPhotos"><span class="spinner"></span> Обробка…</span>
         </div>
 
         @if($photoReport)
@@ -95,12 +98,12 @@
         </p>
 
         <input type="file" wire:model="catalogImages" accept="image/*,.svg" multiple>
-        <div wire:loading wire:target="catalogImages" style="color:#666">Завантаження…</div>
+        <div wire:loading wire:target="catalogImages" style="margin-top:6px; color:#666; font-size:13px">Завантаження файлів…</div>
         @error('catalogImages.*') <span style="color:red">{{ $message }}</span> @enderror
 
-        <div style="margin-top:.5rem">
+        <div style="margin-top:.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
             <button wire:click="uploadCatalogImages" wire:loading.attr="disabled" wire:target="uploadCatalogImages">Завантажити каталожні фото</button>
-            <span wire:loading wire:target="uploadCatalogImages" style="color:#666">Обробка…</span>
+            <span class="spinner-line" wire:loading wire:target="uploadCatalogImages"><span class="spinner"></span> Обробка…</span>
         </div>
 
         @if($catalogImageReport)

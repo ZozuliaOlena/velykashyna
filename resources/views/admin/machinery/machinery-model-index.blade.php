@@ -14,6 +14,7 @@
             :options="$types->map(fn ($t) => ['value' => $t->id, 'label' => $t->name])->all()" />
     </div>
 
+    <div class="table-scroll">
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
             <tr><th>Модель</th><th>Виробник</th><th>Тип техніки</th><th>Дії</th></tr>
@@ -26,7 +27,7 @@
                 <td data-label="Тип техніки">{{ $item->type?->name ?? '—' }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete({{ $item->id }})" wire:confirm="Видалити модель?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $item->id }})" data-confirm="Ви дійсно хочете видалити модель?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -34,8 +35,9 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
-    <div style="margin-top:1rem">{{ $items->links() }}</div>
+    <div style="margin-top:1rem">{{ $items->links('pagination.admin') }}</div>
 
     @if($showModal)
     <x-admin.modal :title="$editingId ? 'Редагувати модель' : 'Нова модель'">
@@ -58,7 +60,7 @@
         </div>
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Скасувати</button>
         </x-slot:footer>
     </x-admin.modal>

@@ -28,9 +28,24 @@
 
 <div class="admin-shell">
     <aside class="admin-sidebar" :class="{ 'is-open': sidebar }">
-        <a href="{{ route('admin.dashboard') }}" class="admin-sidebar__brand" wire:navigate>Велика Шина</a>
+        <div class="admin-sidebar__top">
+            <button type="button" class="admin-sidebar__toggle" x-on:click.stop="sidebar = !sidebar" aria-label="Меню">
+                <span x-show="!sidebar">☰</span>
+                <span x-show="sidebar" x-cloak>✕</span>
+            </button>
+            <a href="{{ route('admin.dashboard') }}" class="admin-sidebar__brand" wire:navigate x-show="sidebar" x-cloak>
+                <img src="/images/logo.png" alt="Велика Шина">
+            </a>
+        </div>
 
-        <nav class="admin-nav">
+        @php
+            // Яка група розгорнута за замовчуванням — за поточним маршрутом.
+            $openGroup = $on('admin.categories.*','admin.attributes.*','admin.brands.*','admin.product-types.*') ? 'catalog'
+                : ($on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-models.*','admin.machinery-positions.*') ? 'tech'
+                : ($on('admin.users.*','admin.settings.*') ? 'system' : ''));
+        @endphp
+        {{-- openGroup = акордеон: одночасно відкрита лише одна група --}}
+        <nav class="admin-nav" x-data="{ openGroup: '{{ $openGroup }}' }">
             <a href="{{ route('admin.dashboard') }}" class="admin-nav__item {{ $nav('admin.dashboard') }}" wire:navigate>
                 {!! $icons['home'] !!}<span>Головна</span>
             </a>
@@ -48,11 +63,11 @@
             </a>
 
             {{-- Каталог --}}
-            <div class="admin-nav__group" x-data="{ open: {{ $on('admin.categories.*','admin.attributes.*','admin.brands.*','admin.product-types.*') ? 'true' : 'false' }} }">
-                <button type="button" class="admin-nav__head" x-on:click="open = !open">
-                    {!! $icons['grid'] !!}<span>Каталог</span><span class="admin-nav__chev" :class="{ 'is-open': open }">▶</span>
+            <div class="admin-nav__group">
+                <button type="button" class="admin-nav__head {{ $on('admin.categories.*','admin.attributes.*','admin.brands.*','admin.product-types.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'catalog' ? '' : 'catalog' } else { sidebar = true; openGroup = 'catalog' }">
+                    {!! $icons['grid'] !!}<span>Каталог</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'catalog' }">▶</span>
                 </button>
-                <div class="admin-nav__sub" x-show="open" x-transition x-cloak>
+                <div class="admin-nav__sub" x-show="openGroup === 'catalog'" x-transition x-cloak>
                     <a href="{{ route('admin.categories.index') }}" class="admin-nav__item {{ $nav('admin.categories.*') }}" wire:navigate>Категорії</a>
                     <a href="{{ route('admin.attributes.index') }}" class="admin-nav__item {{ $nav('admin.attributes.*') }}" wire:navigate>Характеристики</a>
                     <a href="{{ route('admin.brands.index') }}" class="admin-nav__item {{ $nav('admin.brands.*') }}" wire:navigate>Бренди</a>
@@ -61,11 +76,11 @@
             </div>
 
             {{-- Техніка --}}
-            <div class="admin-nav__group" x-data="{ open: {{ $on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-models.*','admin.machinery-positions.*') ? 'true' : 'false' }} }">
-                <button type="button" class="admin-nav__head" x-on:click="open = !open">
-                    {!! $icons['truck'] !!}<span>Техніка</span><span class="admin-nav__chev" :class="{ 'is-open': open }">▶</span>
+            <div class="admin-nav__group">
+                <button type="button" class="admin-nav__head {{ $on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-models.*','admin.machinery-positions.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'tech' ? '' : 'tech' } else { sidebar = true; openGroup = 'tech' }">
+                    {!! $icons['truck'] !!}<span>Техніка</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'tech' }">▶</span>
                 </button>
-                <div class="admin-nav__sub" x-show="open" x-transition x-cloak>
+                <div class="admin-nav__sub" x-show="openGroup === 'tech'" x-transition x-cloak>
                     <a href="{{ route('admin.machinery-types.index') }}" class="admin-nav__item {{ $nav('admin.machinery-types.*') }}" wire:navigate>Типи техніки</a>
                     <a href="{{ route('admin.machinery-brands.index') }}" class="admin-nav__item {{ $nav('admin.machinery-brands.*') }}" wire:navigate>Виробники</a>
                     <a href="{{ route('admin.machinery-models.index') }}" class="admin-nav__item {{ $nav('admin.machinery-models.*') }}" wire:navigate>Моделі</a>
@@ -74,11 +89,11 @@
             </div>
 
             {{-- Система --}}
-            <div class="admin-nav__group" x-data="{ open: {{ $on('admin.users.*','admin.settings.*') ? 'true' : 'false' }} }">
-                <button type="button" class="admin-nav__head" x-on:click="open = !open">
-                    {!! $icons['gear'] !!}<span>Система</span><span class="admin-nav__chev" :class="{ 'is-open': open }">▶</span>
+            <div class="admin-nav__group">
+                <button type="button" class="admin-nav__head {{ $on('admin.users.*','admin.settings.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'system' ? '' : 'system' } else { sidebar = true; openGroup = 'system' }">
+                    {!! $icons['gear'] !!}<span>Система</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'system' }">▶</span>
                 </button>
-                <div class="admin-nav__sub" x-show="open" x-transition x-cloak>
+                <div class="admin-nav__sub" x-show="openGroup === 'system'" x-transition x-cloak>
                     <a href="{{ route('admin.users.index') }}" class="admin-nav__item {{ $nav('admin.users.*') }}" wire:navigate>Користувачі</a>
                     <a href="{{ route('admin.settings.index') }}" class="admin-nav__item {{ $nav('admin.settings.*') }}" wire:navigate>Налаштування</a>
                 </div>
@@ -93,9 +108,17 @@
             <button class="admin-burger" x-on:click.stop="sidebar = !sidebar" aria-label="Меню">☰</button>
             <span class="admin-header__title">Адмін-панель</span>
             <div class="admin-header__spacer"></div>
+
+            <a href="{{ route('admin.leads.index') }}" class="admin-header__leads" wire:navigate title="Нові заявки" aria-label="Заявки">
+                {!! $icons['inbox'] !!}
+                @if($newLeads > 0)
+                    <span class="admin-header__leads-badge">{{ $newLeads > 99 ? '99+' : $newLeads }}</span>
+                @endif
+            </a>
+
             <form class="admin-logout" method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit">Вийти</button>
+                <button type="submit" data-confirm="Ви дійсно хочете вийти з акаунту?">Вийти</button>
             </form>
         </header>
 
@@ -104,6 +127,9 @@
         </main>
     </div>
 </div>
+
+{{-- Глобальна модалка підтвердження дій (видалення, вихід, збереження тощо) --}}
+<x-admin.confirm-modal />
 
 {{-- Глобальні сповіщення (тости) --}}
 <div class="admin-toasts"

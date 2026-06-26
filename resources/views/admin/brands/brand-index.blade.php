@@ -12,7 +12,8 @@
         <input wire:model.live="search" placeholder="Пошук по назві...">
     </div>
 
-    <table border="1" cellpadding="6" style="width:100%; margin-top:1rem">
+    <div class="table-scroll">
+    <table border="1" cellpadding="6" style="width:100%">
         <thead>
             <tr>
                 <th>Лого</th>
@@ -43,14 +44,15 @@
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $brand->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
                     <button class="icon-btn" wire:click="delete({{ $brand->id }})"
-                        wire:confirm="Видалити бренд?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                        data-confirm="Ви дійсно хочете видалити бренд?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
+    </div>
 
-    {{ $brands->links() }}
+    {{ $brands->links('pagination.admin') }}
 
     {{-- Модальне вікно --}}
     @if($showModal)
@@ -78,7 +80,7 @@
                 <div class="photo-thumb">
                     <img src="/storage/{{ ltrim($currentLogo, '/') }}" alt="">
                     <button type="button" class="photo-del" wire:click="deleteLogo({{ $editingId }})"
-                        wire:confirm="Видалити логотип?">×</button>
+                        data-confirm="Ви дійсно хочете видалити логотип?">×</button>
                 </div>
             @endif
 
@@ -92,7 +94,7 @@
         </div>
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Скасувати</button>
         </x-slot:footer>
     </x-admin.modal>
