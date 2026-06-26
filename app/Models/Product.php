@@ -207,4 +207,66 @@ class Product extends Model implements HasMedia
             ? "-{$value}%"
             : "-{$value} {$this->currency}";
     }
+
+    /** Тип конструкції для картки: "Радіальна (TL)" / "Діагональна (TT)". */
+    public function constructionLabel(): string
+    {
+        $type = match ($this->rd_type) {
+            'R' => 'Радіальна',
+            'D' => 'Діагональна',
+            default => null,
+        };
+
+        $tube = $this->tube_type ? " ({$this->tube_type})" : '';
+
+        return trim(($type ?? '') . $tube);
+    }
+
+    /** Промо-бейджі для картки (узгоджено з partials/product-card). */
+    public function cardPromos(): array
+    {
+        $promos = [];
+        if ($this->is_promo) {
+            $promos[] = 'Акція';
+        }
+        if ($this->hasDiscount()) {
+            $promos[] = 'Знижка';
+        }
+        if ($this->free_shipping) {
+            $promos[] = 'Безкоштовна доставка';
+        }
+
+        return $promos;
+    }
+
+    /**
+     * Нормалізація товару у масив для partials/product-card.blade.php.
+     * Очікує (бажано) завантажені зв'язки brand, catalogImage,
+     * machineryCompatibility.machineryType — щоб уникнути N+1.
+     */
+    public function toCard(): array
+    {
+        $compat = $this->machineryCompatibility->first();
+        $type = $compat?->machineryType;
+
+        return [
+            'sku' => $this->sku ?? '',
+            'size' => $this->size_raw ?? '',
+            'brand' => $this->brand?->name ?? '',
+            'brand_logo_url' => $this->brand?->logoUrl(),
+            'model' => $this->model ?? '',
+            'constr' => $this->constructionLabel(),
+            'spec' => $this->specification ?? '',
+            'li' => $this->load_speed_index ?? '',
+            'app' => $type?->name ?? '',
+            'app_icon_url' => $type?->iconUrl(),
+            'stock' => $this->stock_status === 'in_stock',
+            'img_url' => $this->thumbUrl(),
+            'price_mode' => $this->price_mode,
+            'price' => $this->effectivePrice(),
+            'old_price' => $this->oldPrice(),
+            'cur' => $this->currency === 'UAH' ? 'грн' : $this->currency,
+            'promos' => $this->cardPromos(),
+        ];
+    }
 }

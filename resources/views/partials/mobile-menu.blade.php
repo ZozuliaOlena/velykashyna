@@ -38,9 +38,9 @@
     <nav class="mm-links">
         <a href="{{ route('catalog') }}" @click="$store.ui.closeMenu()">Шини {!! $chev !!}</a>
         <a href="#" @click="$store.ui.closeMenu()">Камери {!! $chev !!}</a>
-        <a href="#" @click="$store.ui.closeMenu()">Агрошини {!! $chev !!}</a>
-        <a href="#" @click="$store.ui.closeMenu()">Спецтехніка {!! $chev !!}</a>
-        <a href="#" @click="$store.ui.closeMenu()">Вантажні шини {!! $chev !!}</a>
+        @foreach ($headerLinks ?? [] as $link)
+        <a href="{{ $link['url'] }}" @click="$store.ui.closeMenu()">{{ $link['name'] }} {!! $chev !!}</a>
+        @endforeach
     </nav>
 
     <div class="mm-label">Інформація</div>

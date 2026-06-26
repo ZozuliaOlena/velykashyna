@@ -5,7 +5,8 @@
 @php($stats = config('site.stats'))
 @php($foundedDate = config('site.founded_date'))
 
-@php($categories = [
+{{-- Категорії: з БД ($dbCategories), інакше — демо-заглушка. --}}
+@php($categoriesFallback = [
 ['name' => 'Тракторні', 'count' => 'Понад 8 000 позицій', 'img' => 'MICHELIN MEGAXBIB.jpg'],
 ['name' => 'Комбайні', 'count' => 'Понад 3 000 позицій', 'img' => 'Michelin XMCL.jpg'],
 ['name' => 'Обприскувачі', 'count' => 'Понад 2 000 позицій', 'img' => 'MICHELIN megaxbib1.jpg'],
@@ -13,6 +14,7 @@
 ['name' => 'Спецтехніка', 'count' => 'Понад 6 000 позицій', 'img' => 'continental M 159.jpg'],
 ['name' => 'Вантажні', 'count' => 'Понад 12 000 позицій', 'img' => '1050-50R32.jpg'],
 ])
+@php($categories = !empty($dbCategories ?? []) ? $dbCategories : $categoriesFallback)
 
 @section('content')
 {{-- ===================== HERO-СЛАЙДЕР ======================= --}}
@@ -57,8 +59,8 @@
                 </template>
             </div>
             <div class="hs-actions">
-                <a href="{{ route('catalog') }}" class="btn btn--dark">Обрати самостійно</a>
-                <a href="tel:{{ config('site.contacts.phone_href') }}" class="btn btn--primary">Консультація</a>
+                <a href="{{ route('catalog') }}" class="btn btn--primary">Обрати самостійно</a>
+                <a href="tel:{{ config('site.contacts.phone_href') }}" class="btn btn--dark">Консультація</a>
             </div>
         </div>
     </div>
@@ -70,16 +72,16 @@
 </svg>')
 <div class="filter-bar-wrap" id="pidbir">
     <div class="container">
-        <form class="filter-bar" action="{{ route('catalog') }}" method="GET">
+        <form class="filter-bar" action="{{ route('catalog') }}" method="GET"
+            x-data="homeFilter(@js($filters))" :class="{ 'is-loading': loading }">
             <div class="field">
                 <label>Тип техніки</label>
                 <div class="select">
-                    <select name="machinery">
-                        <option value="">Оберіть тип</option>
-                        <option>Трактори</option>
-                        <option>Комбайни</option>
-                        <option>Навантажувачі</option>
-                        <option>Спецтехніка</option>
+                    <select name="machinery" x-model="machinery" @change="refresh('machinery')">
+                        <option value="">Всі</option>
+                        <template x-for="o in machineryOptions" :key="o.value">
+                            <option :value="o.value" x-text="o.label"></option>
+                        </template>
                     </select>
                     {!! $chev !!}
                 </div>
@@ -87,11 +89,11 @@
             <div class="field">
                 <label>Категорія</label>
                 <div class="select">
-                    <select name="category">
-                        <option value="">Оберіть категорію</option>
-                        <option>Агрошини</option>
-                        <option>Спецшини</option>
-                        <option>Вантажні</option>
+                    <select name="category" x-model="category" @change="refresh('category')">
+                        <option value="">Всі</option>
+                        <template x-for="o in categoryOptions" :key="o.value">
+                            <option :value="o.value" x-text="o.label"></option>
+                        </template>
                     </select>
                     {!! $chev !!}
                 </div>
@@ -99,12 +101,11 @@
             <div class="field">
                 <label>Бренд</label>
                 <div class="select">
-                    <select name="brand">
-                        <option value="">Оберіть бренд</option>
-                        <option>BKT</option>
-                        <option>Michelin</option>
-                        <option>Mitas</option>
-                        <option>Continental</option>
+                    <select name="brand" x-model="brand" @change="refresh('brand')">
+                        <option value="">Всі</option>
+                        <template x-for="o in brandOptions" :key="o.value">
+                            <option :value="o.value" x-text="o.label"></option>
+                        </template>
                     </select>
                     {!! $chev !!}
                 </div>
@@ -112,11 +113,11 @@
             <div class="field">
                 <label>Розмір</label>
                 <div class="select">
-                    <select name="size">
-                        <option value="">Оберіть розмір</option>
-                        <option>710/70R38</option>
-                        <option>800/65R32</option>
-                        <option>520/85R42</option>
+                    <select name="size" x-model="size" @change="refresh('size')">
+                        <option value="">Всі</option>
+                        <template x-for="o in sizeOptions" :key="o.value">
+                            <option :value="o.value" x-text="o.label"></option>
+                        </template>
                     </select>
                     {!! $chev !!}
                 </div>
@@ -126,77 +127,55 @@
     </div>
 </div>
 
-{{-- ============== ПІДБЕРЕМО ДЛЯ ВАШОЇ ТЕХНІКИ ================= --}}
+{{-- ===================== ДЛЯ ВАШОЇ ТЕХНІКИ ===================== --}}
 <section class="section machinery"
     x-data="{ scroll(dir) { this.$refs.track.scrollBy({ left: dir * 320, behavior: 'smooth' }) } }">
     <div class="container">
         <div class="section-head" data-aos="fade-up">
-            <h2 class="section-title">Підберемо для вашої техніки</h2>
-            <div class="mach-nav">
-                <button type="button" class="mach-arrow" aria-label="Прокрутити назад" @click="scroll(-1)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                </button>
-                <button type="button" class="mach-arrow" aria-label="Прокрутити вперед" @click="scroll(1)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                </button>
-            </div>
+            <h2 class="section-title">Для вашої техніки</h2>
         </div>
-        <div class="mach-track" x-ref="track">
-            @php($machinery = [
-            ['Трактори', 'tractor.svg'],
-            ['Комбайни', 'combine.svg'],
-            ['Обприскувачі', 'sprayer.svg'],
-            ['Навантажувачі', 'loaders.svg'],
-            ['Вантажні', 'truck.svg'],
-            ['Інше', 'wheel.svg'],
-            ])
-            @foreach ($machinery as $m)
-            <a href="{{ route('catalog') }}" class="mach-item">
-                <span class="mach-ico mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/{{ $m[1] }}');mask-image:url('/images/svg/tehnics/{{ $m[1] }}')"></span>
-                <span>{{ $m[0] }}</span>
-            </a>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-{{-- ====================== КАТАЛОГ ШИН ========================== --}}
-<section class="section">
-    <div class="container">
-        <div class="section-head" data-aos="fade-up">
-            <h2 class="section-title">Каталог шин</h2>
-            <a href="{{ route('catalog') }}" class="section-link">Весь каталог
+        <div class="mach-wrap">
+            <button type="button" class="mach-arrow mach-arrow--prev" aria-label="Прокрутити назад"
+                @click="scroll(-1)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
+                    <polyline points="15 18 9 12 15 6" />
                 </svg>
-            </a>
-        </div>
-        <div class="cat-grid">
-            @foreach ($categories as $i => $cat)
-            <a href="{{ route('catalog') }}" class="cat-card" data-aos="fade-up" data-aos-delay="{{ $i * 60 }}">
-                <div class="cat-img"><img src="/images/wheels/{{ $cat['img'] }}" alt="{{ $cat['name'] }}"
-                        loading="lazy" /></div>
-                <div class="cat-name">{{ $cat['name'] }}</div>
-                <div class="cat-count">
-                    {{ $cat['count'] }}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                        <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                </div>
+            </button>
+            <div class="mach-track" x-ref="track">
+            {{-- Техніка: з БД ($dbMachinery), інакше — демо-заглушка. --}}
+            @php($machineryFallback = [
+            ['name' => 'Трактори', 'icon' => '/images/svg/tehnics/tractor.svg', 'url' => route('catalog')],
+            ['name' => 'Комбайни', 'icon' => '/images/svg/tehnics/combine.svg', 'url' => route('catalog')],
+            ['name' => 'Обприскувачі', 'icon' => '/images/svg/tehnics/sprayer.svg', 'url' => route('catalog')],
+            ['name' => 'Навантажувачі', 'icon' => '/images/svg/tehnics/loaders.svg', 'url' => route('catalog')],
+            ['name' => 'Вантажні', 'icon' => '/images/svg/tehnics/truck.svg', 'url' => route('catalog')],
+            ['name' => 'Інше', 'icon' => '/images/svg/tehnics/wheel.svg', 'url' => route('catalog')],
+            ])
+            @php($machinery = !empty($dbMachinery ?? []) ? $dbMachinery : $machineryFallback)
+            @foreach ($machinery as $m)
+            <a href="{{ $m['url'] ?? route('catalog') }}" class="mach-item">
+                <span class="mach-ico mask-ico"
+                    style="-webkit-mask-image:url('{{ $m['icon'] }}');mask-image:url('{{ $m['icon'] }}')"></span>
+                <span>{{ $m['name'] }}</span>
             </a>
             @endforeach
+            </div>
+            <button type="button" class="mach-arrow mach-arrow--next" aria-label="Прокрутити вперед"
+                @click="scroll(1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </button>
         </div>
     </div>
 </section>
 
-{{-- ================== ПОПУЛЯРНІ МОДЕЛІ (товари) =============== --}}
-@php($products = [
+{{-- ================= ЛІЧИЛЬНИК ДОСВІДУ ======================== --}}
+@include('partials.experience-counter')
+
+{{-- ================== КАТАЛОГ ШИН (товари) =================== --}}
+{{-- Товари: з БД ($dbProducts), інакше — демо-заглушка. --}}
+@php($productsFallback = [
 ['brand' => 'Michelin', 'model' => 'XMCL', 'size' => '460/70 R24', 'constr' => 'Радіальна (TL)', 'li' => '159A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 47800, 'promos' => ['Акція', 'Безкоштовна доставка']],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '620/75 R30', 'constr' => 'Радіальна (TL)', 'li' => '170D', 'app' => 'Комбайни', 'stock' => false, 'img' => 'MICHELIN MEGAXBIB.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '800/65 R32', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Комбайни', 'stock' => true, 'img' => 'MICHELIN megaxbib1.jpg', 'price_mode' => 'from', 'price' => 132000],
@@ -206,10 +185,11 @@
 ['brand' => 'BKT', 'model' => 'Earthmax SR41', 'size' => '1050/50 R32', 'constr' => 'Радіальна (TL)', 'li' => '178A8', 'app' => 'Спецтехніка', 'stock' => true, 'img' => '1050-50R32.jpg', 'price_mode' => 'inquiry'],
 ['brand' => 'Trelleborg', 'model' => 'TM1000', 'size' => '540/65 R28', 'constr' => 'Радіальна (TL)', 'li' => '149D', 'app' => 'Трактори', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 54600],
 ])
-<section class="section" style="padding-top:0">
+@php($products = !empty($dbProducts ?? []) ? $dbProducts : $productsFallback)
+<section class="section">
     <div class="container">
         <div class="section-head" data-aos="fade-up">
-            <h2 class="section-title">Популярні моделі</h2>
+            <h2 class="section-title">Каталог шин</h2>
             <a href="{{ route('catalog') }}" class="section-link">Весь каталог
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12" />
@@ -299,9 +279,16 @@
         ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/star.svg\');mask-image:url(\'/images/svg/others/star.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/user-shield.svg\');mask-image:url(\'/images/svg/others/user-shield.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Порядність', 'd' => 'Чесно радимо те, що дійсно підходить і працює.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/><path d="M9.5 8l1.7 1.7L14.5 6.5"/></svg>'],
+        ['p' => 'Велика', 't' => 'Порядність', 'd' => 'Чесно радимо те, що дійсно підходить і працює.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="6" />
+            <path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5" />
+            <path d="M9.5 8l1.7 1.7L14.5 6.5" />
+        </svg>'],
         ['p' => 'Велика', 't' => 'Допомога', 'd' => 'Допомагаємо до, під час і після покупки.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/help.svg\');mask-image:url(\'/images/svg/others/help.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Надійність', 'd' => 'Гарантуємо якість та результат.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'],
+        ['p' => 'Велика', 't' => 'Надійність', 'd' => 'Гарантуємо якість та результат.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <polyline points="9 12 11 14 15 10" />
+        </svg>'],
         ])
         <div class="why-grid">
             @foreach ($why as $i => $w)

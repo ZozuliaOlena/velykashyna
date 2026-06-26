@@ -52,20 +52,17 @@
                 <a href="{{ route('contacts') }}" class="{{ request()->routeIs('contacts') ? 'is-active' : '' }}">Контакти</a>
             </nav>
 
+            @if (!empty($headerLinks))
             <div class="header-cats">
-                <a href="#">
-                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/loaders.svg');mask-image:url('/images/svg/tehnics/loaders.svg');width:18px;height:18px;color:#e31e24"></span>
-                    Спецтехніка
+                @foreach ($headerLinks as $link)
+                <a href="{{ $link['url'] }}">
+                    <span class="mask-ico"
+                        style="-webkit-mask-image:url('{{ $link['icon'] }}');mask-image:url('{{ $link['icon'] }}');width:18px;height:18px;color:#e31e24"></span>
+                    {{ $link['name'] }}
                 </a>
-                <a href="#">
-                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/tractor.svg');mask-image:url('/images/svg/tehnics/tractor.svg');width:18px;height:18px;color:#e31e24"></span>
-                    Агрошини
-                </a>
-                <a href="#">
-                    <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/tehnics/truck.svg');mask-image:url('/images/svg/tehnics/truck.svg');width:18px;height:18px;color:#e31e24"></span>
-                    Вантажні
-                </a>
+                @endforeach
             </div>
+            @endif
         </div>
 
         {{-- ============== МОБІЛЬНИЙ ============== --}}
