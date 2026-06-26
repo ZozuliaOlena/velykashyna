@@ -30,13 +30,18 @@ body.admin-body {
     }
 
     // ── Каркас: бічне меню + контент ─────────────────────────────────────
+    // Висота = рівно вікно, сторінка сама не прокручується. Прокручується
+    // лише контентна зона (.admin-main) — завдяки цьому шапка таблиці
+    // надійно «липне» до верху зони під хедером (див. thead th).
     .admin-shell {
         display: flex;
-        min-height: 100vh;
+        height: 100vh;
+        overflow: hidden;
     }
 
     [x-cloak] { display: none !important; }
 
+    // Базова поведінка (мобільні): off-canvas, відкривається бургером + хрестик.
     .admin-sidebar {
         width: 252px;
         flex-shrink: 0;
@@ -44,30 +49,52 @@ body.admin-body {
         inset: 0 auto 0 0;
         background: #15171c;
         overflow-y: auto;
+        overflow-x: hidden;
         z-index: 1000;
         display: flex;
         flex-direction: column;
-        transition: transform 0.25s ease;
+        transform: translateX(-100%);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+        transition: width 0.2s ease, transform 0.25s ease;
 
-        &__brand {
+        &.is-open { transform: translateX(0); }
+
+        &__top {
             display: flex;
             align-items: center;
             gap: 11px;
-            padding: 20px;
-            font-weight: 800;
-            font-size: 17px;
-            color: #fff;
-            text-decoration: none;
+            min-height: 56px;
+            padding: 12px 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
 
-            &::before {
-                content: "";
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background: $primary-red;
-                flex-shrink: 0;
-                box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.25);
+        &__toggle {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 8px;
+
+            &:hover { background: rgba(255, 255, 255, 0.08); }
+        }
+
+        &__brand {
+            display: block;
+            min-width: 0;
+
+            img {
+                display: block;
+                height: 32px;
+                width: auto;
+                max-width: 160px;
             }
         }
     }
@@ -166,15 +193,19 @@ body.admin-body {
     }
 
     .admin-content {
-        margin-left: 252px;
+        margin-left: 0;
         flex: 1;
         min-width: 0;
+        height: 100vh;
+        overflow: hidden;       // прокрутку віддаємо .admin-main
         display: flex;
         flex-direction: column;
+        transition: margin-left 0.2s ease;
     }
 
     .admin-header {
         height: 56px;
+        flex-shrink: 0;         // не стискається у флекс-колонці контенту
         display: flex;
         align-items: center;
         gap: 12px;
@@ -182,8 +213,6 @@ body.admin-body {
         background: $bg-white;
         border-bottom: 1px solid $border-color;
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-        position: sticky;
-        top: 0;
         z-index: 900;
 
         &__spacer { flex: 1; }
@@ -192,6 +221,42 @@ body.admin-body {
             font-weight: 700;
             font-size: 15px;
             color: $text-light;
+        }
+
+        // Іконка заявок із лічильником нових
+        &__leads {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            color: $text-light;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+
+            svg { width: 21px; height: 21px; }
+            &:hover { background: #f3f4f6; color: $text-dark; }
+        }
+
+        &__leads-badge {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: $primary-red;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            line-height: 1;
+            box-shadow: 0 0 0 2px $bg-white;
         }
 
         .admin-logout button {
@@ -210,7 +275,8 @@ body.admin-body {
     }
 
     .admin-burger {
-        display: none;
+        display: inline-flex;
+        align-items: center;
         background: none;
         border: none;
         cursor: pointer;
@@ -221,30 +287,67 @@ body.admin-body {
     }
 
     .admin-overlay { display: none; }
+    .admin-overlay.is-open {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+    }
 
-    @media (max-width: 992px) {
+    // ── Десктоп: завжди видимий рейл-іконки, бургер у рейлі розгортає меню ──
+    @media (min-width: 993px) {
         .admin-sidebar {
-            transform: translateX(-100%);
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+            width: 72px;
+            transform: translateX(0);     // рейл завжди видно
+            box-shadow: none;
         }
-        .admin-sidebar.is-open { transform: translateX(0); }
-        .admin-content { margin-left: 0; }
-        .admin-burger { display: inline-flex; align-items: center; }
-        .admin-overlay.is-open {
-            display: block;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 999;
+        .admin-sidebar.is-open {
+            width: 252px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
         }
+
+        // Згорнутий рейл: ховаємо підписи/підменю, центруємо іконки
+        .admin-sidebar:not(.is-open) {
+            .admin-nav__item > span,
+            .admin-nav__head > span,
+            .admin-nav__chev,
+            .admin-nav__sub,
+            .admin-nav__badge { display: none; }
+
+            .admin-nav__item,
+            .admin-nav__head {
+                justify-content: center;
+                gap: 0;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .admin-sidebar__top {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
+        .admin-content { margin-left: 72px; }
+
+        // На десктопі бургер у хедері не потрібен — перемикач у рейлі
+        .admin-burger { display: none; }
     }
 
     // ── Контентна область ────────────────────────────────────────────────
+    // Єдина прокручувана зона сторінки (по вертикалі й горизонталі).
+    // padding-top = 0 навмисно: інакше липка шапка таблиці чіплялась би
+    // нижче падінгу, і у верхньому проміжку «просвічував» би рядок.
+    // Верхній відступ робимо через margin-top картки (.admin-main > div).
     .admin-main {
-        max-width: 1280px;
-        margin: 0 auto;
+        max-width: none;       // на всю ширину екрана пристрою
         width: 100%;
-        padding: 28px 24px 60px;
+        flex: 1;
+        min-height: 0;         // дозволяє flex-нащадку прокручуватись
+        overflow: auto;
+        padding: 0 24px 60px;
 
         h1 {
             font-size: 24px;
@@ -372,6 +475,7 @@ body.admin-body {
             display: block;
             width: 100%;
             max-width: 100%;
+            margin-top: 8px;
             padding: 10px 12px;
             font-size: 13.5px;
             color: $text-light;
@@ -543,6 +647,12 @@ body.admin-body {
             background: $bg-white;
 
             > div { margin-bottom: 10px; }
+
+            // Опис під заголовком блоку — відступ до кнопки/поля нижче.
+            > p {
+                margin: 4px 0 14px;
+                line-height: 1.5;
+            }
         }
 
         legend {
@@ -603,24 +713,29 @@ body.admin-body {
         }
 
         // ── Таблиці ──────────────────────────────────────────────────────
+        // ВАЖЛИВО: жодного overflow на самій table — інакше вона стає
+        // clip-контейнером і «position: sticky» шапки чіпляється до неї
+        // (яка не прокручується), і шапка зникає під час гортання.
         table {
             width: 100%;
             border-collapse: collapse;
             background: $bg-white;
             border: 1px solid $border-color;
             border-radius: 12px;
-            overflow: hidden;
             margin-top: 14px;
         }
 
         // Обгортка для широких таблиць: горизонтальний скрол усередині блоку,
         // щоб таблиця ніколи не вилазила за картку сторінки.
+        // Обгортка таблиці. Навмисно БЕЗ overflow: інакше блок став би
+        // власним скрол-контейнером і «position: sticky» шапки прив'язалась
+        // би до нього, а не до сторінки — і шапка зникала б під час гортання.
+        // Завдяки overflow: visible шапка липне відносно вікна (див. thead th).
         .table-scroll {
             width: 100%;
             max-width: 100%;
             margin-top: 14px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            overflow: visible;
 
             > table { margin-top: 0; }
         }
@@ -644,6 +759,11 @@ body.admin-body {
             font-weight: 700;
             border-bottom: 2px solid $border-color;
             white-space: nowrap;
+            // Липне до верху зони прокрутки (.admin-main). Рядки чисто йдуть
+            // під шапку, а сама вона лишається видимою під час гортання.
+            position: sticky;
+            top: 0;
+            z-index: 3;
         }
 
         tbody tr {
@@ -713,8 +833,9 @@ body.admin-body {
             }
         }
 
-        // Кілька іконок у комірці дій — рівний відступ
+        // Кілька іконок у комірці дій — рівний відступ, завжди в один рядок
         td .icon-btn + .icon-btn { margin-left: 6px; }
+        td.cell-actions { white-space: nowrap; }
 
         // ── Дерево категорій (згортуване + drag-and-drop) ────────────────
         .cat-hint {
@@ -971,9 +1092,73 @@ body.admin-body {
             }
         }
 
-        // ── Пагінація (Laravel/Tailwind) — легке вирівнювання ────────────
+        // ── Пагінація ────────────────────────────────────────────────────
         nav[role="navigation"] {
             margin-top: 16px;
+        }
+
+        .adm-pg {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+
+            &__info {
+                font-size: 13px;
+                color: $text-light;
+            }
+
+            &__list {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            &__btn {
+                min-width: 36px;
+                height: 36px;
+                padding: 0 10px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid $border-color;
+                border-radius: 8px;
+                background: $bg-white;
+                color: $text-dark;
+                font-size: 14px;
+                font-weight: 600;
+                font-family: inherit;
+                cursor: pointer;
+                transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+                &:hover { background: #f3f4f6; border-color: #cfcfcf; }
+
+                &.is-active {
+                    background: $primary-red;
+                    border-color: $primary-red;
+                    color: #fff;
+                    cursor: default;
+                }
+
+                &.is-disabled {
+                    opacity: 0.45;
+                    cursor: default;
+                    pointer-events: none;
+                }
+            }
+
+            &__dots {
+                padding: 0 4px;
+                color: $text-light;
+            }
+
+            @media (max-width: 560px) {
+                justify-content: center;
+                &__info { width: 100%; text-align: center; }
+            }
         }
 
         // ── Плитки статистики (dashboard) ────────────────────────────────
@@ -1026,6 +1211,7 @@ body.admin-body {
     // ── Сторінка як єдина картка ─────────────────────────────────────────
     // Кореневий <div> кожного Livewire-компонента стає чистою карткою.
     .admin-main > div {
+        margin-top: 28px;       // відступ від хедера (перенесено з .admin-main)
         background: $bg-white;
         border: 1px solid $border-color;
         border-radius: 16px;
@@ -1218,6 +1404,80 @@ body.admin-body {
         }
     }
 
+    // ── Модалка підтвердження дій ────────────────────────────────────────
+    .admin-confirm {
+        z-index: 1600;            // вище за звичайні модалки редагування
+        align-items: center;      // по центру екрана
+
+        &__box {
+            width: min(420px, 100%);
+            text-align: center;
+            padding: 28px 26px 24px;
+        }
+
+        &__icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fdecea;
+            color: $primary-red;
+
+            svg { width: 28px; height: 28px; }
+        }
+
+        &__text {
+            margin: 0 0 22px;
+            font-size: 16px;
+            font-weight: 600;
+            color: $text-dark;
+            line-height: 1.5;
+        }
+
+        // Кнопки модалки стоять поза .admin-main, тому загальні стилі кнопок
+        // до них не доходять — оформлюємо явно тут.
+        &__actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+
+            button {
+                min-width: 132px;
+                padding: 11px 20px;
+                font-family: inherit;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1;
+                border-radius: $radius;
+                border: 1px solid $border-color;
+                background: $bg-white;
+                color: $text-dark;
+                cursor: pointer;
+                transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.05s;
+
+                &:hover { background: #f3f4f6; border-color: #cfcfcf; }
+                &:active { transform: translateY(1px); }
+            }
+
+            // Підтвердження — акцентна червона кнопка.
+            .btn-primary {
+                background: $primary-red;
+                border-color: $primary-red;
+                color: #fff;
+                box-shadow: 0 2px 10px rgba(211, 47, 47, 0.30);
+
+                &:hover {
+                    background: $red-hover;
+                    border-color: $red-hover;
+                    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.38);
+                }
+            }
+        }
+    }
+
     // Позиції заявки всередині модалки
     .lead-items {
         width: 100%;
@@ -1229,6 +1489,50 @@ body.admin-body {
             padding: 7px 9px;
         }
     }
+
+    // ── Кольорові статуси заявок ─────────────────────────────────────────
+    .lead-status {
+        display: inline-block;
+        padding: 3px 11px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+
+        &--new        { background: #fdecea; color: $primary-red; }   // нова — увага
+        &--processing { background: #e7f0ff; color: #1d4ed8; }        // в обробці
+        &--confirmed  { background: #e8f5e9; color: #2e7d32; }        // підтверджена
+        &--canceled   { background: #f1f2f5; color: $text-light; }    // скасована
+    }
+
+    // Рядок нової заявки — легка підсвітка + червоний акцент зліва
+    .admin-main tbody tr.is-new-lead {
+        background: #fff7f7;
+        box-shadow: inset 3px 0 0 $primary-red;
+    }
+
+    // ── Спінер завантаження ──────────────────────────────────────────────
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(211, 47, 47, 0.25);
+        border-top-color: $primary-red;
+        border-radius: 50%;
+        animation: admin-spin 0.7s linear infinite;
+        vertical-align: middle;
+    }
+
+    // Без display: ним керує Livewire (wire:loading ховає елемент).
+    // Інакше display переб'є [wire:loading]{display:none} і спінер видно завжди.
+    .spinner-line {
+        color: $text-light;
+        font-size: 14px;
+
+        .spinner { margin-right: 8px; }
+    }
+
+    @keyframes admin-spin { to { transform: rotate(360deg); } }
 
     // ══════════════════════════════════════════════════════════════════════
     // Мобільний адаптив — зручно й «user friendly» на телефоні
@@ -1320,7 +1624,7 @@ body.admin-body {
         // Комірка з кнопками дій — кнопки в ряд праворуч
         tbody td.cell-actions {
             justify-content: flex-end;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 8px;
         }
 

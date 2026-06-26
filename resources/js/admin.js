@@ -40,8 +40,48 @@ function scheduleInit() {
     });
 }
 
+// ── Підтвердження дій через гарну модалку замість нативного confirm() ──────
+// Перехоплюємо клік по елементах з [data-confirm] у фазі захоплення (раніше
+// за обробники Livewire), показуємо модалку, і лише після «Так» повторно
+// «клікаємо» елемент — тоді спрацьовує його wire:click / submit.
+function initConfirm() {
+    if (window.__adminConfirmInit) return;
+    window.__adminConfirmInit = true;
+
+    document.addEventListener(
+        'click',
+        (e) => {
+            const el = e.target.closest('[data-confirm]');
+            if (!el) return;
+
+            // Повторний (уже підтверджений) клік — пропускаємо далі.
+            if (el.__confirmed) {
+                el.__confirmed = false;
+                return;
+            }
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            window.dispatchEvent(
+                new CustomEvent('admin-confirm', {
+                    detail: {
+                        message: el.getAttribute('data-confirm'),
+                        accept: () => {
+                            el.__confirmed = true;
+                            el.click();
+                        },
+                    },
+                })
+            );
+        },
+        true // capture
+    );
+}
+
 function boot() {
     initSortables();
+    initConfirm();
     new MutationObserver(scheduleInit).observe(document.body, { childList: true, subtree: true });
 }
 

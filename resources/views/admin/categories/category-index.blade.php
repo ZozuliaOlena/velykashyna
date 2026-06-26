@@ -31,7 +31,7 @@
                     </td>
                     <td class="cell-actions">
                         <button class="icon-btn" wire:click="openEdit({{ $cat->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                        <button class="icon-btn" wire:click="delete({{ $cat->id }})" wire:confirm="Видалити категорію?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                        <button class="icon-btn" wire:click="delete({{ $cat->id }})" data-confirm="Ви дійсно хочете видалити категорію?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                     </td>
                 </tr>
                 @empty
@@ -90,7 +90,7 @@
         </fieldset>
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Скасувати</button>
         </x-slot:footer>
     </x-admin.modal>

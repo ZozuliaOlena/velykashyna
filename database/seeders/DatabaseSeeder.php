@@ -31,5 +31,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProductTypeSeeder::class,
         ]);
+
+        // Демо-каталог (бренди, категорії, 28 товарів із фото) — лише локально,
+        // щоб фейкові дані не потрапили в продакшн. Фронтендеру достатньо
+        // звичайного `composer setup` / `php artisan migrate --seed`.
+        // Порядок важливий: спирається на типи з ProductTypeSeeder вище.
+        if (app()->environment('local')) {
+            $this->call([
+                DemoCatalogSeeder::class,
+            ]);
+        }
     }
 }

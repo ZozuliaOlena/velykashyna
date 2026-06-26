@@ -288,7 +288,7 @@
                     <div class="photo-thumb">
                         <img src="{{ \App\Support\MediaUrl::rel($mainMedia->hasGeneratedConversion('thumb') ? $mainMedia->getUrl('thumb') : $mainMedia->getUrl()) }}" alt="">
                         <button type="button" class="photo-del" wire:click="deleteMedia({{ $mainMedia->id }})"
-                            wire:confirm="Видалити основне фото?">×</button>
+                            data-confirm="Ви дійсно хочете видалити основне фото?">×</button>
                     </div>
                 @endif
                 <input wire:model="mainPhoto" type="file" accept="image/*">
@@ -305,7 +305,7 @@
                             <div class="photo-thumb" wire:key="media-{{ $m->id }}">
                                 <img src="{{ \App\Support\MediaUrl::rel($m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl()) }}" alt="">
                                 <button type="button" class="photo-del" wire:click="deleteMedia({{ $m->id }})"
-                                    wire:confirm="Видалити фото?">×</button>
+                                    data-confirm="Ви дійсно хочете видалити фото?">×</button>
                             </div>
                         @endforeach
                     </div>
@@ -325,7 +325,7 @@
         </div>
 
         <div style="margin-bottom:2rem">
-            <button type="submit">Зберегти</button>
+            <button type="submit" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <a href="{{ route('admin.products.index') }}" wire:navigate>
                 <button type="button">Скасувати</button>
             </a>

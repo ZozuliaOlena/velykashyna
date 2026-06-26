@@ -18,7 +18,8 @@
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
     </div>
 
-    <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
+    <div class="table-scroll">
+    <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
             <tr>
                 @if($withIcon) <th>Іконка</th> @endif
@@ -43,7 +44,7 @@
                 @if($countKey) <td data-label="{{ $countLabel ?? 'Використання' }}">{{ $item->{$countKey} }}</td> @endif
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete({{ $item->id }})" wire:confirm="Видалити запис?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $item->id }})" data-confirm="Ви дійсно хочете видалити запис?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -51,8 +52,9 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
-    <div style="margin-top:1rem">{{ $items->links() }}</div>
+    <div style="margin-top:1rem">{{ $items->links('pagination.admin') }}</div>
 
     @if($showModal)
     <x-admin.modal :title="$editingId ? 'Редагувати' : 'Новий запис'">
@@ -69,7 +71,7 @@
                 <div class="photo-thumb">
                     <img src="/storage/{{ ltrim($currentIcon, '/') }}" alt="">
                     <button type="button" class="photo-del" wire:click="deleteIcon({{ $editingId }})"
-                        wire:confirm="Видалити іконку?">×</button>
+                        data-confirm="Ви дійсно хочете видалити іконку?">×</button>
                 </div>
             @endif
             <input wire:model="icon" type="file" accept=".svg,image/svg+xml">
@@ -80,7 +82,7 @@
         @endif
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Скасувати</button>
         </x-slot:footer>
     </x-admin.modal>

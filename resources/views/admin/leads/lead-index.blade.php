@@ -19,17 +19,19 @@
         </thead>
         <tbody>
             @forelse($leads as $lead)
-            <tr wire:key="lead-{{ $lead->id }}">
+            <tr wire:key="lead-{{ $lead->id }}" @class(['is-new-lead' => $lead->status === 'new'])>
                 <td data-label="#">{{ $lead->id }}</td>
                 <td data-label="Клієнт">{{ $lead->customer_name }}</td>
                 <td data-label="Телефон">{{ $lead->phone }}</td>
                 <td data-label="Спосіб">{{ $lead->contact_method ?? '—' }}</td>
                 <td data-label="Позицій">{{ $lead->items_count }}</td>
-                <td data-label="Статус">{{ $statuses[$lead->status] ?? $lead->status }}</td>
+                <td data-label="Статус">
+                    <span class="lead-status lead-status--{{ $lead->status }}">{{ $statuses[$lead->status] ?? $lead->status }}</span>
+                </td>
                 <td data-label="Дата">{{ $lead->created_at?->format('d.m.Y H:i') }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openView({{ $lead->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete({{ $lead->id }})" wire:confirm="Видалити заявку?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $lead->id }})" data-confirm="Ви дійсно хочете видалити заявку?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -39,7 +41,7 @@
     </table>
     </div>
 
-    <div style="margin-top:1rem">{{ $leads->links() }}</div>
+    <div style="margin-top:1rem">{{ $leads->links('pagination.admin') }}</div>
 
     @if($showModal)
     <x-admin.modal :title="$editingId ? 'Заявка #'.$current?->id : 'Нова заявка'" :wide="true">
@@ -114,7 +116,7 @@
                             <td><input type="number" step="0.01" min="0" wire:model="items.{{ $i }}.price" placeholder="за запитом"></td>
                             <td>
                                 <button type="button" wire:click="removeItem({{ $i }})"
-                                        wire:confirm="Прибрати товар із заявки?">×</button>
+                                        data-confirm="Ви дійсно хочете прибрати товар із заявки?">×</button>
                             </td>
                         </tr>
                         @empty
@@ -135,7 +137,7 @@
         </div>
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Закрити</button>
         </x-slot:footer>
     </x-admin.modal>

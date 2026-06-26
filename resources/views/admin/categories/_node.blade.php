@@ -25,7 +25,7 @@
             {{ $cat->is_active ? 'Так' : 'Ні' }}
         </button>
         <button class="icon-btn" wire:click="openEdit({{ $cat->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-        <button class="icon-btn" wire:click="delete({{ $cat->id }})" wire:confirm="Видалити категорію?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+        <button class="icon-btn" wire:click="delete({{ $cat->id }})" data-confirm="Ви дійсно хочете видалити категорію?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
     </div>
 
     @if($cat->children->isNotEmpty())

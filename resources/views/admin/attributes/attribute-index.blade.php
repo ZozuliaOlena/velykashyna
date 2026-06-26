@@ -30,7 +30,7 @@
                 <td data-label="Варіантів">{{ $attr->data_type === 'select' ? $attr->options_count : '—' }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $attr->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete({{ $attr->id }})" wire:confirm="Видалити характеристику?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $attr->id }})" data-confirm="Ви дійсно хочете видалити характеристику?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -40,7 +40,7 @@
     </table>
     </div>
 
-    <div style="margin-top:1rem">{{ $attrs->links() }}</div>
+    <div style="margin-top:1rem">{{ $attrs->links('pagination.admin') }}</div>
 
     @if($showModal)
     <x-admin.modal :title="$editingId ? 'Редагувати характеристику' : 'Нова характеристика'" :wide="true">
@@ -114,7 +114,7 @@
         @endif
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Закрити</button>
         </x-slot:footer>
     </x-admin.modal>

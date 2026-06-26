@@ -74,7 +74,7 @@
                 <input wire:model="bulkPricePercent" type="number" step="0.1"
                     placeholder="%" style="width:80px" title="Напр. 10 = +10%, -5 = знижка">
                 <button wire:click="bulkRaisePrice"
-                    wire:confirm="Змінити ціну вибраних товарів на вказаний відсоток?">Змінити ціну на %</button>
+                    data-confirm="Ви дійсно хочете змінити ціну вибраних товарів на вказаний відсоток?">Змінити ціну на %</button>
             </span>
 
             {{-- Каталожне фото (одне на кілька товарів) --}}
@@ -114,7 +114,7 @@
                 <button wire:click="bulkSetFreeShipping(false)">Доставка OFF</button>
             </span>
 
-            <button wire:click="bulkDelete" wire:confirm="Видалити вибрані товари?">Видалити</button>
+            <button wire:click="bulkDelete" data-confirm="Ви дійсно хочете видалити вибрані товари?">Видалити</button>
         </div>
     @endif
 
@@ -208,7 +208,7 @@
                 <td class="cell-actions">
                     <a class="icon-btn" href="{{ route('admin.products.edit', $product->id) }}" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></a>
                     <button class="icon-btn" wire:click="delete({{ $product->id }})"
-                        wire:confirm="Видалити товар?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                        data-confirm="Ви дійсно хочете видалити товар?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -219,6 +219,6 @@
     </div>
 
     <div style="margin-top:1rem">
-        {{ $products->links() }}
+        {{ $products->links('pagination.admin') }}
     </div>
 </div>

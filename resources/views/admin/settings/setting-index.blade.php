@@ -10,7 +10,8 @@
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по ключу...">
     </div>
 
-    <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
+    <div class="table-scroll">
+    <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
             <tr><th>Ключ</th><th>Значення</th><th>Дії</th></tr>
         </thead>
@@ -21,7 +22,7 @@
                 <td data-label="Значення" style="word-break:break-all">{{ \Illuminate\Support\Str::limit($setting->value, 80) }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit('{{ $setting->key }}')" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete('{{ $setting->key }}')" wire:confirm="Видалити параметр?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete('{{ $setting->key }}')" data-confirm="Ви дійсно хочете видалити параметр?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
@@ -29,8 +30,9 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
-    <div style="margin-top:1rem">{{ $settings->links() }}</div>
+    <div style="margin-top:1rem">{{ $settings->links('pagination.admin') }}</div>
 
     @if($showModal)
     <x-admin.modal :title="$editingKey ? 'Редагувати параметр' : 'Новий параметр'">
@@ -48,7 +50,7 @@
         </div>
 
         <x-slot:footer>
-            <button wire:click="save">Зберегти</button>
+            <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>
             <button wire:click="$set('showModal', false)">Скасувати</button>
         </x-slot:footer>
     </x-admin.modal>
