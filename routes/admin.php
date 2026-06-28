@@ -14,6 +14,7 @@ use App\Livewire\Admin\Machinery\MachineryTypeIndex;
 use App\Livewire\Admin\Products\ProductForm;
 use App\Livewire\Admin\Products\ProductIndex;
 use App\Livewire\Admin\ProductTypes\ProductTypeIndex;
+use App\Livewire\Admin\Security\SecurityPage;
 use App\Livewire\Admin\Settings\SettingIndex;
 use App\Livewire\Admin\Users\UserIndex;
 
@@ -43,5 +44,6 @@ Route::prefix('admin')
         Route::get('/leads', LeadIndex::class)->name('leads.index');
         Route::get('/users', UserIndex::class)->name('users.index');
         Route::get('/settings', SettingIndex::class)->name('settings.index');
+        Route::get('/security', SecurityPage::class)->name('security.index');
         Route::get('/import-export', ImportExport::class)->name('import-export.index');
     });
