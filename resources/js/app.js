@@ -210,6 +210,56 @@ document.addEventListener('alpine:init', () => {
     }));
 
     /**
+     * Живий (випадаючий) пошук у навігації: на введення підвантажує
+     * товари-підказки й показує дропдаун. Enter — звичайний сабміт у каталог.
+     */
+    Alpine.data('liveSearch', (endpoint, catalogUrl) => ({
+        q: '',
+        items: [],
+        total: 0,
+        open: false,
+        loading: false,
+        timer: null,
+
+        onInput() {
+            clearTimeout(this.timer);
+            const term = this.q.trim();
+            if (term.length < 1) {
+                this.items = [];
+                this.total = 0;
+                this.open = false;
+                return;
+            }
+            this.open = true;
+            this.timer = setTimeout(() => this.fetch(term), 200);
+        },
+
+        async fetch(term) {
+            this.loading = true;
+            try {
+                const res = await fetch(`${endpoint}?q=${encodeURIComponent(term)}`, {
+                    headers: { Accept: 'application/json' },
+                });
+                const data = await res.json();
+                this.items = data.items || [];
+                this.total = data.total || 0;
+            } catch (e) {
+                this.items = [];
+                this.total = 0;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        catalogLink() {
+            return `${catalogUrl}?q=${encodeURIComponent(this.q.trim())}`;
+        },
+        close() {
+            this.open = false;
+        },
+    }));
+
+    /**
      * Підтвердження видалення зі стора ($store[name]) через модалку.
      */
     Alpine.data('removeConfirm', (storeName) => ({

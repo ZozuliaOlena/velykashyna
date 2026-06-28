@@ -24,24 +24,36 @@
         </div>
     </div>
 
-    <form class="mm-search" action="{{ route('catalog') }}" method="GET" role="search">
-        <input type="text" name="q" placeholder="Пошук за розміром або артикулом" autocomplete="off" />
-        <button type="submit" aria-label="Шукати">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-        </button>
-    </form>
+    <div class="search-field" x-data="liveSearch('{{ route('search.suggest') }}', '{{ route('catalog') }}')">
+        <form class="mm-search" action="{{ route('catalog') }}" method="GET" role="search">
+            <input type="text" name="q" placeholder="Пошук за розміром або артикулом" autocomplete="off"
+                x-model="q" @input="onInput()" />
+            <button type="submit" aria-label="Шукати">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+            </button>
+        </form>
+        @include('partials.search-results')
+    </div>
 
     <div class="mm-label">Каталог</div>
     <nav class="mm-links">
-        <a href="{{ route('catalog') }}" @click="$store.ui.closeMenu()">Шини {!! $chev !!}</a>
-        <a href="#" @click="$store.ui.closeMenu()">Камери {!! $chev !!}</a>
-        @foreach ($headerLinks ?? [] as $link)
-        <a href="{{ $link['url'] }}" @click="$store.ui.closeMenu()">{{ $link['name'] }} {!! $chev !!}</a>
+        <a href="{{ route('catalog') }}" @click="$store.ui.closeMenu()">Усі товари {!! $chev !!}</a>
+        @foreach ($catalogMenu['types'] ?? [] as $t)
+        <a href="{{ $t['url'] }}" @click="$store.ui.closeMenu()">{{ $t['name'] }} {!! $chev !!}</a>
         @endforeach
     </nav>
+
+    @if (!empty($catalogMenu['machinery']))
+    <div class="mm-label">За технікою</div>
+    <nav class="mm-links">
+        @foreach (array_slice($catalogMenu['machinery'], 0, 7) as $m)
+        <a href="{{ $m['url'] }}" @click="$store.ui.closeMenu()">{{ $m['name'] }} {!! $chev !!}</a>
+        @endforeach
+    </nav>
+    @endif
 
     <div class="mm-label">Інформація</div>
     <nav class="mm-links">

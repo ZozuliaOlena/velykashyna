@@ -17,10 +17,13 @@
                 <span class="h-tagline">Підбираємо правильні шини з {{ config('site.founded_year') }} року</span>
             </a>
 
-            <form class="header-search" action="{{ route('catalog') }}" method="GET" role="search">
+            <form class="header-search" action="{{ route('catalog') }}" method="GET" role="search"
+                x-data="liveSearch('{{ route('search.suggest') }}', '{{ route('catalog') }}')"
+                @click.outside="close()">
                 <input type="text" name="q" placeholder="Пошук за типорозміром або артикулом, напр. 800/65R32"
-                    autocomplete="off" />
+                    autocomplete="off" x-model="q" @input="onInput()" @focus="items.length && (open = true)" />
                 <button type="submit" aria-label="Шукати">{!! $searchIcon !!}</button>
+                @include('partials.search-results')
             </form>
 
             <div class="header-actions">
@@ -48,8 +51,52 @@
         {{-- ============== ДЕСКТОП: нижній ярус (навігація + категорії) ============== --}}
         <div class="header-bar">
             <nav class="header-nav">
-                <a href="{{ route('catalog') }}" class="{{ request()->routeIs('catalog') ? 'is-active' : '' }}">Шини</a>
-                <a href="#">Камери</a>
+                <div class="nav-mega" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false"
+                    @click.outside="open = false">
+                    <a href="{{ route('catalog') }}"
+                        class="nav-mega__trigger {{ request()->routeIs('catalog') ? 'is-active' : '' }}">
+                        Каталог
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </a>
+                    <div class="mega" x-show="open" x-cloak x-transition.opacity.duration.150ms>
+                        @if (!empty($catalogMenu['types']))
+                        <div class="mega__col">
+                            <span class="mega__title">Типи товару</span>
+                            @foreach ($catalogMenu['types'] as $t)
+                            <a href="{{ $t['url'] }}">{{ $t['name'] }}</a>
+                            @endforeach
+                        </div>
+                        @endif
+                        @if (!empty($catalogMenu['machinery']))
+                        <div class="mega__col">
+                            <span class="mega__title">За технікою</span>
+                            @foreach (array_slice($catalogMenu['machinery'], 0, 7) as $m)
+                            <a href="{{ $m['url'] }}">
+                                <span class="mask-ico"
+                                    style="-webkit-mask-image:url('{{ $m['icon'] }}');mask-image:url('{{ $m['icon'] }}')"></span>
+                                {{ $m['name'] }}
+                            </a>
+                            @endforeach
+                        </div>
+                        @endif
+                        @if (!empty($catalogMenu['categories']))
+                        <div class="mega__col">
+                            <span class="mega__title">Категорії</span>
+                            @foreach ($catalogMenu['categories'] as $cat)
+                            <a href="{{ $cat['url'] }}">{{ $cat['name'] }}</a>
+                            @endforeach
+                        </div>
+                        @endif
+                        <a href="{{ route('catalog') }}" class="mega__all">Весь каталог
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
                 <a href="#">Новини</a>
                 <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'is-active' : '' }}">Про нас</a>
                 <a href="{{ route('contacts') }}" class="{{ request()->routeIs('contacts') ? 'is-active' : '' }}">Контакти</a>
@@ -75,9 +122,6 @@
             </a>
 
             <div class="hm-side">
-                <button class="hm-btn" type="button" aria-label="Пошук" @click="$store.ui.toggleSearch()">
-                    {!! $searchIcon !!}
-                </button>
                 <a href="{{ route('favorites') }}" class="hm-btn hm-iconbtn" aria-label="Обране">
                     {!! $heartIcon !!}
                     <span class="badge" x-show="$store.fav.count" x-text="$store.fav.count" x-cloak></span>
@@ -85,6 +129,9 @@
                 <a href="{{ route('cart') }}" class="hm-btn hm-iconbtn" aria-label="Кошик">
                     {!! $cartIcon !!}
                     <span class="badge" x-show="$store.cart.count" x-text="$store.cart.count" x-cloak></span>
+                </a>
+                <a href="tel:{{ $c['phone_href'] }}" class="hm-btn" aria-label="Подзвонити">
+                    {!! $phoneIcon !!}
                 </a>
                 <button class="hm-btn hm-burger" type="button" aria-label="Меню" @click="$store.ui.toggleMenu()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

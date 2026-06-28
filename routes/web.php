@@ -4,6 +4,7 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 // Головна — дані тягнуться з БД (товари, категорії, техніка, бренди).
@@ -19,6 +20,9 @@ Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 
 // Кількість товарів за поточним вибором фільтрів (JSON, для живого лічильника).
 Route::get('/catalog/count', [CatalogController::class, 'count'])->name('catalog.count');
+
+// Випадаючий (живий) пошук у навігації — підказки товарів (JSON).
+Route::get('/search/suggest', [SearchController::class, 'suggest'])->name('search.suggest');
 
 // Сторінка товару (детальна картка) за ЧПУ-slug.
 Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('product');

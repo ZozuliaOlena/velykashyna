@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use App\Models\MachineryType;
+use App\Models\ProductType;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -27,28 +29,49 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Топ-3 популярні типи техніки (за кількістю сумісних товарів) для
-        // чипів у шапці. Доступні в усіх в'юхах через $headerLinks.
+        // Дані меню каталогу (типи / техніка / категорії) для шапки й
+        // мобільного меню; $headerLinks — топ-3 техніки для чипів.
         View::composer(['partials.header', 'partials.mobile-menu'], function ($view) {
-            $view->with('headerLinks', $this->headerLinks());
+            $menu = $this->catalogMenu();
+            $view->with('catalogMenu', $menu);
+            $view->with('headerLinks', $menu['chips']);
         });
     }
 
-    private function headerLinks(): array
+    private function catalogMenu(): array
     {
-        return Cache::remember('header_machinery', 600, function () {
-            return MachineryType::query()
+        return Cache::remember('catalog_menu', 600, function () {
+            $types = ProductType::orderBy('id')->get(['code', 'name'])
+                ->map(fn (ProductType $t) => [
+                    'name' => $t->name,
+                    'url' => route('catalog', ['type' => $t->code]),
+                ])->all();
+
+            $machinery = MachineryType::query()
                 ->withCount('compatibility')
-                ->orderByDesc('compatibility_count')
-                ->orderBy('name')
-                ->take(3)
+                ->orderByDesc('compatibility_count')->orderBy('name')
                 ->get()
                 ->map(fn (MachineryType $m) => [
                     'name' => $m->name,
                     'url' => route('catalog', ['machinery' => $m->name]),
                     'icon' => $m->iconUrl() ?? '/images/svg/tehnics/' . $this->iconFor($m->name),
-                ])
-                ->all();
+                ])->all();
+
+            $categories = Category::query()
+                ->whereNull('parent_id')->where('is_active', true)
+                ->orderBy('sort_order')->orderBy('name')
+                ->take(8)->get(['name', 'slug'])
+                ->map(fn (Category $c) => [
+                    'name' => $c->name,
+                    'url' => route('catalog', ['category' => $c->slug]),
+                ])->all();
+
+            return [
+                'types' => $types,
+                'machinery' => $machinery,
+                'categories' => $categories,
+                'chips' => array_slice($machinery, 0, 3),
+            ];
         });
     }
 

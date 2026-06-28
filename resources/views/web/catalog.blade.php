@@ -1,7 +1,7 @@
 {{-- resources/views/web/catalog.blade.php — каталог із БД (фільтри, сортування, пагінація) --}}
 @extends('layouts.app')
 
-@section('title', 'Каталог шин — Велика Шина')
+@section('title', 'Каталог — Велика Шина')
 
 @php($chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>')
 
@@ -12,11 +12,11 @@
         <nav class="breadcrumbs">
             <a href="{{ route('home') }}">Головна</a>
             <span class="sep">/</span>
-            <span class="current">Каталог шин</span>
+            <span class="current">Каталог</span>
         </nav>
 
         <div class="catalog-top">
-            <h1 class="catalog-title">Каталог шин</h1>
+            <h1 class="catalog-title">Каталог</h1>
             <span class="catalog-count">Знайдено: <b>{{ $total }}</b></span>
         </div>
 
@@ -62,6 +62,9 @@
                 @if ($selected['category'])
                 <input type="hidden" name="category" value="{{ $selected['category'] }}" />
                 @endif
+                @foreach ($selected['type'] as $t)
+                <input type="hidden" name="type[]" value="{{ $t }}" />
+                @endforeach
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -155,6 +158,27 @@
                     </label>
                     <p class="cf-hint">Показувати тільки товари в наявності</p>
                 </div>
+
+                {{-- Тип товару --}}
+                @if (count($productTypes))
+                <div class="cf-group" x-data="{ open: true }">
+                    <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
+                        Тип товару
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="cf-group__body" x-show="open">
+                        @foreach ($productTypes as $t)
+                        <label class="cf-check">
+                            <input type="checkbox" name="type[]" value="{{ $t->code }}"
+                                @checked(in_array($t->code, $selected['type'], true)) />
+                            <span>{{ $t->name }}</span>
+                        </label>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
 
                 {{-- Тип техніки --}}
                 @if (count($machineryNames))
@@ -333,6 +357,22 @@
                     </div>
                 </label>
             </div>
+
+            {{-- Активні фільтри --}}
+            @if (!empty($activeFilters))
+            <div class="active-filters">
+                @foreach ($activeFilters as $chip)
+                <a href="{{ $chip['url'] }}" class="active-chip">
+                    {{ $chip['label'] }}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </a>
+                @endforeach
+                <a href="{{ route('catalog') }}" class="active-filters__reset">Скинути все</a>
+            </div>
+            @endif
 
             <div class="product-grid catalog-grid" :class="{ 'is-list': view === 'list' }">
                 @forelse ($products as $p)

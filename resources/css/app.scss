@@ -284,6 +284,7 @@ button {
 
 // Видимий рядок пошуку в шапці (стандарт e-commerce)
 .header-search {
+    position: relative;
     flex: 1;
     max-width: 560px;
     display: flex;
@@ -6589,4 +6590,290 @@ button {
             font-weight: 700;
         }
     }
+}
+
+// =====================================================================
+//  ВИПАДАЮЧИЙ ПОШУК (підказки в навігації)
+// =====================================================================
+.search-field {
+    position: relative;
+}
+
+.search-drop {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 1200;
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: $shadow-md;
+    max-height: 70vh;
+    overflow-y: auto;
+
+    &__loading,
+    &__empty {
+        padding: 16px 14px;
+        font-size: 14px;
+        color: $muted;
+        text-align: center;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-bottom: 1px solid $line;
+        color: $ink;
+        transition: background 0.15s ease;
+
+        &:hover {
+            background: $bg-soft;
+        }
+    }
+
+    &__img {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+        background: $bg-soft;
+        border-radius: $radius-sm;
+        padding: 4px;
+        mix-blend-mode: multiply;
+    }
+
+    &__name {
+        flex: 1;
+        min-width: 0;
+        font-size: 14px;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__price {
+        flex-shrink: 0;
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 14px;
+        color: $red;
+        white-space: nowrap;
+    }
+
+    &__all {
+        display: block;
+        padding: 12px 14px;
+        text-align: center;
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 13px;
+        color: $red;
+        background: $bg-soft;
+
+        &:hover {
+            background: $red-soft;
+        }
+    }
+}
+
+// =====================================================================
+//  АКТИВНІ ФІЛЬТРИ (чипи) у каталозі
+// =====================================================================
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.active-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    background: $red-soft;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $red;
+    transition: all 0.2s ease;
+
+    svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    &:hover {
+        background: $red;
+        color: #fff;
+    }
+}
+
+.active-filters__reset {
+    font-size: 13px;
+    font-weight: 600;
+    color: $muted;
+    text-decoration: underline;
+    margin-left: 4px;
+
+    &:hover {
+        color: $red;
+    }
+}
+
+// =====================================================================
+//  ТИПИ ТОВАРУ (вкладки-пілюлі у каталозі)
+// =====================================================================
+.catalog-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 18px;
+
+    .ctype {
+        padding: 9px 18px;
+        border: 1px solid $line;
+        border-radius: 999px;
+        background: #fff;
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 14px;
+        color: $ink;
+        transition: all 0.2s ease;
+
+        &:hover {
+            border-color: $red;
+            color: $red;
+        }
+
+        &.is-active {
+            background: $red;
+            border-color: $red;
+            color: #fff;
+        }
+    }
+}
+
+// =====================================================================
+//  МЕГА-МЕНЮ «КАТАЛОГ» (десктоп, по наведенню)
+// =====================================================================
+.nav-mega {
+    position: relative;
+
+    &__trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        svg {
+            width: 15px;
+            height: 15px;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    &:hover &__trigger svg {
+        transform: rotate(180deg);
+    }
+}
+
+.mega {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1100;
+    margin-top: 10px;
+    width: min(600px, calc(100vw - 32px));
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px 18px;
+    padding: 20px 22px;
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: $shadow-md;
+
+    &__col {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        min-width: 0;
+    }
+
+    &__title {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 11.5px;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: $muted-2;
+        margin-bottom: 4px;
+    }
+
+    &__col a {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.3;
+        color: $ink;
+        white-space: normal;
+        overflow-wrap: break-word;
+        transition: color 0.15s ease;
+
+        .mask-ico {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            vertical-align: -4px;
+            color: $red;
+        }
+
+        &:hover {
+            color: $red;
+        }
+    }
+
+    &__all {
+        grid-column: 1 / -1;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 6px;
+        padding-top: 14px;
+        border-top: 1px solid $line;
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 13px;
+        color: $red;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover {
+            gap: 11px;
+        }
+    }
+}
+
+// Текст мега-меню завжди темний (перебиваємо білий колір overlay-шапки)
+.site-header .header-nav .mega__col a {
+    color: $ink;
+}
+.site-header .header-nav .mega__col a:hover {
+    color: $red;
+}
+.site-header .header-nav .mega__title {
+    color: $muted-2;
+}
+.site-header .header-nav .mega__all {
+    color: $red;
 }

@@ -208,6 +208,29 @@ class Product extends Model implements HasMedia
             : "-{$value} {$this->currency}";
     }
 
+    /**
+     * Пошук за змістовними полями: артикул, бренд, типорозмір, модель.
+     * `name` навмисно НЕ шукаємо (там трапляються індекси навантаження
+     * на кшталт «123A8», які давали хибні збіги). Розмір порівнюємо
+     * без пробілів і регістру, тож «800/65r32» = «800/65 R32».
+     */
+    public function scopeSearch($query, string $term)
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return $query;
+        }
+
+        $norm = mb_strtolower(str_replace(' ', '', $term));
+
+        return $query->where(function ($w) use ($term, $norm) {
+            $w->where('sku', 'like', "%{$term}%")
+                ->orWhere('model', 'like', "%{$term}%")
+                ->orWhereRaw("REPLACE(LOWER(size_raw), ' ', '') LIKE ?", ['%' . $norm . '%'])
+                ->orWhereHas('brand', fn ($b) => $b->where('name', 'like', "%{$term}%"));
+        });
+    }
+
     /** Тип конструкції для картки: "Радіальна (TL)" / "Діагональна (TT)". */
     public function constructionLabel(): string
     {
