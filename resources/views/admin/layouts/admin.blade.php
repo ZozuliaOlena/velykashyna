@@ -42,7 +42,7 @@
             // Яка група розгорнута за замовчуванням — за поточним маршрутом.
             $openGroup = $on('admin.categories.*','admin.attributes.*','admin.brands.*','admin.product-types.*') ? 'catalog'
                 : ($on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-models.*','admin.machinery-positions.*') ? 'tech'
-                : ($on('admin.users.*','admin.settings.*') ? 'system' : ''));
+                : ($on('admin.users.*','admin.settings.*','admin.security.*') ? 'system' : ''));
         @endphp
         {{-- openGroup = акордеон: одночасно відкрита лише одна група --}}
         <nav class="admin-nav" x-data="{ openGroup: '{{ $openGroup }}' }">
@@ -90,12 +90,13 @@
 
             {{-- Система --}}
             <div class="admin-nav__group">
-                <button type="button" class="admin-nav__head {{ $on('admin.users.*','admin.settings.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'system' ? '' : 'system' } else { sidebar = true; openGroup = 'system' }">
+                <button type="button" class="admin-nav__head {{ $on('admin.users.*','admin.settings.*','admin.security.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'system' ? '' : 'system' } else { sidebar = true; openGroup = 'system' }">
                     {!! $icons['gear'] !!}<span>Система</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'system' }">▶</span>
                 </button>
                 <div class="admin-nav__sub" x-show="openGroup === 'system'" x-transition x-cloak>
                     <a href="{{ route('admin.users.index') }}" class="admin-nav__item {{ $nav('admin.users.*') }}" wire:navigate>Користувачі</a>
                     <a href="{{ route('admin.settings.index') }}" class="admin-nav__item {{ $nav('admin.settings.*') }}" wire:navigate>Налаштування</a>
+                    <a href="{{ route('admin.security.index') }}" class="admin-nav__item {{ $nav('admin.security.*') }}" wire:navigate>Безпека</a>
                 </div>
             </div>
         </nav>

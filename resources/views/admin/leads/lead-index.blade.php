@@ -15,7 +15,7 @@
     <div class="table-scroll">
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
-            <tr><th>#</th><th>Клієнт</th><th>Телефон</th><th>Спосіб</th><th>Позицій</th><th>Статус</th><th>Дата</th><th>Дії</th></tr>
+            <tr><th>#</th><th>Клієнт</th><th>Телефон</th><th>Спосіб</th><th>Місто</th><th>Доставка</th><th>Позицій</th><th>Статус</th><th>Дата</th><th>Дії</th></tr>
         </thead>
         <tbody>
             @forelse($leads as $lead)
@@ -24,6 +24,8 @@
                 <td data-label="Клієнт">{{ $lead->customer_name }}</td>
                 <td data-label="Телефон">{{ $lead->phone }}</td>
                 <td data-label="Спосіб">{{ $lead->contact_method ?? '—' }}</td>
+                <td data-label="Місто">{{ $lead->city ?? '—' }}</td>
+                <td data-label="Доставка">{{ trim(($lead->delivery_method ?? '') . ($lead->delivery_address ? ', ' . $lead->delivery_address : '')) ?: '—' }}</td>
                 <td data-label="Позицій">{{ $lead->items_count }}</td>
                 <td data-label="Статус">
                     <span class="lead-status lead-status--{{ $lead->status }}">{{ $statuses[$lead->status] ?? $lead->status }}</span>
@@ -35,7 +37,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="8" style="text-align:center">Заявок не знайдено</td></tr>
+            <tr><td colspan="10" style="text-align:center">Заявок не знайдено</td></tr>
             @endforelse
         </tbody>
     </table>
@@ -58,6 +60,38 @@
         <div>
             <label>Спосіб зв'язку</label>
             <input wire:model="contact_method" type="text" style="width:100%">
+        </div>
+        <div>
+            <label>Місто</label>
+            <input wire:model="city" type="text" style="width:100%">
+        </div>
+        <div>
+            <label>Спосіб доставки</label>
+            <select wire:model="delivery_method" style="width:100%">
+                <option value="">— не вказано —</option>
+                @foreach($deliveryMethods as $m)
+                    <option value="{{ $m }}">{{ $m }}</option>
+                @endforeach
+                @if($delivery_method && ! in_array($delivery_method, $deliveryMethods, true))
+                    <option value="{{ $delivery_method }}">{{ $delivery_method }}</option>
+                @endif
+            </select>
+        </div>
+        <div>
+            <label>Відділення / адреса</label>
+            <input wire:model="delivery_address" type="text" style="width:100%" placeholder="№ відділення або адреса">
+        </div>
+        <div>
+            <label>Спосіб оплати</label>
+            <select wire:model="payment_method" style="width:100%">
+                <option value="">— не вказано —</option>
+                @foreach($paymentMethods as $m)
+                    <option value="{{ $m }}">{{ $m }}</option>
+                @endforeach
+                @if($payment_method && ! in_array($payment_method, $paymentMethods, true))
+                    <option value="{{ $payment_method }}">{{ $payment_method }}</option>
+                @endif
+            </select>
         </div>
         <div>
             <label>Статус *</label>

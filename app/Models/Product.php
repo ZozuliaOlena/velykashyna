@@ -25,6 +25,7 @@ class Product extends Model implements HasMedia
         'rd_type', 'tube_type', 'ply_rating', 'load_speed_index', 'specification',
         'stock_status', 'price_mode', 'price', 'currency', 'exchange_rate',
         'discount_value', 'discount_type', 'is_promo', 'free_shipping', 'merchant_enabled',
+        'condition',
         'seo_title', 'seo_description', 'seo_h1', 'slug', 'is_active',
     ];
 
@@ -75,6 +76,20 @@ class Product extends Model implements HasMedia
             ->fit(Fit::Contain, 300, 300)
             ->background('ffffff')
             ->nonQueued();
+    }
+
+    /**
+     * Товари, що потрапляють у Google Merchant фід:
+     * активні, Merchant=ON, з фіксованою ціною (режими «від»/«уточнюйте»
+     * виключені) та з брендом. Єдине джерело правди для фіда й статусу в адмінці.
+     */
+    public function scopeForMerchantFeed($query)
+    {
+        return $query->where('is_active', true)
+            ->where('merchant_enabled', true)
+            ->where('price_mode', 'fixed')
+            ->whereNotNull('price')
+            ->whereHas('brand');
     }
 
     public function productType(): BelongsTo

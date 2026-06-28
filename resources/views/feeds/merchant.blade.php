@@ -18,8 +18,7 @@
 @endif
 @if ($i['brand'])<g:brand>{{ $i['brand'] }}</g:brand>
 @endif
-<g:mpn>{{ $i['mpn'] }}</g:mpn>
-<g:identifier_exists>yes</g:identifier_exists>
+<g:identifier_exists>{{ $i['identifier_exists'] }}</g:identifier_exists>
 <g:google_product_category>{{ $i['google_product_category'] }}</g:google_product_category>
 @if ($i['product_type'])<g:product_type>{{ $i['product_type'] }}</g:product_type>
 @endif

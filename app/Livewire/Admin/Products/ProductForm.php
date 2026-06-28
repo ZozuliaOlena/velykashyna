@@ -53,6 +53,7 @@ class ProductForm extends Component
     public bool $merchant_enabled = false;
     public bool $is_promo = false;
     public bool $free_shipping = false;
+    public string $condition = 'new'; // new / used / refurbished (Google Merchant)
 
     // ── SEO ──────────────────────────────────────────────────
     public ?string $seo_title = null;
@@ -111,6 +112,7 @@ class ProductForm extends Component
         $this->merchant_enabled = $product->merchant_enabled;
         $this->is_promo         = $product->is_promo;
         $this->free_shipping    = $product->free_shipping;
+        $this->condition        = $product->condition ?: 'new';
         $this->seo_title        = $product->seo_title;
         $this->seo_description  = $product->seo_description;
         $this->seo_h1           = $product->seo_h1;
@@ -176,6 +178,7 @@ class ProductForm extends Component
             'discount_type'  => ['nullable', 'in:percent,amount'],
             'is_promo'       => ['boolean'],
             'free_shipping'  => ['boolean'],
+            'condition'      => ['required', 'in:new,used,refurbished'],
 
             'seo_title'       => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string'],

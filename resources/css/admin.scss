@@ -573,6 +573,37 @@ body.admin-body {
                 box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
             }
 
+            // Поле пошуку в списку — липне зверху, поки опції прокручуються.
+            &__search {
+                position: sticky;
+                top: 0;
+                background: #fff;
+                padding: 2px 2px 6px;
+                margin-bottom: 4px;
+                border-bottom: 1px solid $border-color;
+
+                input {
+                    width: 100%;
+                    padding: 8px 10px;
+                    border: 1px solid $border-color;
+                    border-radius: 6px;
+                    font: inherit;
+
+                    &:focus {
+                        outline: none;
+                        border-color: $primary-red;
+                        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
+                    }
+                }
+            }
+
+            &__empty {
+                padding: 10px;
+                color: $text-light;
+                font-size: 13px;
+                text-align: center;
+            }
+
             &__opt {
                 display: block;
                 width: 100%;

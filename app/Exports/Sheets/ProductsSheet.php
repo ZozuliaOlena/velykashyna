@@ -27,7 +27,7 @@ class ProductsSheet implements FromArray, WithHeadings, WithTitle
             'Артикул', 'Найменування', 'Тип', 'Виробник', 'Типорозмір',
             'Посадковий діаметр', 'R/D', 'Протектор', 'Специфікація',
             'TT/TL', 'PR', 'LI/SS', 'Наявність', 'Режим ціни', 'Ціна',
-            'Валюта', 'Знижка', 'Тип знижки', 'Merchant', 'Активний',
+            'Валюта', 'Знижка', 'Тип знижки', 'Merchant', 'Стан', 'Активний',
             'SEO Title', 'SEO Description', 'SEO H1', 'URL', 'Категорії', 'Фото', 'Каталожне фото',
         ], $this->attributes->pluck('name')->all());
     }
@@ -66,6 +66,7 @@ class ProductsSheet implements FromArray, WithHeadings, WithTitle
                 $p->discount_value,
                 CatalogColumns::discountLabel($p->discount_type),
                 CatalogColumns::boolLabel((bool) $p->merchant_enabled),
+                CatalogColumns::conditionLabel($p->condition),
                 CatalogColumns::boolLabel((bool) $p->is_active),
                 $p->seo_title,
                 $p->seo_description,

@@ -48,6 +48,13 @@
             <input wire:model="name" type="text" style="width:100%">
             @error('name') <span style="color:red">{{ $message }}</span> @enderror
         </div>
+        <div class="is-full">
+            <label>Google-категорія (для фіду Merchant)</label>
+            <input wire:model="google_category" type="text" style="width:100%"
+                placeholder="Vehicles & Parts > Vehicle Parts & Accessories > Motor Vehicle Parts > Motor Vehicle Tires">
+            @error('google_category') <span style="color:red">{{ $message }}</span> @enderror
+            <small style="color:#666">Залиште порожнім — застосується розумний дефолт за кодом типу (шини / диски / інше).</small>
+        </div>
 
         <x-slot:footer>
             <button wire:click="save" data-confirm="Ви дійсно хочете зберегти зміни?">Зберегти</button>

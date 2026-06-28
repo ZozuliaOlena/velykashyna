@@ -1,6 +1,49 @@
 <div>
     <h1>Імпорт / Експорт</h1>
 
+    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
+    @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
+
+    {{-- ── Google Merchant фід ─────────────────────────────── --}}
+    <fieldset style="margin-top:1rem">
+        <legend><strong>Google Merchant (фід)</strong></legend>
+        <p style="color:#666">
+            XML-фід генерується автоматично й завжди актуальний. Додайте це посилання
+            як джерело даних у Google Merchant Center (Products → Feeds) і налаштуйте
+            періодичне отримання — товари оновлюватимуться самі.
+        </p>
+
+        <div class="is-full" style="margin-bottom:.75rem" x-data="{ copied: false }">
+            <label>Посилання на фід</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+                <input type="text" readonly value="{{ $feedUrl }}" style="flex:1; min-width:280px"
+                    x-ref="feedUrl" onclick="this.select()">
+                <button type="button" class="btn-primary"
+                    x-on:click="navigator.clipboard.writeText($refs.feedUrl.value); copied = true; setTimeout(() => copied = false, 1500)">
+                    <span x-show="!copied">Копіювати</span><span x-show="copied" x-cloak>Скопійовано ✓</span>
+                </button>
+                <a href="{{ $feedUrl }}" target="_blank" rel="noopener">Відкрити фід ↗</a>
+            </div>
+        </div>
+
+        <p style="margin:0 0 .25rem">
+            Зараз у фіді: <strong>{{ $feedCount }}</strong> товар(ів).
+        </p>
+        <p style="color:#666; font-size:13px; margin:0 0 1rem">
+            У фід потрапляють лише товари: <strong>Merchant = ON</strong>, з <strong>фіксованою ціною</strong>,
+            з брендом і фото. Режими «Ціна від» та «Уточнюйте» виключаються автоматично.
+        </p>
+
+        <div class="is-full" style="max-width:420px">
+            <label>Назва магазину у фіді</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <input wire:model="merchantStoreName" type="text" style="flex:1; min-width:220px">
+                <button wire:click="saveMerchantSettings">Зберегти</button>
+            </div>
+            @error('merchantStoreName') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+    </fieldset>
+
     {{-- ── Експорт ─────────────────────────────────────────── --}}
     <fieldset style="margin-top:1rem">
         <legend><strong>Експорт</strong></legend>

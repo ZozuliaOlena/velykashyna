@@ -27,6 +27,13 @@ class CatalogColumns
         'amount'  => 'Сума',
     ];
 
+    // Стан товару для Google Merchant.
+    public const CONDITION = [
+        'new'         => 'Новий',
+        'used'        => 'Вживаний',
+        'refurbished' => 'Відновлений',
+    ];
+
     public static function stockLabel(?string $code): string
     {
         return self::STOCK[$code] ?? self::STOCK['inquiry'];
@@ -59,6 +66,16 @@ class CatalogColumns
             return null;
         }
         return self::codeFromCell($value, self::DISCOUNT, 'percent');
+    }
+
+    public static function conditionLabel(?string $code): string
+    {
+        return self::CONDITION[$code] ?? self::CONDITION['new'];
+    }
+
+    public static function conditionFromCell(?string $value): string
+    {
+        return self::codeFromCell($value, self::CONDITION, 'new');
     }
 
     /** Текст комірки → технічний код (приймає і код, і підпис, без регістру). */

@@ -20,6 +20,10 @@ class LeadIndex extends Component
         'canceled'   => 'Скасована',
     ];
 
+    // Мають збігатися з варіантами у формі оформлення на клієнтській частині.
+    public const DELIVERY_METHODS = ['Нова Пошта', 'САТ', "Кур'єр", 'Самовивіз зі складу'];
+    public const PAYMENT_METHODS = ['Накладений платіж (при отриманні)', 'Оплата за реквізитами (IBAN)'];
+
     public string $search = '';
     public string $filterStatus = '';
 
@@ -29,6 +33,10 @@ class LeadIndex extends Component
     public string $customer_name = '';
     public string $phone = '';
     public ?string $contact_method = null;
+    public ?string $city = null;
+    public ?string $delivery_method = null;
+    public ?string $delivery_address = null;
+    public ?string $payment_method = null;
     public string $status = 'new';
     public ?string $manager_comment = null;
 
@@ -52,6 +60,10 @@ class LeadIndex extends Component
             'customer_name'      => ['required', 'string', 'max:255'],
             'phone'              => ['required', 'string', 'max:255'],
             'contact_method'     => ['nullable', 'string', 'max:255'],
+            'city'               => ['nullable', 'string', 'max:255'],
+            'delivery_method'    => ['nullable', 'string', 'max:255'],
+            'delivery_address'   => ['nullable', 'string', 'max:255'],
+            'payment_method'     => ['nullable', 'string', 'max:255'],
             'status'             => ['required', 'in:new,processing,confirmed,canceled'],
             'manager_comment'    => ['nullable', 'string'],
             'items'              => ['array'],
@@ -63,7 +75,9 @@ class LeadIndex extends Component
 
     public function openCreate(): void
     {
-        $this->reset('editingId', 'customer_name', 'phone', 'contact_method', 'manager_comment', 'items', 'productSearch');
+        $this->reset('editingId', 'customer_name', 'phone', 'contact_method',
+            'city', 'delivery_method', 'delivery_address', 'payment_method',
+            'manager_comment', 'items', 'productSearch');
         $this->status = 'new';
         $this->showModal = true;
     }
@@ -73,11 +87,15 @@ class LeadIndex extends Component
         $lead = Lead::with('items.product')->findOrFail($id);
 
         $this->editingId       = $id;
-        $this->customer_name   = $lead->customer_name;
-        $this->phone           = $lead->phone;
-        $this->contact_method  = $lead->contact_method;
-        $this->status          = $lead->status;
-        $this->manager_comment = $lead->manager_comment;
+        $this->customer_name    = $lead->customer_name;
+        $this->phone            = $lead->phone;
+        $this->contact_method   = $lead->contact_method;
+        $this->city             = $lead->city;
+        $this->delivery_method  = $lead->delivery_method;
+        $this->delivery_address = $lead->delivery_address;
+        $this->payment_method   = $lead->payment_method;
+        $this->status           = $lead->status;
+        $this->manager_comment  = $lead->manager_comment;
         $this->productSearch   = '';
 
         $this->items = $lead->items->map(fn ($i) => [
@@ -130,11 +148,15 @@ class LeadIndex extends Component
         $isNew = ! $this->editingId;
 
         $leadData = [
-            'customer_name'   => $this->customer_name,
-            'phone'           => $this->phone,
-            'contact_method'  => $this->contact_method,
-            'status'          => $this->status,
-            'manager_comment' => $this->manager_comment,
+            'customer_name'    => $this->customer_name,
+            'phone'            => $this->phone,
+            'contact_method'   => $this->contact_method,
+            'city'             => $this->city,
+            'delivery_method'  => $this->delivery_method,
+            'delivery_address' => $this->delivery_address,
+            'payment_method'   => $this->payment_method,
+            'status'           => $this->status,
+            'manager_comment'  => $this->manager_comment,
         ];
 
         if ($this->editingId) {
@@ -195,10 +217,12 @@ class LeadIndex extends Component
         }
 
         return view('admin.leads.lead-index', [
-            'leads'          => $leads,
-            'current'        => $current,
-            'statuses'       => self::STATUSES,
-            'productResults' => $productResults,
+            'leads'           => $leads,
+            'current'         => $current,
+            'statuses'        => self::STATUSES,
+            'deliveryMethods' => self::DELIVERY_METHODS,
+            'paymentMethods'  => self::PAYMENT_METHODS,
+            'productResults'  => $productResults,
         ])->layout('admin.layouts.admin');
     }
 }
