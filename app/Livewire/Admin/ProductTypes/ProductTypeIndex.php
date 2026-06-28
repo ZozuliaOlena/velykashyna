@@ -19,6 +19,7 @@ class ProductTypeIndex extends Component
 
     public string $code = '';
     public string $name = '';
+    public ?string $google_category = null;
 
     public function updatingSearch(): void
     {
@@ -30,12 +31,13 @@ class ProductTypeIndex extends Component
         return [
             'code' => ['required', 'string', 'max:255', Rule::unique('product_types', 'code')->ignore($this->editingId)],
             'name' => ['required', 'string', 'max:255'],
+            'google_category' => ['nullable', 'string', 'max:255'],
         ];
     }
 
     public function openCreate(): void
     {
-        $this->reset('code', 'name', 'editingId');
+        $this->reset('code', 'name', 'google_category', 'editingId');
         $this->showModal = true;
     }
 
@@ -45,6 +47,7 @@ class ProductTypeIndex extends Component
         $this->editingId = $id;
         $this->code = $type->code;
         $this->name = $type->name;
+        $this->google_category = $type->google_category;
         $this->showModal = true;
     }
 
@@ -55,7 +58,7 @@ class ProductTypeIndex extends Component
         ProductType::updateOrCreate(['id' => $this->editingId], $data);
 
         $this->showModal = false;
-        $this->reset('code', 'name', 'editingId');
+        $this->reset('code', 'name', 'google_category', 'editingId');
         session()->flash('success', 'Збережено');
     }
 

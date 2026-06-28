@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\ImportExport;
 use App\Exports\CatalogExport;
 use App\Imports\CatalogImport;
 use App\Models\CatalogImage;
+use App\Models\Product;
+use App\Models\Setting;
 use App\Services\ProductPhotoArchive;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -22,6 +24,22 @@ class ImportExport extends Component
     public array $importReport = [];
     public array $photoReport = [];
     public array $catalogImageReport = [];
+
+    // Назва магазину для фіда Merchant (зберігається в settings).
+    public string $merchantStoreName = '';
+
+    public function mount(): void
+    {
+        $this->merchantStoreName = Setting::get('merchant_store_name') ?: 'Велика Шина';
+    }
+
+    public function saveMerchantSettings(): void
+    {
+        $this->validate(['merchantStoreName' => ['required', 'string', 'max:255']]);
+
+        Setting::set('merchant_store_name', trim($this->merchantStoreName));
+        session()->flash('success', 'Налаштування Merchant збережено');
+    }
 
     public function export()
     {
@@ -93,6 +111,9 @@ class ImportExport extends Component
 
     public function render()
     {
-        return view('admin.import-export.index')->layout('admin.layouts.admin');
+        return view('admin.import-export.index', [
+            'feedUrl'   => route('feed.merchant'),
+            'feedCount' => Product::forMerchantFeed()->count(),
+        ])->layout('admin.layouts.admin');
     }
 }

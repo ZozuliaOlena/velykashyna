@@ -33,14 +33,9 @@ class LeadController extends Controller
             'items.*.qty'        => ['required', 'integer', 'min:1', 'max:1000'],
         ]);
 
-        // Деталі замовлення (доставка/оплата/коментар) — у текст замовлення.
-        $orderNotes = collect([
-            'Доставка' => $data['delivery_method'] ?? null,
-            'Місто' => $data['city'] ?? null,
-            'Відділення/адреса' => $data['delivery_address'] ?? null,
-            'Оплата' => $data['payment_method'] ?? null,
-            'Коментар' => $data['comment'] ?? null,
-        ])->filter()->map(fn ($v, $k) => "{$k}: {$v}")->implode("\n") ?: null;
+        // Доставку/оплату зберігаємо окремими полями (нижче), у коментар —
+        // лише власне повідомлення клієнта.
+        $customerComment = $data['comment'] ?? null;
 
         // Зведення дублікатів: один товар = один рядок із сумарною кількістю.
         $quantities = collect($data['items'])
@@ -60,12 +55,16 @@ class LeadController extends Controller
             ]);
         }
 
-        $lead = DB::transaction(function () use ($data, $quantities, $products) {
+        $lead = DB::transaction(function () use ($data, $quantities, $products, $customerComment) {
             $lead = Lead::create([
                 'customer_name'    => $data['customer_name'],
                 'phone'            => $data['phone'],
                 'contact_method'   => $data['contact_method'] ?? null,
-                'customer_comment' => $orderNotes,
+                'city'             => $data['city'] ?? null,
+                'delivery_method'  => $data['delivery_method'] ?? null,
+                'delivery_address' => $data['delivery_address'] ?? null,
+                'payment_method'   => $data['payment_method'] ?? null,
+                'customer_comment' => $customerComment,
                 'status'           => 'new',
                 'source'           => 'cart',
             ]);

@@ -24,7 +24,7 @@ class ProductsImportSheet implements ToCollection
         'артикул', 'найменування', 'тип', 'виробник', 'типорозмір',
         'посадковий діаметр', 'r/d', 'протектор', 'специфікація',
         'tt/tl', 'pr', 'li/ss', 'наявність', 'режим ціни', 'ціна',
-        'валюта', 'знижка', 'тип знижки', 'merchant', 'активний',
+        'валюта', 'знижка', 'тип знижки', 'merchant', 'стан', 'активний',
         'seo title', 'seo description', 'seo h1', 'url', 'категорії', 'фото', 'каталожне фото',
     ];
 
@@ -151,6 +151,9 @@ class ProductsImportSheet implements ToCollection
         }
         if ($this->has('merchant')) {
             $product->merchant_enabled = CatalogColumns::boolFromCell($this->val($row, 'Merchant'));
+        }
+        if ($this->has('стан')) {
+            $product->condition = CatalogColumns::conditionFromCell($this->val($row, 'Стан'));
         }
         if ($this->has('активний')) {
             $product->is_active = CatalogColumns::boolFromCell($this->val($row, 'Активний'));

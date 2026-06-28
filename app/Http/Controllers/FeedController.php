@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Setting;
 use App\Support\MediaUrl;
 
 class FeedController extends Controller
@@ -14,19 +15,16 @@ class FeedController extends Controller
      */
     public function merchant()
     {
-        $products = Product::query()
-            ->where('is_active', true)
-            ->where('merchant_enabled', true)
-            ->where('price_mode', 'fixed')
-            ->whereNotNull('price')
-            ->whereHas('brand')
-            ->with(['brand', 'catalogImage', 'categories', 'media'])
+        $products = Product::forMerchantFeed()
+            ->with(['brand', 'productType', 'catalogImage', 'categories', 'media'])
             ->get();
 
         $items = $products->map(fn (Product $p) => $this->item($p))->filter()->values();
 
+        $store = Setting::get('merchant_store_name') ?: 'Велика Шина';
+
         return response()
-            ->view('feeds.merchant', ['items' => $items, 'store' => 'Велика Шина'])
+            ->view('feeds.merchant', ['items' => $items, 'store' => $store])
             ->header('Content-Type', 'application/xml; charset=UTF-8');
     }
 
@@ -55,15 +53,20 @@ class FeedController extends Controller
             'link' => route('product', $p->slug),
             'image_link' => $image,
             'availability' => $availability,
-            'condition' => 'new',
+            'condition' => in_array($p->condition, ['new', 'used', 'refurbished'], true)
+                ? $p->condition
+                : 'new',
             'price' => number_format((float) $p->price, 2, '.', '') . ' ' . $cur,
             'sale_price' => $p->hasDiscount()
                 ? number_format((float) $p->effectivePrice(), 2, '.', '') . ' ' . $cur
                 : null,
             'brand' => $p->brand?->name,
-            'mpn' => $p->sku,
+            // Немає GTIN/MPN виробника → чесно повідомляємо Google, що
+            // ідентифікатора немає (для шин це допустимо). Не вигадуємо mpn.
+            'identifier_exists' => 'no',
             'product_type' => $p->categories->pluck('name')->implode(' > ') ?: null,
-            'google_product_category' => 'Vehicles & Parts > Vehicle Parts & Accessories > Motor Vehicle Parts > Motor Vehicle Tires',
+            'google_product_category' => $p->productType?->googleCategory()
+                ?? 'Vehicles & Parts > Vehicle Parts & Accessories > Motor Vehicle Parts > Motor Vehicle Tires',
         ];
     }
 

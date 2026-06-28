@@ -216,6 +216,15 @@
                     Передавати в Google Merchant (фід)
                 </label>
             </div>
+
+            <div style="margin-top:.75rem">
+                <label>Стан товару (для Google Merchant)</label><br>
+                <select wire:model="condition" style="min-width:240px">
+                    <option value="new">Новий</option>
+                    <option value="used">Вживаний</option>
+                    <option value="refurbished">Відновлений</option>
+                </select>
+            </div>
         </fieldset>
 
         {{-- ── Категорії ───────────────────────────────────── --}}
