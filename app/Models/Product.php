@@ -250,7 +250,10 @@ class Product extends Model implements HasMedia
         $type = $compat?->machineryType;
 
         return [
+            'id' => $this->id,
             'sku' => $this->sku ?? '',
+            'slug' => $this->slug,
+            'url' => $this->slug ? route('product', $this->slug) : null,
             'size' => $this->size_raw ?? '',
             'brand' => $this->brand?->name ?? '',
             'brand_logo_url' => $this->brand?->logoUrl(),

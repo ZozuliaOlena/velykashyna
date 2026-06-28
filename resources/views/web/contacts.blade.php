@@ -2,10 +2,9 @@
 @extends('layouts.app')
 
 @section('title', 'Контакти — Велика Шина')
-@section('meta_description', 'Контакти компанії «Велика Шина»: телефон, email, адреса в Києві, графік роботи та месенджери. Зв\'яжіться з нами — підберемо шини для вашої техніки.')
+@section('meta_description', 'Контакти компанії «Велика Шина»: телефон, email, адреса в Києві та месенджери. Ми на зв\'язку 24/7 — підберемо шини для вашої техніки.')
 
 @php($c = config('site.contacts'))
-@php($schedule = config('site.schedule'))
 @php($socials = config('site.socials'))
 @php($mapQuery = "пров. В'ячеслава Чорновола, 54а, Київ, 08132")
 
@@ -46,7 +45,7 @@
                     <div class="contact-card__body">
                         <span class="contact-card__label">Телефон</span>
                         <span class="contact-card__value">{{ $c['phone'] }}</span>
-                        <span class="contact-card__note">Дзвоніть Пн–Пт з 9:00 до 18:00</span>
+                        <span class="contact-card__note">Телефонуйте будь-коли — ми на зв'язку 24/7</span>
                     </div>
                 </a>
 
@@ -88,11 +87,8 @@
                     </span>
                     <div class="contact-card__body">
                         <span class="contact-card__label">Графік роботи</span>
-                        <ul class="contact-schedule">
-                            @foreach ($schedule as $row)
-                            <li><span>{{ $row['days'] }}</span><b>{{ $row['hours'] }}</b></li>
-                            @endforeach
-                        </ul>
+                        <span class="contact-card__value">Ми на зв'язку 24/7</span>
+                        <span class="contact-card__note">Цілодобово, без вихідних</span>
                     </div>
                 </div>
 

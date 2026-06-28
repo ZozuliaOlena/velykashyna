@@ -29,14 +29,17 @@
                         {!! $phoneIcon !!}
                         <a href="tel:{{ $c['phone_href'] }}">{{ $c['phone'] }}</a>
                     </span>
-                    <span class="hp-note">Пн–Пт з 9:00 до 18:00</span>
+                    <span class="hp-note">Ми на зв'язку 24/7</span>
                 </div>
 
                 <div class="header-icons">
-                    <a href="#" class="h-icon" aria-label="Обране">{!! $heartIcon !!}</a>
-                    <a href="#" class="h-icon" aria-label="Кошик">
+                    <a href="{{ route('favorites') }}" class="h-icon" aria-label="Обране">
+                        {!! $heartIcon !!}
+                        <span class="badge" x-show="$store.fav.count" x-text="$store.fav.count" x-cloak></span>
+                    </a>
+                    <a href="{{ route('cart') }}" class="h-icon" aria-label="Кошик">
                         {!! $cartIcon !!}
-                        <span class="badge">2</span>
+                        <span class="badge" x-show="$store.cart.count" x-text="$store.cart.count" x-cloak></span>
                     </a>
                 </div>
             </div>
@@ -75,8 +78,13 @@
                 <button class="hm-btn" type="button" aria-label="Пошук" @click="$store.ui.toggleSearch()">
                     {!! $searchIcon !!}
                 </button>
-                <a href="tel:{{ $c['phone_href'] }}" class="hm-btn" aria-label="Подзвонити">
-                    {!! $phoneIcon !!}
+                <a href="{{ route('favorites') }}" class="hm-btn hm-iconbtn" aria-label="Обране">
+                    {!! $heartIcon !!}
+                    <span class="badge" x-show="$store.fav.count" x-text="$store.fav.count" x-cloak></span>
+                </a>
+                <a href="{{ route('cart') }}" class="hm-btn hm-iconbtn" aria-label="Кошик">
+                    {!! $cartIcon !!}
+                    <span class="badge" x-show="$store.cart.count" x-text="$store.cart.count" x-cloak></span>
                 </a>
                 <button class="hm-btn hm-burger" type="button" aria-label="Меню" @click="$store.ui.toggleMenu()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

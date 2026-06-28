@@ -78,7 +78,7 @@
 
     <div class="mm-contacts">
         <a href="tel:{{ $c['phone_href'] }}" class="mm-phone">{{ $c['phone'] }}</a>
-        <p class="mm-note">Пн–Пт з 9:00 до 18:00</p>
+        <p class="mm-note">Ми на зв'язку 24/7</p>
         <a href="#" class="btn btn--primary btn--block" style="margin-bottom:20px">Замовити дзвінок</a>
         <p style="font-size:12px;color:#9aa0a8;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Ми в
             соцмережах</p>

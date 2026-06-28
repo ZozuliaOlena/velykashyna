@@ -5342,3 +5342,1251 @@ button {
         }
     }
 }
+
+// =====================================================================
+//  СТОРІНКА ТОВАРУ (детальна картка)
+// =====================================================================
+.product {
+    padding: 8px 0 70px;
+
+    @media (max-width: $bp-md) {
+        padding-bottom: 48px;
+    }
+}
+
+// Клік по фото/назві картки веде на сторінку товару
+.cat-prod__photolink {
+    display: contents;
+}
+
+.cat-prod__size a {
+    color: inherit;
+
+    &:hover {
+        color: $red;
+    }
+}
+
+.product-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    margin-top: 16px;
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+// --- Галерея ---------------------------------------------------------
+.product-gallery {
+    &__main {
+        position: relative;
+        background: $bg-soft;
+        border: 1px solid $line;
+        border-radius: $radius-lg;
+        aspect-ratio: 4 / 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        overflow: hidden;
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+    }
+
+    &__ph {
+        width: 120px;
+        height: 120px;
+        background-color: #c9ced6;
+    }
+
+    &__promos {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    &__thumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+
+        button {
+            width: 72px;
+            height: 72px;
+            padding: 6px;
+            border: 1px solid $line;
+            border-radius: $radius-sm;
+            background: $bg-soft;
+            cursor: pointer;
+            transition: border-color 0.2s;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                mix-blend-mode: multiply;
+            }
+
+            &.active {
+                border-color: $red;
+            }
+        }
+    }
+}
+
+// --- Основна інформація ---------------------------------------------
+.product-main__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.product-title {
+    font-family: $font-head;
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 1.1;
+    color: $ink;
+
+    @media (max-width: $bp-md) {
+        font-size: 24px;
+    }
+}
+
+.product-subtitle {
+    margin-top: 6px;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: $muted;
+}
+
+.product-brand img {
+    max-height: 34px;
+    max-width: 120px;
+    object-fit: contain;
+}
+
+.product-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 16px 0;
+
+    .product-sku {
+        font-size: 14px;
+        color: $muted;
+
+        b {
+            color: $ink;
+        }
+    }
+
+    .product-stock {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: $font-head;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+
+        &.in {
+            background: #e7f6ec;
+            color: $ok;
+        }
+
+        &.order {
+            background: #fdeede;
+            color: #e0892b;
+        }
+    }
+}
+
+.product-highlights {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 22px;
+    margin: 18px 0 22px;
+
+    @media (max-width: $bp-sm) {
+        grid-template-columns: 1fr;
+    }
+
+    li {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px dashed $line;
+        font-size: 14px;
+
+        span {
+            color: $muted;
+        }
+
+        b {
+            color: $ink;
+            font-family: $font-head;
+            text-align: right;
+        }
+    }
+}
+
+// --- Блок купівлі ----------------------------------------------------
+.product-buy {
+    padding: 22px;
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+}
+
+.product-price {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 16px;
+    font-family: $font-head;
+
+    &__old {
+        font-size: 14px;
+        color: $muted-2;
+        text-decoration: line-through;
+    }
+
+    &__now {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 6px;
+        font-weight: 800;
+        font-size: 30px;
+        color: $ink;
+
+        .from {
+            font-family: $font-body;
+            font-size: 13px;
+            font-weight: 600;
+            color: $muted;
+            text-transform: uppercase;
+        }
+
+        .cur {
+            font-size: 15px;
+            font-weight: 700;
+            color: $muted;
+        }
+    }
+
+    &--sale .product-price__now,
+    &--sale .product-price__now .cur {
+        color: $red;
+    }
+
+    &__ask {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: $font-body;
+        font-weight: 700;
+        font-size: 18px;
+        color: $red;
+
+        svg {
+            width: 22px;
+            height: 22px;
+        }
+    }
+}
+
+.product-buy__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .btn {
+        flex: 1;
+        height: 46px;
+    }
+}
+
+.qty {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    border: 1px solid $line;
+    border-radius: $radius-sm;
+    overflow: hidden;
+
+    button {
+        width: 40px;
+        height: 46px;
+        border: none;
+        background: $bg-soft;
+        font-size: 20px;
+        color: $ink;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+            background: $line;
+        }
+    }
+
+    input {
+        width: 46px;
+        height: 46px;
+        border: none;
+        text-align: center;
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 16px;
+        outline: none;
+    }
+}
+
+.product-order {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+
+    input,
+    textarea {
+        width: 100%;
+        border: 1px solid $line;
+        border-radius: $radius-sm;
+        padding: 12px 14px;
+        font-family: $font-body;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+
+        &:focus {
+            border-color: $red;
+        }
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 60px;
+    }
+
+    &__err {
+        color: $red;
+        font-size: 13px;
+    }
+
+    &__note {
+        font-size: 12px;
+        color: $muted-2;
+        text-align: center;
+    }
+}
+
+.product-order__ok {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    padding: 14px;
+    border-radius: $radius;
+    background: #e7f6ec;
+    color: #1f7a44;
+
+    svg {
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        color: $ok;
+    }
+
+    b {
+        display: block;
+        font-family: $font-head;
+    }
+
+    span {
+        font-size: 13px;
+    }
+}
+
+.product-buy__call {
+    width: 100%;
+    margin-top: 12px;
+}
+
+// --- Секції характеристик / сумісності ------------------------------
+.product-section {
+    margin-top: 40px;
+}
+
+.product-section__title {
+    font-family: $font-head;
+    font-weight: 800;
+    font-size: 22px;
+    text-transform: uppercase;
+    color: $ink;
+    margin-bottom: 16px;
+}
+
+.product-specs {
+    max-width: 760px;
+    border: 1px solid $line;
+    border-radius: $radius;
+    overflow: hidden;
+
+    &__row {
+        display: flex;
+        gap: 16px;
+        padding: 12px 16px;
+        font-size: 14px;
+
+        &:nth-child(odd) {
+            background: $bg-soft;
+        }
+    }
+
+    &__label {
+        flex: 0 0 45%;
+        color: $muted;
+    }
+
+    &__value {
+        color: $ink;
+        font-weight: 600;
+    }
+}
+
+.product-compat {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    &__item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 1px solid $line;
+        border-radius: 999px;
+        font-size: 14px;
+        color: $ink;
+
+        svg {
+            width: 16px;
+            height: 16px;
+            color: $red;
+        }
+    }
+}
+
+.product-related {
+    grid-template-columns: repeat(4, 1fr);
+
+    @media (max-width: $bp-lg) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// =====================================================================
+//  КОШИК / ОБРАНЕ
+// =====================================================================
+.page-title {
+    font-family: $font-head;
+    font-weight: 800;
+    font-size: 30px;
+    text-transform: uppercase;
+    color: $ink;
+    margin: 8px 0 24px;
+
+    @media (max-width: $bp-md) {
+        font-size: 24px;
+    }
+}
+
+.muted {
+    color: $muted-2;
+}
+
+.cart-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: $muted;
+
+    svg {
+        display: block;
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 14px;
+        color: $muted-2;
+    }
+
+    p {
+        font-size: 16px;
+        margin-bottom: 18px;
+    }
+}
+
+.cart-done {
+    max-width: 520px;
+    margin: 10px auto;
+    text-align: center;
+    padding: 24px 20px;
+
+    &__ico {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 66px;
+        height: 66px;
+        border-radius: 50%;
+        background: #e7f6ec;
+        color: $ok;
+        margin-bottom: 16px;
+
+        svg {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    h2 {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 24px;
+        color: $ink;
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: $muted;
+        margin-bottom: 20px;
+    }
+}
+
+.cart-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 28px;
+    align-items: start;
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.cart-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid $line;
+    border-radius: $radius;
+    background: #fff;
+
+    &__img {
+        flex: 0 0 84px;
+        background: $bg-soft;
+        border-radius: $radius-sm;
+        padding: 8px;
+
+        img {
+            width: 100%;
+            height: 68px;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+    }
+
+    &__info {
+        flex: 1 1 180px;
+        min-width: 0;
+    }
+
+    &__name {
+        display: block;
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 16px;
+        color: $ink;
+
+        &:hover {
+            color: $red;
+        }
+    }
+
+    &__sub {
+        font-size: 13px;
+        color: $muted;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    &__price {
+        flex: 0 0 auto;
+        min-width: 92px;
+        text-align: right;
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 16px;
+        color: $ink;
+        white-space: nowrap;
+
+        small {
+            font-size: 12px;
+            font-weight: 700;
+            color: $muted;
+        }
+
+        .muted {
+            font-weight: 600;
+            font-size: 14px;
+        }
+    }
+
+    &__remove {
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        border: none;
+        background: $bg-soft;
+        border-radius: 50%;
+        color: $muted;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover {
+            background: $red-soft;
+            color: $red;
+        }
+    }
+}
+
+.cart-summary {
+    border: 1px solid $line;
+    border-radius: $radius-lg;
+    padding: 22px;
+    background: #fff;
+    box-shadow: $shadow-sm;
+
+    @media (min-width: 993px) {
+        position: sticky;
+        top: calc(var(--header-h, 90px) + 16px);
+    }
+
+    &__title {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 18px;
+        text-transform: uppercase;
+        color: $ink;
+        margin-bottom: 14px;
+    }
+
+    &__row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 14px;
+        color: $muted;
+
+        b {
+            color: $ink;
+            font-family: $font-head;
+        }
+    }
+
+    &__total {
+        border-top: 1px solid $line;
+        margin-top: 4px;
+        padding-top: 12px;
+        font-size: 16px;
+
+        b {
+            font-size: 20px;
+            color: $ink;
+        }
+    }
+
+    &__note {
+        font-size: 13px;
+        color: #e0892b;
+        margin-top: 6px;
+    }
+
+    &__hint {
+        font-size: 12px;
+        color: $muted-2;
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+
+.cart-form {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    input,
+    textarea {
+        width: 100%;
+        border: 1px solid $line;
+        border-radius: $radius-sm;
+        padding: 12px 14px;
+        font-family: $font-body;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+
+        &:focus {
+            border-color: $red;
+        }
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 56px;
+    }
+
+    // Поле з підписом
+    .cart-field {
+        display: block;
+
+        > span {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: $ink;
+        }
+
+        .select {
+            position: relative;
+
+            select {
+                width: 100%;
+                appearance: none;
+                border: 1px solid $line;
+                border-radius: $radius-sm;
+                padding: 12px 38px 12px 14px;
+                font-family: $font-body;
+                font-size: 14px;
+                color: $ink;
+                background: #fff;
+                cursor: pointer;
+                outline: none;
+
+                &:focus {
+                    border-color: $red;
+                }
+            }
+
+            svg {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 16px;
+                height: 16px;
+                color: $muted;
+                pointer-events: none;
+            }
+        }
+    }
+
+    .cart-field-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+
+        @media (max-width: $bp-sm) {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+// Підсумок замовлення в кошику
+.cart-totals {
+    margin: 6px 0 4px;
+    padding: 14px 0 4px;
+    border-top: 1px solid $line;
+}
+
+// --- Обране ----------------------------------------------------------
+.fav-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+
+    @media (max-width: $bp-lg) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fav-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid $line;
+    border-radius: $radius;
+    background: #fff;
+
+    &__remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: $bg-soft;
+        border-radius: 50%;
+        color: $muted;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        &:hover {
+            background: $red-soft;
+            color: $red;
+        }
+    }
+
+    &__img {
+        display: block;
+        background: $bg-soft;
+        border-radius: $radius-sm;
+        padding: 14px;
+
+        img {
+            width: 100%;
+            height: 130px;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+    }
+
+    &__name {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 16px;
+        color: $ink;
+
+        &:hover {
+            color: $red;
+        }
+    }
+
+    &__sub {
+        font-size: 12px;
+        color: $muted;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    &__price {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 17px;
+        color: $ink;
+        margin-top: auto;
+        padding: 4px 0 8px;
+
+        small {
+            font-size: 12px;
+            color: $muted;
+        }
+
+        .muted {
+            font-weight: 600;
+            font-size: 14px;
+            color: $red;
+        }
+    }
+}
+
+// --- Доповнення до сторінки товару -----------------------------------
+.product-buy__tocart {
+    display: inline-block;
+    margin-top: 10px;
+    color: #1f7a44;
+    font-size: 14px;
+
+    b {
+        color: $ink;
+    }
+
+    &:hover b {
+        color: $red;
+    }
+}
+
+.product-buy__secondary {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+
+    .product-buy__call {
+        flex: 1;
+        width: auto;
+        margin-top: 0;
+    }
+}
+
+.product-buy__fav {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 46px;
+    padding: 0 16px;
+    border: 1px solid $line;
+    border-radius: $radius-sm;
+    background: #fff;
+    color: $ink;
+    font-family: $font-head;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    &:hover {
+        border-color: $red;
+        color: $red;
+    }
+
+    &.active {
+        border-color: $red;
+        color: $red;
+
+        svg {
+            fill: $red;
+        }
+    }
+}
+
+// Стан «у кошику» для кнопки-кошика в картці
+.cat-prod__cart.added {
+    background: $red;
+    border-color: $red;
+    color: #fff;
+}
+
+// =====================================================================
+//  ТОСТ «ДОДАНО В КОШИК»
+// =====================================================================
+.cart-toast {
+    position: fixed;
+    z-index: 1200;
+    top: calc(var(--header-h, 80px) + 14px);
+    right: 20px;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+    padding: 16px;
+
+    @media (max-width: $bp-sm) {
+        top: auto;
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+    }
+
+    &__head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    &__check {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #e7f6ec;
+        color: $ok;
+
+        svg {
+            width: 17px;
+            height: 17px;
+        }
+    }
+
+    &__img {
+        flex-shrink: 0;
+        width: 46px;
+        height: 46px;
+        object-fit: contain;
+        background: $bg-soft;
+        border-radius: $radius-sm;
+        padding: 4px;
+        mix-blend-mode: multiply;
+    }
+
+    &__info {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__title {
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 13px;
+        color: $ink;
+    }
+
+    &__name {
+        font-size: 13px;
+        color: $muted;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__close {
+        flex-shrink: 0;
+        margin-left: auto;
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: none;
+        color: $muted-2;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover {
+            color: $ink;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 14px;
+
+        .btn {
+            width: 100%;
+            padding: 11px 12px;
+            font-size: 13px;
+        }
+    }
+}
+
+// =====================================================================
+//  МОДАЛКА ПІДТВЕРДЖЕННЯ (фронт)
+// =====================================================================
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    &__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 17, 20, 0.5);
+    }
+
+    &__box {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        background: #fff;
+        border-radius: $radius-lg;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+        padding: 26px 24px;
+        text-align: center;
+    }
+
+    &__title {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 20px;
+        color: $ink;
+        margin-bottom: 8px;
+    }
+
+    &__text {
+        color: $muted;
+        font-size: 14.5px;
+        margin-bottom: 22px;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 10px;
+
+        .btn {
+            flex: 1;
+        }
+    }
+}
+
+// =====================================================================
+//  ІНФО-СТОРІНКИ (доставка, повернення, гарантія, політика)
+// =====================================================================
+.info-page {
+    &__wrap {
+        max-width: 820px;
+        margin: 18px 0 0;
+    }
+
+    &__title {
+        font-family: $font-head;
+        font-weight: 800;
+        font-size: 34px;
+        text-transform: uppercase;
+        color: $ink;
+        line-height: 1.12;
+        margin-bottom: 22px;
+
+        @media (max-width: $bp-md) {
+            font-size: 26px;
+        }
+    }
+
+    &__body {
+        color: $text;
+        font-size: 16px;
+        line-height: 1.7;
+
+        h2 {
+            font-family: $font-head;
+            font-weight: 800;
+            font-size: 20px;
+            color: $ink;
+            margin: 28px 0 10px;
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: $muted;
+        }
+
+        ul {
+            margin: 0 0 16px;
+            padding: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        li {
+            position: relative;
+            padding-left: 26px;
+            color: $muted;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 4px;
+                top: 10px;
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: $red;
+            }
+        }
+
+        b {
+            color: $ink;
+        }
+
+        a {
+            color: $red;
+            font-weight: 600;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .info-free {
+            color: $ok;
+            font-weight: 700;
+        }
+    }
+}

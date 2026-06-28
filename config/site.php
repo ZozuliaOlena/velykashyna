@@ -19,7 +19,7 @@ return [
     'contacts' => [
         'phone' => '+38 (067) 928 20 86',
         'phone_href' => '+380679282086',
-        'email' => 'info@velikashina.ua', // TODO: підтвердити e-mail у замовника
+        'email' => 'velykashyna@ukr.net',
         'address' => "пров. В'ячеслава Чорновола, 54а (р-н Жулянського мосту), м. Київ, 08132",
     ],
 

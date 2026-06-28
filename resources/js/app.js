@@ -28,6 +28,77 @@ document.addEventListener('alpine:init', () => {
         },
     });
 
+    // Кошик (гостьовий, у localStorage; оформлення → /api/leads).
+    Alpine.store('cart', {
+        items: JSON.parse(localStorage.getItem('cart') || '[]'),
+        save() {
+            localStorage.setItem('cart', JSON.stringify(this.items));
+        },
+        find(id) {
+            return this.items.find((i) => i.id === id);
+        },
+        has(id) {
+            return !!this.find(id);
+        },
+        add(item, qty = 1) {
+            if (!item || !item.id) return;
+            const ex = this.find(item.id);
+            if (ex) ex.qty += qty;
+            else this.items.push({ ...item, qty });
+            this.save();
+            // сповіщення (тост) про додавання
+            window.dispatchEvent(new CustomEvent('cart-added', { detail: { ...item, qty } }));
+        },
+        setQty(id, qty) {
+            const i = this.find(id);
+            if (i) {
+                i.qty = Math.max(1, Math.min(1000, parseInt(qty) || 1));
+                this.save();
+            }
+        },
+        remove(id) {
+            this.items = this.items.filter((i) => i.id !== id);
+            this.save();
+        },
+        clear() {
+            this.items = [];
+            this.save();
+        },
+        get count() {
+            return this.items.reduce((s, i) => s + i.qty, 0);
+        },
+        get total() {
+            return this.items.reduce((s, i) => s + (Number(i.price) || 0) * i.qty, 0);
+        },
+        get hasInquiry() {
+            return this.items.some((i) => !i.price || i.price_mode === 'inquiry');
+        },
+    });
+
+    // Обране (гостьове, у localStorage).
+    Alpine.store('fav', {
+        items: JSON.parse(localStorage.getItem('fav') || '[]'),
+        save() {
+            localStorage.setItem('fav', JSON.stringify(this.items));
+        },
+        has(id) {
+            return this.items.some((i) => i.id === id);
+        },
+        toggle(item) {
+            if (!item || !item.id) return;
+            if (this.has(item.id)) this.items = this.items.filter((i) => i.id !== item.id);
+            else this.items.push(item);
+            this.save();
+        },
+        remove(id) {
+            this.items = this.items.filter((i) => i.id !== id);
+            this.save();
+        },
+        get count() {
+            return this.items.length;
+        },
+    });
+
     /**
      * Повноекранний hero-слайдер (відео/зображення) з автопрогортанням.
      * Грає лише активне відео, решта — на паузі.
@@ -132,6 +203,113 @@ document.addEventListener('alpine:init', () => {
                 this.count = (await res.json()).count;
             } catch (e) {
                 // тихо ігноруємо
+            } finally {
+                this.loading = false;
+            }
+        },
+    }));
+
+    /**
+     * Підтвердження видалення зі стора ($store[name]) через модалку.
+     */
+    Alpine.data('removeConfirm', (storeName) => ({
+        confirm: { open: false, id: null, name: '' },
+        askRemove(i) {
+            this.confirm = { open: true, id: i.id, name: (i.size + ' ' + (i.brand || '')).trim() };
+        },
+        cancelRemove() {
+            this.confirm.open = false;
+        },
+        doRemove() {
+            this.$store[storeName].remove(this.confirm.id);
+            this.confirm.open = false;
+        },
+    }));
+
+    /**
+     * Тост «додано в кошик»: вискакує на подію cart-added,
+     * пропонує перейти в кошик або продовжити покупки.
+     */
+    Alpine.data('cartToast', (cartUrl) => ({
+        cartUrl,
+        open: false,
+        item: {},
+        timer: null,
+        show(item) {
+            this.item = item || {};
+            this.open = true;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => (this.open = false), 5000);
+        },
+        close() {
+            this.open = false;
+            clearTimeout(this.timer);
+        },
+    }));
+
+    /**
+     * Оформлення кошика в заявку (сторінка /cart → /api/leads).
+     */
+    Alpine.data('cartCheckout', (endpoint) => ({
+        sent: false,
+        loading: false,
+        error: '',
+        orderId: null,
+        confirm: { open: false, id: null, name: '' },
+        form: {
+            name: '',
+            phone: '',
+            city: '',
+            delivery: 'Нова Пошта',
+            address: '',
+            payment: 'Накладений платіж (при отриманні)',
+            comment: '',
+        },
+
+        get isPickup() {
+            return this.form.delivery === 'Самовивіз зі складу';
+        },
+        get deliveryCost() {
+            return this.isPickup ? 'Безкоштовно' : 'За тарифами перевізника';
+        },
+
+        askRemove(i) {
+            this.confirm = { open: true, id: i.id, name: (i.size + ' ' + (i.brand || '')).trim() };
+        },
+        cancelRemove() {
+            this.confirm.open = false;
+        },
+        doRemove() {
+            this.$store.cart.remove(this.confirm.id);
+            this.confirm.open = false;
+        },
+        async submit() {
+            const items = this.$store.cart.items;
+            if (!items.length) return;
+            this.error = '';
+            this.loading = true;
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        customer_name: this.form.name,
+                        phone: this.form.phone,
+                        city: this.form.city,
+                        delivery_method: this.form.delivery,
+                        delivery_address: this.isPickup ? '' : this.form.address,
+                        payment_method: this.form.payment,
+                        comment: this.form.comment,
+                        items: items.map((i) => ({ product_id: i.id, qty: i.qty })),
+                    }),
+                });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                this.orderId = data.lead_id;
+                this.sent = true;
+                this.$store.cart.clear();
+            } catch (e) {
+                this.error = 'Не вдалося оформити замовлення. Спробуйте ще раз або зателефонуйте нам.';
             } finally {
                 this.loading = false;
             }

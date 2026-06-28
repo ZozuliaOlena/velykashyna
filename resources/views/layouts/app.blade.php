@@ -42,6 +42,33 @@
         <span class="fab-label">Зв'язатися</span>
     </a>
 
+    {{-- Тост «додано в кошик» --}}
+    <div class="cart-toast" x-data="cartToast('{{ route('cart') }}')" @cart-added.window="show($event.detail)"
+        x-show="open" x-cloak x-transition.opacity.duration.250ms>
+        <div class="cart-toast__head">
+            <span class="cart-toast__check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+            </span>
+            <img class="cart-toast__img" :src="item.img || '/images/svg/tehnics/wheel.svg'" :alt="item.brand" />
+            <div class="cart-toast__info">
+                <span class="cart-toast__title">Додано в кошик</span>
+                <span class="cart-toast__name" x-text="(item.size + ' ' + (item.brand || '')).trim()"></span>
+            </div>
+            <button type="button" class="cart-toast__close" @click="close()" aria-label="Закрити">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="cart-toast__actions">
+            <a :href="cartUrl" class="btn btn--primary">Перейти в кошик</a>
+            <button type="button" class="btn btn--outline" @click="close()">Продовжити покупки</button>
+        </div>
+    </div>
+
     @stack('scripts')
 </body>
 

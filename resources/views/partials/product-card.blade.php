@@ -25,6 +25,7 @@
 @php($appIcon = $appIcons[$p['app'] ?? ''] ?? 'wheel.svg')
 @php($priceMode = $p['price_mode'] ?? 'inquiry')
 @php($price = $p['price'] ?? null)
+@php($cur = $p['cur'] ?? 'грн')
 @php($showCountry = $showCountry ?? true)
 
 {{-- Уніфіковані джерела (БД-URL має пріоритет над дефолтними шляхами) --}}
@@ -43,7 +44,22 @@
 @php($promoOrder = ['Безкоштовна доставка' => 0, 'Акція' => 1, 'Знижка' => 2, 'Запитуй знижку' => 3])
 @php($promos = collect($p['promos'] ?? [])->sortBy(fn ($x) => $promoOrder[$x] ?? 99)->values()->all())
 
-<div class="cat-prod" x-data="{ fav: false }">
+{{-- Компактний об'єкт товару для кошика/обраного --}}
+@php($cardItem = [
+'id' => $p['id'] ?? null,
+'slug' => $p['slug'] ?? null,
+'url' => $p['url'] ?? null,
+'size' => $p['size'] ?? '',
+'brand' => $p['brand'] ?? '',
+'model' => $p['model'] ?? '',
+'img' => $imgSrc,
+'price' => $p['price'] ?? null,
+'price_mode' => $priceMode,
+'cur' => $cur,
+'stock' => (bool) ($p['stock'] ?? false),
+])
+
+<div class="cat-prod" x-data="{ item: @js($cardItem) }">
     <div class="cat-prod__media">
         @if (!empty($promos))
         <div class="cat-prod__promos">
@@ -57,7 +73,8 @@
         </div>
         @endif
 
-        <button type="button" class="cat-prod__fav" :class="{ active: fav }" @click="fav = !fav" aria-label="В обране">
+        <button type="button" class="cat-prod__fav" :class="{ active: $store.fav.has(item.id) }"
+            @click="$store.fav.toggle(item)" aria-label="В обране">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path
                     d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -76,13 +93,15 @@
             {{ $p['stock'] ? 'В наявності' : 'Під замовлення' }}
         </span>
 
-        @if ($imgSrc)
-        <img class="cat-prod__photo" src="{{ $imgSrc }}" alt="{{ $p['brand'] }} {{ $p['model'] }}" loading="lazy" />
-        @else
-        <span class="cat-prod__photo cat-prod__photo--ph mask-ico"
-            style="-webkit-mask-image:url('/images/svg/tehnics/wheel.svg');mask-image:url('/images/svg/tehnics/wheel.svg')"
-            aria-hidden="true"></span>
-        @endif
+        <a href="{{ $p['url'] ?? '#' }}" class="cat-prod__photolink" aria-label="{{ $p['brand'] }} {{ $p['model'] }}">
+            @if ($imgSrc)
+            <img class="cat-prod__photo" src="{{ $imgSrc }}" alt="{{ $p['brand'] }} {{ $p['model'] }}" loading="lazy" />
+            @else
+            <span class="cat-prod__photo cat-prod__photo--ph mask-ico"
+                style="-webkit-mask-image:url('/images/svg/tehnics/wheel.svg');mask-image:url('/images/svg/tehnics/wheel.svg')"
+                aria-hidden="true"></span>
+            @endif
+        </a>
     </div>
 
     <div class="cat-prod__body">
@@ -93,7 +112,7 @@
             </span>
             @endif
             <div class="cat-prod__head">
-                <div class="cat-prod__size">{{ $p['size'] }}</div>
+                <div class="cat-prod__size"><a href="{{ $p['url'] ?? '#' }}">{{ $p['size'] }}</a></div>
                 @if ($country && $showCountry)
                 <span class="cat-prod__country">
                     <img class="flag" src="https://flagcdn.com/{{ $country['code'] }}.svg" alt="{{ $country['name'] }}"
@@ -146,7 +165,6 @@
         </div>
 
         @php($oldPrice = $p['old_price'] ?? null)
-        @php($cur = $p['cur'] ?? 'грн')
         <div class="cat-prod__buy">
             <div class="cat-prod__price cat-prod__price--{{ $priceMode }} {{ $oldPrice ? 'cat-prod__price--sale' : '' }}">
                 @if ($priceMode === 'fixed' || $priceMode === 'from')
@@ -174,8 +192,9 @@
             </div>
 
             <div class="cat-prod__footer">
-                <a href="#" class="btn btn--outline cat-prod__more">Переглянути</a>
-                <button type="button" class="cat-prod__cart" aria-label="Додати в кошик">
+                <a href="{{ $p['url'] ?? '#' }}" class="btn btn--outline cat-prod__more">Переглянути</a>
+                <button type="button" class="cat-prod__cart" :class="{ added: $store.cart.has(item.id) }"
+                    @click="$store.cart.add(item)" aria-label="Додати в кошик">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1" />
                         <circle cx="20" cy="21" r="1" />

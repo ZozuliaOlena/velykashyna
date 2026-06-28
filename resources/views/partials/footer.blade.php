@@ -1,6 +1,5 @@
 {{-- resources/views/partials/footer.blade.php --}}
 @php($c = config('site.contacts'))
-@php($schedule = config('site.schedule'))
 
 {{-- CTA-картка над футером (приховується там, де є власний банер) --}}
 @if ($showFooterCta ?? true)
@@ -44,7 +43,7 @@
                     </svg>
                     <div>
                         <a href="tel:{{ $c['phone_href'] }}" class="fc-strong">{{ $c['phone'] }}</a>
-                        <div class="fc-note">Пн–Пт з 9:00 до 18:00</div>
+                        <div class="fc-note">Ми на зв'язку 24/7</div>
                     </div>
                 </div>
                 <div class="footer-contact-line">
@@ -80,11 +79,10 @@
                 <div class="fcol-title">Компанія</div>
                 <ul>
                     <li><a href="{{ route('about') }}">Про нас</a></li>
-                    <li><a href="#">Новини</a></li>
-                    <li><a href="#">Доставка і оплата</a></li>
-                    <li><a href="#">Повернення та обмін</a></li>
-                    <li><a href="#">Гарантія</a></li>
-                    <li><a href="#">Відгуки</a></li>
+                    <li><a href="{{ route('pages.delivery') }}">Доставка й оплата</a></li>
+                    <li><a href="{{ route('pages.returns') }}">Повернення та обмін</a></li>
+                    <li><a href="{{ route('pages.warranty') }}">Гарантія</a></li>
+                    <li><a href="{{ route('pages.privacy') }}">Політика конфіденційності</a></li>
                     <li><a href="{{ route('contacts') }}">Контакти</a></li>
                 </ul>
             </div>
@@ -103,9 +101,8 @@
             <div class="footer-col">
                 <div class="fcol-title">Графік роботи</div>
                 <ul>
-                    @foreach ($schedule as $row)
-                        <li style="color:#9aa0a8">{{ $row['days'] }}: {{ $row['hours'] }}</li>
-                    @endforeach
+                    <li style="color:#9aa0a8">Ми на зв'язку 24/7</li>
+                    <li style="color:#9aa0a8">Замовлення приймаємо цілодобово</li>
                 </ul>
             </div>
         </div>
@@ -142,10 +139,29 @@
             </div>
 
             @php($accordions = [
-                'Каталог' => ['Шини', 'Камери', 'Агрошини', 'Спецтехніка', 'Вантажні шини', 'Диски'],
-                'Компанія' => ['Про нас', 'Новини', 'Доставка і оплата', 'Гарантія', 'Відгуки'],
-                'Покупцю' => ['Як замовити', 'Оплата', 'Доставка', 'Повернення'],
-                'Контакти' => [$c['phone'], $c['email'], 'Telegram', 'Viber'],
+                'Каталог' => [
+                    'Шини' => route('catalog'),
+                    'Камери' => '#', 'Агрошини' => '#', 'Спецтехніка' => '#', 'Вантажні шини' => '#', 'Диски' => '#',
+                ],
+                'Компанія' => [
+                    'Про нас' => route('about'),
+                    'Доставка й оплата' => route('pages.delivery'),
+                    'Повернення та обмін' => route('pages.returns'),
+                    'Гарантія' => route('pages.warranty'),
+                    'Контакти' => route('contacts'),
+                ],
+                'Покупцю' => [
+                    'Доставка й оплата' => route('pages.delivery'),
+                    'Повернення та обмін' => route('pages.returns'),
+                    'Гарантія' => route('pages.warranty'),
+                    'Політика конфіденційності' => route('pages.privacy'),
+                ],
+                'Контакти' => [
+                    $c['phone'] => 'tel:' . $c['phone_href'],
+                    $c['email'] => 'mailto:' . $c['email'],
+                    'Telegram' => config('site.socials.telegram'),
+                    'Viber' => config('site.socials.viber'),
+                ],
             ])
             @foreach ($accordions as $title => $links)
                 <div class="fm-accordion" x-data="{ open: false }">
@@ -156,8 +172,8 @@
                         </svg>
                     </button>
                     <div class="fm-acc-body" x-show="open" x-cloak>
-                        @foreach ($links as $link)
-                            <a href="#">{{ $link }}</a>
+                        @foreach ($links as $label => $url)
+                            <a href="{{ $url }}">{{ $label }}</a>
                         @endforeach
                     </div>
                 </div>
@@ -175,7 +191,7 @@
         <div class="container"
             style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;width:100%">
             <span>© {{ config('site.founded_year') }}–{{ now()->year }} Велика Шина</span>
-            <a href="#">Політика конфіденційності</a>
+            <a href="{{ route('pages.privacy') }}">Політика конфіденційності</a>
             <span class="fb-made">Створено з <span style="color:#e31e24">♥</span> в Україні 🇺🇦</span>
         </div>
     </div>

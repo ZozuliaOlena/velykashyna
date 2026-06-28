@@ -23,11 +23,24 @@ class LeadController extends Controller
             'customer_name'      => ['required', 'string', 'max:255'],
             'phone'              => ['required', 'string', 'max:255'],
             'contact_method'     => ['nullable', 'string', 'max:255'],
+            'city'               => ['nullable', 'string', 'max:255'],
+            'delivery_method'    => ['nullable', 'string', 'max:255'],
+            'delivery_address'   => ['nullable', 'string', 'max:500'],
+            'payment_method'     => ['nullable', 'string', 'max:255'],
             'comment'            => ['nullable', 'string', 'max:2000'],
             'items'              => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'integer'],
             'items.*.qty'        => ['required', 'integer', 'min:1', 'max:1000'],
         ]);
+
+        // Деталі замовлення (доставка/оплата/коментар) — у текст замовлення.
+        $orderNotes = collect([
+            'Доставка' => $data['delivery_method'] ?? null,
+            'Місто' => $data['city'] ?? null,
+            'Відділення/адреса' => $data['delivery_address'] ?? null,
+            'Оплата' => $data['payment_method'] ?? null,
+            'Коментар' => $data['comment'] ?? null,
+        ])->filter()->map(fn ($v, $k) => "{$k}: {$v}")->implode("\n") ?: null;
 
         // Зведення дублікатів: один товар = один рядок із сумарною кількістю.
         $quantities = collect($data['items'])
@@ -52,7 +65,7 @@ class LeadController extends Controller
                 'customer_name'    => $data['customer_name'],
                 'phone'            => $data['phone'],
                 'contact_method'   => $data['contact_method'] ?? null,
-                'customer_comment' => $data['comment'] ?? null,
+                'customer_comment' => $orderNotes,
                 'status'           => 'new',
                 'source'           => 'cart',
             ]);
@@ -73,7 +86,7 @@ class LeadController extends Controller
             'ok'          => true,
             'lead_id'     => $lead->id,
             'items_count' => $quantities->count(),
-            'message'     => 'Заявку прийнято. Менеджер зв’яжеться з вами найближчим часом.',
+            'message'     => 'Замовлення прийнято. Ми зв’яжемося для підтвердження деталей.',
         ], 201);
     }
 }
