@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Адмін панель — Велика Шина</title>
     {{-- Без resources/js/app.js: Alpine надає сам Livewire (@livewireScripts).
          admin.js не стартує Alpine — лише drag-and-drop (SortableJS). --}}
@@ -23,6 +24,7 @@
         'grid'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
         'truck'   => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="13" height="10" rx="1"/><path d="M14 9h4l3 3v4h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
         'gear'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>',
+        'post'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>',
     ];
 @endphp
 
@@ -57,6 +59,9 @@
                 @if($newLeads > 0)
                     <span class="admin-nav__badge">{{ $newLeads > 99 ? '99+' : $newLeads }}</span>
                 @endif
+            </a>
+            <a href="{{ route('admin.posts.index') }}" class="admin-nav__item {{ $nav('admin.posts.*') }}" wire:navigate>
+                {!! $icons['post'] !!}<span>Блог</span>
             </a>
             <a href="{{ route('admin.import-export.index') }}" class="admin-nav__item {{ $nav('admin.import-export.*') }}" wire:navigate>
                 {!! $icons['swap'] !!}<span>Імпорт / Експорт</span>

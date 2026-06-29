@@ -693,6 +693,31 @@ body.admin-body {
             padding: 0 6px;
         }
 
+        // ── Редактор статей (Trix) ───────────────────────────────────────
+        trix-editor {
+            min-height: 320px;
+            border: 1px solid $border-color;
+            border-radius: 8px;
+            padding: 12px 14px;
+            background: #fff;
+            line-height: 1.6;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-red;
+                box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
+            }
+
+            // Картинки в статті не вилазять за межі редактора.
+            img { max-width: 100%; height: auto; border-radius: 6px; }
+            h1 { font-size: 22px; margin: 0.6em 0 0.3em; }
+            a { color: $primary-red; }
+        }
+
+        trix-toolbar .trix-button-group {
+            border-color: $border-color;
+        }
+
         // ── Кнопки ───────────────────────────────────────────────────────
         button {
             font-family: inherit;

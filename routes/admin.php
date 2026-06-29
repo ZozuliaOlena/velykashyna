@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PostImageController;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\ImportExport\ImportExport;
 use App\Livewire\Admin\Attributes\AttributeIndex;
@@ -13,6 +14,8 @@ use App\Livewire\Admin\Machinery\MachineryPositionIndex;
 use App\Livewire\Admin\Machinery\MachineryTypeIndex;
 use App\Livewire\Admin\Products\ProductForm;
 use App\Livewire\Admin\Products\ProductIndex;
+use App\Livewire\Admin\Posts\PostForm;
+use App\Livewire\Admin\Posts\PostIndex;
 use App\Livewire\Admin\ProductTypes\ProductTypeIndex;
 use App\Livewire\Admin\Security\SecurityPage;
 use App\Livewire\Admin\Settings\SettingIndex;
@@ -39,6 +42,12 @@ Route::prefix('admin')
         Route::get('/machinery-brands', MachineryBrandIndex::class)->name('machinery-brands.index');
         Route::get('/machinery-models', MachineryModelIndex::class)->name('machinery-models.index');
         Route::get('/machinery-positions', MachineryPositionIndex::class)->name('machinery-positions.index');
+
+        // Блог
+        Route::get('/posts', PostIndex::class)->name('posts.index');
+        Route::get('/posts/create', PostForm::class)->name('posts.create');
+        Route::get('/posts/{id}/edit', PostForm::class)->name('posts.edit');
+        Route::post('/posts/upload-image', [PostImageController::class, 'store'])->name('posts.upload-image');
 
         // Заявки, користувачі, налаштування
         Route::get('/leads', LeadIndex::class)->name('leads.index');
