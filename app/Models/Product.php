@@ -229,6 +229,16 @@ class Product extends Model implements HasMedia
      * на кшталт «123A8», які давали хибні збіги). Розмір порівнюємо
      * без пробілів і регістру, тож «800/65r32» = «800/65 R32».
      */
+    /** Стем-синоніми → код типу товару (для пошуку «шини», «диски», «камери»…). */
+    private const TYPE_SEARCH_STEMS = [
+        'шин' => 'tire', 'покрышк' => 'tire',
+        'диск' => 'disk', 'обід' => 'disk', 'обод' => 'disk',
+        'камер' => 'tube',
+        'вентил' => 'valve', 'ніпел' => 'valve', 'нипел' => 'valve',
+        'флап' => 'flap', 'ободн' => 'flap',
+        'кільц' => 'ring', 'кольц' => 'ring',
+    ];
+
     public function scopeSearch($query, string $term)
     {
         $term = trim($term);
@@ -238,11 +248,24 @@ class Product extends Model implements HasMedia
 
         $norm = mb_strtolower(str_replace(' ', '', $term));
 
-        return $query->where(function ($w) use ($term, $norm) {
+        // Якщо запит схожий на назву типу («шини», «диск») — додаємо ці типи.
+        $typeCodes = [];
+        foreach (self::TYPE_SEARCH_STEMS as $stem => $code) {
+            if (str_contains($norm, $stem)) {
+                $typeCodes[$code] = true;
+            }
+        }
+        $typeCodes = array_keys($typeCodes);
+
+        return $query->where(function ($w) use ($term, $norm, $typeCodes) {
             $w->where('sku', 'like', "%{$term}%")
                 ->orWhere('model', 'like', "%{$term}%")
                 ->orWhereRaw("REPLACE(LOWER(size_raw), ' ', '') LIKE ?", ['%' . $norm . '%'])
                 ->orWhereHas('brand', fn ($b) => $b->where('name', 'like', "%{$term}%"));
+
+            if ($typeCodes) {
+                $w->orWhereHas('productType', fn ($t) => $t->whereIn('code', $typeCodes));
+            }
         });
     }
 
@@ -292,6 +315,8 @@ class Product extends Model implements HasMedia
             'sku' => $this->sku ?? '',
             'slug' => $this->slug,
             'url' => $this->slug ? route('product', $this->slug) : null,
+            'type' => $this->productType?->name ?? '',
+            'type_code' => $this->productType?->code ?? '',
             'size' => $this->size_raw ?? '',
             'brand' => $this->brand?->name ?? '',
             'brand_logo_url' => $this->brand?->logoUrl(),

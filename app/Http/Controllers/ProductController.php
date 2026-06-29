@@ -25,7 +25,8 @@ class ProductController extends Controller
             'images' => $this->images($product),
             'specs' => $this->specs($product),
             'compat' => $this->compatibility($product),
-            'related' => $this->related($product),
+            'alternatives' => $this->alternatives($product),
+            'accessories' => $this->accessories($product),
         ]);
     }
 
@@ -111,31 +112,103 @@ class ProductController extends Controller
             ->all();
     }
 
-    /** Супутні товари: явні зв'язки, інакше — з тих самих категорій/бренду. */
-    private function related(Product $product): array
+    /**
+     * Альтернативні шини — швидкі переходи в каталог із попередньо
+     * застосованими фільтрами (за моделлю, розміром, брендом, технікою).
+     * Кожен елемент: ['label', 'value', 'url']. Порожні дані пропускаємо.
+     */
+    private function alternatives(Product $product): array
     {
-        $with = ['brand', 'catalogImage', 'machineryCompatibility.machineryType'];
+        $isTire = $product->productType?->code === 'tire';
+        $tire = $isTire ? ['type' => ['tire']] : [];
 
-        $items = $product->relatedProducts()
-            ->where('is_active', true)
-            ->with($with)
-            ->take(4)
-            ->get();
+        $brand = $product->brand?->name;
+        $size = $product->size_raw;
+        $model = $product->model;
 
-        if ($items->isEmpty()) {
-            $catIds = $product->categories->pluck('id');
+        $links = [];
 
-            $items = Product::query()
-                ->where('is_active', true)
-                ->where('id', '!=', $product->id)
-                ->when($catIds->isNotEmpty(), fn ($q) => $q->whereHas('categories', fn ($x) => $x->whereIn('categories.id', $catIds)))
-                ->when($catIds->isEmpty() && $product->brand_id, fn ($q) => $q->where('brand_id', $product->brand_id))
-                ->with($with)
-                ->latest()
-                ->take(4)
-                ->get();
+        // 1) Усі розміри цієї моделі (пошук за назвою моделі, звужений брендом).
+        if ($model) {
+            $links[] = [
+                'label' => 'Всі розміри моделі',
+                'value' => trim(($brand ? $brand . ' ' : '') . $model),
+                'url' => route('catalog', array_filter(['q' => $model, 'brand' => $brand ? [$brand] : null])),
+            ];
         }
 
-        return $items->map->toCard()->all();
+        // 2) Усі шини в цьому розмірі.
+        if ($size) {
+            $links[] = [
+                'label' => 'Усі шини в цьому розмірі',
+                'value' => $size,
+                'url' => route('catalog', ['size' => [$size]] + $tire),
+            ];
+        }
+
+        // 3) Усі шини цього розміру та бренду.
+        if ($size && $brand) {
+            $links[] = [
+                'label' => 'Усі шини',
+                'value' => $size . ' ' . $brand,
+                'url' => route('catalog', ['size' => [$size], 'brand' => [$brand]] + $tire),
+            ];
+        }
+
+        // 4) Усі шини на сумісну техніку (по кожному типу техніки).
+        $machineryTypes = $product->machineryCompatibility
+            ->map(fn ($c) => $c->machineryType?->name)
+            ->filter()->unique()->values();
+
+        foreach ($machineryTypes as $name) {
+            $links[] = [
+                'label' => 'Усі шини на',
+                'value' => mb_strtolower($name),
+                'url' => route('catalog', ['machinery' => [$name]] + $tire),
+            ];
+        }
+
+        return $links;
+    }
+
+    /**
+     * Супутні товари (камери, вентилі, флапи, кільця): спершу того самого
+     * розміру, потім того ж посадкового діаметра, далі — будь-які з цих типів.
+     */
+    private function accessories(Product $product): array
+    {
+        $codes = ['tube', 'valve', 'flap', 'ring'];
+        $with = ['brand', 'catalogImage', 'productType', 'machineryCompatibility.machineryType'];
+        $limit = 8;
+
+        $base = fn () => Product::query()
+            ->where('is_active', true)
+            ->where('id', '!=', $product->id)
+            ->whereHas('productType', fn ($q) => $q->whereIn('code', $codes))
+            ->with($with);
+
+        $items = collect();
+
+        // 1) той самий типорозмір
+        if ($product->size_raw) {
+            $items = $base()->where('size_raw', $product->size_raw)->take($limit)->get();
+        }
+
+        // 2) той самий посадковий діаметр
+        if ($items->count() < $limit && $product->rim_diameter) {
+            $more = $base()->whereNotIn('id', $items->pluck('id'))
+                ->where('rim_diameter', $product->rim_diameter)
+                ->take($limit - $items->count())->get();
+            $items = $items->concat($more);
+        }
+
+        // 3) будь-які супутні товари
+        if ($items->count() < $limit) {
+            $more = $base()->whereNotIn('id', $items->pluck('id'))
+                ->latest()->take($limit - $items->count())->get();
+            $items = $items->concat($more);
+        }
+
+        return $items->take($limit)->map->toCard()->all();
     }
 }

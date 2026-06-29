@@ -90,7 +90,9 @@ document.addEventListener('trix-attachment-add', (event) => {
             }
             return Promise.reject(msg);
         })
-        .then((d) => attachment.setAttributes({ url: d.url, href: d.url }))
+        // Лише url, без href — інакше Trix обгортає зображення у посилання
+        // на файл (на сайті клік відкривав би картинку окремою сторінкою).
+        .then((d) => attachment.setAttributes({ url: d.url }))
         .catch((err) => {
             attachment.remove();
             alert(typeof err === 'string' ? err : 'Не вдалося завантажити зображення.');

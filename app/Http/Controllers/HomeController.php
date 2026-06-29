@@ -157,7 +157,7 @@ class HomeController extends Controller
     {
         return Product::query()
             ->where('is_active', true)
-            ->with(['brand', 'catalogImage', 'machineryCompatibility.machineryType'])
+            ->with(['brand', 'catalogImage', 'productType', 'machineryCompatibility.machineryType'])
             ->orderByDesc('is_promo')
             ->latest()
             ->take(8)

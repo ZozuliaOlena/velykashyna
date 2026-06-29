@@ -99,6 +99,58 @@ document.addEventListener('alpine:init', () => {
         },
     });
 
+    // Порівняння (гостьове, у localStorage). Максимум 4 шини.
+    Alpine.store('compare', {
+        items: JSON.parse(localStorage.getItem('compare') || '[]'),
+        max: 4,
+        save() {
+            localStorage.setItem('compare', JSON.stringify(this.items));
+        },
+        has(id) {
+            return this.items.some((i) => i.id === id);
+        },
+        full() {
+            return this.items.length >= this.max;
+        },
+        toggle(item) {
+            if (!item || !item.id) return;
+            if (this.has(item.id)) {
+                this.items = this.items.filter((i) => i.id !== item.id);
+            } else {
+                if (this.full()) {
+                    window.dispatchEvent(new CustomEvent('compare-full', { detail: { max: this.max } }));
+                    return;
+                }
+                this.items.push(item);
+                window.dispatchEvent(new CustomEvent('compare-added', { detail: { ...item } }));
+            }
+            this.save();
+        },
+        remove(id) {
+            this.items = this.items.filter((i) => i.id !== id);
+            this.save();
+        },
+        // Доповнюємо стор даними з сервера (коли заходять за прямим /compare?ids=).
+        seed(cards) {
+            if (this.items.length || !Array.isArray(cards)) return;
+            this.items = cards.filter((c) => c && c.id);
+            this.save();
+        },
+        clear() {
+            this.items = [];
+            this.save();
+        },
+        get count() {
+            return this.items.length;
+        },
+        get ids() {
+            return this.items.map((i) => i.id).join(',');
+        },
+        get url() {
+            return '/compare?ids=' + this.ids;
+        },
+    });
+
     /**
      * Повноекранний hero-слайдер (відео/зображення) з автопрогортанням.
      * Грає лише активне відео, решта — на паузі.
@@ -290,6 +342,31 @@ document.addEventListener('alpine:init', () => {
             this.open = true;
             clearTimeout(this.timer);
             this.timer = setTimeout(() => (this.open = false), 5000);
+        },
+        close() {
+            this.open = false;
+            clearTimeout(this.timer);
+        },
+    }));
+
+    // Тост «Додано до порівняння» (у стилі тосту кошика).
+    Alpine.data('compareToast', () => ({
+        open: false,
+        limit: false,
+        item: {},
+        timer: null,
+        showItem(item) {
+            this.item = item || {};
+            this.limit = false;
+            this.open = true;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => (this.open = false), 5000);
+        },
+        showLimit() {
+            this.limit = true;
+            this.open = true;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => (this.open = false), 3000);
         },
         close() {
             this.open = false;

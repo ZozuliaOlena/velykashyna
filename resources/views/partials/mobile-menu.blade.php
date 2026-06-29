@@ -38,6 +38,27 @@
         @include('partials.search-results')
     </div>
 
+    {{-- Швидкий доступ: Обране (перенесено сюди з шапки) + Порівняння --}}
+    <div class="mm-quick">
+        <a href="{{ route('favorites') }}" @click="$store.ui.closeMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            <span>Обране</span>
+            <span class="mm-quick__badge" x-show="$store.fav.count" x-text="$store.fav.count" x-cloak></span>
+        </a>
+        <a href="{{ route('compare') }}" :href="$store.compare.url"
+            @click="$store.compare.count < 1 ? $event.preventDefault() : $store.ui.closeMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="6" y1="20" x2="6" y2="14" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="18" y1="20" x2="18" y2="10" />
+            </svg>
+            <span>Порівняння</span>
+            <span class="mm-quick__badge" x-show="$store.compare.count" x-text="$store.compare.count" x-cloak></span>
+        </a>
+    </div>
+
     <div class="mm-label">Каталог</div>
     <nav class="mm-links">
         <a href="{{ route('catalog') }}" @click="$store.ui.closeMenu()">Усі товари {!! $chev !!}</a>
@@ -57,7 +78,7 @@
 
     <div class="mm-label">Інформація</div>
     <nav class="mm-links">
-        <a href="#" @click="$store.ui.closeMenu()">Новини {!! $chev !!}</a>
+        <a href="{{ route('blog.index') }}" @click="$store.ui.closeMenu()">Блог {!! $chev !!}</a>
         <a href="{{ route('about') }}" @click="$store.ui.closeMenu()">Про нас {!! $chev !!}</a>
         <a href="{{ route('contacts') }}" @click="$store.ui.closeMenu()">Контакти {!! $chev !!}</a>
     </nav>

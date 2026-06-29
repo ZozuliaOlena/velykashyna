@@ -49,6 +49,7 @@
 'id' => $p['id'] ?? null,
 'slug' => $p['slug'] ?? null,
 'url' => $p['url'] ?? null,
+'type' => $p['type'] ?? '',
 'size' => $p['size'] ?? '',
 'brand' => $p['brand'] ?? '',
 'model' => $p['model'] ?? '',
@@ -78,6 +79,18 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path
                     d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+        </button>
+
+        <button type="button" class="cat-prod__compare"
+            :class="{ active: $store.compare.has(item.id), 'is-disabled': !$store.compare.has(item.id) && $store.compare.full() }"
+            @click="$store.compare.toggle(item)"
+            :aria-label="$store.compare.has(item.id) ? 'Прибрати з порівняння' : 'Додати до порівняння'"
+            :title="$store.compare.has(item.id) ? 'У порівнянні' : ($store.compare.full() ? 'Максимум ' + $store.compare.max : 'Порівняти')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="6" y1="20" x2="6" y2="14" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="18" y1="20" x2="18" y2="10" />
             </svg>
         </button>
 
@@ -112,7 +125,9 @@
             </span>
             @endif
             <div class="cat-prod__head">
-                <div class="cat-prod__size"><a href="{{ $p['url'] ?? '#' }}">{{ $p['size'] }}</a></div>
+                <div class="cat-prod__size">
+                    <a href="{{ $p['url'] ?? '#' }}">@if (!empty($p['type']))<span class="cat-prod__size-type {{ ($p['type_code'] ?? '') !== 'tire' ? 'is-accent' : '' }}">{{ $p['type'] }}</span> @endif{{ $p['size'] }}</a>
+                </div>
                 @if ($country && $showCountry)
                 <span class="cat-prod__country">
                     <img class="flag" src="https://flagcdn.com/{{ $country['code'] }}.svg" alt="{{ $country['name'] }}"
@@ -137,6 +152,9 @@
             {{-- Характеристики у вигляді колонок — видно лише у режимі списку --}}
             @php($specCol = trim(($p['constr'] ?? '') . (!empty($p['spec']) ? ', ' . $p['spec'] : ''), ', '))
             <div class="cat-prod__listspecs">
+                @if (!empty($p['type']))
+                <div class="lf"><span class="lf-label">Тип</span><span class="lf-val">{{ $p['type'] }}</span></div>
+                @endif
                 @if (!empty($p['sku']))
                 <div class="lf"><span class="lf-label">Артикул</span><span class="lf-val">{{ $p['sku'] }}</span></div>
                 @endif

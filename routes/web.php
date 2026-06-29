@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\CompareController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
@@ -27,12 +29,19 @@ Route::get('/search/suggest', [SearchController::class, 'suggest'])->name('searc
 // Сторінка товару (детальна картка) за ЧПУ-slug.
 Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('product');
 
+// Блог — список статей та детальна сторінка за ЧПУ-slug.
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+
 // Фід для Google Merchant Center (XML).
 Route::get('/feed/merchant.xml', [FeedController::class, 'merchant'])->name('feed.merchant');
 
 // Кошик і Обране — гостьові (стан у localStorage), рендеряться на клієнті.
 Route::view('/cart', 'web.cart', ['showFooterCta' => false])->name('cart');
 Route::view('/favorites', 'web.favorites', ['showFooterCta' => false])->name('favorites');
+
+// Порівняння шин — таблиця характеристик за переданими ?ids=.
+Route::get('/compare', [CompareController::class, 'index'])->name('compare');
 
 // Про нас — власний CTA + прозора шапка поверх темного hero (як на головній).
 Route::get('/about', function () {

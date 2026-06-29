@@ -24,7 +24,7 @@ class CatalogController extends Controller
     {
         $query = Product::query()
             ->where('is_active', true)
-            ->with(['brand', 'catalogImage', 'machineryCompatibility.machineryType']);
+            ->with(['brand', 'catalogImage', 'productType', 'machineryCompatibility.machineryType']);
 
         $this->applyFilters($query, $request);
         $this->applySort($query, $request->query('sort'));
@@ -43,6 +43,8 @@ class CatalogController extends Controller
             'productTypes' => ProductType::orderBy('id')->get(['code', 'name']),
             'selected' => $this->selected($request),
             'activeFilters' => $this->activeFilters($request),
+            // Власний CTA-блок у каталозі — стандартний банер футера вимикаємо.
+            'showFooterCta' => false,
         ]);
     }
 

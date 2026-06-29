@@ -32,7 +32,7 @@ class SearchController extends Controller
                 $c = $p->toCard();
 
                 return [
-                    'title' => trim(($c['size'] ?: '') . ' ' . ($c['brand'] ?: '') . ' ' . ($c['model'] ?: '')),
+                    'title' => trim(($c['type'] ?: '') . ' ' . ($c['size'] ?: '') . ' ' . ($c['brand'] ?: '') . ' ' . ($c['model'] ?: '')),
                     'url' => $c['url'],
                     'img' => $c['img_url'],
                     'price' => $c['price'],

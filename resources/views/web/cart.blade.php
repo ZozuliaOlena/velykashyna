@@ -39,103 +39,127 @@
         </div>
 
         {{-- Вміст кошика --}}
-        <div class="cart-layout" x-show="!sent && $store.cart.items.length > 0" x-cloak>
-            <div class="cart-items">
-                <template x-for="i in $store.cart.items" :key="i.id">
-                    <div class="cart-item">
-                        <a :href="i.url" class="cart-item__img">
-                            <img :src="i.img || '/images/svg/tehnics/wheel.svg'" :alt="i.brand" />
-                        </a>
-                        <div class="cart-item__info">
-                            <a :href="i.url" class="cart-item__name" x-text="i.size"></a>
-                            <span class="cart-item__sub" x-text="(i.brand + ' ' + i.model).trim()"></span>
-                        </div>
-                        <div class="cart-item__qty qty">
-                            <button type="button" @click="$store.cart.setQty(i.id, i.qty - 1)">−</button>
-                            <input type="text" :value="i.qty" readonly />
-                            <button type="button" @click="$store.cart.setQty(i.id, i.qty + 1)">+</button>
-                        </div>
-                        <div class="cart-item__price">
-                            <template x-if="i.price && i.price_mode !== 'inquiry'">
-                                <span><span x-text="(i.price * i.qty).toLocaleString('uk-UA')"></span> <small
-                                        x-text="i.cur"></small></span>
-                            </template>
-                            <template x-if="!i.price || i.price_mode === 'inquiry'">
-                                <span class="muted">Уточнюйте</span>
-                            </template>
-                        </div>
-                        <button type="button" class="cart-item__remove" @click="askRemove(i)"
-                            aria-label="Видалити">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                        </button>
-                    </div>
-                </template>
-            </div>
-
-            <aside class="cart-summary">
-                <h2 class="cart-summary__title">Оформлення замовлення</h2>
-
-                <form @submit.prevent="submit()" class="cart-form">
-                    <label class="cart-field">
-                        <span>Ваше ім'я</span>
-                        <input type="text" x-model="form.name" placeholder="Як до вас звертатися" required />
-                    </label>
-                    <label class="cart-field">
-                        <span>Телефон</span>
-                        <input type="tel" x-model="form.phone" placeholder="+38 (0__) ___ __ __" required />
-                    </label>
-
-                    <label class="cart-field">
-                        <span>Спосіб доставки</span>
-                        <div class="select">
-                            <select x-model="form.delivery">
-                                <option>Нова Пошта</option>
-                                <option>САТ</option>
-                                <option>Кур'єр</option>
-                                <option>Самовивіз зі складу</option>
-                            </select>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </div>
-                    </label>
-
-                    <template x-if="!isPickup">
-                        <div class="cart-field-group">
-                            <label class="cart-field">
-                                <span>Місто</span>
-                                <input type="text" x-model="form.city" placeholder="Напр. Київ" :required="!isPickup" />
-                            </label>
-                            <label class="cart-field">
-                                <span>Відділення / адреса</span>
-                                <input type="text" x-model="form.address" placeholder="№ відділення або адреса"
-                                    :required="!isPickup" />
-                            </label>
+        <div class="cart" x-show="!sent && $store.cart.items.length > 0" x-cloak>
+            {{-- 1. Товари --}}
+            <section class="cart-section">
+                <h2 class="cart-section__title">Товари в кошику
+                    <span class="cart-section__count" x-text="$store.cart.count"></span>
+                </h2>
+                <div class="cart-items">
+                    <template x-for="i in $store.cart.items" :key="i.id">
+                        <div class="cart-item">
+                            <a :href="i.url" class="cart-item__img">
+                                <img :src="i.img || '/images/svg/tehnics/wheel.svg'" :alt="i.brand" />
+                            </a>
+                            <div class="cart-item__info">
+                                <a :href="i.url" class="cart-item__name" x-text="i.size"></a>
+                                <span class="cart-item__sub" x-text="(i.brand + ' ' + i.model).trim()"></span>
+                            </div>
+                            <div class="cart-item__qty qty">
+                                <button type="button" @click="$store.cart.setQty(i.id, i.qty - 1)">−</button>
+                                <input type="text" :value="i.qty" readonly />
+                                <button type="button" @click="$store.cart.setQty(i.id, i.qty + 1)">+</button>
+                            </div>
+                            <div class="cart-item__price">
+                                <template x-if="i.price && i.price_mode !== 'inquiry'">
+                                    <span><span x-text="(i.price * i.qty).toLocaleString('uk-UA')"></span> <small
+                                            x-text="i.cur"></small></span>
+                                </template>
+                                <template x-if="!i.price || i.price_mode === 'inquiry'">
+                                    <span class="muted">Уточнюйте</span>
+                                </template>
+                            </div>
+                            <button type="button" class="cart-item__remove" @click="askRemove(i)"
+                                aria-label="Видалити">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
                         </div>
                     </template>
+                </div>
+                <a href="{{ route('catalog') }}" class="cart-continue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    Продовжити покупки
+                </a>
+            </section>
 
-                    <label class="cart-field">
-                        <span>Спосіб оплати</span>
-                        <div class="select">
-                            <select x-model="form.payment">
-                                <option>Накладений платіж (при отриманні)</option>
-                                <option>Оплата за реквізитами (IBAN)</option>
-                            </select>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
+            {{-- 2. Оформлення замовлення --}}
+            <form @submit.prevent="submit()" class="cart-checkout">
+                <div class="cart-form-card">
+                    <h2 class="cart-card__title">Оформлення замовлення</h2>
+                    <div class="cart-form">
+                        <div class="cart-field-group">
+                            <label class="cart-field">
+                                <span>Ваше ім'я</span>
+                                <input type="text" x-model="form.name" placeholder="Як до вас звертатися" required />
+                            </label>
+                            <label class="cart-field">
+                                <span>Телефон</span>
+                                <input type="tel" x-model="form.phone" placeholder="+38 (0__) ___ __ __" required />
+                            </label>
                         </div>
-                    </label>
 
-                    <textarea x-model="form.comment" rows="2" placeholder="Коментар до замовлення (необов'язково)"></textarea>
+                        <label class="cart-field">
+                            <span>Спосіб доставки</span>
+                            <div class="select">
+                                <select x-model="form.delivery">
+                                    <option>Нова Пошта</option>
+                                    <option>САТ</option>
+                                    <option>Кур'єр</option>
+                                    <option>Самовивіз зі складу</option>
+                                </select>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                            </div>
+                        </label>
 
-                    {{-- Підсумок --}}
+                        <template x-if="!isPickup">
+                            <div class="cart-field-group">
+                                <label class="cart-field">
+                                    <span>Місто</span>
+                                    <input type="text" x-model="form.city" placeholder="Напр. Київ"
+                                        :required="!isPickup" />
+                                </label>
+                                <label class="cart-field">
+                                    <span>Відділення / адреса</span>
+                                    <input type="text" x-model="form.address" placeholder="№ відділення або адреса"
+                                        :required="!isPickup" />
+                                </label>
+                            </div>
+                        </template>
+
+                        <label class="cart-field">
+                            <span>Спосіб оплати</span>
+                            <div class="select">
+                                <select x-model="form.payment">
+                                    <option>Накладений платіж (при отриманні)</option>
+                                    <option>Оплата за реквізитами (IBAN)</option>
+                                </select>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                            </div>
+                        </label>
+
+                        <label class="cart-field">
+                            <span>Коментар до замовлення</span>
+                            <textarea x-model="form.comment" rows="3"
+                                placeholder="Необов'язково: побажання, уточнення…"></textarea>
+                        </label>
+                    </div>
+                </div>
+
+                <aside class="cart-summary-card">
+                    <h2 class="cart-card__title">Ваше замовлення</h2>
                     <div class="cart-totals">
                         <div class="cart-summary__row">
-                            <span>Вартість товару (<span x-text="$store.cart.count"></span>)</span>
+                            <span>Товари (<span x-text="$store.cart.count"></span>)</span>
                             <b><span x-text="$store.cart.total.toLocaleString('uk-UA')"></span> грн</b>
                         </div>
                         <div class="cart-summary__row">
@@ -156,10 +180,10 @@
                         <span x-show="loading" x-cloak>Оформлюємо…</span>
                     </button>
                     <p class="product-order__err" x-show="error" x-cloak x-text="error"></p>
-                    <p class="cart-summary__hint">Вартість доставки за тарифами перевізника. Самовивіз зі складу —
-                        безкоштовно.</p>
-                </form>
-            </aside>
+                    <p class="cart-summary__hint">Без онлайн-оплати. Вартість доставки — за тарифами перевізника,
+                        самовивіз безкоштовний.</p>
+                </aside>
+            </form>
         </div>
     </div>
 

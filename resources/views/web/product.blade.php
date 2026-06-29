@@ -3,6 +3,12 @@
 
 @php($title = $product->size_raw ?: $product->name)
 @php($subtitle = trim(($product->brand?->name ? $product->brand->name . ' ' : '') . $product->model))
+{{-- Тип товару (Шина / Диск / Камера…) — додаємо перед розміром у заголовку.
+     Лише коли заголовок — це типорозмір (інакше назва вже може містити тип). --}}
+@php($typeName = $product->productType?->name)
+@php($typeCode = $product->productType?->code)
+@php($typePrefix = ($typeName && $product->size_raw) ? $typeName . ' ' : '')
+@php($fullName = trim($typePrefix . $title . ($subtitle ? ' ' . $subtitle : '')))
 @php($priceMode = $product->price_mode)
 @php($price = $product->effectivePrice())
 @php($oldPrice = $product->oldPrice())
@@ -16,6 +22,7 @@
 'id' => $product->id,
 'slug' => $product->slug,
 'url' => route('product', $product->slug),
+'type' => trim($typePrefix),
 'size' => $title,
 'brand' => $product->brand?->name ?? '',
 'model' => $product->model ?? '',
@@ -26,18 +33,18 @@
 'stock' => $inStock,
 ])
 
-@section('title', $product->seo_title ?: trim($title . ' ' . $subtitle) . ' — Велика Шина')
-@section('meta_description', $product->seo_description ?: 'Купити ' . trim($title . ' ' . $subtitle) . ' у компанії «Велика Шина». Підбір, консультація та доставка по Україні.')
+@section('title', $product->seo_title ?: $fullName . ' — Велика Шина')
+@section('meta_description', $product->seo_description ?: 'Купити ' . $fullName . ' у компанії «Велика Шина». Підбір, консультація та доставка по Україні.')
 
 {{-- Структуровані дані Product (узгоджені з Merchant-фідом) --}}
 @push('head')
 @php($ld = array_filter([
 '@context' => 'https://schema.org',
 '@type' => 'Product',
-'name' => trim($title . ' ' . $subtitle),
+'name' => $fullName,
 'sku' => $product->sku,
 'mpn' => $product->sku,
-'description' => $product->seo_description ?: ('Купити ' . trim($title . ' ' . $subtitle) . ' у «Велика Шина».'),
+'description' => $product->seo_description ?: ('Купити ' . $fullName . ' у «Велика Шина».'),
 'image' => collect($images)->map(fn ($u) => url($u))->values()->all(),
 'brand' => $product->brand?->name ? ['@type' => 'Brand', 'name' => $product->brand->name] : null,
 ]))
@@ -62,7 +69,7 @@
             <span class="sep">/</span>
             <a href="{{ route('catalog') }}">Каталог шин</a>
             <span class="sep">/</span>
-            <span class="current">{{ trim($title . ' ' . $subtitle) }}</span>
+            <span class="current">{{ $fullName }}</span>
         </nav>
 
         <div class="product-top">
@@ -70,7 +77,7 @@
             <div class="product-gallery" x-data="{ active: 0, images: @js($images) }">
                 <div class="product-gallery__main">
                     @if (count($images))
-                    <img :src="images[active]" alt="{{ trim($title . ' ' . $subtitle) }}" />
+                    <img :src="images[active]" alt="{{ $fullName }}" />
                     @else
                     <span class="product-gallery__ph mask-ico"
                         style="-webkit-mask-image:url('/images/svg/tehnics/wheel.svg');mask-image:url('/images/svg/tehnics/wheel.svg')"></span>
@@ -100,7 +107,7 @@
             <div class="product-main">
                 <div class="product-main__head">
                     <div>
-                        <h1 class="product-title">{{ $title }}</h1>
+                        <h1 class="product-title">@if ($typePrefix)<span class="product-title__type {{ $typeCode !== 'tire' ? 'is-accent' : '' }}">{{ $typeName }}</span> @endif{{ $title }}</h1>
                         @if ($subtitle)
                         <p class="product-subtitle">{{ $subtitle }}</p>
                         @endif
@@ -180,6 +187,16 @@
                             </svg>
                             <span x-text="$store.fav.has(item.id) ? 'В обраному' : 'В обране'">В обране</span>
                         </button>
+                        <button type="button" class="product-buy__compare" :class="{ active: $store.compare.has(item.id) }"
+                            @click="$store.compare.toggle(item)"
+                            :title="$store.compare.full() && !$store.compare.has(item.id) ? 'Максимум ' + $store.compare.max : ''">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="6" y1="20" x2="6" y2="14" />
+                                <line x1="12" y1="20" x2="12" y2="4" />
+                                <line x1="18" y1="20" x2="18" y2="10" />
+                            </svg>
+                            <span x-text="$store.compare.has(item.id) ? 'У порівнянні' : 'Порівняти'">Порівняти</span>
+                        </button>
                         <a href="tel:{{ config('site.contacts.phone_href') }}" class="btn btn--dark product-buy__call">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -224,13 +241,38 @@
         @endif
     </div>
 
-    {{-- СУПУТНІ ТОВАРИ --}}
-    @if (count($related))
+    {{-- АЛЬТЕРНАТИВНІ ШИНИ — швидкі переходи у каталог із фільтрами --}}
+    @if (count($alternatives))
     <div class="section" style="padding-bottom:0">
         <div class="container">
             <div class="section-head">
-                <h2 class="section-title">Схожі товари</h2>
-                <a href="{{ route('catalog') }}" class="section-link">Весь каталог
+                <h2 class="section-title">Альтернативні шини в цьому ж розмірі</h2>
+            </div>
+            <div class="alt-links">
+                @foreach ($alternatives as $a)
+                <a href="{{ $a['url'] }}" class="alt-link">
+                    <span class="alt-link__text">
+                        <span class="alt-link__label">{{ $a['label'] }}</span>
+                        <span class="alt-link__value">{{ $a['value'] }}</span>
+                    </span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- СУПУТНІ ТОВАРИ (камери, вентилі, флапи) --}}
+    @if (count($accessories))
+    <div class="section" style="padding-bottom:0">
+        <div class="container">
+            <div class="section-head">
+                <h2 class="section-title">Супутні товари</h2>
+                <a href="{{ route('catalog', ['type' => ['tube', 'valve', 'flap']]) }}" class="section-link">Усі камери та аксесуари
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="5" y1="12" x2="19" y2="12" />
                         <polyline points="12 5 19 12 12 19" />
@@ -238,7 +280,7 @@
                 </a>
             </div>
             <div class="product-grid product-related">
-                @foreach ($related as $p)
+                @foreach ($accessories as $p)
                 @include('partials.product-card', ['p' => $p, 'showCountry' => false])
                 @endforeach
             </div>

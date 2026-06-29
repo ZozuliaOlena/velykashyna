@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Support\Translit;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -73,5 +75,49 @@ class Post extends Model implements HasMedia
                 ? $media->getUrl($conversion)
                 : $media->getUrl()
         );
+    }
+
+    /** Опубліковані статті, відсортовані від найновіших (для публічного блогу). */
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query
+            ->where('is_published', true)
+            ->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->orderByDesc('published_at')
+            ->orderByDesc('id');
+    }
+
+    /** Анонс для списку: явний excerpt або автоматично з тексту. */
+    public function teaser(int $words = 28): string
+    {
+        if ($this->excerpt) {
+            return $this->excerpt;
+        }
+
+        return Str::words(trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->content))), $words, '…');
+    }
+
+    /** Приблизний час читання у хвилинах (≈200 слів/хв). */
+    public function readingTime(): int
+    {
+        $count = Str::wordCount(strip_tags((string) $this->content));
+
+        return max(1, (int) ceil($count / 200));
+    }
+
+    /** Дата публікації у форматі «29 червня 2026» (укр. родовий відмінок). */
+    public function formattedDate(): ?string
+    {
+        if (! $this->published_at) {
+            return null;
+        }
+
+        $months = [
+            1 => 'січня', 2 => 'лютого', 3 => 'березня', 4 => 'квітня',
+            5 => 'травня', 6 => 'червня', 7 => 'липня', 8 => 'серпня',
+            9 => 'вересня', 10 => 'жовтня', 11 => 'листопада', 12 => 'грудня',
+        ];
+
+        return $this->published_at->day . ' ' . $months[$this->published_at->month] . ' ' . $this->published_at->year;
     }
 }

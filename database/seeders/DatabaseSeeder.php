@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
         if (app()->environment('local')) {
             $this->call([
                 DemoCatalogSeeder::class,
+                BlogSeeder::class,
             ]);
         }
     }
