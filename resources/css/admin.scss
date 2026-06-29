@@ -561,8 +561,14 @@ body.admin-body {
                 z-index: 60;
                 top: calc(100% + 4px);
                 left: 0;
-                right: 0;            // ← рівно ширина контролу
+                right: auto;
+                // Розширюється під найдовший пункт, але не вужче за контрол
+                // і не за межі екрана — текст завжди видно повністю.
+                min-width: 100%;
+                width: max-content;
+                max-width: min(420px, 92vw);
                 max-height: 280px;
+                overflow-x: hidden;
                 overflow-y: auto;
                 margin: 0;
                 padding: 4px;
@@ -718,6 +724,47 @@ body.admin-body {
             border-color: $border-color;
         }
 
+        // ── Фото «в роботі» (картки із технікою та підписом) ─────────────
+        .field-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px;
+            margin: 12px 0;
+        }
+
+        .field-photo {
+            position: relative;
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+
+            img { width: 100%; height: 150px; object-fit: cover; display: block; }
+
+            &__meta {
+                padding: 8px 10px;
+                font-size: 13px;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+
+                strong { color: $text-dark; }
+                span { color: $text-light; }
+            }
+
+            .photo-del {
+                position: absolute;
+                top: 6px;
+                right: 6px;
+            }
+        }
+
+        .field-photo-add {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px dashed $border-color;
+        }
+
         // ── Кнопки ───────────────────────────────────────────────────────
         button {
             font-family: inherit;
@@ -782,16 +829,17 @@ body.admin-body {
         }
 
         // Обгортка для широких таблиць: горизонтальний скрол усередині блоку,
-        // щоб таблиця ніколи не вилазила за картку сторінки.
-        // Обгортка таблиці. Навмисно БЕЗ overflow: інакше блок став би
-        // власним скрол-контейнером і «position: sticky» шапки прив'язалась
-        // би до нього, а не до сторінки — і шапка зникала б під час гортання.
-        // Завдяки overflow: visible шапка липне відносно вікна (див. thead th).
+        // Обгортка таблиці = власний скрол-контейнер: широка таблиця
+        // прокручується ГОРИЗОНТАЛЬНО всередині картки (не вилазить за борт),
+        // а max-height дає вертикальний скрол, завдяки якому липка шапка
+        // (thead th: sticky top:0) лишається на місці під час гортання.
         .table-scroll {
             width: 100%;
             max-width: 100%;
             margin-top: 14px;
-            overflow: visible;
+            overflow: auto;
+            max-height: calc(100vh - 230px);
+            -webkit-overflow-scrolling: touch;
 
             > table { margin-top: 0; }
         }
@@ -815,8 +863,8 @@ body.admin-body {
             font-weight: 700;
             border-bottom: 2px solid $border-color;
             white-space: nowrap;
-            // Липне до верху зони прокрутки (.admin-main). Рядки чисто йдуть
-            // під шапку, а сама вона лишається видимою під час гортання.
+            // Липне до верху скрол-бокса .table-scroll: рядки йдуть під шапку,
+            // а сама вона лишається видимою під час гортання таблиці.
             position: sticky;
             top: 0;
             z-index: 3;

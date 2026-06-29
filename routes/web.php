@@ -7,6 +7,7 @@ use App\Http\Controllers\FeedController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 // Головна — дані тягнуться з БД (товари, категорії, техніка, бренди).
@@ -35,6 +36,9 @@ Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.sho
 
 // Фід для Google Merchant Center (XML).
 Route::get('/feed/merchant.xml', [FeedController::class, 'merchant'])->name('feed.merchant');
+
+// Карта сайту для Google (динамічна: головна, каталог, сторінки, усі товари).
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Кошик і Обране — гостьові (стан у localStorage), рендеряться на клієнті.
 Route::view('/cart', 'web.cart', ['showFooterCta' => false])->name('cart');

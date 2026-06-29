@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostImageController;
+use App\Http\Controllers\Admin\ProductPdfController;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\FieldPhotos\FieldPhotoBrowse;
 use App\Livewire\Admin\ImportExport\ImportExport;
 use App\Livewire\Admin\Attributes\AttributeIndex;
 use App\Livewire\Admin\Brands\BrandIndex;
@@ -31,6 +33,7 @@ Route::prefix('admin')
         Route::get('/products', ProductIndex::class)->name('products.index');
         Route::get('/products/create', ProductForm::class)->name('products.create');
         Route::get('/products/{id}/edit', ProductForm::class)->name('products.edit');
+        Route::get('/products/{product}/pdf', [ProductPdfController::class, 'card'])->name('products.pdf');
 
         Route::get('/categories', CategoryIndex::class)->name('categories.index');
         Route::get('/attributes', AttributeIndex::class)->name('attributes.index');
@@ -42,6 +45,7 @@ Route::prefix('admin')
         Route::get('/machinery-brands', MachineryBrandIndex::class)->name('machinery-brands.index');
         Route::get('/machinery-models', MachineryModelIndex::class)->name('machinery-models.index');
         Route::get('/machinery-positions', MachineryPositionIndex::class)->name('machinery-positions.index');
+        Route::get('/field-photos', FieldPhotoBrowse::class)->name('field-photos.index');
 
         // Блог
         Route::get('/posts', PostIndex::class)->name('posts.index');
