@@ -40,6 +40,8 @@ class ProductForm extends Component
     public ?string $ply_rating = null;       // PR
     public ?string $load_speed_index = null; // LI/SS
     public ?string $specification = null;
+    public ?string $description = null;      // загальний опис товару
+    public ?string $expert_note = null;      // «Думка експерта Велика Шина»
 
     // ── наявність та ціна ────────────────────────────────────
     public string $stock_status = 'inquiry';
@@ -102,6 +104,8 @@ class ProductForm extends Component
         $this->ply_rating       = $product->ply_rating;
         $this->load_speed_index = $product->load_speed_index;
         $this->specification    = $product->specification;
+        $this->description      = $product->description;
+        $this->expert_note      = $product->expert_note;
         $this->stock_status     = $product->stock_status;
         $this->price_mode       = $product->price_mode;
         $this->price            = $product->price;
@@ -167,6 +171,8 @@ class ProductForm extends Component
             'ply_rating'       => ['nullable', 'string', 'max:10'],
             'load_speed_index' => ['nullable', 'string', 'max:30'],
             'specification'    => ['nullable', 'string', 'max:255'],
+            'description'      => ['nullable', 'string', 'max:5000'],
+            'expert_note'      => ['nullable', 'string', 'max:5000'],
 
             'stock_status'   => ['required', 'in:in_stock,on_order,inquiry'],
             'price_mode'     => ['required', 'in:fixed,from,inquiry'],
@@ -357,7 +363,9 @@ class ProductForm extends Component
             'mainMedia'    => $product?->getFirstMedia('main'),
             'galleryMedia' => $product ? $product->getMedia('gallery') : collect(),
             'catalogImageUrl' => $product?->catalogImage?->imageUrl('thumb'),
-            'attributes'   => $this->attributesForType(),
+            // ВАЖЛИВО: не називати змінну 'attributes' — це зарезервоване імʼя
+            // Livewire ($attributes = ComponentAttributeBag), воно перекриває дані.
+            'typeAttributes' => $this->attributesForType(),
         ])->layout('admin.layouts.admin');
     }
 }

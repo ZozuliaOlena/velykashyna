@@ -40,8 +40,7 @@
                 </div>
             @endif
 
-            <input wire:model="image" type="file" accept="image/*">
-            <div wire:loading wire:target="image" style="color:#666">Завантаження…</div>
+            <x-admin.image-upload model="image" />
             @error('image') <span style="color:red">{{ $message }}</span> @enderror
             @unless($postId)
                 <p style="color:#666">Фото завантажиться разом зі збереженням статті.</p>

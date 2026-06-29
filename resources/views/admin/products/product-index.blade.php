@@ -207,6 +207,7 @@
                 </td>
                 <td class="cell-actions">
                     <a class="icon-btn" href="{{ route('admin.products.edit', $product->id) }}" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></a>
+                    <a class="icon-btn" href="{{ route('admin.products.pdf', $product->id) }}?mode=inline" target="_blank" rel="noopener" title="PDF-картка" aria-label="PDF-картка"><x-icon name="file"/></a>
                     <button class="icon-btn" wire:click="delete({{ $product->id }})"
                         data-confirm="Ви дійсно хочете видалити товар?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>

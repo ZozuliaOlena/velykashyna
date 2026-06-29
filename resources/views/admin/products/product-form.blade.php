@@ -108,10 +108,10 @@
 
             @if(! $product_type_id)
                 <p style="color:#666">Оберіть тип товару, щоб з'явились його характеристики.</p>
-            @elseif($attributes->isEmpty())
+            @elseif($typeAttributes->isEmpty())
                 <p style="color:#666">Для цього типу ще немає характеристик. Додайте їх у розділі «Характеристики».</p>
             @else
-                @foreach($attributes as $attr)
+                @foreach($typeAttributes as $attr)
                     <div wire:key="attr-{{ $attr->id }}">
                         <label>
                             {{ $attr->name }}@if($attr->unit) <small style="color:#888">({{ $attr->unit }})</small>@endif
@@ -139,6 +139,26 @@
                     </div>
                 @endforeach
             @endif
+        </fieldset>
+
+        {{-- ── Опис товару ─────────────────────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Опис товару</strong></legend>
+            <div class="is-full">
+                <textarea wire:model="description" rows="5" style="width:100%; line-height:1.6"
+                    placeholder="Загальний опис товару: призначення, переваги, особливості конструкції."></textarea>
+                @error('description') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+        </fieldset>
+
+        {{-- ── Думка експерта / особливості ────────────────── --}}
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Думка експерта «Велика Шина» / особливості</strong></legend>
+            <div class="is-full">
+                <textarea wire:model="expert_note" rows="5" style="width:100%; line-height:1.6"
+                    placeholder="Особливості, нюанси застосування. Напр.: передня шина на екскаваторах JCB 3CX, чудово працює на твердому покритті, але на болоті забивається."></textarea>
+                @error('expert_note') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
         </fieldset>
 
         {{-- ── Наявність та ціна ───────────────────────────── --}}
@@ -300,8 +320,7 @@
                             data-confirm="Ви дійсно хочете видалити основне фото?">×</button>
                     </div>
                 @endif
-                <input wire:model="mainPhoto" type="file" accept="image/*">
-                <div wire:loading wire:target="mainPhoto" style="color:#666">Завантаження…</div>
+                <x-admin.image-upload model="mainPhoto" />
                 @error('mainPhoto') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
@@ -340,4 +359,44 @@
             </a>
         </div>
     </form>
+
+    {{-- PDF-картка товару (для пересилання клієнту) --}}
+    @if($productId)
+        <fieldset style="margin-top:1rem">
+            <legend><strong>PDF-картка (для Viber / Telegram)</strong></legend>
+            <p style="color:#666; margin:0 0 .5rem">
+                Кнопка відкриває готову PDF-картку товару в новій вкладці — на телефоні
+                тисніть «Поділитися» й оберіть Viber/Telegram. «Завантажити» — зберегти файл.
+            </p>
+            <ul style="color:#666; font-size:13px; margin:0 0 .9rem; padding-left:1.2rem">
+                <li><strong>Повна</strong> — фото, всі характеристики, опис, думка експерта, фото «в роботі».</li>
+                <li><strong>Коротка</strong> — лише головне: фото, основні характеристики, наявність.</li>
+                <li><strong>з ціною / без ціни</strong> — показувати ціну в картці чи ні.</li>
+            </ul>
+
+            <div style="margin-bottom:.6rem">
+                <span style="font-size:13px; color:#555">Повна картка:</span><br>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=1&mode=inline"><button type="button" class="btn-primary">Повна — з ціною</button></a>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=0&mode=inline"><button type="button">Повна — без ціни</button></a>
+            </div>
+            <div>
+                <span style="font-size:13px; color:#555">Коротка картка:</span><br>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=short&price=1&mode=inline"><button type="button" class="btn-primary">Коротка — з ціною</button></a>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=short&price=0&mode=inline"><button type="button">Коротка — без ціни</button></a>
+            </div>
+            <div style="margin-top:.75rem; padding-top:.6rem; border-top:1px solid #eee">
+                <a href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=1"><button type="button">⬇ Завантажити файл (повна з ціною)</button></a>
+            </div>
+        </fieldset>
+    @endif
+
+    {{-- Фото «в роботі» — окремий блок, доступний після збереження товару --}}
+    @if($productId)
+        @livewire('admin.products.product-field-photos', ['productId' => $productId], key('field-photos-'.$productId))
+    @else
+        <fieldset style="margin-top:1rem">
+            <legend><strong>Фото «в роботі» (застосування)</strong></legend>
+            <p style="color:#666">Доступно після збереження товару — відкрийте товар на редагування, щоб додати фото з техніки.</p>
+        </fieldset>
+    @endif
 </div>

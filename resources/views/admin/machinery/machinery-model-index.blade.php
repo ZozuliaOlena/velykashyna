@@ -26,6 +26,7 @@
                 <td data-label="Виробник">{{ $item->brand?->name ?? '—' }}</td>
                 <td data-label="Тип техніки">{{ $item->type?->name ?? '—' }}</td>
                 <td class="cell-actions">
+                    <a class="icon-btn" href="{{ route('admin.field-photos.index', ['filterModel' => $item->id]) }}" wire:navigate title="Фото в роботі" aria-label="Фото в роботі"><x-icon name="eye"/></a>
                     <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
                     <button class="icon-btn" wire:click="delete({{ $item->id }})" data-confirm="Ви дійсно хочете видалити модель?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>

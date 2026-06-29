@@ -23,6 +23,7 @@ class Product extends Model implements HasMedia
         'sku', 'product_type_id', 'name', 'brand_id', 'model', 'catalog_image_id',
         'size_raw', 'size_width', 'size_profile', 'rim_diameter',
         'rd_type', 'tube_type', 'ply_rating', 'load_speed_index', 'specification',
+        'description', 'expert_note',
         'stock_status', 'price_mode', 'price', 'currency', 'exchange_rate',
         'discount_value', 'discount_type', 'is_promo', 'free_shipping', 'merchant_enabled',
         'condition',
@@ -115,6 +116,12 @@ class Product extends Model implements HasMedia
     public function machineryCompatibility(): HasMany
     {
         return $this->hasMany(ProductMachineryCompatibility::class);
+    }
+
+    /** Фото товару «в роботі» (встановлені/інспектовані шини на техніці). */
+    public function fieldPhotos(): HasMany
+    {
+        return $this->hasMany(ProductFieldPhoto::class)->orderBy('sort_order')->orderByDesc('id');
     }
 
     public function relatedProducts(): BelongsToMany

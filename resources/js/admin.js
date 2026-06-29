@@ -52,6 +52,10 @@ function downscaleImage(file, maxDim = 1600, quality = 0.82) {
     });
 }
 
+// Доступно глобально — використовується компонентом <x-admin.image-upload>
+// для стиснення фото перед завантаженням у Livewire.
+window.adminCompressImage = downscaleImage;
+
 // Завантаження зображень, вставлених прямо в текст статті (Trix attachments):
 // шлемо (стиснений) файл на сервер і підставляємо отриманий URL у контент.
 document.addEventListener('trix-attachment-add', (event) => {
