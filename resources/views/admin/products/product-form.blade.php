@@ -141,13 +141,47 @@
             @endif
         </fieldset>
 
-        {{-- ── Опис товару ─────────────────────────────────── --}}
+        {{-- ── Опис товару (фіксований шаблон) ─────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Опис товару</strong></legend>
+            <p style="color:#666; margin:0 0 .75rem">
+                Заповніть розділи — заголовки фіксовані (їх не можна змінити). Зі вступу й розділів
+                автоматично складеться готовий опис товару (для сайту та PDF).
+            </p>
+
             <div class="is-full">
-                <textarea wire:model="description" rows="5" style="width:100%; line-height:1.6"
-                    placeholder="Загальний опис товару: призначення, переваги, особливості конструкції."></textarea>
-                @error('description') <span style="color:red">{{ $message }}</span> @enderror
+                <label>Опис</label>
+                <textarea wire:model="descrIntro" rows="4" style="width:100%; line-height:1.6"
+                    placeholder="Вступний опис: що це за шина, для чого, ключові технології."></textarea>
+                @error('descrIntro') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="is-full">
+                <label>Ключові переваги <small style="color:#888">(по одному пункту в рядок)</small></label>
+                <textarea wire:model="descrAdvantages" rows="5" style="width:100%; line-height:1.6"
+                    placeholder="Технологія VF для роботи при зниженому тиску&#10;Посилений металевий брекер Steel Belted&#10;Мінімальне пошкодження рослин"></textarea>
+                @error('descrAdvantages') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="is-full">
+                <label>Переваги над конкурентами <small style="color:#888">(по одному пункту в рядок)</small></label>
+                <textarea wire:model="descrVsCompetitors" rows="5" style="width:100%; line-height:1.6"
+                    placeholder="Кращa стабільність на високих швидкостях&#10;Ефективне самоочищення на вологому полі"></textarea>
+                @error('descrVsCompetitors') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="is-full">
+                <label>Особливості експлуатації</label>
+                <textarea wire:model="descrFeatures" rows="4" style="width:100%; line-height:1.6"
+                    placeholder="У яких умовах працює, як поводиться, нюанси використання."></textarea>
+                @error('descrFeatures') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="is-full">
+                <label>Чому варто придбати</label>
+                <textarea wire:model="descrWhyBuy" rows="4" style="width:100%; line-height:1.6"
+                    placeholder="Підсумок: для кого, чому це практичний вибір."></textarea>
+                @error('descrWhyBuy') <span style="color:red">{{ $message }}</span> @enderror
             </div>
         </fieldset>
 

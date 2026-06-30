@@ -24,13 +24,23 @@ class ProductPdfController extends Controller
         $product->load([
             'brand', 'productType', 'categories',
             'fieldPhotos.machineryType', 'fieldPhotos.machineryBrand', 'fieldPhotos.machineryModel', 'fieldPhotos.media',
+            'machineryCompatibility.machineryBrand', 'machineryCompatibility.machineryModel',
         ]);
+
+        // Сумісна техніка (з зв'язків): «Бренд Модель», без дублів.
+        $machinery = $product->machineryCompatibility
+            ->map(fn ($c) => trim(($c->machineryBrand?->name ? $c->machineryBrand->name.' ' : '').($c->machineryModel?->name ?? '')))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
 
         $data = [
             'product'   => $product,
             'variant'   => $variant,
             'withPrice' => $withPrice,
             'logo'      => $this->dataUri(public_path('images/logo.png')),
+            'machinery' => $machinery,
             'photo'     => $this->mainPhotoData($product),
             'fieldPhotos' => $variant === 'full'
                 ? $product->fieldPhotos->take(6)->map(fn ($fp) => [

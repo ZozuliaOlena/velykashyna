@@ -41,7 +41,14 @@
     .price-now { color: #d32f2f; font-size: 20px; font-weight: bold; }
     .price-old { color: #9aa0aa; text-decoration: line-through; font-size: 13px; }
     .section-title { font-size: 13px; font-weight: bold; margin: 18px 0 6px; color: #d32f2f; }
-    .expert { background: #f7f8fa; border-left: 3px solid #d32f2f; padding: 8px 12px; font-size: 12px; line-height: 1.5; }
+    .descr { font-size: 12px; line-height: 1.55; }
+    .descr h1, .descr h2, .descr h3 { font-size: 13px; margin: 10px 0 4px; }
+    .descr ul, .descr ol { margin: 4px 0 8px; padding-left: 18px; }
+    .descr li { margin: 2px 0; }
+    .descr p, .descr div { margin: 0 0 6px; text-align: justify; }
+    .descr a { color: #d32f2f; }
+    .machinery { font-size: 12px; line-height: 1.6; }
+    .expert { background: #f7f8fa; border-left: 3px solid #d32f2f; padding: 8px 12px; font-size: 12px; line-height: 1.5; text-align: justify; }
     .fp { width: 33%; padding: 4px; vertical-align: top; }
     .fp img { width: 150px; height: 150px; border: 1px solid #e0e0e0; }
     .fp-meta { font-size: 9px; color: #555; }
@@ -99,7 +106,12 @@
     @if($variant === 'full')
         @if($product->description)
             <div class="section-title">Опис товару</div>
-            <div style="font-size:12px; line-height:1.5">{{ $product->description }}</div>
+            <div class="descr">{!! $product->description !!}</div>
+        @endif
+
+        @if(count($machinery))
+            <div class="section-title">Сумісна техніка</div>
+            <div class="machinery">{{ implode(' · ', $machinery) }}</div>
         @endif
 
         @if($product->expert_note)
