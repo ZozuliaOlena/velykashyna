@@ -13,6 +13,7 @@ use App\Livewire\Admin\Leads\LeadIndex;
 use App\Livewire\Admin\Machinery\MachineryBrandIndex;
 use App\Livewire\Admin\Machinery\MachineryModelIndex;
 use App\Livewire\Admin\Machinery\MachineryPositionIndex;
+use App\Livewire\Admin\Machinery\MachinerySeriesIndex;
 use App\Livewire\Admin\Machinery\MachineryTypeIndex;
 use App\Livewire\Admin\Products\ProductForm;
 use App\Livewire\Admin\Products\ProductIndex;
@@ -43,6 +44,7 @@ Route::prefix('admin')
         // Сумісність з технікою
         Route::get('/machinery-types', MachineryTypeIndex::class)->name('machinery-types.index');
         Route::get('/machinery-brands', MachineryBrandIndex::class)->name('machinery-brands.index');
+        Route::get('/machinery-series', MachinerySeriesIndex::class)->name('machinery-series.index');
         Route::get('/machinery-models', MachineryModelIndex::class)->name('machinery-models.index');
         Route::get('/machinery-positions', MachineryPositionIndex::class)->name('machinery-positions.index');
         Route::get('/field-photos', FieldPhotoBrowse::class)->name('field-photos.index');

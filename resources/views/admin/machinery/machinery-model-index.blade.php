@@ -17,13 +17,14 @@
     <div class="table-scroll">
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
-            <tr><th>Модель</th><th>Виробник</th><th>Тип техніки</th><th>Дії</th></tr>
+            <tr><th>Модель</th><th>Виробник</th><th>Серія</th><th>Тип техніки</th><th>Дії</th></tr>
         </thead>
         <tbody>
             @forelse($items as $item)
             <tr wire:key="mmodel-{{ $item->id }}">
                 <td data-label="Модель">{{ $item->name }}</td>
                 <td data-label="Виробник">{{ $item->brand?->name ?? '—' }}</td>
+                <td data-label="Серія">{{ $item->series?->name ?? '—' }}</td>
                 <td data-label="Тип техніки">{{ $item->type?->name ?? '—' }}</td>
                 <td class="cell-actions">
                     <a class="icon-btn" href="{{ route('admin.field-photos.index', ['filterModel' => $item->id]) }}" wire:navigate title="Фото в роботі" aria-label="Фото в роботі"><x-icon name="eye"/></a>
@@ -32,7 +33,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="4" style="text-align:center">Нічого не знайдено</td></tr>
+            <tr><td colspan="5" style="text-align:center">Нічого не знайдено</td></tr>
             @endforelse
         </tbody>
     </table>
@@ -47,6 +48,12 @@
             <x-admin.select model="machinery_brand_id" placeholder="— Оберіть —" :live="false"
                 :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
             @error('machinery_brand_id') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+        <div>
+            <label>Серія (необов'язково)</label>
+            <x-admin.select model="machinery_series_id" placeholder="— Без серії —" :live="false"
+                :options="$series->map(fn ($s) => ['value' => $s->id, 'label' => ($s->brand?->name ? $s->brand->name.' — ' : '').$s->name])->all()" />
+            @error('machinery_series_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>
         <div>
             <label>Тип техніки *</label>

@@ -137,6 +137,34 @@ class FullDemoSeeder extends Seeder
                 }
             }
         }
+
+        // Серії та прив'язка моделей до них.
+        $seriesMap = [
+            'John Deere'      => ['8R' => ['8400'], '7R' => ['7830'], '6R' => ['6155R'], 'S-Series' => ['S780'], 'W-Series' => ['W650']],
+            'CASE IH'         => ['Magnum' => ['Magnum 340'], 'Puma' => ['Puma 185'], 'Axial-Flow' => ['Axial-Flow 9240']],
+            'New Holland'     => ['T7' => ['T7.270'], 'T8' => ['T8.435'], 'CR' => ['CR9.90']],
+            'CLAAS'           => ['Axion' => ['Axion 850'], 'Lexion' => ['Lexion 760'], 'Tucano' => ['Tucano 450']],
+            'Fendt'           => ['Vario' => ['936 Vario', '724 Vario']],
+            'МТЗ (Беларус)'   => ['Беларус' => ['МТЗ-82', 'МТЗ-1221', 'МТЗ-3522']],
+            'Massey Ferguson' => ['MF 7700' => ['MF 7720'], 'MF 9300' => ['MF 9300']],
+            'JCB'             => ['Backhoe' => ['3CX'], 'Loadall' => ['531-70']],
+        ];
+
+        foreach ($seriesMap as $brandName => $seriesList) {
+            $brand = MachineryBrand::where('name', $brandName)->first();
+            if (! $brand) {
+                continue;
+            }
+            foreach ($seriesList as $seriesName => $modelNames) {
+                $series = \App\Models\MachinerySeries::firstOrCreate([
+                    'machinery_brand_id' => $brand->id,
+                    'name' => $seriesName,
+                ]);
+                MachineryModel::where('machinery_brand_id', $brand->id)
+                    ->whereIn('name', $modelNames)
+                    ->update(['machinery_series_id' => $series->id]);
+            }
+        }
     }
 
     // ── Характеристики (EAV) ─────────────────────────────────────────────

@@ -9,11 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MachineryModel extends Model
 {
-    protected $fillable = ['machinery_brand_id', 'machinery_type_id', 'name'];
+    protected $fillable = ['machinery_brand_id', 'machinery_series_id', 'machinery_type_id', 'name'];
 
     public function brand(): BelongsTo
     {
         return $this->belongsTo(MachineryBrand::class, 'machinery_brand_id');
+    }
+
+    public function series(): BelongsTo
+    {
+        return $this->belongsTo(MachinerySeries::class, 'machinery_series_id');
     }
 
     public function type(): BelongsTo

@@ -43,7 +43,7 @@
         @php
             // Яка група розгорнута за замовчуванням — за поточним маршрутом.
             $openGroup = $on('admin.categories.*','admin.attributes.*','admin.brands.*','admin.product-types.*') ? 'catalog'
-                : ($on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-models.*','admin.machinery-positions.*','admin.field-photos.*') ? 'tech'
+                : ($on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-series.*','admin.machinery-models.*','admin.machinery-positions.*','admin.field-photos.*') ? 'tech'
                 : ($on('admin.users.*','admin.settings.*','admin.security.*') ? 'system' : ''));
         @endphp
         {{-- openGroup = акордеон: одночасно відкрита лише одна група --}}
@@ -82,12 +82,13 @@
 
             {{-- Техніка --}}
             <div class="admin-nav__group">
-                <button type="button" class="admin-nav__head {{ $on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-models.*','admin.machinery-positions.*','admin.field-photos.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'tech' ? '' : 'tech' } else { sidebar = true; openGroup = 'tech' }">
+                <button type="button" class="admin-nav__head {{ $on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-series.*','admin.machinery-models.*','admin.machinery-positions.*','admin.field-photos.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'tech' ? '' : 'tech' } else { sidebar = true; openGroup = 'tech' }">
                     {!! $icons['truck'] !!}<span>Техніка</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'tech' }">▶</span>
                 </button>
                 <div class="admin-nav__sub" x-show="openGroup === 'tech'" x-transition x-cloak>
                     <a href="{{ route('admin.machinery-types.index') }}" class="admin-nav__item {{ $nav('admin.machinery-types.*') }}" wire:navigate>Типи техніки</a>
                     <a href="{{ route('admin.machinery-brands.index') }}" class="admin-nav__item {{ $nav('admin.machinery-brands.*') }}" wire:navigate>Виробники</a>
+                    <a href="{{ route('admin.machinery-series.index') }}" class="admin-nav__item {{ $nav('admin.machinery-series.*') }}" wire:navigate>Серії</a>
                     <a href="{{ route('admin.machinery-models.index') }}" class="admin-nav__item {{ $nav('admin.machinery-models.*') }}" wire:navigate>Моделі</a>
                     <a href="{{ route('admin.machinery-positions.index') }}" class="admin-nav__item {{ $nav('admin.machinery-positions.*','admin.field-photos.*') }}" wire:navigate>Позиції</a>
                     <a href="{{ route('admin.field-photos.index') }}" class="admin-nav__item {{ $nav('admin.field-photos.*') }}" wire:navigate>Фото в роботі</a>
