@@ -228,15 +228,7 @@
             </div>
         </div>
 
-        {{-- ОПИС ТОВАРУ --}}
-        @if (filled($product->description))
-        <div class="product-section">
-            <h2 class="product-section__title">Опис</h2>
-            <div class="product-prose">{!! nl2br(e($product->description)) !!}</div>
-        </div>
-        @endif
-
-        {{-- ПОВНІ ХАРАКТЕРИСТИКИ --}}
+        {{-- 1. ПОВНІ ХАРАКТЕРИСТИКИ --}}
         @if (count($specs))
         <div class="product-section">
             <h2 class="product-section__title">Характеристики</h2>
@@ -251,24 +243,58 @@
         </div>
         @endif
 
-        {{-- СУМІСНІСТЬ ІЗ ТЕХНІКОЮ --}}
-        @if (count($compat))
+        {{-- 2. ОПИС ТОВАРУ --}}
+        @php($db = $product->description_blocks ?? [])
+        @if (!empty($db) || filled($product->description))
         <div class="product-section">
-            <h2 class="product-section__title">Підходить для техніки</h2>
-            <div class="product-compat">
-                @foreach ($compat as $line)
-                <span class="product-compat__item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    {{ $line }}
-                </span>
-                @endforeach
+            <h2 class="product-section__title">Опис</h2>
+            <div class="product-prose">
+                @if (!empty($db))
+                    {{-- Рендеримо зі структурних блоків: чистимо рядки від
+                         зайвих маркерів «•/-», галочки малюємо самі. --}}
+                    @php($clean = fn ($s) => trim(preg_replace('/^[\s•\-–·*]+/u', '', (string) $s)))
+                    @php($paras = fn ($t) => collect(preg_split('/\r\n|\r|\n/', (string) $t))->map(fn ($l) => trim($l))->filter())
+
+                    @foreach ($paras($db['intro'] ?? '') as $p)
+                        <p>{{ $p }}</p>
+                    @endforeach
+
+                    @if (!empty($db['advantages']))
+                        <h3>Ключові переваги</h3>
+                        <ul class="prose-checks">
+                            @foreach ($db['advantages'] as $i)
+                                @if ($clean($i) !== '')<li>{{ $clean($i) }}</li>@endif
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if (!empty($db['vs_competitors']))
+                        <h3>Переваги над конкурентами</h3>
+                        <ul class="prose-checks">
+                            @foreach ($db['vs_competitors'] as $i)
+                                @if ($clean($i) !== '')<li>{{ $clean($i) }}</li>@endif
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if (filled($db['features'] ?? null))
+                        <h3>Особливості експлуатації</h3>
+                        @foreach ($paras($db['features']) as $p)<p>{{ $p }}</p>@endforeach
+                    @endif
+
+                    @if (filled($db['why_buy'] ?? null))
+                        <h3>Чому варто придбати</h3>
+                        @foreach ($paras($db['why_buy']) as $p)<p>{{ $p }}</p>@endforeach
+                    @endif
+                @else
+                    {{-- Старий простий опис без блоків — текст із переносами. --}}
+                    {!! nl2br(e($product->description)) !!}
+                @endif
             </div>
         </div>
         @endif
 
-        {{-- ДУМКА ЕКСПЕРТА «ВЕЛИКА ШИНА» --}}
+        {{-- 3. ДУМКА ЕКСПЕРТА «ВЕЛИКА ШИНА» --}}
         @if (filled($product->expert_note))
         <div class="product-section">
             <div class="expert-note">
@@ -285,7 +311,24 @@
         </div>
         @endif
 
-        {{-- ФОТО «В РОБОТІ» --}}
+        {{-- 4. СУМІСНІСТЬ ІЗ ТЕХНІКОЮ --}}
+        @if (count($compat))
+        <div class="product-section">
+            <h2 class="product-section__title">Підходить для техніки</h2>
+            <div class="product-compat">
+                @foreach ($compat as $line)
+                <span class="product-compat__item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    {{ $line }}
+                </span>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        {{-- 5. ФОТО «В РОБОТІ» --}}
         @if ($product->fieldPhotos->isNotEmpty())
         <div class="product-section" x-data="{ open: false, src: '', cap: '' }">
             <h2 class="product-section__title">Фото «в роботі»</h2>
@@ -294,14 +337,25 @@
                 @foreach ($product->fieldPhotos as $fp)
                 @php($thumb = $fp->imageUrl('thumb'))
                 @if ($thumb)
-                @php($label = trim($fp->machineryLabel() . ($fp->caption ? ($fp->machineryLabel() ? ' — ' : '') . $fp->caption : '')))
-                <button type="button" class="field-photo"
-                    @click="src = '{{ $fp->imageUrl('large') }}'; cap = @js($label); open = true">
-                    <img src="{{ $thumb }}" alt="{{ $label ?: $product->model }}" loading="lazy" />
-                    @if ($label)
-                    <span class="field-photo__cap">{{ $label }}</span>
+                @php($mach = $fp->machineryLabel())
+                @php($label = trim($mach . ($fp->caption ? ($mach ? ' — ' : '') . $fp->caption : '')))
+                <figure class="field-photo">
+                    <button type="button" class="field-photo__img"
+                        @click="src = '{{ $fp->imageUrl('large') }}'; cap = @js($label); open = true">
+                        <img src="{{ $thumb }}" alt="{{ $label ?: $product->model }}" loading="lazy" />
+                    </button>
+                    @if ($mach || $fp->caption)
+                    <figcaption class="field-photo__cap">
+                        @if ($fp->machinery_model_id)
+                            <a href="{{ route('in-work', $fp->machinery_model_id) }}" class="field-photo__mach"
+                                title="Усі застосування «{{ $mach }}» в роботі">{{ $mach }}</a>
+                        @elseif ($mach)
+                            <span class="field-photo__mach">{{ $mach }}</span>
+                        @endif
+                        @if ($fp->caption)<span class="field-photo__note">{{ $fp->caption }}</span>@endif
+                    </figcaption>
                     @endif
-                </button>
+                </figure>
                 @endif
                 @endforeach
             </div>

@@ -60,6 +60,10 @@ body {
     background: $bg;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    // Прибираємо випадковий горизонтальний скрол на мобільних.
+    // `clip` (на відміну від `hidden`) не створює скрол-контейнер
+    // і не ламає position: sticky / прокрутку сторінки.
+    overflow-x: clip;
 }
 
 img {
@@ -5541,6 +5545,7 @@ button {
     font-size: 30px;
     line-height: 1.1;
     color: $ink;
+    overflow-wrap: anywhere;
 
     @media (max-width: $bp-md) {
         font-size: 24px;
@@ -7841,6 +7846,83 @@ button {
     font-size: 15px;
     line-height: 1.7;
     color: $text;
+
+    p {
+        margin: 0 0 14px;
+        text-align: justify;
+    }
+
+    // Підзаголовки розділів структурного опису (Ключові переваги тощо).
+    h2,
+    h3 {
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 17px;
+        color: $ink;
+        margin: 22px 0 10px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    ul,
+    ol {
+        margin: 0 0 16px;
+        padding-left: 20px;
+
+        li {
+            margin-bottom: 7px;
+        }
+    }
+
+    // Маркери-«галочки» для списків переваг — чітка SVG-іконка (рівна).
+    ul {
+        list-style: none;
+        padding-left: 0;
+
+        li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 9px;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 2px;
+                width: 20px;
+                height: 20px;
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%23e31e24'/%3E%3Cpath d='M5.6 10.4l3 3 5.8-6.6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+            }
+        }
+    }
+
+    // Списки переваг — у дві колонки, щоб не було «стіни» з галочок.
+    .prose-checks {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px 28px;
+        margin-bottom: 18px;
+
+        li {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: $bp-md) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    strong,
+    b {
+        font-weight: 700;
+        color: $ink;
+    }
+
+    & > *:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .product-section__sub {
@@ -7905,44 +7987,56 @@ button {
 }
 
 .field-photo {
-    position: relative;
-    display: block;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border: 1px solid $line;
-    border-radius: $radius;
-    overflow: hidden;
-    background: $bg-soft;
-    cursor: pointer;
-    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
-    img {
+    &__img {
+        position: relative;
+        display: block;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.35s ease;
-    }
+        aspect-ratio: 1 / 1;
+        border: 1px solid $line;
+        border-radius: $radius;
+        overflow: hidden;
+        background: $bg-soft;
+        cursor: pointer;
+        padding: 0;
 
-    &:hover img {
-        transform: scale(1.06);
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        &:hover img {
+            transform: scale(1.06);
+        }
     }
 
     &__cap {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 18px 10px 8px;
-        background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
-        color: #fff;
-        font-size: 12px;
-        font-weight: 600;
-        line-height: 1.35;
-        text-align: left;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+
+    // Техніка — клікабельна (усі застосування «в роботі»).
+    &__mach {
+        display: inline;
+        font-family: $font-head;
+        font-weight: 700;
+        color: $red;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &__note {
+        display: block;
+        color: $muted;
+        margin-top: 2px;
     }
 }
 
@@ -8031,4 +8125,134 @@ button {
     color: #fff;
     font-family: $font-head;
     font-weight: 800;
+}
+
+/* ============ Сторінка «Шини в роботі» (in-work) ============= */
+.in-work__head {
+    margin-bottom: 28px;
+
+    // Заголовок на всю ширину (не тиснемо у вузьку колонку).
+    .section-title {
+        margin: 6px 0 12px;
+    }
+
+    // Лише підзаголовок тримаємо вужчим — для зручного читання.
+    .about-sub {
+        max-width: 680px;
+    }
+}
+
+.inwork-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    @media (max-width: $bp-sm) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.inwork-card {
+    display: flex;
+    flex-direction: column;
+    background: $bg-card;
+    border: 1px solid $line;
+    border-radius: $radius-lg;
+    overflow: hidden;
+
+    &__photo {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border: none;
+        padding: 0;
+        background: $bg-soft;
+        cursor: pointer;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        &:hover img {
+            transform: scale(1.05);
+        }
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 14px 16px 16px;
+        flex: 1;
+    }
+
+    &__note {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: $ink;
+        font-weight: 600;
+    }
+
+    &__product {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid $line;
+        color: $ink;
+
+        &:hover {
+            color: $red;
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
+            margin-left: auto;
+            color: $red;
+            flex: none;
+        }
+    }
+
+    &__thumb {
+        flex: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: $bg-soft;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+
+        img {
+            max-width: 86%;
+            max-height: 86%;
+            object-fit: contain;
+        }
+    }
+
+    &__pname {
+        font-size: 13px;
+        line-height: 1.35;
+        color: $muted;
+
+        b {
+            display: block;
+            font-family: $font-head;
+            font-size: 14px;
+            color: $ink;
+        }
+    }
 }

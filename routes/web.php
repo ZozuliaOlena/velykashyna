@@ -4,6 +4,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\InWorkController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SearchController;
@@ -46,6 +47,9 @@ Route::view('/favorites', 'web.favorites', ['showFooterCta' => false])->name('fa
 
 // Порівняння шин — таблиця характеристик за переданими ?ids=.
 Route::get('/compare', [CompareController::class, 'index'])->name('compare');
+
+// «Шини в роботі» на конкретній моделі техніки (фото-застосування).
+Route::get('/in-work/{machineryModel}', [InWorkController::class, 'show'])->name('in-work');
 
 // Про нас — власний CTA + прозора шапка поверх темного hero (як на головній).
 Route::get('/about', function () {

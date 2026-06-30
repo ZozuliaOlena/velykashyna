@@ -255,25 +255,38 @@ class Product extends Model implements HasMedia
             return $query;
         }
 
-        $norm = mb_strtolower(str_replace(' ', '', $term));
+        // Розбиваємо запит на слова — КОЖНЕ має знайтись (AND між словами),
+        // але кожне — у будь-якому з полів (OR всередині слова). Завдяки цьому
+        // працюють складені запити: «BKT Agrimax Procrop», «Steel Belted TL».
+        $words = preg_split('/\s+/', $term, -1, PREG_SPLIT_NO_EMPTY);
 
-        // Якщо запит схожий на назву типу («шини», «диск») — додаємо ці типи.
-        $typeCodes = [];
-        foreach (self::TYPE_SEARCH_STEMS as $stem => $code) {
-            if (str_contains($norm, $stem)) {
-                $typeCodes[$code] = true;
-            }
-        }
-        $typeCodes = array_keys($typeCodes);
+        return $query->where(function ($outer) use ($words) {
+            foreach ($words as $word) {
+                $norm = mb_strtolower(str_replace([' ', '-'], '', $word));
 
-        return $query->where(function ($w) use ($term, $norm, $typeCodes) {
-            $w->where('sku', 'like', "%{$term}%")
-                ->orWhere('model', 'like', "%{$term}%")
-                ->orWhereRaw("REPLACE(LOWER(size_raw), ' ', '') LIKE ?", ['%' . $norm . '%'])
-                ->orWhereHas('brand', fn ($b) => $b->where('name', 'like', "%{$term}%"));
+                // Тип за стемом («шини» → tire тощо).
+                $typeCodes = [];
+                foreach (self::TYPE_SEARCH_STEMS as $stem => $code) {
+                    if (str_contains($norm, $stem)) {
+                        $typeCodes[$code] = true;
+                    }
+                }
+                $typeCodes = array_keys($typeCodes);
 
-            if ($typeCodes) {
-                $w->orWhereHas('productType', fn ($t) => $t->whereIn('code', $typeCodes));
+                $outer->where(function ($w) use ($word, $norm, $typeCodes) {
+                    $w->where('sku', 'like', "%{$word}%")
+                        ->orWhere('model', 'like', "%{$word}%")
+                        ->orWhere('load_speed_index', 'like', "%{$word}%")
+                        ->orWhere('specification', 'like', "%{$word}%")
+                        ->orWhere('tube_type', 'like', "%{$word}%")
+                        // Розмір — без пробілів/дефісів і регістру.
+                        ->orWhereRaw("REPLACE(REPLACE(LOWER(size_raw), ' ', ''), '-', '') LIKE ?", ['%' . $norm . '%'])
+                        ->orWhereHas('brand', fn ($b) => $b->where('name', 'like', "%{$word}%"));
+
+                    if ($typeCodes) {
+                        $w->orWhereHas('productType', fn ($t) => $t->whereIn('code', $typeCodes));
+                    }
+                });
             }
         });
     }
