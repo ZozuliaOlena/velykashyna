@@ -64,7 +64,7 @@ class CatalogController extends Controller
             'machinery' => fn ($v) => $v,
             'brand' => fn ($v) => $v,
             'size' => fn ($v) => $v,
-            'constr' => fn ($v) => $v === 'TL' ? 'Радіальні (TL)' : ($v === 'TT' ? 'Діагональні (TT)' : $v),
+            'constr' => fn ($v) => $v === 'TL' ? 'Безкамерна (TL)' : ($v === 'TT' ? 'Камерна (TT)' : $v),
         ];
 
         if ($sel['q'] !== '') {

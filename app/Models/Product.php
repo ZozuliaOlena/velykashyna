@@ -216,7 +216,7 @@ class Product extends Model implements HasMedia
         return $this->hasDiscount() ? round((float) $this->price, 2) : null;
     }
 
-    /** Підпис знижки: "-10%" або "-50 UAH". */
+    /** Підпис знижки: "-10%" або "-50 грн". */
     public function discountLabel(): ?string
     {
         if (! $this->hasDiscount()) {
@@ -224,10 +224,11 @@ class Product extends Model implements HasMedia
         }
 
         $value = rtrim(rtrim(number_format((float) $this->discount_value, 2, '.', ''), '0'), '.');
+        $cur = $this->currency === 'UAH' ? 'грн' : $this->currency;
 
         return $this->discount_type === 'percent'
             ? "-{$value}%"
-            : "-{$value} {$this->currency}";
+            : "-{$value} {$cur}";
     }
 
     /**
@@ -276,18 +277,39 @@ class Product extends Model implements HasMedia
         });
     }
 
-    /** Тип конструкції для картки: "Радіальна (TL)" / "Діагональна (TT)". */
+    /**
+     * Камерність шини: TL → «Безкамерна», TT → «Камерна».
+     * Радіальна/Діагональна не пишемо — це видно з типорозміру
+     * ("-" = діагональна, "R" = радіальна).
+     */
     public function constructionLabel(): string
     {
-        $type = match ($this->rd_type) {
-            'R' => 'Радіальна',
-            'D' => 'Діагональна',
-            default => null,
+        return match ($this->tube_type) {
+            'TL' => 'Безкамерна',
+            'TT' => 'Камерна',
+            default => '',
         };
+    }
 
-        $tube = $this->tube_type ? " ({$this->tube_type})" : '';
+    /**
+     * Повне найменування товару одним рядком:
+     * «Шина 800/65R32 BKT AGRIMAX TERIS 178A8/175B 16PR STEEL BELTED TL».
+     * Складається з усіх ключових полів (порожні пропускаються).
+     */
+    public function fullName(): string
+    {
+        $parts = [
+            $this->productType?->name,
+            $this->size_raw,
+            $this->brand?->name,
+            $this->model,
+            $this->load_speed_index,
+            $this->ply_rating ? $this->ply_rating . 'PR' : null,
+            $this->specification,
+            $this->tube_type,
+        ];
 
-        return trim(($type ?? '') . $tube);
+        return trim(preg_replace('/\s+/', ' ', implode(' ', array_filter($parts))));
     }
 
     /** Промо-бейджі для картки (узгоджено з partials/product-card). */
@@ -338,8 +360,23 @@ class Product extends Model implements HasMedia
             'price_mode' => $this->price_mode,
             'price' => $this->effectivePrice(),
             'old_price' => $this->oldPrice(),
+            // У картці показуємо бейдж лише для відсоткової знижки («-20%»),
+            // суму («-500 грн») не показуємо — є стара/нова ціна.
+            'discount' => $this->discount_type === 'percent' ? $this->discountLabel() : null,
+            'save' => $this->savedAmount(),
             'cur' => $this->currency === 'UAH' ? 'грн' : $this->currency,
             'promos' => $this->cardPromos(),
         ];
+    }
+
+    /** Сума економії (стара ціна − поточна), заокруглена; null без знижки. */
+    public function savedAmount(): ?float
+    {
+        $old = $this->oldPrice();
+        if ($old === null) {
+            return null;
+        }
+
+        return max(0, round($old - (float) $this->effectivePrice()));
     }
 }

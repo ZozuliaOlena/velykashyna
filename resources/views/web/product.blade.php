@@ -9,11 +9,17 @@
 @php($typeCode = $product->productType?->code)
 @php($typePrefix = ($typeName && $product->size_raw) ? $typeName . ' ' : '')
 @php($fullName = trim($typePrefix . $title . ($subtitle ? ' ' . $subtitle : '')))
+{{-- Повне найменування (для заголовка): тип винесено окремим акцентом,
+     решта — рядком. --}}
+@php($fullDesignation = $product->fullName())
+@php($fullRest = ($typeName && str_starts_with($fullDesignation, $typeName)) ? trim(mb_substr($fullDesignation, mb_strlen($typeName))) : $fullDesignation)
 @php($priceMode = $product->price_mode)
 @php($price = $product->effectivePrice())
 @php($oldPrice = $product->oldPrice())
 @php($cur = $product->currency === 'UAH' ? 'грн' : $product->currency)
-@php($promos = $product->cardPromos())
+{{-- «Знижка» прибираємо — на фото показуємо бейдж відсотка («-20%»). --}}
+@php($promos = collect($product->cardPromos())->reject(fn ($x) => $x === 'Знижка')->values()->all())
+@php($discountBadge = $product->discount_type === 'percent' ? $product->discountLabel() : null)
 @php($promoStyles = ['Акція' => 'sale', 'Знижка' => 'discount', 'Запитуй знижку' => 'ask', 'Безкоштовна доставка' => 'ship'])
 @php($brandLogos = ['Michelin' => 'michelin.svg', 'Continental' => 'continental.svg'])
 @php($brandLogo = $product->brand?->logoUrl() ?? (isset($brandLogos[$product->brand?->name]) ? '/images/svg/brands/' . $brandLogos[$product->brand->name] : null))
@@ -67,9 +73,13 @@
         <nav class="breadcrumbs">
             <a href="{{ route('home') }}">Головна</a>
             <span class="sep">/</span>
-            <a href="{{ route('catalog') }}">Каталог шин</a>
+            <a href="{{ route('catalog') }}">Каталог</a>
+            @foreach ($crumbs as $crumb)
             <span class="sep">/</span>
-            <span class="current">{{ $fullName }}</span>
+            <a href="{{ $crumb['url'] }}">{{ $crumb['name'] }}</a>
+            @endforeach
+            <span class="sep">/</span>
+            <span class="current">{{ trim($typePrefix . $title) }}</span>
         </nav>
 
         <div class="product-top">
@@ -83,8 +93,11 @@
                         style="-webkit-mask-image:url('/images/svg/tehnics/wheel.svg');mask-image:url('/images/svg/tehnics/wheel.svg')"></span>
                     @endif
 
-                    @if (!empty($promos))
+                    @if ($discountBadge || !empty($promos))
                     <div class="product-gallery__promos">
+                        @if ($discountBadge)
+                        <span class="promo promo--disc">{{ $discountBadge }}</span>
+                        @endif
                         @foreach ($promos as $promo)
                         <span class="promo promo--{{ $promoStyles[$promo] ?? 'sale' }}">{{ $promo }}</span>
                         @endforeach
@@ -107,10 +120,7 @@
             <div class="product-main">
                 <div class="product-main__head">
                     <div>
-                        <h1 class="product-title">@if ($typePrefix)<span class="product-title__type {{ $typeCode !== 'tire' ? 'is-accent' : '' }}">{{ $typeName }}</span> @endif{{ $title }}</h1>
-                        @if ($subtitle)
-                        <p class="product-subtitle">{{ $subtitle }}</p>
-                        @endif
+                        <h1 class="product-title">@if ($typeName)<span class="product-title__type {{ ($typeCode ?? '') !== 'tire' ? 'is-accent' : '' }}">{{ $typeName }}</span> @endif{{ $fullRest }}</h1>
                     </div>
                     @if ($brandLogo)
                     <span class="product-brand"><img src="{{ $brandLogo }}" alt="{{ $product->brand?->name }}" /></span>
@@ -119,9 +129,6 @@
 
                 <div class="product-meta">
                     <span class="product-sku">Артикул: <b>{{ $product->sku }}</b></span>
-                    <span class="product-stock {{ $inStock ? 'in' : 'order' }}">
-                        {{ $inStock ? 'В наявності' : 'Під замовлення' }}
-                    </span>
                 </div>
 
                 {{-- Короткі характеристики --}}
@@ -135,11 +142,21 @@
 
                 {{-- БЛОК КУПІВЛІ --}}
                 <div class="product-buy" x-data="{ qty: 1, item: @js($buyItem), added: false }">
+                    <div class="product-buy__head">
                     <div class="product-price product-price--{{ $priceMode }} {{ $oldPrice ? 'product-price--sale' : '' }}">
                         @if ($priceMode === 'fixed' || $priceMode === 'from')
                         @if ($oldPrice)
-                        <span class="product-price__old">
-                            @if ($priceMode === 'from')від @endif{{ number_format($oldPrice, 0, '', ' ') }} {{ $cur }}
+                        @php($save = $product->savedAmount())
+                        <span class="product-price__oldrow">
+                            <span class="product-price__old">
+                                @if ($priceMode === 'from')від @endif{{ number_format($oldPrice, 0, '', ' ') }} {{ $cur }}
+                            </span>
+                            @if ($product->discountLabel())
+                            <span class="product-price__disc">{{ $product->discountLabel() }}</span>
+                            @endif
+                            @if ($save)
+                            <span class="product-price__save">Економія {{ number_format($save, 0, '', ' ') }} {{ $cur }}</span>
+                            @endif
                         </span>
                         @endif
                         <span class="product-price__now">
@@ -158,6 +175,10 @@
                         </span>
                         @endif
                     </div>
+                    <span class="product-buy__stock {{ $inStock ? 'in' : 'order' }}">
+                        <span class="dot"></span>{{ $inStock ? 'В наявності' : 'Під замовлення' }}
+                    </span>
+                    </div>
 
                     <div class="product-buy__row">
                         <div class="qty">
@@ -165,48 +186,55 @@
                             <input type="text" x-model.number="qty" readonly />
                             <button type="button" @click="qty = Math.min(1000, qty + 1)" aria-label="Більше">+</button>
                         </div>
-                        <button type="button" class="btn btn--primary"
-                            @click="$store.cart.add(item, qty); added = true">
+
+                        <button type="button" class="product-buy__cart" :class="{ 'is-added': $store.cart.has(item.id) }"
+                            @click="$store.cart.add(item, qty); added = true"
+                            :aria-label="$store.cart.has(item.id) ? 'У кошику' : 'Додати в кошик'"
+                            :title="$store.cart.has(item.id) ? 'У кошику' : 'Додати в кошик'">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
                                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                             </svg>
-                            {{ $priceMode === 'inquiry' ? 'У кошик (за запитом)' : 'Додати в кошик' }}
+                        </button>
+
+                        <button type="button" class="product-buy__icon" :class="{ active: $store.fav.has(item.id) }"
+                            @click="$store.fav.toggle(item)"
+                            :aria-label="$store.fav.has(item.id) ? 'В обраному' : 'В обране'"
+                            :title="$store.fav.has(item.id) ? 'В обраному' : 'В обране'">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+
+                        <button type="button" class="product-buy__icon"
+                            :class="{ active: $store.compare.has(item.id), 'is-disabled': !$store.compare.has(item.id) && $store.compare.full() }"
+                            @click="$store.compare.toggle(item)"
+                            :aria-label="$store.compare.has(item.id) ? 'У порівнянні' : 'Порівняти'"
+                            :title="$store.compare.has(item.id) ? 'У порівнянні' : ($store.compare.full() ? 'Максимум ' + $store.compare.max : 'Порівняти')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                                <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                                <path d="M7 21h10"/>
+                                <path d="M12 3v18"/>
+                                <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+                            </svg>
                         </button>
                     </div>
 
                     <a href="{{ route('cart') }}" class="product-buy__tocart" x-show="added" x-cloak x-transition>
                         ✓ Додано — <b>перейти в кошик</b>
                     </a>
-
-                    <div class="product-buy__secondary">
-                        <button type="button" class="product-buy__fav" :class="{ active: $store.fav.has(item.id) }"
-                            @click="$store.fav.toggle(item)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                            </svg>
-                            <span x-text="$store.fav.has(item.id) ? 'В обраному' : 'В обране'">В обране</span>
-                        </button>
-                        <button type="button" class="product-buy__compare" :class="{ active: $store.compare.has(item.id) }"
-                            @click="$store.compare.toggle(item)"
-                            :title="$store.compare.full() && !$store.compare.has(item.id) ? 'Максимум ' + $store.compare.max : ''">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="6" y1="20" x2="6" y2="14" />
-                                <line x1="12" y1="20" x2="12" y2="4" />
-                                <line x1="18" y1="20" x2="18" y2="10" />
-                            </svg>
-                            <span x-text="$store.compare.has(item.id) ? 'У порівнянні' : 'Порівняти'">Порівняти</span>
-                        </button>
-                        <a href="tel:{{ config('site.contacts.phone_href') }}" class="btn btn--dark product-buy__call">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                            </svg>
-                            {{ config('site.contacts.phone') }}
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
+
+        {{-- ОПИС ТОВАРУ --}}
+        @if (filled($product->description))
+        <div class="product-section">
+            <h2 class="product-section__title">Опис</h2>
+            <div class="product-prose">{!! nl2br(e($product->description)) !!}</div>
+        </div>
+        @endif
 
         {{-- ПОВНІ ХАРАКТЕРИСТИКИ --}}
         @if (count($specs))
@@ -236,6 +264,61 @@
                     {{ $line }}
                 </span>
                 @endforeach
+            </div>
+        </div>
+        @endif
+
+        {{-- ДУМКА ЕКСПЕРТА «ВЕЛИКА ШИНА» --}}
+        @if (filled($product->expert_note))
+        <div class="product-section">
+            <div class="expert-note">
+                <div class="expert-note__badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z" />
+                    </svg>
+                </div>
+                <div class="expert-note__body">
+                    <span class="expert-note__title">Думка експерта «Велика Шина»</span>
+                    <div class="product-prose">{!! nl2br(e($product->expert_note)) !!}</div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- ФОТО «В РОБОТІ» --}}
+        @if ($product->fieldPhotos->isNotEmpty())
+        <div class="product-section" x-data="{ open: false, src: '', cap: '' }">
+            <h2 class="product-section__title">Фото «в роботі»</h2>
+            <p class="product-section__sub">Реальні приклади встановлення цієї шини на техніці.</p>
+            <div class="field-photos">
+                @foreach ($product->fieldPhotos as $fp)
+                @php($thumb = $fp->imageUrl('thumb'))
+                @if ($thumb)
+                @php($label = trim($fp->machineryLabel() . ($fp->caption ? ($fp->machineryLabel() ? ' — ' : '') . $fp->caption : '')))
+                <button type="button" class="field-photo"
+                    @click="src = '{{ $fp->imageUrl('large') }}'; cap = @js($label); open = true">
+                    <img src="{{ $thumb }}" alt="{{ $label ?: $product->model }}" loading="lazy" />
+                    @if ($label)
+                    <span class="field-photo__cap">{{ $label }}</span>
+                    @endif
+                </button>
+                @endif
+                @endforeach
+            </div>
+
+            {{-- Лайтбокс --}}
+            <div class="about-lightbox" x-show="open" x-cloak x-transition.opacity @click="open = false"
+                @keydown.escape.window="open = false">
+                <button type="button" class="about-lightbox__close" aria-label="Закрити">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <figure class="field-lightbox__fig" @click.stop>
+                    <img :src="src" alt="" />
+                    <figcaption x-show="cap" x-text="cap"></figcaption>
+                </figure>
             </div>
         </div>
         @endif

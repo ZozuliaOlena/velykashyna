@@ -216,16 +216,16 @@
                 {{-- Тип шини --}}
                 <div class="cf-group" x-data="{ open: true }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
-                        Тип шини
+                        Камерність
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="6 9 12 15 18 9" />
                         </svg>
                     </button>
                     <div class="cf-group__body" x-show="open">
                         <label class="cf-check"><input type="checkbox" name="constr[]" value="TL"
-                                @checked(in_array('TL', $selected['constr'], true)) /><span>Радіальні (TL)</span></label>
+                                @checked(in_array('TL', $selected['constr'], true)) /><span>Безкамерна (TL)</span></label>
                         <label class="cf-check"><input type="checkbox" name="constr[]" value="TT"
-                                @checked(in_array('TT', $selected['constr'], true)) /><span>Діагональні (TT)</span></label>
+                                @checked(in_array('TT', $selected['constr'], true)) /><span>Камерна (TT)</span></label>
                     </div>
                 </div>
 

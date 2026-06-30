@@ -18,6 +18,10 @@ class ProductController extends Controller
             'machineryCompatibility.machineryBrand',
             'machineryCompatibility.machineryModel',
             'machineryCompatibility.position',
+            'fieldPhotos.media',
+            'fieldPhotos.machineryType',
+            'fieldPhotos.machineryBrand',
+            'fieldPhotos.machineryModel',
         ]);
 
         return view('web.product', [
@@ -25,9 +29,36 @@ class ProductController extends Controller
             'images' => $this->images($product),
             'specs' => $this->specs($product),
             'compat' => $this->compatibility($product),
+            'crumbs' => $this->breadcrumbs($product),
             'alternatives' => $this->alternatives($product),
             'accessories' => $this->accessories($product),
         ]);
+    }
+
+    /**
+     * Ланцюжок категорій товару для «хлібних крихт»: від кореня до
+     * найконкретнішої (найглибшої) категорії. Кожна — з посиланням у каталог.
+     */
+    private function breadcrumbs(Product $product): array
+    {
+        // Найбільш конкретна (глибша) категорія товару.
+        $category = $product->categories
+            ->sortByDesc(fn ($c) => $c->level ?? 0)
+            ->first();
+
+        $chain = [];
+        $node = $category;
+        $guard = 0;
+
+        while ($node && $guard++ < 12) {
+            $chain[] = [
+                'name' => $node->name,
+                'url' => route('catalog', ['category' => $node->slug]),
+            ];
+            $node = $node->parent; // піднімаємось до кореня
+        }
+
+        return array_reverse($chain);
     }
 
     /** Усі зображення товару: власні (main → gallery), інакше каталожне. */
@@ -70,7 +101,7 @@ class ProductController extends Controller
         $push('Бренд', $product->brand?->name);
         $push('Модель / протектор', $product->model);
         $push('Розмір', $product->size_raw);
-        $push('Тип конструкції', $product->constructionLabel() ?: null);
+        $push('Камерність', $product->constructionLabel() ?: null);
         $push('Індекс навантаж./швидк.', $product->load_speed_index);
         $push('Норма шарів (PR)', $product->ply_rating);
         $push('Посадковий діаметр', $product->rim_diameter ? 'R' . (int) $product->rim_diameter : null);

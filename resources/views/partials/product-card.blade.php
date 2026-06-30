@@ -40,9 +40,10 @@
 'Запитуй знижку' => ['s' => 'ask', 'i' => '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],
 'Безкоштовна доставка' => ['s' => 'ship', 'i' => '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'],
 ])
-{{-- Безкоштовна доставка завжди першою (зверху), далі — решта --}}
+{{-- Безкоштовна доставка завжди першою (зверху), далі — решта.
+     «Знижка» прибираємо — замість неї показуємо бейдж відсотка («-10%»). --}}
 @php($promoOrder = ['Безкоштовна доставка' => 0, 'Акція' => 1, 'Знижка' => 2, 'Запитуй знижку' => 3])
-@php($promos = collect($p['promos'] ?? [])->sortBy(fn ($x) => $promoOrder[$x] ?? 99)->values()->all())
+@php($promos = collect($p['promos'] ?? [])->reject(fn ($x) => $x === 'Знижка')->sortBy(fn ($x) => $promoOrder[$x] ?? 99)->values()->all())
 
 {{-- Компактний об'єкт товару для кошика/обраного --}}
 @php($cardItem = [
@@ -61,9 +62,16 @@
 ])
 
 <div class="cat-prod" x-data="{ item: @js($cardItem) }">
+    {{-- Клік по будь-якій частині картки → сторінка товару (інтерактивні
+         кнопки лежать вище за z-index і працюють як зазвичай). --}}
+    <a href="{{ $p['url'] ?? '#' }}" class="cat-prod__stretch"
+        aria-label="{{ trim(($p['type'] ?? '') . ' ' . ($p['size'] ?? '') . ' ' . ($p['brand'] ?? '')) }}" tabindex="-1"></a>
     <div class="cat-prod__media">
-        @if (!empty($promos))
+        @if (!empty($p['discount']) || !empty($promos))
         <div class="cat-prod__promos">
+            @if (!empty($p['discount']))
+            <span class="promo cat-prod__disc">{{ $p['discount'] }}</span>
+            @endif
             @foreach ($promos as $promo)
             @php($pc = $promoConfig[$promo] ?? ['s' => 'sale', 'i' => ''])
             <span class="promo promo--{{ $pc['s'] }}">
@@ -87,10 +95,12 @@
             @click="$store.compare.toggle(item)"
             :aria-label="$store.compare.has(item.id) ? 'Прибрати з порівняння' : 'Додати до порівняння'"
             :title="$store.compare.has(item.id) ? 'У порівнянні' : ($store.compare.full() ? 'Максимум ' + $store.compare.max : 'Порівняти')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="6" y1="20" x2="6" y2="14" />
-                <line x1="12" y1="20" x2="12" y2="4" />
-                <line x1="18" y1="20" x2="18" y2="10" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                <path d="M7 21h10"/>
+                <path d="M12 3v18"/>
+                <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
             </svg>
         </button>
 
@@ -102,9 +112,6 @@
             @endif
         </span>
 
-        <span class="cat-prod__stock {{ $p['stock'] ? 'in' : 'order' }}">
-            {{ $p['stock'] ? 'В наявності' : 'Під замовлення' }}
-        </span>
 
         <a href="{{ $p['url'] ?? '#' }}" class="cat-prod__photolink" aria-label="{{ $p['brand'] }} {{ $p['model'] }}">
             @if ($imgSrc)
@@ -162,14 +169,11 @@
                 <div class="lf"><span class="lf-label">Бренд</span><span class="lf-val">{{ $p['brand'] ?: '—' }}</span></div>
                 <div class="lf"><span class="lf-label">Профіль</span><span class="lf-val">{{ $p['model'] ?: '—' }}</span></div>
                 <div class="lf"><span class="lf-label">LI / SI / PR</span><span class="lf-val">{{ $p['li'] ?: '—' }}</span></div>
-                <div class="lf"><span class="lf-label">Специфікація</span><span class="lf-val">{{ $specCol ?: '—' }}</span></div>
+                <div class="lf lf--spec"><span class="lf-label">Специфікація</span><span class="lf-val">{{ $specCol ?: '—' }}</span></div>
             </div>
 
-            {{-- Наявність + промо текстом (видно у режимі списку) --}}
+            {{-- Промо текстом (видно у режимі списку) --}}
             <div class="cat-prod__meta">
-                <span class="cat-prod__stockline {{ $p['stock'] ? 'in' : 'order' }}">
-                    {{ $p['stock'] ? 'В наявності' : 'Під замовлення' }}
-                </span>
                 @if (!empty($promos))
                 @foreach ($promos as $promo)
                 @php($pc = $promoConfig[$promo] ?? ['s' => 'sale', 'i' => ''])
@@ -184,6 +188,10 @@
 
         @php($oldPrice = $p['old_price'] ?? null)
         <div class="cat-prod__buy">
+            <span class="cat-prod__avail {{ $p['stock'] ? 'in' : 'order' }}">
+                <span class="dot"></span>{{ $p['stock'] ? 'В наявності' : 'Під замовлення' }}
+            </span>
+            <div class="cat-prod__buyline">
             <div class="cat-prod__price cat-prod__price--{{ $priceMode }} {{ $oldPrice ? 'cat-prod__price--sale' : '' }}">
                 @if ($priceMode === 'fixed' || $priceMode === 'from')
                 @if ($oldPrice)
@@ -209,18 +217,15 @@
                 @endif
             </div>
 
-            <div class="cat-prod__footer">
-                <a href="{{ $p['url'] ?? '#' }}" class="btn btn--outline cat-prod__more">Переглянути</a>
-                <button type="button" class="cat-prod__cart" :class="{ added: $store.cart.has(item.id) }"
-                    @click="$store.cart.add(item)" aria-label="Додати в кошик">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="9" cy="21" r="1" />
-                        <circle cx="20" cy="21" r="1" />
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                    </svg>
-                </button>
-                <a href="tel:{{ config('site.contacts.phone_href') }}"
-                    class="btn btn--primary cat-prod__consult">Консультація</a>
+            <button type="button" class="cat-prod__cart" :class="{ added: $store.cart.has(item.id) }"
+                @click.stop="$store.cart.add(item)"
+                :aria-label="$store.cart.has(item.id) ? 'У кошику' : 'Додати в кошик'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+            </button>
             </div>
         </div>
     </div>
