@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Admin\Leads\LeadIndex;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Lead;
@@ -17,6 +18,10 @@ class Dashboard extends Component
             'categoriesCount' => Category::count(),
             'brandsCount'     => Brand::count(),
             'newLeadsCount'   => Lead::where('status', 'new')->count(),
+            'recentLeads'     => Lead::withCount('items')
+                ->whereNotIn('status', LeadIndex::ARCHIVED_STATUSES)
+                ->latest('id')->take(8)->get(),
+            'leadStatuses'    => LeadIndex::STATUSES,
         ])->layout('admin.layouts.admin');
     }
 }
