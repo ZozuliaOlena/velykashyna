@@ -17,8 +17,12 @@ class LeadIndex extends Component
         'new'        => 'Нова',
         'processing' => 'В обробці',
         'confirmed'  => 'Підтверджена',
+        'done'       => 'Виконана',
         'canceled'   => 'Скасована',
     ];
+
+    // Заявки з цими статусами вважаються завершеними й живуть у вкладці «Архів».
+    public const ARCHIVED_STATUSES = ['done', 'canceled'];
 
     // Мають збігатися з варіантами у формі оформлення на клієнтській частині.
     public const DELIVERY_METHODS = ['Нова Пошта', 'САТ', "Кур'єр", 'Самовивіз зі складу'];
@@ -26,6 +30,7 @@ class LeadIndex extends Component
 
     public string $search = '';
     public string $filterStatus = '';
+    public string $tab = 'active'; // active | archive
 
     public bool $showModal = false;
     public ?int $editingId = null;
@@ -54,6 +59,18 @@ class LeadIndex extends Component
         }
     }
 
+    /** Перемикання між активними та архівними заявками. */
+    public function setTab(string $tab): void
+    {
+        if (! in_array($tab, ['active', 'archive'], true)) {
+            return;
+        }
+
+        $this->tab = $tab;
+        $this->filterStatus = '';
+        $this->resetPage();
+    }
+
     protected function rules(): array
     {
         return [
@@ -64,7 +81,7 @@ class LeadIndex extends Component
             'delivery_method'    => ['nullable', 'string', 'max:255'],
             'delivery_address'   => ['nullable', 'string', 'max:255'],
             'payment_method'     => ['nullable', 'string', 'max:255'],
-            'status'             => ['required', 'in:new,processing,confirmed,canceled'],
+            'status'             => ['required', 'in:new,processing,confirmed,done,canceled'],
             'manager_comment'    => ['nullable', 'string'],
             'items'              => ['array'],
             'items.*.product_id' => ['required', 'integer', 'exists:products,id'],
@@ -189,13 +206,30 @@ class LeadIndex extends Component
 
     public function render()
     {
+        // Архів = завершені статуси; активна вкладка — решта.
+        $archived = self::ARCHIVED_STATUSES;
+        $scopeTab = fn ($q) => $this->tab === 'archive'
+            ? $q->whereIn('status', $archived)
+            : $q->whereNotIn('status', $archived);
+
         $leads = Lead::query()
             ->withCount('items')
-            ->when($this->search, fn ($q) => $q->where('customer_name', 'like', "%{$this->search}%")
-                ->orWhere('phone', 'like', "%{$this->search}%"))
+            ->tap($scopeTab)
+            ->when($this->search, fn ($q) => $q->where(fn ($w) => $w
+                ->where('customer_name', 'like', "%{$this->search}%")
+                ->orWhere('phone', 'like', "%{$this->search}%")))
             ->when($this->filterStatus, fn ($q) => $q->where('status', $this->filterStatus))
             ->orderByDesc('id')
             ->paginate(25);
+
+        // Лічильники для вкладок.
+        $activeCount = Lead::whereNotIn('status', $archived)->count();
+        $archiveCount = Lead::whereIn('status', $archived)->count();
+
+        // У фільтрі статусів показуємо лише ті, що доречні для поточної вкладки.
+        $tabStatuses = collect(self::STATUSES)
+            ->filter(fn ($label, $key) => in_array($key, $archived, true) === ($this->tab === 'archive'))
+            ->all();
 
         $current = $this->editingId
             ? Lead::find($this->editingId)
@@ -220,6 +254,9 @@ class LeadIndex extends Component
             'leads'           => $leads,
             'current'         => $current,
             'statuses'        => self::STATUSES,
+            'tabStatuses'     => $tabStatuses,
+            'activeCount'     => $activeCount,
+            'archiveCount'    => $archiveCount,
             'deliveryMethods' => self::DELIVERY_METHODS,
             'paymentMethods'  => self::PAYMENT_METHODS,
             'productResults'  => $productResults,

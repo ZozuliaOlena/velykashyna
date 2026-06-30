@@ -7,7 +7,7 @@
     Значення синхронізується з Livewire-властивістю через $wire.entangle (live).
     Якщо опцій багато (> 6) — у списку зʼявляється поле пошуку.
 --}}
-<div class="aselect"
+<div class="aselect" {{ $attributes }}
      x-data="{
         open: false,
         search: '',

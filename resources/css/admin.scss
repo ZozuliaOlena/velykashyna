@@ -1606,7 +1606,54 @@ body.admin-body {
         &--new        { background: #fdecea; color: $primary-red; }   // нова — увага
         &--processing { background: #e7f0ff; color: #1d4ed8; }        // в обробці
         &--confirmed  { background: #e8f5e9; color: #2e7d32; }        // підтверджена
+        &--done       { background: #e0f2f1; color: #00695c; }        // виконана
         &--canceled   { background: #f1f2f5; color: $text-light; }    // скасована
+    }
+
+    // ── Вкладки заявок: Активні / Архів ──────────────────────────────────
+    .lead-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 14px;
+        border-bottom: 1px solid #e3e6ec;
+    }
+
+    .lead-tab {
+        appearance: none;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 8px 14px;
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-light;
+        cursor: pointer;
+        margin-bottom: -1px;
+
+        &:hover { color: $primary-red; }
+
+        &.is-active {
+            color: $primary-red;
+            border-bottom-color: $primary-red;
+        }
+
+        &__count {
+            display: inline-block;
+            min-width: 18px;
+            padding: 1px 6px;
+            margin-left: 4px;
+            border-radius: 999px;
+            background: #eef0f4;
+            color: $text-light;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        &.is-active &__count {
+            background: #fdecea;
+            color: $primary-red;
+        }
     }
 
     // Рядок нової заявки — легка підсвітка + червоний акцент зліва

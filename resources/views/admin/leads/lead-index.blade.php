@@ -6,10 +6,22 @@
 
     @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
 
+    <div class="lead-tabs">
+        <button type="button" @class(['lead-tab', 'is-active' => $tab === 'active'])
+            wire:click="setTab('active')">
+            Активні <span class="lead-tab__count">{{ $activeCount }}</span>
+        </button>
+        <button type="button" @class(['lead-tab', 'is-active' => $tab === 'archive'])
+            wire:click="setTab('archive')">
+            Архів <span class="lead-tab__count">{{ $archiveCount }}</span>
+        </button>
+    </div>
+
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: ім'я, телефон...">
         <x-admin.select model="filterStatus" placeholder="— Усі статуси —"
-            :options="collect($statuses)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
+            wire:key="status-filter-{{ $tab }}"
+            :options="collect($tabStatuses)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
     </div>
 
     <div class="table-scroll">
