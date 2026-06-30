@@ -4,7 +4,7 @@
         <a href="{{ route('admin.products.index') }}" wire:navigate>← До списку</a>
     </div>
 
-    <form wire:submit="save" style="max-width:760px">
+    <form wire:submit="save" style="max-width:760px" data-dirty-guard>
 
         {{-- ── Основне ─────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
@@ -358,13 +358,19 @@
                 @error('mainPhoto') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
-            {{-- Додаткові фото --}}
+            {{-- Додаткові фото (галерея, як на OLX: превʼю, видалення, зміна порядку) --}}
             <div>
                 <label>Додаткові фото</label><br>
+                <small style="color:#666; display:block; margin-bottom:.5rem">
+                    Можна додати до {{ $galleryMax }} фото. Перетягуйте за ⠿, щоб змінити порядок.
+                </small>
+
+                {{-- Уже збережені фото — drag-and-drop порядок --}}
                 @if($galleryMedia->count())
-                    <div class="photo-grid">
+                    <div class="photo-grid" data-reorder-gallery wire:key="gallery-saved">
                         @foreach($galleryMedia as $m)
-                            <div class="photo-thumb" wire:key="media-{{ $m->id }}">
+                            <div class="photo-thumb" wire:key="media-{{ $m->id }}" data-id="{{ $m->id }}">
+                                <span class="drag-handle" title="Перетягнути">⠿</span>
                                 <img src="{{ \App\Support\MediaUrl::rel($m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl()) }}" alt="">
                                 <button type="button" class="photo-del" wire:click="deleteMedia({{ $m->id }})"
                                     data-confirm="Ви дійсно хочете видалити фото?">×</button>
@@ -372,8 +378,19 @@
                         @endforeach
                     </div>
                 @endif
-                <input wire:model="galleryPhotos" type="file" accept="image/*" multiple>
-                <div wire:loading wire:target="galleryPhotos" style="color:#666">Завантаження…</div>
+
+                {{-- Нові фото — клієнтський аплоадер зі стисненням і превʼю --}}
+                <div class="gallery-uploader" wire:ignore
+                     data-model="galleryPhotos"
+                     data-max="{{ $galleryMax }}"
+                     data-saved="{{ $galleryMedia->count() }}">
+                    <div class="photo-grid" data-pending-grid></div>
+                    <label class="upload-btn" data-add>
+                        <input type="file" accept="image/*" multiple hidden>
+                        <span>+ Додати фото</span>
+                    </label>
+                    <p class="gallery-uploader__hint" data-hint style="color:#666; font-size:13px; margin:.4rem 0 0"></p>
+                </div>
                 @error('galleryPhotos.*') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
@@ -394,10 +411,12 @@
         </div>
     </form>
 
-    {{-- PDF-картка товару (для пересилання клієнту) --}}
+    {{-- PDF-картка товару (для пересилання клієнту) — згортний блок, --}}
+    {{-- щоб не відсувати кнопку «Зберегти» вгору й не губити її. --}}
     @if($productId)
-        <fieldset style="margin-top:1rem">
-            <legend><strong>PDF-картка (для Viber / Telegram)</strong></legend>
+        <details class="collapse-block" wire:ignore.self>
+            <summary>PDF-картка (для Viber / Telegram)</summary>
+            <div class="collapse-block__body">
             <p style="color:#666; margin:0 0 .5rem">
                 Кнопка відкриває готову PDF-картку товару в новій вкладці — на телефоні
                 тисніть «Поділитися» й оберіть Viber/Telegram. «Завантажити» — зберегти файл.
@@ -421,7 +440,8 @@
             <div style="margin-top:.75rem; padding-top:.6rem; border-top:1px solid #eee">
                 <a href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=1"><button type="button">⬇ Завантажити файл (повна з ціною)</button></a>
             </div>
-        </fieldset>
+            </div>
+        </details>
     @endif
 
     {{-- Фото «в роботі» — окремий блок, доступний після збереження товару --}}

@@ -129,8 +129,143 @@ function initSortables() {
     });
 }
 
+// ── Галерея фото товару (OLX-стиль): превʼю, видалення, ліміт, порядок ──────
+// Клієнтський аплоадер: стискаємо фото у браузері, тримаємо їх у локальному
+// масиві (джерело правди для порядку) і синхронізуємо у Livewire через
+// uploadMultiple. Контейнер має wire:ignore — DOM повністю наш.
+function initGalleryUploaders() {
+    document.querySelectorAll('.gallery-uploader').forEach((root) => {
+        if (root._galInit) return;
+        root._galInit = true;
+
+        const model = root.dataset.model;
+        const max = parseInt(root.dataset.max || '8', 10);
+        const saved = parseInt(root.dataset.saved || '0', 10);
+        const grid = root.querySelector('[data-pending-grid]');
+        const input = root.querySelector('input[type="file"]');
+        const addLabel = root.querySelector('[data-add]');
+        const hint = root.querySelector('[data-hint]');
+
+        const items = []; // { uid, file, url }
+        let uidc = 0;
+
+        const wireEl = root.closest('[wire\\:id]');
+        const comp = () =>
+            window.Livewire && wireEl ? window.Livewire.find(wireEl.getAttribute('wire:id')) : null;
+
+        // Збережені фото можуть видалятись на льоту — рахуємо їх щоразу з DOM.
+        const savedGrid = root.parentElement?.querySelector('[data-reorder-gallery]');
+        const savedCount = () =>
+            savedGrid ? savedGrid.querySelectorAll('.photo-thumb').length : saved;
+        const remaining = () => max - savedCount() - items.length;
+
+        function updateHint() {
+            const r = remaining();
+            hint.textContent = r > 0
+                ? `Можна додати ще ${r} фото`
+                : `Досягнуто ліміту: ${max} фото`;
+            addLabel.style.display = r > 0 ? '' : 'none';
+        }
+
+        function sync() {
+            const c = comp();
+            if (!c) return;
+            c.uploadMultiple(
+                model,
+                items.map((i) => i.file),
+                () => {},
+                () => { alert('Не вдалося завантажити деякі фото.'); },
+                () => {}
+            );
+        }
+
+        function render() {
+            grid.innerHTML = '';
+            items.forEach((it) => {
+                const d = document.createElement('div');
+                d.className = 'photo-thumb';
+                d.dataset.uid = it.uid;
+                d.innerHTML =
+                    '<span class="drag-handle" title="Перетягнути">⠿</span>' +
+                    '<img alt="">' +
+                    '<button type="button" class="photo-del">×</button>';
+                d.querySelector('img').src = it.url;
+                d.querySelector('.photo-del').addEventListener('click', () => removeItem(it.uid));
+                grid.appendChild(d);
+            });
+            updateHint();
+        }
+
+        function removeItem(uid) {
+            const i = items.findIndex((x) => x.uid === uid);
+            if (i < 0) return;
+            URL.revokeObjectURL(items[i].url);
+            items.splice(i, 1);
+            render();
+            sync();
+        }
+
+        async function addFiles(fileList) {
+            for (const f of Array.from(fileList)) {
+                if (remaining() <= 0) {
+                    alert(`Можна додати щонайбільше ${max} фото.`);
+                    break;
+                }
+                if (!/^image\//.test(f.type)) continue;
+                const blob = await Promise.resolve(window.adminCompressImage ? window.adminCompressImage(f) : f);
+                const ext = blob.type === 'image/png' ? '.png' : (blob.type === 'image/webp' ? '.webp' : '.jpg');
+                const file = new File([blob], (f.name || 'image').replace(/\.[^.]+$/, '') + ext, { type: blob.type });
+                items.push({ uid: ++uidc, file, url: URL.createObjectURL(file) });
+            }
+            render();
+            sync();
+        }
+
+        input.addEventListener('change', (e) => {
+            addFiles(e.target.files);
+            e.target.value = '';
+        });
+
+        // Перетягування міняє порядок нових фото (і порядок відправки на сервер).
+        Sortable.create(grid, {
+            handle: '.drag-handle',
+            draggable: '.photo-thumb',
+            animation: 150,
+            onEnd: () => {
+                const order = Array.from(grid.querySelectorAll('.photo-thumb'))
+                    .map((el) => parseInt(el.dataset.uid, 10));
+                items.sort((a, b) => order.indexOf(a.uid) - order.indexOf(b.uid));
+                sync();
+            },
+        });
+
+        render();
+    });
+}
+
+// Зміна порядку вже збережених фото галереї — як у списку категорій.
+function initGallerySaved() {
+    document.querySelectorAll('[data-reorder-gallery]').forEach((grid) => {
+        if (grid._galSavedInit) return;
+        grid._galSavedInit = true;
+
+        Sortable.create(grid, {
+            handle: '.drag-handle',
+            draggable: '.photo-thumb',
+            animation: 150,
+            onEnd: () => {
+                const ids = Array.from(grid.querySelectorAll('.photo-thumb')).map((el) => el.dataset.id);
+                const wireEl = grid.closest('[wire\\:id]');
+                if (!wireEl || !window.Livewire) return;
+                const compInst = window.Livewire.find(wireEl.getAttribute('wire:id'));
+                if (compInst) compInst.call('reorderGallery', ids);
+            },
+        });
+    });
+}
+
 // Надійний тригер незалежно від версії Livewire: спостерігаємо за DOM
-// і переініціалізовуємо нові списки (initSortables ідемпотентний).
+// і переініціалізовуємо нові списки (усі init-функції ідемпотентні).
 let scheduled = false;
 function scheduleInit() {
     if (scheduled) return;
@@ -138,6 +273,8 @@ function scheduleInit() {
     requestAnimationFrame(() => {
         scheduled = false;
         initSortables();
+        initGalleryUploaders();
+        initGallerySaved();
     });
 }
 
@@ -180,9 +317,71 @@ function initConfirm() {
     );
 }
 
+// ── Захист від втрати незбережених змін ───────────────────────────────────
+// Форма з [data-dirty-guard] стежить за правками. Якщо є незбережені зміни,
+// попереджаємо при: закритті/оновленні вкладки (нативно) та переході геть
+// (Скасувати / ← До списку / меню — будь-яке wire:navigate) — гарною модалкою.
+function initDirtyGuard() {
+    if (window.__dirtyGuardInit) return;
+    window.__dirtyGuardInit = true;
+
+    let dirty = false;
+    const setDirty = (v) => { dirty = v; };
+
+    const inGuard = (node) =>
+        node instanceof Element && node.closest('[data-dirty-guard]');
+
+    // Правка будь-якого поля всередині форми → є незбережені зміни.
+    document.addEventListener('input', (e) => { if (inGuard(e.target)) setDirty(true); });
+    document.addEventListener('change', (e) => { if (inGuard(e.target)) setDirty(true); });
+    // Редактор статей (Trix) і кастомні селекти не мають native input/change.
+    document.addEventListener('trix-change', (e) => { if (inGuard(e.target)) setDirty(true); });
+    document.addEventListener('click', (e) => {
+        if (e.target.closest && e.target.closest('[data-dirty-guard] .aselect__opt')) setDirty(true);
+    });
+
+    // Сабміт форми (Зберегти) → зміни збережено, попередження не потрібне.
+    document.addEventListener('submit', (e) => { if (inGuard(e.target)) setDirty(false); }, true);
+
+    // Закриття / оновлення вкладки або зовнішній перехід.
+    window.addEventListener('beforeunload', (e) => {
+        if (!dirty) return;
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
+    // Перехід усередині застосунку (wire:navigate: Скасувати, ← До списку,
+    // меню). Офіційний відмінюваний хук Livewire — гарантовано спиняє перехід,
+    // поки користувач не підтвердить у модалці. Нікуди не виходимо без «Так».
+    document.addEventListener('livewire:navigate', (e) => {
+        if (!dirty) return;
+
+        const url = e.detail?.url?.toString();
+        e.preventDefault(); // спиняємо навігацію
+
+        window.dispatchEvent(
+            new CustomEvent('admin-confirm', {
+                detail: {
+                    message: 'Є незбережені зміни. Залишити сторінку без збереження?',
+                    accept: () => {
+                        setDirty(false);
+                        if (url && window.Livewire?.navigate) window.Livewire.navigate(url);
+                    },
+                },
+            })
+        );
+    });
+
+    // Нова сторінка завантажилась — скидаємо стан.
+    document.addEventListener('livewire:navigated', () => setDirty(false));
+}
+
 function boot() {
     initSortables();
+    initGalleryUploaders();
+    initGallerySaved();
     initConfirm();
+    initDirtyGuard();
     new MutationObserver(scheduleInit).observe(document.body, { childList: true, subtree: true });
 }
 

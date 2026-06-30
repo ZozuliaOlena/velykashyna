@@ -33,7 +33,9 @@
     h1 { font-size: 17px; margin: 0 0 12px; }
     td { vertical-align: top; }
     .photo-cell { width: 230px; padding-right: 16px; }
-    .photo { width: 220px; height: 220px; border: 1px solid #e0e0e0; }
+    /* dompdf не підтримує object-fit: фіксуємо лише ширину, висота — авто
+       (аспект зберігається; квадратне «uniform»-фото лишається 220×220). */
+    .photo { width: 220px; height: auto; border: 1px solid #e0e0e0; }
     .spec-row td { padding: 4px 0; border-bottom: 1px solid #eee; font-size: 12px; }
     .spec-label { color: #777; width: 130px; }
     .spec-val { font-weight: bold; }

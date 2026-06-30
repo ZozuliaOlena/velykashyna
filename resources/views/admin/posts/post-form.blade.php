@@ -4,7 +4,7 @@
         <a href="{{ route('admin.posts.index') }}" wire:navigate>← До списку</a>
     </div>
 
-    <form wire:submit="save" style="max-width:760px">
+    <form wire:submit="save" style="max-width:760px" data-dirty-guard>
         {{-- ── Основне ─────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Основне</strong></legend>

@@ -1,6 +1,12 @@
 <div>
-    <fieldset style="margin-top:1rem">
-        <legend><strong>Фото «в роботі» (застосування)</strong></legend>
+    {{-- wire:ignore.self — щоб блок не згортався при додаванні фото (Livewire --}}
+    {{-- не чіпає атрибут open самого <details>, але оновлює вміст усередині). --}}
+    <details class="collapse-block" wire:ignore.self>
+        <summary>
+            Фото «в роботі» (застосування)
+            @if($photos->count())<span class="collapse-block__count">{{ $photos->count() }}</span>@endif
+        </summary>
+        <div class="collapse-block__body">
         <p style="color:#666">
             Реальні фото встановлених/інспектованих шин на техніці. Прив'яжіть до моделі
             (напр. CASE 310) і додайте підпис — потім їх можна переглянути за технікою.
@@ -59,5 +65,6 @@
                 <span wire:loading wire:target="add" style="color:#666">Збереження…</span>
             </div>
         </div>
-    </fieldset>
+        </div>
+    </details>
 </div>

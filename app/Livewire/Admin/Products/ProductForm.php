@@ -87,6 +87,9 @@ class ProductForm extends Component
     public $mainPhoto = null;        // одне основне
     public array $galleryPhotos = []; // кілька додаткових
 
+    /** Максимум фото у галереї (збережені + нові разом). */
+    public const GALLERY_MAX = 8;
+
     public function mount(?int $id = null): void
     {
         if (! $id) {
@@ -215,7 +218,7 @@ class ProductForm extends Component
             'relatedIds.*' => ['exists:products,id'],
 
             'mainPhoto'        => ['nullable', 'image', 'max:5120'],
-            'galleryPhotos'    => ['nullable', 'array'],
+            'galleryPhotos'    => ['nullable', 'array', 'max:' . self::GALLERY_MAX],
             'galleryPhotos.*'  => ['image', 'max:5120'],
         ];
     }
@@ -348,6 +351,27 @@ class ProductForm extends Component
         session()->flash('success', 'Фото видалено');
     }
 
+    /**
+     * Зміна порядку збережених фото галереї (drag-and-drop).
+     * Приймає id у новому порядку; чужі/невалідні ігноруємо.
+     */
+    public function reorderGallery(array $ids): void
+    {
+        if (! $this->productId) {
+            return;
+        }
+
+        $valid = Product::find($this->productId)?->getMedia('gallery')->pluck('id')->all() ?? [];
+        $ordered = array_values(array_filter(
+            array_map('intval', $ids),
+            fn ($id) => in_array($id, $valid, true),
+        ));
+
+        if ($ordered) {
+            \Spatie\MediaLibrary\MediaCollections\Models\Media::setNewOrder($ordered);
+        }
+    }
+
     private function uploadName($file): string
     {
         return Str::random(24) . '.' . $file->getClientOriginalExtension();
@@ -438,6 +462,7 @@ class ProductForm extends Component
                 ->orderBy('name')->get(['id', 'sku', 'name']),
             'mainMedia'    => $product?->getFirstMedia('main'),
             'galleryMedia' => $product ? $product->getMedia('gallery') : collect(),
+            'galleryMax'   => self::GALLERY_MAX,
             'catalogImageUrl' => $product?->catalogImage?->imageUrl('thumb'),
             // ВАЖЛИВО: не називати змінну 'attributes' — це зарезервоване імʼя
             // Livewire ($attributes = ComponentAttributeBag), воно перекриває дані.
