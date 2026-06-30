@@ -34,7 +34,8 @@ class ProductPdfController extends Controller
             'photo'     => $this->mainPhotoData($product),
             'fieldPhotos' => $variant === 'full'
                 ? $product->fieldPhotos->take(6)->map(fn ($fp) => [
-                    'img'     => $this->dataUri($this->mediaPath($fp->getFirstMedia('photo'), 'large')),
+                    // квадратна мініатюра (crop) — у PDF не розтягується
+                    'img'     => $this->dataUri($this->mediaPath($fp->getFirstMedia('photo'), 'thumb')),
                     'label'   => $fp->machineryLabel(),
                     'caption' => $fp->caption,
                 ])->filter(fn ($x) => $x['img'])->values()->all()

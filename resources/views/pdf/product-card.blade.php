@@ -43,7 +43,7 @@
     .section-title { font-size: 13px; font-weight: bold; margin: 18px 0 6px; color: #d32f2f; }
     .expert { background: #f7f8fa; border-left: 3px solid #d32f2f; padding: 8px 12px; font-size: 12px; line-height: 1.5; }
     .fp { width: 33%; padding: 4px; vertical-align: top; }
-    .fp img { width: 100%; height: 110px; border: 1px solid #e0e0e0; }
+    .fp img { width: 150px; height: 150px; border: 1px solid #e0e0e0; }
     .fp-meta { font-size: 9px; color: #555; }
     .foot { margin-top: 22px; border-top: 1px solid #e0e0e0; padding-top: 8px; color: #555; font-size: 10px; }
 </style>
@@ -108,19 +108,21 @@
         @endif
 
         @if(count($fieldPhotos))
-            <div class="section-title">Фото в роботі</div>
-            <table width="100%"><tr>
-                @foreach($fieldPhotos as $i => $fp)
-                    <td class="fp">
-                        <img src="{{ $fp['img'] }}" alt="">
-                        <div class="fp-meta">
-                            @if($fp['label'])<strong>{{ $fp['label'] }}</strong>@endif
-                            @if($fp['caption']) — {{ $fp['caption'] }}@endif
-                        </div>
-                    </td>
-                    @if(($i + 1) % 3 === 0)</tr><tr>@endif
-                @endforeach
-            </tr></table>
+            <div style="page-break-inside: avoid">
+                <div class="section-title">Фото в роботі</div>
+                <table width="100%"><tr>
+                    @foreach($fieldPhotos as $i => $fp)
+                        <td class="fp">
+                            <img src="{{ $fp['img'] }}" alt="">
+                            <div class="fp-meta">
+                                @if($fp['label'])<strong>{{ $fp['label'] }}</strong>@endif
+                                @if($fp['caption']) — {{ $fp['caption'] }}@endif
+                            </div>
+                        </td>
+                        @if(($i + 1) % 3 === 0)</tr><tr>@endif
+                    @endforeach
+                </tr></table>
+            </div>
         @endif
     @endif
 
