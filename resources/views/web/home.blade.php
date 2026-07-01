@@ -70,66 +70,48 @@
 @php($chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <polyline points="6 9 12 15 18 9" />
 </svg>')
+@php($searchIco = '<svg class="ssel__search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>')
 <div class="filter-bar-wrap" id="pidbir">
     <div class="container">
         <form class="filter-bar" action="{{ route('catalog') }}" method="GET"
             x-data="homeFilter(@js($filters))" :class="{ 'is-loading': loading }">
+            @php($homeFields = [
+                ['name' => 'machinery', 'label' => 'Тип техніки', 'opts' => 'machineryOptions', 'search' => 'Пошук техніки…'],
+                ['name' => 'category', 'label' => 'Категорія', 'opts' => 'categoryOptions', 'search' => 'Пошук категорії…'],
+                ['name' => 'brand', 'label' => 'Бренд', 'opts' => 'brandOptions', 'search' => 'Пошук бренду…'],
+                ['name' => 'size', 'label' => 'Розмір', 'opts' => 'sizeOptions', 'search' => 'Пошук розміру…'],
+            ])
+            @foreach ($homeFields as $f)
             <div class="field">
-                <label>Тип техніки</label>
-                <div class="select">
-                    <select name="machinery" x-model="machinery" @change="refresh('machinery')">
-                        <option value="">Всі</option>
-                        <template x-for="o in machineryOptions" :key="o.value">
-                            <option :value="o.value" x-text="o.label"></option>
-                        </template>
-                    </select>
-                    {!! $chev !!}
+                <label>{{ $f['label'] }}</label>
+                <div class="ssel" x-data="searchSelect({ placeholder: 'Всі' })"
+                    @click.outside="close()" @keydown.escape.window="close()">
+                    <button type="button" class="ssel__btn" :class="{ 'is-set': {{ $f['name'] }} }" @click="toggle()">
+                        <span class="ssel__val" x-text="{{ $f['name'] }} ? ({{ $f['opts'] }}.find(o => o.value === {{ $f['name'] }})?.label || {{ $f['name'] }}) : 'Всі'"></span>
+                        {!! $chev !!}
+                    </button>
+                    <div class="ssel__backdrop" x-show="open" x-cloak @click="close()"></div>
+                    <div class="ssel__panel" x-show="open" x-cloak x-transition.opacity.duration.150ms>
+                        <div class="ssel__search">{!! $searchIco !!}<input x-ref="search" x-model="term" type="text" placeholder="{{ $f['search'] }}" /></div>
+                        <div class="ssel__list">
+                            <button type="button" class="ssel__opt" :class="{ 'is-active': !{{ $f['name'] }} }" @click="{{ $f['name'] }} = ''; refresh('{{ $f['name'] }}'); close()">Всі</button>
+                            <template x-for="o in {{ $f['opts'] }}.filter(o => matches(o.label))" :key="o.value">
+                                <button type="button" class="ssel__opt" :class="{ 'is-active': {{ $f['name'] }} === o.value }" @click="{{ $f['name'] }} = o.value; refresh('{{ $f['name'] }}'); close()" x-text="o.label"></button>
+                            </template>
+                            <p class="ssel__empty" x-show="{{ $f['opts'] }}.filter(o => matches(o.label)).length === 0">Нічого не знайдено</p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="{{ $f['name'] }}" :value="{{ $f['name'] }}" />
                 </div>
             </div>
-            <div class="field">
-                <label>Категорія</label>
-                <div class="select">
-                    <select name="category" x-model="category" @change="refresh('category')">
-                        <option value="">Всі</option>
-                        <template x-for="o in categoryOptions" :key="o.value">
-                            <option :value="o.value" x-text="o.label"></option>
-                        </template>
-                    </select>
-                    {!! $chev !!}
-                </div>
-            </div>
-            <div class="field">
-                <label>Бренд</label>
-                <div class="select">
-                    <select name="brand" x-model="brand" @change="refresh('brand')">
-                        <option value="">Всі</option>
-                        <template x-for="o in brandOptions" :key="o.value">
-                            <option :value="o.value" x-text="o.label"></option>
-                        </template>
-                    </select>
-                    {!! $chev !!}
-                </div>
-            </div>
-            <div class="field">
-                <label>Розмір</label>
-                <div class="select">
-                    <select name="size" x-model="size" @change="refresh('size')">
-                        <option value="">Всі</option>
-                        <template x-for="o in sizeOptions" :key="o.value">
-                            <option :value="o.value" x-text="o.label"></option>
-                        </template>
-                    </select>
-                    {!! $chev !!}
-                </div>
-            </div>
+            @endforeach
             <button type="submit" class="btn btn--primary filter-submit">Підібрати шини</button>
         </form>
     </div>
 </div>
 
 {{-- ===================== ДЛЯ ВАШОЇ ТЕХНІКИ ===================== --}}
-<section class="section machinery"
-    x-data="{ scroll(dir) { this.$refs.track.scrollBy({ left: dir * 320, behavior: 'smooth' }) } }">
+<section class="section machinery" x-data="dragScroll()">
     <div class="container">
         <div class="section-head" data-aos="fade-up">
             <h2 class="section-title">Для вашої техніки</h2>
@@ -141,7 +123,10 @@
                     <polyline points="15 18 9 12 15 6" />
                 </svg>
             </button>
-            <div class="mach-track" x-ref="track">
+            <div class="mach-track" x-ref="track"
+                @pointerdown="dragStart($event)" @pointermove="dragMove($event)"
+                @pointerup="dragEnd()" @pointerleave="dragEnd()" @pointercancel="dragEnd()"
+                @click.capture="dragClick($event)">
             {{-- Техніка: з БД ($dbMachinery), інакше — демо-заглушка. --}}
             @php($machineryFallback = [
             ['name' => 'Трактори', 'icon' => '/images/svg/tehnics/tractor.svg', 'url' => route('catalog')],

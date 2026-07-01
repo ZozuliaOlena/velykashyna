@@ -188,8 +188,9 @@
 
         @php($oldPrice = $p['old_price'] ?? null)
         <div class="cat-prod__buy">
-            <span class="cat-prod__avail {{ $p['stock'] ? 'in' : 'order' }}">
-                <span class="dot"></span>{{ $p['stock'] ? 'В наявності' : 'Під замовлення' }}
+            @php($stockClass = ($p['stock_status'] ?? '') === 'in_stock' ? 'in' : (($p['stock_status'] ?? '') === 'inquiry' ? 'inquiry' : 'order'))
+            <span class="cat-prod__avail {{ $stockClass }}">
+                <span class="dot"></span>{{ $p['stock_label'] ?? ($p['stock'] ? 'В наявності' : 'Під замовлення') }}
             </span>
             <div class="cat-prod__buyline">
             <div class="cat-prod__price cat-prod__price--{{ $priceMode }} {{ $oldPrice ? 'cat-prod__price--sale' : '' }}">

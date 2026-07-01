@@ -175,8 +175,9 @@
                         </span>
                         @endif
                     </div>
-                    <span class="product-buy__stock {{ $inStock ? 'in' : 'order' }}">
-                        <span class="dot"></span>{{ $inStock ? 'В наявності' : 'Під замовлення' }}
+                    @php($stockClass = $product->stock_status === 'in_stock' ? 'in' : ($product->stock_status === 'inquiry' ? 'inquiry' : 'order'))
+                    <span class="product-buy__stock {{ $stockClass }}">
+                        <span class="dot"></span>{{ $product->stockLabel() }}
                     </span>
                     </div>
 

@@ -65,13 +65,13 @@
             <div class="footer-col">
                 <div class="fcol-title">Каталог</div>
                 <ul>
-                    <li><a href="{{ route('catalog') }}">Шини</a></li>
-                    <li><a href="#">Камери</a></li>
-                    <li><a href="#">Агрошини</a></li>
-                    <li><a href="#">Спецтехніка</a></li>
-                    <li><a href="#">Вантажні шини</a></li>
-                    <li><a href="#">Диски</a></li>
-                    <li><a href="#">Аксесуари</a></li>
+                    <li><a href="{{ route('catalog') }}">Усі товари</a></li>
+                    @foreach ($catalogMenu['types'] ?? [] as $t)
+                    <li><a href="{{ $t['url'] }}">{{ $t['name'] }}</a></li>
+                    @endforeach
+                    @foreach (array_slice($catalogMenu['machinery'] ?? [], 0, 3) as $m)
+                    <li><a href="{{ $m['url'] }}">Шини на {{ mb_strtolower($m['name']) }}</a></li>
+                    @endforeach
                 </ul>
             </div>
 
@@ -138,11 +138,12 @@
                 <a href="#" class="btn btn--primary btn--block">Замовити дзвінок</a>
             </div>
 
+            @php($catalogLinks = collect([['name' => 'Усі товари', 'url' => route('catalog')]])
+                ->merge($catalogMenu['types'] ?? [])
+                ->merge(collect($catalogMenu['machinery'] ?? [])->take(3)->map(fn ($m) => ['name' => 'Шини на ' . mb_strtolower($m['name']), 'url' => $m['url']]))
+                ->mapWithKeys(fn ($i) => [$i['name'] => $i['url']])->all())
             @php($accordions = [
-                'Каталог' => [
-                    'Шини' => route('catalog'),
-                    'Камери' => '#', 'Агрошини' => '#', 'Спецтехніка' => '#', 'Вантажні шини' => '#', 'Диски' => '#',
-                ],
+                'Каталог' => $catalogLinks,
                 'Компанія' => [
                     'Про нас' => route('about'),
                     'Доставка й оплата' => route('pages.delivery'),

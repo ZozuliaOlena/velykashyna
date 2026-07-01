@@ -62,7 +62,7 @@ class CompareController extends Controller
             'Норма шарів (PR)' => fn (Product $p) => $p->ply_rating,
             'Посадковий діаметр' => fn (Product $p) => $p->rim_diameter ? 'R' . (int) $p->rim_diameter : null,
             'Специфікація' => fn (Product $p) => $p->specification,
-            'Наявність' => fn (Product $p) => $p->stock_status === 'in_stock' ? 'В наявності' : 'Під замовлення',
+            'Наявність' => fn (Product $p) => $p->stockLabel(),
         ];
 
         $rows = [];

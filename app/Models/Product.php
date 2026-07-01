@@ -281,11 +281,15 @@ class Product extends Model implements HasMedia
                         ->orWhere('tube_type', 'like', "%{$word}%")
                         // Розмір — без пробілів/дефісів і регістру.
                         ->orWhereRaw("REPLACE(REPLACE(LOWER(size_raw), ' ', ''), '-', '') LIKE ?", ['%' . $norm . '%'])
-                        ->orWhereHas('brand', fn ($b) => $b->where('name', 'like', "%{$word}%"));
-
-                    if ($typeCodes) {
-                        $w->orWhereHas('productType', fn ($t) => $t->whereIn('code', $typeCodes));
-                    }
+                        ->orWhereHas('brand', fn ($b) => $b->where('name', 'like', "%{$word}%"))
+                        // Тип товару: за назвою («Ущільнювальне», «кільце»)
+                        // або за стемом («шини» → tire).
+                        ->orWhereHas('productType', function ($t) use ($word, $typeCodes) {
+                            $t->where('name', 'like', "%{$word}%");
+                            if ($typeCodes) {
+                                $t->orWhereIn('code', $typeCodes);
+                            }
+                        });
                 });
             }
         });
@@ -370,6 +374,8 @@ class Product extends Model implements HasMedia
             'app' => $type?->name ?? '',
             'app_icon_url' => $type?->iconUrl(),
             'stock' => $this->stock_status === 'in_stock',
+            'stock_status' => $this->stock_status,
+            'stock_label' => $this->stockLabel(),
             'img_url' => $this->thumbUrl(),
             'price_mode' => $this->price_mode,
             'price' => $this->effectivePrice(),
@@ -381,6 +387,17 @@ class Product extends Model implements HasMedia
             'cur' => $this->currency === 'UAH' ? 'грн' : $this->currency,
             'promos' => $this->cardPromos(),
         ];
+    }
+
+    /** Підпис наявності: В наявності / Під замовлення / Уточнюйте. */
+    public function stockLabel(): string
+    {
+        return match ($this->stock_status) {
+            'in_stock' => 'В наявності',
+            'on_order' => 'Під замовлення',
+            'inquiry' => 'Уточнюйте',
+            default => 'Під замовлення',
+        };
     }
 
     /** Сума економії (стара ціна − поточна), заокруглена; null без знижки. */
