@@ -144,6 +144,17 @@
         <div wire:loading wire:target="catalogImages" style="margin-top:6px; color:#666; font-size:13px">Завантаження файлів…</div>
         @error('catalogImages.*') <span style="color:red">{{ $message }}</span> @enderror
 
+        {{-- Прев'ю вибраних файлів перед завантаженням --}}
+        @if($catalogImages)
+            <div class="photo-grid" style="margin-top:.6rem">
+                @foreach($catalogImages as $ci)
+                    <div class="photo-thumb" wire:key="ci-prev-{{ $loop->index }}">
+                        <img src="{{ $ci->temporaryUrl() }}" alt="">
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
         <div style="margin-top:.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
             <button wire:click="uploadCatalogImages" wire:loading.attr="disabled" wire:target="uploadCatalogImages">Завантажити каталожні фото</button>
             <span class="spinner-line" wire:loading wire:target="uploadCatalogImages"><span class="spinner"></span> Обробка…</span>

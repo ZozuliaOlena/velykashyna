@@ -45,6 +45,8 @@ class ProductIndex extends Component
     public string $bulkPriceMode = '';
     public ?string $bulkPrice = null;
     public ?string $bulkPricePercent = null;
+    public string $bulkDiscountType = '';    // '' | 'percent' | 'amount'
+    public ?string $bulkDiscountValue = null;
     public $bulkCatalogPhoto = null; // каталожне фото для масового призначення
 
     protected function queryString(): array
@@ -215,6 +217,54 @@ class ProductIndex extends Component
         $this->afterBulk();
         $this->reset('bulkPricePercent');
         session()->flash('success', "Ціни змінено на {$percent}% (оновлено товарів: {$affected})");
+    }
+
+    /** Масово встановити знижку: у відсотках (%) або на суму (грн). */
+    public function bulkSetDiscount(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+        if (! in_array($this->bulkDiscountType, ['percent', 'amount'], true)) {
+            session()->flash('error', 'Оберіть тип знижки (відсоток або сума)');
+            return;
+        }
+        if (! is_numeric($this->bulkDiscountValue) || (float) $this->bulkDiscountValue <= 0) {
+            session()->flash('error', 'Вкажіть значення знижки (більше за 0)');
+            return;
+        }
+
+        $value = (float) $this->bulkDiscountValue;
+        if ($this->bulkDiscountType === 'percent' && $value > 100) {
+            session()->flash('error', 'Відсоток знижки не може перевищувати 100');
+            return;
+        }
+
+        $count = Product::whereIn('id', $this->selected)->update([
+            'discount_type'  => $this->bulkDiscountType,
+            'discount_value' => $value,
+        ]);
+
+        $this->afterBulk();
+        $this->reset('bulkDiscountType', 'bulkDiscountValue');
+        session()->flash('success', "Знижку встановлено (оновлено товарів: {$count})");
+    }
+
+    /** Масово прибрати знижку у вибраних товарів. */
+    public function bulkClearDiscount(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $count = Product::whereIn('id', $this->selected)->update([
+            'discount_type'  => null,
+            'discount_value' => null,
+        ]);
+
+        $this->afterBulk();
+        $this->reset('bulkDiscountType', 'bulkDiscountValue');
+        session()->flash('success', "Знижку прибрано (оновлено товарів: {$count})");
     }
 
     /** Масово призначити одне каталожне (стокове) фото вибраним товарам. */

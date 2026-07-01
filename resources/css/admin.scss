@@ -757,11 +757,15 @@ body.admin-body {
         // ── Редактор статей (Trix) ───────────────────────────────────────
         trix-editor {
             min-height: 320px;
+            max-width: 100%;
             border: 1px solid $border-color;
             border-radius: 8px;
             padding: 12px 14px;
             background: #fff;
             line-height: 1.6;
+            // Довгі слова / посилання не розпирають редактор.
+            overflow-wrap: break-word;
+            word-break: break-word;
 
             &:focus {
                 outline: none;
@@ -777,6 +781,22 @@ body.admin-body {
 
         trix-toolbar .trix-button-group {
             border-color: $border-color;
+        }
+
+        // Панель інструментів не влазила по ширині на телефоні й вилазила
+        // за край. Дозволяємо кнопкам переноситись на кілька рядів.
+        trix-toolbar {
+            max-width: 100%;
+
+            .trix-button-row {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                row-gap: 6px;
+            }
+
+            .trix-button-group {
+                margin-bottom: 0;
+            }
         }
 
         // ── Фото «в роботі» (картки із технікою та підписом) ─────────────
@@ -1983,6 +2003,43 @@ body.admin-body {
             justify-content: center;
             text-align: center;
             &::before { content: none; }
+        }
+
+        // Таблиця позицій заявки НЕ перетворюється на «картки»: у неї немає
+        // data-label, тож порожній підпис штовхав текст праворуч («товар
+        // з'їжджав у бік»). Лишаємо звичайну таблицю з текстом, як на
+        // десктопі; за потреби .lead-items дає горизонтальний скрол.
+        .lead-items {
+            table { display: table; }
+
+            thead {
+                position: static;
+                width: auto;
+                height: auto;
+                overflow: visible;
+                clip: auto;
+            }
+
+            tbody { display: table-row-group; }
+
+            tbody tr {
+                display: table-row;
+                margin: 0;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                background: none;
+            }
+
+            tbody td {
+                display: table-cell;
+                text-align: left;
+                border: 1px solid $border-color;
+                padding: 6px 8px;
+                white-space: normal;
+
+                &::before { content: none; }
+            }
         }
 
         // Фільтри: кожен контрол на всю ширину, «Скинути» — теж.

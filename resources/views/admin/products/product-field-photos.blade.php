@@ -44,11 +44,15 @@
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:.5rem">
                 <div style="flex:1 1 200px">
                     <label>Тип техніки</label>
-                    <x-admin.select model="machinery_type_id" :live="false" placeholder="— Тип техніки —" :options="$typeOptions" />
+                    <x-admin.select model="machinery_type_id" :live="true" placeholder="— Тип техніки —" :options="$typeOptions" />
                 </div>
                 <div style="flex:1 1 200px">
                     <label>Модель техніки</label>
-                    <x-admin.select model="machinery_model_id" :live="false" placeholder="— Модель (напр. CASE 310) —" :options="$modelOptions" />
+                    {{-- wire:key зі значенням типу: коли тип змінюється, Livewire
+                         перестворює список, і моделі підтягуються вже відфільтровані. --}}
+                    <x-admin.select model="machinery_model_id" :live="false"
+                        wire:key="fp-model-{{ $machinery_type_id ?? 0 }}"
+                        placeholder="— Модель (напр. CASE 310) —" :options="$modelOptions" />
                 </div>
             </div>
 
