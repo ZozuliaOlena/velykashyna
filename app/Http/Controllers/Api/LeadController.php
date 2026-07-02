@@ -89,4 +89,35 @@ class LeadController extends Controller
             'message'     => 'Замовлення прийнято. Ми зв’яжемося для підтвердження деталей.',
         ], 201);
     }
+
+    /**
+     * Заявка на консультацію (без кошика): ім'я, телефон і повідомлення.
+     * Створює заявку з source='consultation' — в адмінці вона позначена
+     * окремим типом «Консультація». Товарів не має.
+     */
+    public function consultation(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'customer_name' => ['required', 'string', 'max:255'],
+            'phone'         => ['required', 'string', 'max:255'],
+            // Повідомлення клієнта (напр. «Що вас цікавить?»). Приймаємо і
+            // 'comment', і 'message' — щоб форму було зручно підключити.
+            'comment'       => ['nullable', 'string', 'max:2000'],
+            'message'       => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $lead = Lead::create([
+            'customer_name'    => $data['customer_name'],
+            'phone'            => $data['phone'],
+            'customer_comment' => $data['comment'] ?? $data['message'] ?? null,
+            'status'           => 'new',
+            'source'           => 'consultation',
+        ]);
+
+        return response()->json([
+            'ok'      => true,
+            'lead_id' => $lead->id,
+            'message' => 'Дякуємо! Ми отримали вашу заявку і зв’яжемося найближчим часом.',
+        ], 201);
+    }
 }

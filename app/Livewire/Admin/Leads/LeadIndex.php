@@ -24,12 +24,20 @@ class LeadIndex extends Component
     // Заявки з цими статусами вважаються завершеними й живуть у вкладці «Архів».
     public const ARCHIVED_STATUSES = ['done', 'canceled'];
 
+    // Джерело заявки — щоб відрізняти кошик від консультації.
+    public const SOURCES = [
+        'cart'         => 'Кошик',
+        'consultation' => 'Консультація',
+        'manual'       => 'Вручну',
+    ];
+
     // Мають збігатися з варіантами у формі оформлення на клієнтській частині.
     public const DELIVERY_METHODS = ['Нова Пошта', 'САТ', "Кур'єр", 'Самовивіз зі складу'];
     public const PAYMENT_METHODS = ['Накладений платіж (при отриманні)', 'Оплата за реквізитами (IBAN)'];
 
     public string $search = '';
     public string $filterStatus = '';
+    public string $filterSource = '';
     public string $tab = 'active'; // active | archive
 
     public bool $showModal = false;
@@ -37,7 +45,6 @@ class LeadIndex extends Component
 
     public string $customer_name = '';
     public string $phone = '';
-    public ?string $contact_method = null;
     public ?string $city = null;
     public ?string $delivery_method = null;
     public ?string $delivery_address = null;
@@ -54,7 +61,7 @@ class LeadIndex extends Component
 
     public function updating($name): void
     {
-        if (in_array($name, ['search', 'filterStatus'])) {
+        if (in_array($name, ['search', 'filterStatus', 'filterSource'])) {
             $this->resetPage();
         }
     }
@@ -76,7 +83,6 @@ class LeadIndex extends Component
         return [
             'customer_name'      => ['required', 'string', 'max:255'],
             'phone'              => ['required', 'string', 'max:255'],
-            'contact_method'     => ['nullable', 'string', 'max:255'],
             'city'               => ['nullable', 'string', 'max:255'],
             'delivery_method'    => ['nullable', 'string', 'max:255'],
             'delivery_address'   => ['nullable', 'string', 'max:255'],
@@ -92,7 +98,7 @@ class LeadIndex extends Component
 
     public function openCreate(): void
     {
-        $this->reset('editingId', 'customer_name', 'phone', 'contact_method',
+        $this->reset('editingId', 'customer_name', 'phone',
             'city', 'delivery_method', 'delivery_address', 'payment_method',
             'manager_comment', 'items', 'productSearch');
         $this->status = 'new';
@@ -106,7 +112,6 @@ class LeadIndex extends Component
         $this->editingId       = $id;
         $this->customer_name    = $lead->customer_name;
         $this->phone            = $lead->phone;
-        $this->contact_method   = $lead->contact_method;
         $this->city             = $lead->city;
         $this->delivery_method  = $lead->delivery_method;
         $this->delivery_address = $lead->delivery_address;
@@ -167,7 +172,6 @@ class LeadIndex extends Component
         $leadData = [
             'customer_name'    => $this->customer_name,
             'phone'            => $this->phone,
-            'contact_method'   => $this->contact_method,
             'city'             => $this->city,
             'delivery_method'  => $this->delivery_method,
             'delivery_address' => $this->delivery_address,
@@ -219,6 +223,7 @@ class LeadIndex extends Component
                 ->where('customer_name', 'like', "%{$this->search}%")
                 ->orWhere('phone', 'like', "%{$this->search}%")))
             ->when($this->filterStatus, fn ($q) => $q->where('status', $this->filterStatus))
+            ->when($this->filterSource, fn ($q) => $q->where('source', $this->filterSource))
             ->orderByDesc('id')
             ->paginate(25);
 
@@ -254,6 +259,7 @@ class LeadIndex extends Component
             'leads'           => $leads,
             'current'         => $current,
             'statuses'        => self::STATUSES,
+            'sources'         => self::SOURCES,
             'tabStatuses'     => $tabStatuses,
             'activeCount'     => $activeCount,
             'archiveCount'    => $archiveCount,

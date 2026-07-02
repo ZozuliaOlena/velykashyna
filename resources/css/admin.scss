@@ -1870,6 +1870,20 @@ body.admin-body {
         &--canceled   { background: #f1f2f5; color: $text-light; }    // скасована
     }
 
+    // ── Тип заявки: кошик / консультація / вручну ────────────────────────
+    .lead-source {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+
+        &--cart         { background: #e7f0ff; color: #1d4ed8; }      // з кошика
+        &--consultation { background: #fff4e5; color: #b26a00; }      // консультація
+        &--manual       { background: #f1f2f5; color: $text-light; }  // вручну
+    }
+
     // ── Вкладки заявок: Активні / Архів ──────────────────────────────────
     .lead-tabs {
         display: flex;
