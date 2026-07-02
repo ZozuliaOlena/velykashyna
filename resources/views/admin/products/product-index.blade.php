@@ -50,8 +50,7 @@
             </select>
             <input wire:model="bulkRateValue" type="number" step="0.0001" min="0"
                 placeholder="курс, грн" style="width:110px" title="Скільки гривень за 1 одиницю валюти">
-            <button wire:click="bulkSetExchangeRate"
-                data-confirm="Встановити цей курс усім товарам у вибраній валюті?">Застосувати курс усім</button>
+            <button wire:click="bulkSetExchangeRate">Застосувати курс усім</button>
         </span>
         <small style="color:#666">Напр.: усім товарам у EUR — курс 45. Курс збережеться у полі «Курс» кожного такого товару.</small>
     </div>
