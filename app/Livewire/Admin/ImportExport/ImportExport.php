@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\ImportExport;
 
+use App\Livewire\Concerns\WithAdminToast;
 use App\Exports\CatalogExport;
 use App\Imports\CatalogImport;
 use App\Models\CatalogImage;
@@ -16,6 +17,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class ImportExport extends Component
 {
     use WithFileUploads;
+    use WithAdminToast;
 
     public $importFile = null;
     public $photoArchive = null;

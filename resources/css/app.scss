@@ -6391,6 +6391,58 @@ button {
             color: $red;
         }
     }
+
+    // На мобільному flex-wrap розкидав елементи хаотично («товар з'їжджав
+    // у бік»). Фіксуємо чіткою сіткою: фото зліва, назва + видалити зверху,
+    // кількість + ціна знизу.
+    @media (max-width: $bp-sm) {
+        display: grid;
+        grid-template-columns: 64px minmax(0, 1fr) auto;
+        grid-template-areas:
+            "img info remove"
+            "img qty  price";
+        column-gap: 12px;
+        row-gap: 12px;
+        align-items: center;
+
+        &__img {
+            grid-area: img;
+            flex: none;
+            width: 64px;
+            align-self: start;
+        }
+
+        &__info {
+            grid-area: info;
+        }
+
+        &__qty {
+            grid-area: qty;
+            justify-self: start;
+
+            button {
+                width: 34px;
+                height: 40px;
+            }
+
+            input {
+                width: 38px;
+                height: 40px;
+            }
+        }
+
+        &__price {
+            grid-area: price;
+            min-width: 0;
+            align-self: center;
+        }
+
+        &__remove {
+            grid-area: remove;
+            align-self: start;
+            justify-self: end;
+        }
+    }
 }
 
 .cart-summary__row {
@@ -7501,6 +7553,15 @@ button {
         line-height: 1.75;
         color: $text;
         text-align: justify;
+        // Довгі слова / URL із редактора не вилазять за межі колонки.
+        overflow-wrap: break-word;
+        word-break: break-word;
+
+        // На вузьких екранах justify лишає некрасиві дірки — вирівнюємо ліворуч.
+        @media (max-width: $bp-sm) {
+            font-size: 16px;
+            text-align: left;
+        }
 
         // Trix зберігає абзаци як <div>, тож відступи — і для p, і для div.
         p,
@@ -7576,6 +7637,36 @@ button {
             height: auto;
             border-radius: $radius;
             margin: 8px 0 24px;
+        }
+
+        // Trix іноді зберігає ширину attachment інлайн — не даємо вилазити.
+        figure.attachment {
+            max-width: 100% !important;
+        }
+
+        // Вбудовані відео / карти / об'єкти — адаптивні.
+        iframe,
+        video,
+        embed,
+        object {
+            max-width: 100%;
+        }
+
+        // Широкі таблиці та код із редактора — горизонтальний скрол
+        // всередині блоку замість виходу за межі екрана.
+        .table-wrap,
+        pre {
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            max-width: 100%;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-collapse: collapse;
         }
 
         blockquote {

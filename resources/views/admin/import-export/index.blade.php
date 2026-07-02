@@ -1,8 +1,6 @@
 <div>
     <h1>Імпорт / Експорт</h1>
 
-    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
-    @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
     {{-- ── Google Merchant фід ─────────────────────────────── --}}
     <fieldset style="margin-top:1rem">
@@ -143,6 +141,17 @@
         <input type="file" wire:model="catalogImages" accept="image/*,.svg" multiple>
         <div wire:loading wire:target="catalogImages" style="margin-top:6px; color:#666; font-size:13px">Завантаження файлів…</div>
         @error('catalogImages.*') <span style="color:red">{{ $message }}</span> @enderror
+
+        {{-- Прев'ю вибраних файлів перед завантаженням --}}
+        @if($catalogImages)
+            <div class="photo-grid" style="margin-top:.6rem">
+                @foreach($catalogImages as $ci)
+                    <div class="photo-thumb" wire:key="ci-prev-{{ $loop->index }}">
+                        <img src="{{ $ci->temporaryUrl() }}" alt="">
+                    </div>
+                @endforeach
+            </div>
+        @endif
 
         <div style="margin-top:.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
             <button wire:click="uploadCatalogImages" wire:loading.attr="disabled" wire:target="uploadCatalogImages">Завантажити каталожні фото</button>

@@ -31,6 +31,15 @@ class ProductFieldPhotos extends Component
         $this->productId = $productId;
     }
 
+    /**
+     * При зміні типу техніки скидаємо раніше обрану модель — інакше в списку
+     * лишилась би модель іншого типу, а фільтр показував би вже інші моделі.
+     */
+    public function updatedMachineryTypeId(): void
+    {
+        $this->machinery_model_id = null;
+    }
+
     protected function rules(): array
     {
         return [
@@ -78,7 +87,13 @@ class ProductFieldPhotos extends Component
             ->get();
 
         $types = MachineryType::orderBy('name')->get(['id', 'name']);
-        $models = MachineryModel::with('brand')->orderBy('name')->get();
+
+        // Моделі фільтруємо за обраним типом техніки. Якщо тип не обрано —
+        // показуємо всі моделі.
+        $models = MachineryModel::with('brand')
+            ->when($this->machinery_type_id, fn ($q) => $q->where('machinery_type_id', $this->machinery_type_id))
+            ->orderBy('name')
+            ->get();
 
         return view('admin.products.product-field-photos', [
             'photos' => $photos,

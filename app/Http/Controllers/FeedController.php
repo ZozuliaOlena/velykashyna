@@ -44,8 +44,6 @@ class FeedController extends Controller
             default => 'out_of_stock',
         };
 
-        $cur = $p->currency ?: 'UAH';
-
         return [
             'id' => $p->sku,
             'title' => mb_substr($title !== '' ? $title : $p->name, 0, 150),
@@ -56,9 +54,9 @@ class FeedController extends Controller
             'condition' => in_array($p->condition, ['new', 'used', 'refurbished'], true)
                 ? $p->condition
                 : 'new',
-            'price' => number_format((float) $p->price, 2, '.', '') . ' ' . $cur,
+            'price' => $this->feedPrice((float) $p->price, $p),
             'sale_price' => $p->hasDiscount()
-                ? number_format((float) $p->effectivePrice(), 2, '.', '') . ' ' . $cur
+                ? $this->feedPrice((float) $p->effectivePrice(), $p)
                 : null,
             'brand' => $p->brand?->name,
             // Немає GTIN/MPN виробника → чесно повідомляємо Google, що
@@ -68,6 +66,25 @@ class FeedController extends Controller
             'google_product_category' => $p->productType?->googleCategory()
                 ?? 'Vehicles & Parts > Vehicle Parts & Accessories > Motor Vehicle Parts > Motor Vehicle Tires',
         ];
+    }
+
+    /**
+     * Ціна для фіда. Якщо товар у валюті (USD/EUR) і задано курс — перераховуємо
+     * в гривні (Google Merchant краще приймає локальну валюту). Інакше — лишаємо
+     * ціну у валюті товара. Курс береться з поля exchange_rate (масово виставляється
+     * в адмінці для всіх товарів обраної валюти).
+     */
+    private function feedPrice(float $amount, Product $p): string
+    {
+        $cur  = $p->currency ?: 'UAH';
+        $rate = (float) ($p->exchange_rate ?? 0);
+
+        if ($cur !== 'UAH' && $rate > 0) {
+            $amount *= $rate;
+            $cur = 'UAH';
+        }
+
+        return number_format($amount, 2, '.', '') . ' ' . $cur;
     }
 
     private function image(Product $p): ?string

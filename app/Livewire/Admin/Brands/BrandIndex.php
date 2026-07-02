@@ -34,7 +34,8 @@ class BrandIndex extends Component
         return [
             'name'    => 'required|string|max:255',
             'country' => 'nullable|string|max:255',
-            'logo'    => 'nullable|image|max:5120',
+            // Дозволяємо і растр, і векторний SVG (логотипи брендів часто у SVG).
+            'logo'    => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp,svg', 'max:5120'],
         ];
     }
 

@@ -11,8 +11,6 @@
         <button wire:click="openCreate">{{ $addLabel }}</button>
     </div>
 
-    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
-    @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
@@ -67,7 +65,12 @@
         @if($withIcon)
         <div class="is-full">
             <label>SVG-іконка</label><br>
-            @if($currentIcon)
+            {{-- прев'ю щойно вибраного файлу, інакше — вже збереженої іконки --}}
+            @if($icon)
+                <div class="photo-thumb">
+                    <img src="{{ $icon->temporaryUrl() }}" alt="">
+                </div>
+            @elseif($currentIcon)
                 <div class="photo-thumb">
                     <img src="/storage/{{ ltrim($currentIcon, '/') }}" alt="">
                     <button type="button" class="photo-del" wire:click="deleteIcon({{ $editingId }})"

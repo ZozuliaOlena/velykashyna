@@ -1,7 +1,6 @@
 <div>
     <h1>Безпека</h1>
 
-    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
 
     <fieldset style="margin-top:1rem; max-width:560px">
         <legend><strong>Двофакторна автентифікація (2FA)</strong></legend>

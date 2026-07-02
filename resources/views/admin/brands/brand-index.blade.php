@@ -4,10 +4,6 @@
         <button wire:click="openCreate">+ Додати бренд</button>
     </div>
 
-    @if(session('success'))
-        <p style="color:green">{{ session('success') }}</p>
-    @endif
-
     <div class="admin-filters">
         <input wire:model.live="search" placeholder="Пошук по назві...">
     </div>
@@ -84,8 +80,9 @@
                 </div>
             @endif
 
-            <input wire:model="logo" type="file" accept="image/*">
+            <input wire:model="logo" type="file" accept="image/*,.svg,image/svg+xml">
             <div wire:loading wire:target="logo" style="color:#666">Завантаження…</div>
+            <small style="color:#666; display:block">PNG, JPG, WEBP або SVG, до 5 МБ.</small>
             @error('logo') <span style="color:red">{{ $message }}</span> @enderror
         </div>
 
