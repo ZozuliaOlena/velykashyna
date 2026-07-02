@@ -228,17 +228,20 @@
                     </div>
                     <div>
                         <label>Валюта</label><br>
-                        <select wire:model="currency" style="width:90px">
+                        <select wire:model.live="currency" style="width:90px">
                             <option value="UAH">UAH</option>
                             <option value="USD">USD</option>
                             <option value="EUR">EUR</option>
                         </select>
                         @error('currency') <span style="color:red">{{ $message }}</span> @enderror
                     </div>
+                    {{-- Курс потрібен лише для валют (USD/EUR) → у гривні. --}}
+                    @if($currency !== 'UAH')
                     <div>
-                        <label>Курс (опц.)</label><br>
+                        <label>Курс до грн (опц.)</label><br>
                         <input wire:model="exchange_rate" type="text" style="width:100px">
                     </div>
+                    @endif
                 </div>
 
                 <div style="display:flex; gap:.5rem; flex-wrap:wrap">

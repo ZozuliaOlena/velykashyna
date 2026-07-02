@@ -46,7 +46,6 @@
                 <option value="">Валюта товарів…</option>
                 <option value="USD">дол (USD) — {{ $currencyCounts['USD'] ?? 0 }} тов.</option>
                 <option value="EUR">євро (EUR) — {{ $currencyCounts['EUR'] ?? 0 }} тов.</option>
-                <option value="UAH">грн (UAH) — {{ $currencyCounts['UAH'] ?? 0 }} тов.</option>
             </select>
             <input wire:model="bulkRateValue" type="number" step="0.0001" min="0"
                 placeholder="курс, грн" style="width:110px" title="Скільки гривень за 1 одиницю валюти">

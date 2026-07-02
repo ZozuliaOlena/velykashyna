@@ -210,8 +210,9 @@ class ProductIndex extends Component
      */
     public function bulkSetExchangeRate(): void
     {
-        if (! in_array($this->bulkRateCurrency, ['UAH', 'USD', 'EUR'], true)) {
-            session()->flash('error', 'Оберіть валюту, для якої встановити курс');
+        // Курс має сенс лише для валют (USD/EUR) відносно гривні.
+        if (! in_array($this->bulkRateCurrency, ['USD', 'EUR'], true)) {
+            session()->flash('error', 'Оберіть валюту (USD або EUR), для якої встановити курс');
             return;
         }
         if (! is_numeric($this->bulkRateValue) || (float) $this->bulkRateValue <= 0) {
