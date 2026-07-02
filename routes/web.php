@@ -3,6 +3,7 @@
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CompareController;
+use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\InWorkController;
 use App\Http\Controllers\HomeController;
@@ -44,6 +45,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 // Кошик і Обране — гостьові (стан у localStorage), рендеряться на клієнті.
 Route::view('/cart', 'web.cart', ['showFooterCta' => false])->name('cart');
 Route::view('/favorites', 'web.favorites', ['showFooterCta' => false])->name('favorites');
+Route::get('/favorites/cards', [FavoritesController::class, 'cards'])->name('favorites.cards');
 
 // Порівняння шин — таблиця характеристик за переданими ?ids=.
 Route::get('/compare', [CompareController::class, 'index'])->name('compare');

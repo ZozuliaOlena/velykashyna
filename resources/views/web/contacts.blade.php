@@ -135,7 +135,7 @@
                             </label>
                             <label class="cform__field">
                                 <span>Телефон</span>
-                                <input type="tel" name="phone" placeholder="+38 (0__) ___ __ __" required />
+                                <input type="tel" name="phone" value="+38 " placeholder="+38 (0__) ___ __ __" required />
                             </label>
                         </div>
                         <label class="cform__field">

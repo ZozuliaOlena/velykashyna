@@ -369,6 +369,7 @@ class Product extends Model implements HasMedia
             'brand_logo_url' => $this->brand?->logoUrl(),
             'model' => $this->model ?? '',
             'constr' => $this->constructionLabel(),
+            'tube' => $this->tube_type ?? '',
             'spec' => $this->specification ?? '',
             'li' => $this->load_speed_index ?? '',
             'app' => $type?->name ?? '',

@@ -97,11 +97,12 @@ class ProductController extends Controller
             }
         };
 
-        $push('Артикул', $product->sku);
+        // Артикул не дублюємо в характеристиках — він показаний окремим рядком
+        // під заголовком товару.
         $push('Бренд', $product->brand?->name);
         $push('Модель / протектор', $product->model);
         $push('Розмір', $product->size_raw);
-        $push('Камерність', $product->constructionLabel() ?: null);
+        $push('TL / TT', $product->tube_type);
         $push('Індекс навантаж./швидк.', $product->load_speed_index);
         $push('Норма шарів (PR)', $product->ply_rating);
         $push('Посадковий діаметр', $product->rim_diameter ? 'R' . (int) $product->rim_diameter : null);

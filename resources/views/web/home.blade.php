@@ -297,7 +297,7 @@
                 <p>Наші спеціалісти допоможуть підібрати оптимальний варіант для вашої техніки.</p>
             </div>
             <div class="cta-actions">
-                <a href="#" class="btn btn--primary">Отримати консультацію</a>
+                <a href="{{ route('contacts') }}" class="btn btn--primary">Отримати консультацію</a>
                 <a href="tel:{{ config('site.contacts.phone_href') }}" class="btn btn--ghost-light">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path

@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Category;
+use App\Models\MachineryBrand;
+use App\Models\MachineryModel;
 use App\Models\MachineryType;
 use App\Models\Product;
+use App\Models\ProductMachineryCompatibility;
 use App\Models\ProductType;
 use Illuminate\Http\Request;
 
@@ -40,6 +44,8 @@ class CatalogController extends Controller
             'sizes' => $this->sizeFacet($request),
             'diameters' => $this->diameterFacet($request),
             'machineryNames' => MachineryType::orderBy('name')->pluck('name')->all(),
+            'machineryBrands' => $this->machineryBrands($request),
+            'machineryModels' => $this->machineryModels($request),
             'productTypes' => ProductType::orderBy('id')->get(['code', 'name']),
             'selected' => $this->selected($request),
             'activeFilters' => $this->activeFilters($request),
@@ -57,11 +63,15 @@ class CatalogController extends Controller
         $rm = fn (array $params) => $request->fullUrlWithQuery($params + ['page' => null]);
 
         $typeNames = ProductType::pluck('name', 'code');
+        $mBrandNames = MachineryBrand::pluck('name', 'id');
+        $mModelNames = MachineryModel::pluck('name', 'id');
 
         // Багатозначні поля: знімаємо одне значення зі списку.
         $multi = [
             'type' => fn ($v) => $typeNames[$v] ?? $v,
             'machinery' => fn ($v) => $v,
+            'mbrand' => fn ($v) => 'Техніка: ' . ($mBrandNames[$v] ?? $v),
+            'mmodel' => fn ($v) => 'Модель: ' . ($mModelNames[$v] ?? $v),
             'brand' => fn ($v) => $v,
             'size' => fn ($v) => $v,
             'constr' => fn ($v) => $v === 'TL' ? 'Безкамерна (TL)' : ($v === 'TT' ? 'Камерна (TT)' : $v),
@@ -71,9 +81,9 @@ class CatalogController extends Controller
             $chips[] = ['label' => 'Пошук: ' . $sel['q'], 'url' => $rm(['q' => null])];
         }
         if ($sel['category'] !== '') {
-            $chips[] = ['label' => $sel['category'], 'url' => $rm(['category' => null])];
+            $catName = Category::where('slug', $sel['category'])->orWhere('name', $sel['category'])->value('name');
+            $chips[] = ['label' => $catName ?? $sel['category'], 'url' => $rm(['category' => null])];
         }
-
         foreach ($multi as $key => $labeller) {
             foreach ($sel[$key] as $value) {
                 $rest = array_values(array_diff($sel[$key], [$value]));
@@ -101,6 +111,29 @@ class CatalogController extends Controller
     }
 
     /**
+     * ID категорії разом з усіма нащадками (рекурсивно, одним запитом).
+     * Потрібно, щоб фільтр за батьківською категорією включав товари підкатегорій.
+     *
+     * @return array<int>
+     */
+    private function categoryWithDescendantIds(int $rootId): array
+    {
+        $byParent = Category::get(['id', 'parent_id'])->groupBy('parent_id');
+
+        $ids = [];
+        $stack = [$rootId];
+        while ($stack) {
+            $id = array_pop($stack);
+            $ids[] = $id;
+            foreach ($byParent[$id] ?? [] as $child) {
+                $stack[] = $child->id;
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
      * Застосовує фільтри запиту. $except — поля, які пропустити
      * (для фасетних списків: опції поля рахуються без урахування його самого).
      */
@@ -121,9 +154,27 @@ class CatalogController extends Controller
             $query->whereHas('machineryCompatibility', fn ($x) => $x->whereIn('machinery_type_id', $typeIds));
         }
 
+        // Каскад «за технікою»: марка → модель (мультивибір). Частковий вибір =
+        // ширша видача (обрав лише марку → усі шини на техніку цієї марки).
+        if ($on('mbrand') && ($mbrand = array_filter((array) $request->query('mbrand', [])))) {
+            $query->whereHas('machineryCompatibility', fn ($x) => $x->whereIn('machinery_brand_id', $mbrand));
+        }
+
+        if ($on('mmodel') && ($mmodel = array_filter((array) $request->query('mmodel', [])))) {
+            $query->whereHas('machineryCompatibility', fn ($x) => $x->whereIn('machinery_model_id', $mmodel));
+        }
+
         if ($on('category') && ($category = $request->query('category'))) {
-            // приймаємо і slug (з фільтра головної), і назву (з чипів у шапці)
-            $query->whereHas('categories', fn ($x) => $x->where('slug', $category)->orWhere('name', $category));
+            // Приймаємо і slug (з фільтра/чипів), і назву. Товари прив'язані до
+            // листових категорій, тож для батьківської («Агрошина») включаємо
+            // всі її підкатегорії, інакше нічого б не знаходилось.
+            $root = Category::where('slug', $category)->orWhere('name', $category)->first();
+            if ($root) {
+                $ids = $this->categoryWithDescendantIds($root->id);
+                $query->whereHas('categories', fn ($x) => $x->whereIn('categories.id', $ids));
+            } else {
+                $query->whereRaw('1 = 0'); // невідома категорія → порожній результат
+            }
         }
 
         if ($on('brand') && ($brands = array_filter((array) $request->query('brand', [])))) {
@@ -189,6 +240,48 @@ class CatalogController extends Controller
             ->unique()->values()->all();
     }
 
+    /**
+     * Записи сумісності для товарів, що відповідають поточним фільтрам
+     * (без machinery-марки/моделі), звужені типом техніки (вкладки) і — за
+     * потреби — обраною маркою. База для каскадних фасетів марки/моделі.
+     */
+    private function machineryCompat(Request $request, bool $withBrand)
+    {
+        $base = Product::query()->where('is_active', true);
+        $this->applyFilters($base, $request, ['mbrand', 'mmodel']);
+
+        $q = ProductMachineryCompatibility::query()->whereIn('product_id', $base->select('id'));
+
+        if ($mNames = array_filter((array) $request->query('machinery', []))) {
+            $q->whereIn('machinery_type_id', MachineryType::whereIn('name', $mNames)->pluck('id'));
+        }
+        if ($withBrand && ($mb = array_filter((array) $request->query('mbrand', [])))) {
+            $q->whereIn('machinery_brand_id', $mb);
+        }
+
+        return $q;
+    }
+
+    /** Доступні марки техніки (з урахуванням типу техніки та фільтрів). */
+    private function machineryBrands(Request $request): array
+    {
+        $ids = $this->machineryCompat($request, false)
+            ->whereNotNull('machinery_brand_id')->distinct()->pluck('machinery_brand_id');
+
+        return MachineryBrand::whereIn('id', $ids)->orderBy('name')->get(['id', 'name'])
+            ->map(fn ($b) => ['id' => $b->id, 'name' => $b->name])->all();
+    }
+
+    /** Доступні моделі техніки (звужені обраною маркою, якщо є). */
+    private function machineryModels(Request $request): array
+    {
+        $ids = $this->machineryCompat($request, true)
+            ->whereNotNull('machinery_model_id')->distinct()->pluck('machinery_model_id');
+
+        return MachineryModel::whereIn('id', $ids)->orderBy('name')->get(['id', 'name'])
+            ->map(fn ($m) => ['id' => $m->id, 'name' => $m->name])->all();
+    }
+
     private function applySort($query, ?string $sort): void
     {
         match ($sort) {
@@ -227,6 +320,8 @@ class CatalogController extends Controller
     {
         return [
             'machinery' => array_filter((array) $request->query('machinery', [])),
+            'mbrand' => array_filter((array) $request->query('mbrand', [])),
+            'mmodel' => array_filter((array) $request->query('mmodel', [])),
             'type' => array_filter((array) $request->query('type', [])),
             'category' => (string) $request->query('category', ''),
             'brand' => array_filter((array) $request->query('brand', [])),

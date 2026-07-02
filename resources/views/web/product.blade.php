@@ -131,13 +131,23 @@
                     <span class="product-sku">Артикул: <b>{{ $product->sku }}</b></span>
                 </div>
 
-                {{-- Короткі характеристики --}}
+                {{-- Характеристики під назвою: показуємо перші 5, решту — за кнопкою --}}
                 @if (count($specs))
-                <ul class="product-highlights">
-                    @foreach (array_slice($specs, 0, 5) as $s)
-                    <li><span>{{ $s['label'] }}</span><b>{{ $s['value'] }}</b></li>
-                    @endforeach
-                </ul>
+                <div class="product-highlights-wrap" x-data="{ open: false }">
+                    <ul class="product-highlights">
+                        @foreach ($specs as $i => $s)
+                        <li @if ($i >= 5) x-show="open" x-cloak @endif><span>{{ $s['label'] }}</span><b>{{ $s['value'] }}</b></li>
+                        @endforeach
+                    </ul>
+                    @if (count($specs) > 5)
+                    <button type="button" class="product-highlights__toggle" @click="open = !open" :aria-expanded="open">
+                        <span x-text="open ? 'Згорнути характеристики' : 'Усі характеристики'"></span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ 'is-open': open }">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    @endif
+                </div>
                 @endif
 
                 {{-- БЛОК КУПІВЛІ --}}
@@ -229,27 +239,15 @@
             </div>
         </div>
 
-        {{-- 1. ПОВНІ ХАРАКТЕРИСТИКИ --}}
-        @if (count($specs))
-        <div class="product-section">
-            <h2 class="product-section__title">Характеристики</h2>
-            <div class="product-specs">
-                @foreach ($specs as $s)
-                <div class="product-specs__row">
-                    <span class="product-specs__label">{{ $s['label'] }}</span>
-                    <span class="product-specs__value">{{ $s['value'] }}</span>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
+        {{-- Характеристики перенесені праворуч під заголовок (product-highlights). --}}
 
-        {{-- 2. ОПИС ТОВАРУ --}}
+        {{-- ОПИС ТОВАРУ --}}
         @php($db = $product->description_blocks ?? [])
         @if (!empty($db) || filled($product->description))
-        <div class="product-section">
+        <div class="product-section product-desc" x-data="{ open: false, long: true }"
+            x-init="$nextTick(() => { long = $refs.prose.scrollHeight > $refs.prose.clientHeight + 8 })">
             <h2 class="product-section__title">Опис</h2>
-            <div class="product-prose">
+            <div class="product-prose" x-ref="prose" :class="{ 'is-clamp': long && !open }">
                 @if (!empty($db))
                     {{-- Рендеримо зі структурних блоків: чистимо рядки від
                          зайвих маркерів «•/-», галочки малюємо самі. --}}
@@ -292,6 +290,12 @@
                     {!! nl2br(e($product->description)) !!}
                 @endif
             </div>
+            <button type="button" class="product-desc__toggle" x-show="long" @click="open = !open" :aria-expanded="open" x-cloak>
+                <span x-text="open ? 'Згорнути' : 'Читати повністю'"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ 'is-open': open }">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </button>
         </div>
         @endif
 
@@ -300,8 +304,10 @@
         <div class="product-section">
             <div class="expert-note">
                 <div class="expert-note__badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+                        <path d="M9 18h6" />
+                        <path d="M10 22h4" />
                     </svg>
                 </div>
                 <div class="expert-note__body">
@@ -315,7 +321,7 @@
         {{-- 4. СУМІСНІСТЬ ІЗ ТЕХНІКОЮ --}}
         @if (count($compat))
         <div class="product-section">
-            <h2 class="product-section__title">Підходить для техніки</h2>
+            <h2 class="product-section__title">Техніка</h2>
             <div class="product-compat">
                 @foreach ($compat as $line)
                 <span class="product-compat__item">
@@ -332,8 +338,7 @@
         {{-- 5. ФОТО «В РОБОТІ» --}}
         @if ($product->fieldPhotos->isNotEmpty())
         <div class="product-section" x-data="{ open: false, src: '', cap: '' }">
-            <h2 class="product-section__title">Фото «в роботі»</h2>
-            <p class="product-section__sub">Реальні приклади встановлення цієї шини на техніці.</p>
+            <h2 class="product-section__title">Шини в роботі</h2>
             <div class="field-photos">
                 @foreach ($product->fieldPhotos as $fp)
                 @php($thumb = $fp->imageUrl('thumb'))
@@ -383,9 +388,6 @@
     @if (count($alternatives))
     <div class="section" style="padding-bottom:0">
         <div class="container">
-            <div class="section-head">
-                <h2 class="section-title">Альтернативні шини в цьому ж розмірі</h2>
-            </div>
             <div class="alt-links">
                 @foreach ($alternatives as $a)
                 <a href="{{ $a['url'] }}" class="alt-link">

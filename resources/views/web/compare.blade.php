@@ -60,17 +60,24 @@
                                 {{ trim(($c['type'] ?? '') . ' ' . ($c['size'] ?? '')) }}
                             </a>
                             <div class="compare-col__brand"><b>{{ $c['brand'] }}</b> {{ $c['model'] }}</div>
-                            <div class="compare-col__price">
-                                @if (($c['price_mode'] ?? '') === 'fixed' || ($c['price_mode'] ?? '') === 'from')
-                                    @if ($c['price_mode'] === 'from')<span class="from">від</span> @endif
-                                    {{ number_format($c['price'], 0, '', ' ') }} {{ $c['cur'] ?? 'грн' }}
-                                @else
-                                    <span class="ask">Уточнюйте ціну</span>
-                                @endif
-                            </div>
-                            <div class="compare-col__actions" x-data="{ item: @js($c) }">
-                                <button type="button" class="btn btn--primary" @click="$store.cart.add(item)">У кошик</button>
-                                <a href="{{ $c['url'] ?? '#' }}" class="btn btn--outline">Переглянути</a>
+                            {{-- Ціна + компактна кнопка кошика (як у каталозі).
+                                 «Переглянути» прибрано — картка кликабельна через фото/назву. --}}
+                            <div class="compare-col__buyline" x-data="{ item: @js($c) }">
+                                <div class="compare-col__price">
+                                    @if (($c['price_mode'] ?? '') === 'fixed' || ($c['price_mode'] ?? '') === 'from')
+                                        @if ($c['price_mode'] === 'from')<span class="from">від</span> @endif
+                                        {{ number_format($c['price'], 0, '', ' ') }} {{ $c['cur'] ?? 'грн' }}
+                                    @else
+                                        <span class="ask">Уточнюйте ціну</span>
+                                    @endif
+                                </div>
+                                <button type="button" class="compare-col__cart" @click="$store.cart.add(item)"
+                                    aria-label="Додати в кошик" title="Додати в кошик">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                    </svg>
+                                </button>
                             </div>
                         </th>
                         @endforeach

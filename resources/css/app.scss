@@ -226,20 +226,23 @@ button {
     font-family: $font-head;
     font-weight: 700;
     font-size: 13px;
-    color: $red;
+    color: $ink;
     text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+    transition: color 0.2s;
 
     svg {
         width: 16px;
         height: 16px;
     }
 
+    // Червоний лише при наведенні.
     &:hover {
         gap: 10px;
+        color: $red;
     }
 }
 
@@ -482,13 +485,18 @@ button {
         font-family: $font-head;
         font-weight: 600;
         font-size: 13px;
+        // Ті самі стилі, що й у пунктах меню (Блог/Про нас/Контакти):
+        // великі літери, той самий колір і жирність; іконка — без червоного.
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
         color: $ink;
         transition: background 0.2s;
 
+        .mask-ico,
         svg {
             width: 18px;
             height: 18px;
-            color: $red;
+            color: currentColor; // іконка того ж кольору, що й текст
         }
 
         &:hover {
@@ -1158,12 +1166,17 @@ button {
 // =====================================================================
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    // Повноширинні сітки шинних карток (головна / обране / супутні) — 4 колонки,
+    // єдине правило. Каталог (з фільтрами) і блог мають власні значення.
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
 
-    @media (max-width: $bp-sm) {
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
+    @media (max-width: $bp-lg) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: $bp-md) {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     // Дуже вузькі екрани — одна колонка на всю ширину,
@@ -3081,8 +3094,8 @@ button {
         }
 
         &.is-active {
-            background: $red;
-            border-color: $red;
+            background: $ink;
+            border-color: $ink;
             color: #fff;
         }
 
@@ -3134,7 +3147,7 @@ button {
             }
 
             &.active {
-                background: $red;
+                background: $ink;
                 color: #fff;
             }
         }
@@ -3379,24 +3392,27 @@ button {
         align-items: center;
         justify-content: space-between;
         gap: 8px;
+        // Однакова висота, як у бейджа техніки (54px) — щоб заголовки в усіх
+        // картках ряду були на одному рівні (незалежно від наявності бейджа).
+        min-height: 54px;
     }
 
     &__size {
         font-family: $font-head;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 18px;
         color: $ink;
     }
 
     // Тип товару у заголовку перед розміром: «Шина 900/60R32».
     // Читається як частина заголовка; для не-шин (диск/камера…) —
-    // червоний акцент, щоб одразу було видно, що це не шина.
+    // легкий акцент кольором тексту (без червоного, щоб не перевантажувати).
     &__size-type {
         color: $ink;
-        font-weight: 800;
+        font-weight: 700;
 
         &.is-accent {
-            color: $red;
+            color: $ink;
         }
     }
 
@@ -3483,7 +3499,7 @@ button {
         .mask-ico {
             width: 32px;
             height: 32px;
-            color: $red;
+            color: $muted;
         }
 
         @media (max-width: $bp-sm) {
@@ -3506,14 +3522,13 @@ button {
         gap: 5px;
         min-height: 26px;
         font-family: $font-head;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 21px;
         color: $ink;
 
         .from {
             align-self: center;
-            font-family: $font-body;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             color: $muted;
             text-transform: uppercase;
@@ -3522,15 +3537,17 @@ button {
 
         .cur {
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 600;
             color: $muted;
         }
 
-        // Поточна ціна (рядок із числом + валютою)
+        // Поточна ціна (рядок із числом + валютою).
+        // nowrap — щоб число з пробілом-роздільником («24 300») не рвалось.
         .now {
             display: inline-flex;
             align-items: baseline;
             gap: 5px;
+            white-space: nowrap;
         }
 
         // Стара (закреслена) ціна над поточною — лише при знижці
@@ -3538,15 +3555,14 @@ button {
             display: inline-flex;
             align-items: baseline;
             gap: 4px;
-            font-family: $font-body;
             font-size: 13px;
             font-weight: 600;
-            color: $muted-2;
+            color: $muted;
             text-decoration: line-through;
+            white-space: nowrap;
 
             .from {
-                font-size: 11px;
-                color: $muted-2;
+                color: $muted;
             }
         }
 
@@ -3567,10 +3583,9 @@ button {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-family: $font-body;
             font-size: 14px;
-            font-weight: 700;
-            color: $red;
+            font-weight: 600;
+            color: $ink;
 
             svg {
                 width: 17px;
@@ -3638,6 +3653,7 @@ button {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap; // якщо довга ціна («від 132 000 грн») не влазить — кошик переноситься нижче
         gap: 12px;
     }
 
@@ -3645,7 +3661,8 @@ button {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-size: 12px;
+        font-family: $font-head;
+        font-size: 13px;
         font-weight: 600;
 
         .dot {
@@ -4110,27 +4127,35 @@ button {
         flex-direction: row;
     }
 
-    // Фото в режимі списку — трохи більше, щоб картинка й кнопки читались.
+    // Фото в режимі списку — фіксований бокс (ширина × висота), фото
+    // вписується (object-fit: contain). Так усі рядки й зображення однакові.
     .cat-prod__media {
         flex: 0 0 168px;
-        height: auto;
+        height: 160px;
         border-bottom: none;
         border-right: 1px solid $line;
         padding: 16px;
 
         @media (max-width: $bp-md) {
             flex-basis: 130px;
+            height: 150px;
         }
 
         @media (max-width: $bp-sm) {
             flex-basis: 100px;
+            height: 130px;
             padding: 10px;
         }
     }
 
-    .cat-prod__promos,
     .cat-prod__stock,
     .cat-prod__brand {
+        display: none;
+    }
+
+    // У списку прибираємо бейджі з фото — показуємо їх окремим рядком
+    // над характеристиками (див. .cat-prod__meta нижче), щоб не перекривати фото.
+    .cat-prod__promos {
         display: none;
     }
 
@@ -4145,27 +4170,31 @@ button {
 
     // Характеристики в один ряд, коли є місце; якщо не вміщаються (напр.
     // відкриті фільтри) — переносяться, щоб не виштовхувати ціну/кошик.
+    // Прайс-таблиця: фіксовані колонки, тож значення в усіх рядках
+    // вишиковуються стовпчик під стовпчиком (Артикул / Розмір / Бренд /
+    // Профіль / LI-SI-PR / TL-TT).
     .cat-prod__listspecs {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 12px 26px;
+        display: grid;
+        grid-template-columns: 0.9fr 0.9fr 1fr 1.3fr 0.9fr 0.6fr;
+        align-items: start;
+        gap: 6px 22px;
         margin-bottom: 10px;
 
         .lf {
-            flex: 0 1 auto;
-        }
-
-        .lf--spec {
-            flex: 1 1 200px;
+            min-width: 0;
         }
 
         @media (max-width: $bp-lg) {
-            gap: 12px 20px;
+            gap: 6px 16px;
+        }
 
-            .lf--spec {
-                flex: 1 1 100%;
-            }
+        @media (max-width: $bp-md) {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px 16px;
+        }
+
+        @media (max-width: $bp-sm) {
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 
@@ -4187,9 +4216,16 @@ button {
         min-width: 0;
     }
 
-    // У списку показуємо наявність/промо в meta
+    // Бейджі промо — біля ціни (перший елемент правої колонки .cat-prod__buy).
+    // Доставка перша; якщо не влазять в один рядок — переносяться (доставка зверху).
     .cat-prod__meta {
         display: flex;
+        justify-content: flex-end;
+        margin: 0;
+
+        @media (max-width: $bp-md) {
+            justify-content: flex-start;
+        }
     }
 
     // Права колонка: наявність + ціна + кошик акуратно вирівняні праворуч.
@@ -4217,9 +4253,12 @@ button {
         }
     }
 
+    // Трохи менша ціна в списку — щоб «від 24 300 грн» вміщалась поруч із
+    // кошиком в один рядок (кошик не переноситься), і рядки лишались однакові.
     .cat-prod__price {
         margin-bottom: 0;
         flex: 0 1 auto;
+        font-size: 17px;
     }
 }
 
@@ -4235,16 +4274,17 @@ button {
     min-width: 0;
 
     .lf-label {
+        font-family: $font-head;
         font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.3px;
-        color: $red;
+        color: $muted;
     }
 
     .lf-val {
         font-family: $font-head;
-        font-weight: 700;
+        font-weight: 500;
         font-size: 14px;
         color: $ink;
         white-space: nowrap;
@@ -5632,11 +5672,47 @@ button {
     }
 }
 
+.product-highlights-wrap {
+    margin: 18px 0 22px;
+}
+
+// Кнопка «розгорнути/згорнути» — спільна для характеристик і опису.
+.product-highlights__toggle,
+.product-desc__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 6px 0;
+    background: none;
+    border: none;
+    font-family: $font-head;
+    font-weight: 600;
+    font-size: 13px;
+    color: $ink;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    svg {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.2s;
+
+        &.is-open {
+            transform: rotate(180deg);
+        }
+    }
+
+    &:hover {
+        color: $red;
+    }
+}
+
 .product-highlights {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0 22px;
-    margin: 18px 0 22px;
+    margin: 0;
 
     @media (max-width: $bp-sm) {
         grid-template-columns: 1fr;
@@ -6445,6 +6521,17 @@ button {
 }
 
 // --- Обране ----------------------------------------------------------
+// Обгортка картки обраного: розтягуємо .cat-prod на всю висоту рядка,
+// щоб усі картки в ряду були однакової довжини (як у каталозі).
+.fav-item {
+    display: flex;
+
+    > .cat-prod {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
 .fav-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -6517,7 +6604,7 @@ button {
 
     &__name {
         font-family: $font-head;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 16px;
         color: $ink;
 
@@ -6533,23 +6620,57 @@ button {
         letter-spacing: 0.3px;
     }
 
+    // Низ картки — ціна + компактна кнопка кошика в один ряд (як у каталозі).
+    &__buyline {
+        margin-top: auto;
+        padding-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
     &__price {
         font-family: $font-head;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 17px;
         color: $ink;
-        margin-top: auto;
-        padding: 4px 0 8px;
 
         small {
             font-size: 12px;
             color: $muted;
         }
 
+        // «Уточнюйте» — в колір ціни (темний), не червоний.
         .muted {
             font-weight: 600;
             font-size: 14px;
-            color: $red;
+            color: $ink;
+        }
+    }
+
+    // Компактна кнопка кошика (як .cat-prod__cart).
+    &__cart {
+        flex-shrink: 0;
+        width: 46px;
+        height: 46px;
+        border: none;
+        border-radius: $radius-sm;
+        background: $red;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        &:hover {
+            background: $red-dark;
         }
     }
 }
@@ -7709,13 +7830,13 @@ button {
         z-index: 3;
     }
 
-    // Підсвічування рядків з відмінностями.
+    // Підсвічування рядків з відмінностями — нейтральне (без червоного).
     tr.is-diff td {
-        background: #fff8f8;
+        background: $bg-soft;
     }
 
     tr.is-diff .compare-table__label {
-        color: $red;
+        color: $ink;
     }
 }
 
@@ -7766,7 +7887,7 @@ button {
     &__title {
         display: block;
         font-family: $font-head;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 16px;
         color: $ink;
 
@@ -7787,10 +7908,9 @@ button {
 
     &__price {
         font-family: $font-head;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 17px;
         color: $ink;
-        margin-bottom: 12px;
 
         .from {
             font-size: 12px;
@@ -7801,18 +7921,39 @@ button {
         .ask {
             font-size: 14px;
             font-weight: 600;
-            color: $muted;
+            color: $ink;
         }
     }
 
-    &__actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+    // Ряд «ціна + компактна кнопка кошика» — по центру колонки.
+    &__buyline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
 
-        .btn {
-            width: 100%;
-            justify-content: center;
+    &__cart {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: $radius-sm;
+        background: $red;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        &:hover {
+            background: $red-dark;
         }
     }
 }
@@ -7874,6 +8015,14 @@ button {
     font-size: 15px;
     line-height: 1.7;
     color: $text;
+
+    // Згорнутий стан: показуємо частину, решту ховаємо з плавним затуханням.
+    &.is-clamp {
+        max-height: 260px;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent);
+        mask-image: linear-gradient(180deg, #000 68%, transparent);
+    }
 
     p {
         margin: 0 0 14px;
@@ -7963,8 +8112,8 @@ button {
     display: flex;
     gap: 16px;
     padding: 22px 24px;
-    background: $red-soft;
-    border: 1px solid rgba($red, 0.18);
+    background: $bg-soft;
+    border: 1px solid $line;
     border-radius: $radius-lg;
 
     @media (max-width: $bp-sm) {
@@ -7972,21 +8121,19 @@ button {
         gap: 12px;
     }
 
+    // Іконка-лампочка без кружечка — сіра/темно-сіра.
     &__badge {
         flex: none;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: $red;
-        color: #fff;
+        color: $muted;
         display: grid;
         place-items: center;
 
         svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-            stroke: none;
+            width: 30px;
+            height: 30px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
         }
     }
 
@@ -8054,7 +8201,7 @@ button {
         display: inline;
         font-family: $font-head;
         font-weight: 700;
-        color: $red;
+        color: $ink;
 
         &:hover {
             text-decoration: underline;
@@ -8160,8 +8307,19 @@ button {
     margin-bottom: 28px;
 
     // Заголовок на всю ширину (не тиснемо у вузьку колонку).
+    // Спокійніше: менше жирності, назва техніки — темна (не червона).
     .section-title {
         margin: 6px 0 12px;
+        font-weight: 700;
+
+        span {
+            color: $ink;
+        }
+    }
+
+    // Кікер «Реальні приклади» — сірий, без червоного.
+    .about-kicker {
+        color: $muted;
     }
 
     // Лише підзаголовок тримаємо вужчим — для зручного читання.
@@ -8248,7 +8406,7 @@ button {
             width: 18px;
             height: 18px;
             margin-left: auto;
-            color: $red;
+            color: currentColor; // стрілка — колір тексту (червона лише на hover)
             flex: none;
         }
     }
@@ -8337,12 +8495,14 @@ button {
     }
 
     // ── Випадаюча панель ──────────────────────────────────────
+    // z-index вище за липкий сайдбар фільтрів (600), але нижче за шапку (1000),
+    // щоб дропдаун не ховався під боковою панеллю.
     &__panel {
         position: absolute;
         top: calc(100% + 6px);
         left: 0;
         right: 0;
-        z-index: 60;
+        z-index: 700;
         background: #fff;
         border: 1px solid $line;
         border-radius: $radius;

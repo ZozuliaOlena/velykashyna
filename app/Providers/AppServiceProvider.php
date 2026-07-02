@@ -22,6 +22,13 @@ class AppServiceProvider extends ServiceProvider
         'причіп' => 'wheel.svg',
     ];
 
+    /** Назва кореневої категорії → SVG-іконка для чипів у шапці. */
+    private const CATEGORY_ICONS = [
+        'агро' => 'tractor.svg',
+        'спец' => 'loaders.svg',
+        'вантаж' => 'truck.svg',
+    ];
+
     public function register(): void
     {
         //
@@ -57,20 +64,34 @@ class AppServiceProvider extends ServiceProvider
                     'icon' => $m->iconUrl() ?? '/images/svg/tehnics/' . $this->iconFor($m->name),
                 ])->all();
 
-            $categories = Category::query()
+            $rootCategories = Category::query()
                 ->whereNull('parent_id')->where('is_active', true)
                 ->orderBy('sort_order')->orderBy('name')
-                ->take(8)->get(['name', 'slug'])
+                ->take(8)->get(['name', 'slug']);
+
+            $categories = $rootCategories->map(fn (Category $c) => [
+                'name' => $c->name,
+                'url' => route('catalog', ['category' => $c->slug]),
+            ])->all();
+
+            // Чипи в шапці — головні підкатегорії «Шини» у фіксованому порядку.
+            $chipSlugs = ['agroshyna', 'spetsshyna', 'vantazhni-shyny'];
+            $chips = Category::query()
+                ->where('is_active', true)
+                ->whereIn('slug', $chipSlugs)
+                ->get(['name', 'slug'])
+                ->sortBy(fn (Category $c) => array_search($c->slug, $chipSlugs))
                 ->map(fn (Category $c) => [
                     'name' => $c->name,
                     'url' => route('catalog', ['category' => $c->slug]),
-                ])->all();
+                    'icon' => '/images/svg/tehnics/' . $this->categoryIcon($c->name),
+                ])->values()->all();
 
             return [
                 'types' => $types,
                 'machinery' => $machinery,
                 'categories' => $categories,
-                'chips' => array_slice($machinery, 0, 3),
+                'chips' => $chips,
             ];
         });
     }
@@ -79,6 +100,18 @@ class AppServiceProvider extends ServiceProvider
     {
         $name = mb_strtolower($name);
         foreach (self::MACHINERY_ICONS as $needle => $icon) {
+            if (str_contains($name, $needle)) {
+                return $icon;
+            }
+        }
+
+        return 'wheel.svg';
+    }
+
+    private function categoryIcon(string $name): string
+    {
+        $name = mb_strtolower($name);
+        foreach (self::CATEGORY_ICONS as $needle => $icon) {
             if (str_contains($name, $needle)) {
                 return $icon;
             }

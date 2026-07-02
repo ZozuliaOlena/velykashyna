@@ -67,14 +67,24 @@
     <a href="{{ $p['url'] ?? '#' }}" class="cat-prod__stretch"
         aria-label="{{ trim(($p['type'] ?? '') . ' ' . ($p['size'] ?? '') . ' ' . ($p['brand'] ?? '')) }}" tabindex="-1"></a>
     <div class="cat-prod__media">
-        @if (!empty($p['discount']) || !empty($promos))
+        {{-- Доставка завжди першою (зверху), далі бейдж знижки (-%), далі решта. --}}
+        @php($hasShipping = in_array('Безкоштовна доставка', $promos, true))
+        @php($restPromos = array_values(array_filter($promos, fn ($x) => $x !== 'Безкоштовна доставка')))
+        @if ($hasShipping || !empty($p['discount']) || !empty($restPromos))
         <div class="cat-prod__promos">
+            @if ($hasShipping)
+            @php($pc = $promoConfig['Безкоштовна доставка'])
+            <span class="promo promo--{{ $pc['s'] }}" title="Безкоштовна доставка">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">{!! $pc['i'] !!}</svg>
+                <span>Безкоштовна доставка</span>
+            </span>
+            @endif
             @if (!empty($p['discount']))
             <span class="promo cat-prod__disc">{{ $p['discount'] }}</span>
             @endif
-            @foreach ($promos as $promo)
+            @foreach ($restPromos as $promo)
             @php($pc = $promoConfig[$promo] ?? ['s' => 'sale', 'i' => ''])
-            <span class="promo promo--{{ $pc['s'] }}">
+            <span class="promo promo--{{ $pc['s'] }}" title="{{ $promo }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">{!! $pc['i'] !!}</svg>
                 <span>{{ $promo }}</span>
             </span>
@@ -82,8 +92,11 @@
         </div>
         @endif
 
+        {{-- На сторінці «Обране» ($favConfirm) — не знімаємо одразу, а просимо
+             підтвердження через модалку (подія fav-remove). --}}
+        @php($favClick = ($favConfirm ?? false) ? "\$dispatch('fav-remove', item)" : "\$store.fav.toggle(item)")
         <button type="button" class="cat-prod__fav" :class="{ active: $store.fav.has(item.id) }"
-            @click="$store.fav.toggle(item)" aria-label="В обране">
+            @click="{{ $favClick }}" aria-label="В обране">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path
                     d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -156,38 +169,33 @@
                 @if ($hasApp)<li class="cat-prod__app">{{ $p['app'] }}</li>@endif
             </ul>
 
-            {{-- Характеристики у вигляді колонок — видно лише у режимі списку --}}
-            @php($specCol = trim(($p['constr'] ?? '') . (!empty($p['spec']) ? ', ' . $p['spec'] : ''), ', '))
+            {{-- Характеристики у вигляді колонок (прайс-таблиця) — видно лише
+                 у режимі списку. Набір колонок фіксований, щоб значення в усіх
+                 рядках вишиковувались стовпчик під стовпчиком. --}}
             <div class="cat-prod__listspecs">
-                @if (!empty($p['type']))
-                <div class="lf"><span class="lf-label">Тип</span><span class="lf-val">{{ $p['type'] }}</span></div>
-                @endif
-                @if (!empty($p['sku']))
-                <div class="lf"><span class="lf-label">Артикул</span><span class="lf-val">{{ $p['sku'] }}</span></div>
-                @endif
+                <div class="lf"><span class="lf-label">Артикул</span><span class="lf-val">{{ $p['sku'] ?: '—' }}</span></div>
                 <div class="lf"><span class="lf-label">Розмір</span><span class="lf-val">{{ $p['size'] ?: '—' }}</span></div>
                 <div class="lf"><span class="lf-label">Бренд</span><span class="lf-val">{{ $p['brand'] ?: '—' }}</span></div>
                 <div class="lf"><span class="lf-label">Профіль</span><span class="lf-val">{{ $p['model'] ?: '—' }}</span></div>
                 <div class="lf"><span class="lf-label">LI / SI / PR</span><span class="lf-val">{{ $p['li'] ?: '—' }}</span></div>
-                <div class="lf lf--spec"><span class="lf-label">Специфікація</span><span class="lf-val">{{ $specCol ?: '—' }}</span></div>
+                <div class="lf"><span class="lf-label">TL / TT</span><span class="lf-val">{{ $p['tube'] ?: '—' }}</span></div>
             </div>
+        </div>
 
-            {{-- Промо текстом (видно у режимі списку) --}}
+        @php($oldPrice = $p['old_price'] ?? null)
+        <div class="cat-prod__buy">
+            {{-- Промо-бейджі (видно у режимі списку) — біля ціни; доставка перша. --}}
             <div class="cat-prod__meta">
                 @if (!empty($promos))
                 @foreach ($promos as $promo)
                 @php($pc = $promoConfig[$promo] ?? ['s' => 'sale', 'i' => ''])
-                <span class="promo promo--{{ $pc['s'] }}">
+                <span class="promo promo--{{ $pc['s'] }}" title="{{ $promo }}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">{!! $pc['i'] !!}</svg>
                     <span>{{ $promo }}</span>
                 </span>
                 @endforeach
                 @endif
             </div>
-        </div>
-
-        @php($oldPrice = $p['old_price'] ?? null)
-        <div class="cat-prod__buy">
             @php($stockClass = ($p['stock_status'] ?? '') === 'in_stock' ? 'in' : (($p['stock_status'] ?? '') === 'inquiry' ? 'inquiry' : 'order'))
             <span class="cat-prod__avail {{ $stockClass }}">
                 <span class="dot"></span>{{ $p['stock_label'] ?? ($p['stock'] ? 'В наявності' : 'Під замовлення') }}

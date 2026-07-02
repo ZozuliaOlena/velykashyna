@@ -80,7 +80,7 @@
 
     <div class="mm-label">Інформація</div>
     <nav class="mm-links">
-        <a href="{{ route('blog.index') }}" @click="$store.ui.closeMenu()">Блог {!! $chev !!}</a>
+        <a href="{{ route('blog.index') }}" @click="$store.ui.closeMenu()">Статті {!! $chev !!}</a>
         <a href="{{ route('about') }}" @click="$store.ui.closeMenu()">Про нас {!! $chev !!}</a>
         <a href="{{ route('contacts') }}" @click="$store.ui.closeMenu()">Контакти {!! $chev !!}</a>
     </nav>
@@ -88,7 +88,7 @@
     <div class="mm-contacts">
         <a href="tel:{{ $c['phone_href'] }}" class="mm-phone">{{ $c['phone'] }}</a>
         <p class="mm-note">Ми на зв'язку 24/7</p>
-        <a href="#" class="btn btn--primary btn--block" style="margin-bottom:20px">Замовити дзвінок</a>
+        <a href="{{ route('contacts') }}" class="btn btn--primary btn--block" style="margin-bottom:20px">Замовити дзвінок</a>
         <p style="font-size:12px;color:#9aa0a8;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Ми в
             соцмережах</p>
         @include('partials.socials')

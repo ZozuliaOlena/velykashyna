@@ -102,7 +102,7 @@ document.addEventListener('alpine:init', () => {
     // Порівняння (гостьове, у localStorage). Максимум 4 шини.
     Alpine.store('compare', {
         items: JSON.parse(localStorage.getItem('compare') || '[]'),
-        max: 4,
+        max: 3,
         save() {
             localStorage.setItem('compare', JSON.stringify(this.items));
         },
@@ -329,6 +329,43 @@ document.addEventListener('alpine:init', () => {
     }));
 
     /**
+     * Обране: підтягуємо повні каталожні картки з сервера за ID зі стору
+     * (localStorage), щоб обране виглядало так само, як каталог. Зняття
+     * «сердечка» ховає картку (x-show у розмітці фрагмента).
+     */
+    Alpine.data('favCards', (endpoint) => ({
+        confirm: { open: false, id: null, name: '' },
+        async load() {
+            const grid = this.$refs.grid;
+            if (!grid) return;
+            const ids = this.$store.fav.items.map((i) => i.id).filter(Boolean);
+            if (!ids.length) {
+                grid.innerHTML = '';
+                return;
+            }
+            try {
+                const res = await fetch(endpoint + '?ids=' + ids.join(','));
+                grid.innerHTML = await res.text();
+                window.Alpine.initTree(grid);
+            } catch (e) {
+                grid.innerHTML = '';
+            }
+        },
+        // Запит на видалення (з картки прилітає подія fav-remove з item).
+        askRemove(item) {
+            if (!item || !item.id) return;
+            this.confirm = { open: true, id: item.id, name: (item.size + ' ' + (item.brand || '')).trim() };
+        },
+        cancelRemove() {
+            this.confirm.open = false;
+        },
+        doRemove() {
+            this.$store.fav.remove(this.confirm.id);
+            this.confirm.open = false;
+        },
+    }));
+
+    /**
      * Тост «додано в кошик»: вискакує на подію cart-added,
      * пропонує перейти в кошик або продовжити покупки.
      */
@@ -385,7 +422,7 @@ document.addEventListener('alpine:init', () => {
         confirm: { open: false, id: null, name: '' },
         form: {
             name: '',
-            phone: '',
+            phone: '+38 ',
             city: '',
             delivery: 'Нова Пошта',
             address: '',
@@ -421,7 +458,7 @@ document.addEventListener('alpine:init', () => {
                     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                     body: JSON.stringify({
                         customer_name: this.form.name,
-                        phone: this.form.phone,
+                        phone: this.form.phone.replace(/\s+/g, ''),
                         city: this.form.city,
                         delivery_method: this.form.delivery,
                         delivery_address: this.isPickup ? '' : this.form.address,
@@ -435,6 +472,11 @@ document.addEventListener('alpine:init', () => {
                 this.orderId = data.lead_id;
                 this.sent = true;
                 this.$store.cart.clear();
+                // Прокручуємо до блоку «Дякуємо», щоб користувач одразу його бачив
+                // (інакше сторінка «стрибає» вниз, бо кошик зник).
+                this.$nextTick(() => {
+                    this.$refs.done?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
             } catch (e) {
                 this.error = 'Не вдалося оформити замовлення. Спробуйте ще раз або зателефонуйте нам.';
             } finally {

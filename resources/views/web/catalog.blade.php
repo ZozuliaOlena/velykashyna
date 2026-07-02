@@ -87,12 +87,15 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             <form class="catalog-search" action="{{ route('catalog') }}" method="GET" role="search">
                 <input type="hidden" name="sort" value="{{ $selected['sort'] }}" />
                 @if ($selected['category'])
                 <input type="hidden" name="category" value="{{ $selected['category'] }}" />
                 @endif
+                @foreach ($selected['mbrand'] as $v)<input type="hidden" name="mbrand[]" value="{{ $v }}" />@endforeach
+                @foreach ($selected['mmodel'] as $v)<input type="hidden" name="mmodel[]" value="{{ $v }}" />@endforeach
                 @foreach ($selected['type'] as $t)
                 <input type="hidden" name="type[]" value="{{ $t }}" />
                 @endforeach
@@ -240,6 +243,72 @@
                                 <input type="checkbox" name="machinery[]" value="{{ $m }}"
                                     @checked(in_array($m, $selected['machinery'], true)) />
                                 <span>{{ $m }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Марка техніки (каскад: обери марку → звузяться моделі нижче) --}}
+                @if (count($machineryBrands))
+                <div class="cf-group" x-data="{ open: {{ $selected['mbrand'] ? 'true' : 'false' }}, term: '' }">
+                    <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
+                        Марка техніки
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="cf-group__body" x-show="open">
+                        @if (count($machineryBrands) > 6)
+                        <div class="cf-search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" placeholder="Пошук марки" x-model="term" />
+                        </div>
+                        @endif
+                        <div class="cf-options">
+                            @foreach ($machineryBrands as $b)
+                            <label class="cf-check"
+                                x-show="!term || '{{ mb_strtolower($b['name']) }}'.includes(term.toLowerCase())">
+                                <input type="checkbox" name="mbrand[]" value="{{ $b['id'] }}"
+                                    @checked(in_array($b['id'], $selected['mbrand'])) />
+                                <span>{{ $b['name'] }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Модель техніки (звужується обраною маркою) --}}
+                @if (count($machineryModels))
+                <div class="cf-group" x-data="{ open: {{ $selected['mmodel'] ? 'true' : 'false' }}, term: '' }">
+                    <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
+                        Модель техніки
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="cf-group__body" x-show="open">
+                        @if (count($machineryModels) > 6)
+                        <div class="cf-search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" placeholder="Пошук моделі" x-model="term" />
+                        </div>
+                        @endif
+                        <div class="cf-options">
+                            @foreach ($machineryModels as $m)
+                            <label class="cf-check"
+                                x-show="!term || '{{ mb_strtolower($m['name']) }}'.includes(term.toLowerCase())">
+                                <input type="checkbox" name="mmodel[]" value="{{ $m['id'] }}"
+                                    @checked(in_array($m['id'], $selected['mmodel'])) />
+                                <span>{{ $m['name'] }}</span>
                             </label>
                             @endforeach
                         </div>

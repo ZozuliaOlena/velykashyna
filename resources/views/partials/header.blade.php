@@ -56,54 +56,12 @@
 
         {{-- ============== ДЕСКТОП: нижній ярус (навігація + категорії) ============== --}}
         <div class="header-bar">
+            @php($typeActive = fn ($code) => request()->routeIs('catalog') && in_array($code, (array) request('type', []), true) ? 'is-active' : '')
             <nav class="header-nav">
-                <div class="nav-mega" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false"
-                    @click.outside="open = false">
-                    <a href="{{ route('catalog') }}"
-                        class="nav-mega__trigger {{ request()->routeIs('catalog') ? 'is-active' : '' }}">
-                        Каталог
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                    </a>
-                    <div class="mega" x-show="open" x-cloak x-transition.opacity.duration.150ms>
-                        @if (!empty($catalogMenu['types']))
-                        <div class="mega__col">
-                            <span class="mega__title">Типи товару</span>
-                            @foreach ($catalogMenu['types'] as $t)
-                            <a href="{{ $t['url'] }}">{{ $t['name'] }}</a>
-                            @endforeach
-                        </div>
-                        @endif
-                        @if (!empty($catalogMenu['machinery']))
-                        <div class="mega__col">
-                            <span class="mega__title">За технікою</span>
-                            @foreach (array_slice($catalogMenu['machinery'], 0, 7) as $m)
-                            <a href="{{ $m['url'] }}">
-                                <span class="mask-ico"
-                                    style="-webkit-mask-image:url('{{ $m['icon'] }}');mask-image:url('{{ $m['icon'] }}')"></span>
-                                {{ $m['name'] }}
-                            </a>
-                            @endforeach
-                        </div>
-                        @endif
-                        @if (!empty($catalogMenu['categories']))
-                        <div class="mega__col">
-                            <span class="mega__title">Категорії</span>
-                            @foreach ($catalogMenu['categories'] as $cat)
-                            <a href="{{ $cat['url'] }}">{{ $cat['name'] }}</a>
-                            @endforeach
-                        </div>
-                        @endif
-                        <a href="{{ route('catalog') }}" class="mega__all">Весь каталог
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="5" y1="12" x2="19" y2="12" />
-                                <polyline points="12 5 19 12 12 19" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'is-active' : '' }}">Блог</a>
+                <a href="{{ route('catalog', ['type' => 'tire']) }}" class="{{ $typeActive('tire') }}">Шини</a>
+                <a href="{{ route('catalog', ['type' => 'tube']) }}" class="{{ $typeActive('tube') }}">Камери</a>
+                <a href="{{ route('catalog', ['type' => 'disk']) }}" class="{{ $typeActive('disk') }}">Диски</a>
+                <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'is-active' : '' }}">Статті</a>
                 <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'is-active' : '' }}">Про нас</a>
                 <a href="{{ route('contacts') }}" class="{{ request()->routeIs('contacts') ? 'is-active' : '' }}">Контакти</a>
             </nav>
@@ -113,7 +71,7 @@
                 @foreach ($headerLinks as $link)
                 <a href="{{ $link['url'] }}">
                     <span class="mask-ico"
-                        style="-webkit-mask-image:url('{{ $link['icon'] }}');mask-image:url('{{ $link['icon'] }}');width:18px;height:18px;color:#e31e24"></span>
+                        style="-webkit-mask-image:url('{{ $link['icon'] }}');mask-image:url('{{ $link['icon'] }}');width:18px;height:18px"></span>
                     {{ $link['name'] }}
                 </a>
                 @endforeach
