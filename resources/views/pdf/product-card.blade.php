@@ -1,5 +1,5 @@
 @php
-    $cur = $product->currency === 'UAH' ? 'грн' : $product->currency;
+    $cur = 'грн'; // сайт/PDF — завжди у гривнях (валютні перераховуються за курсом)
     $stock = match ($product->stock_status) {
         'in_stock' => 'В наявності',
         'on_order' => 'Під замовлення',
@@ -92,13 +92,13 @@
 
             @if($withPrice)
                 <div class="price-box">
-                    @if($product->price_mode === 'inquiry' || $product->price === null)
+                    @if($product->priceModeForSite() === 'inquiry' || $product->price === null)
                         <span class="price-now">Ціна: Уточнюйте</span>
                     @elseif($product->hasDiscount())
-                        <span class="price-old">{{ $pref }}{{ $product->oldPrice() }} {{ $cur }}</span><br>
-                        <span class="price-now">{{ $pref }}{{ $product->effectivePrice() }} {{ $cur }}</span>
+                        <span class="price-old">{{ $pref }}{{ $product->oldPriceUah() }} {{ $cur }}</span><br>
+                        <span class="price-now">{{ $pref }}{{ $product->priceUah() }} {{ $cur }}</span>
                     @else
-                        <span class="price-now">{{ $pref }}{{ $product->price }} {{ $cur }}</span>
+                        <span class="price-now">{{ $pref }}{{ $product->toUah((float) $product->price) }} {{ $cur }}</span>
                     @endif
                 </div>
             @endif

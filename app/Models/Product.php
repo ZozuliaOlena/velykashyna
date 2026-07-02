@@ -217,6 +217,57 @@ class Product extends Model implements HasMedia
         return $this->hasDiscount() ? round((float) $this->price, 2) : null;
     }
 
+    /**
+     * Конвертація суми у гривні за курсом товару (exchange_rate).
+     * Сайт показує лише грн, тож ціни у валюті (USD/EUR) перераховуються
+     * автоматично. Курс масово виставляється в адмінці для всіх товарів
+     * обраної валюти. Фід конвертує окремо (feedPrice), тому effectivePrice()
+     * лишаємо у валюті товару — інакше було б подвійне множення на курс.
+     */
+    public function toUah(?float $amount): ?float
+    {
+        if ($amount === null) {
+            return null;
+        }
+
+        if ($this->currency && $this->currency !== 'UAH') {
+            $rate = (float) ($this->exchange_rate ?? 0);
+
+            // Валютний товар без курсу — коректно перерахувати не можемо,
+            // тож повертаємо null (сайт покаже «Уточнюйте ціну»).
+            return $rate > 0 ? round($amount * $rate, 2) : null;
+        }
+
+        return round($amount, 2);
+    }
+
+    /** Ефективна ціна вже у гривнях (для відображення на сайті). */
+    public function priceUah(): ?float
+    {
+        return $this->toUah($this->effectivePrice());
+    }
+
+    /** Стара (закреслена) ціна у гривнях. */
+    public function oldPriceUah(): ?float
+    {
+        return $this->toUah($this->oldPrice());
+    }
+
+    /**
+     * Режим ціни для сайту. Якщо товар у валюті, але курс не заданий —
+     * показуємо «уточнюйте» замість некоректної гривневої ціни.
+     */
+    public function priceModeForSite(): string
+    {
+        if (in_array($this->price_mode, ['fixed', 'from'], true)
+            && $this->effectivePrice() !== null
+            && $this->priceUah() === null) {
+            return 'inquiry';
+        }
+
+        return $this->price_mode;
+    }
+
     /** Підпис знижки: "-10%" або "-50 грн". */
     public function discountLabel(): ?string
     {
@@ -224,12 +275,17 @@ class Product extends Model implements HasMedia
             return null;
         }
 
-        $value = rtrim(rtrim(number_format((float) $this->discount_value, 2, '.', ''), '0'), '.');
-        $cur = $this->currency === 'UAH' ? 'грн' : $this->currency;
+        if ($this->discount_type === 'percent') {
+            $value = rtrim(rtrim(number_format((float) $this->discount_value, 2, '.', ''), '0'), '.');
 
-        return $this->discount_type === 'percent'
-            ? "-{$value}%"
-            : "-{$value} {$cur}";
+            return "-{$value}%";
+        }
+
+        // Сума знижки — переводимо у гривні (сайт лише в грн).
+        $amount = $this->toUah((float) $this->discount_value);
+        $value = rtrim(rtrim(number_format((float) $amount, 2, '.', ''), '0'), '.');
+
+        return "-{$value} грн";
     }
 
     /**
@@ -405,14 +461,15 @@ class Product extends Model implements HasMedia
             'stock_status' => $this->stock_status,
             'stock_label' => $this->stockLabel(),
             'img_url' => $this->thumbUrl(),
-            'price_mode' => $this->price_mode,
-            'price' => $this->effectivePrice(),
-            'old_price' => $this->oldPrice(),
+            'price_mode' => $this->priceModeForSite(),
+            // Ціни на сайті — завжди у гривнях (валютні перераховуються за курсом).
+            'price' => $this->priceUah(),
+            'old_price' => $this->oldPriceUah(),
             // У картці показуємо бейдж лише для відсоткової знижки («-20%»),
             // суму («-500 грн») не показуємо — є стара/нова ціна.
             'discount' => $this->discount_type === 'percent' ? $this->discountLabel() : null,
-            'save' => $this->savedAmount(),
-            'cur' => $this->currency === 'UAH' ? 'грн' : $this->currency,
+            'save' => $this->toUah($this->savedAmount()),
+            'cur' => 'грн',
             'promos' => $this->cardPromos(),
         ];
     }
