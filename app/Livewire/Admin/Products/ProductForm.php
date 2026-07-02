@@ -151,6 +151,35 @@ class ProductForm extends Component
         }
     }
 
+    /**
+     * Авто-генерація SEO з поточних даних форми. Заповнює лише порожні поля,
+     * щоб не затирати те, що менеджер написав вручну (щоб перегенерувати —
+     * очистіть поле й натисніть знову).
+     */
+    public function generateSeo(): void
+    {
+        // Тимчасовий товар із поточних значень форми (без збереження в БД).
+        $draft = new Product([
+            'name'             => $this->name,
+            'model'            => $this->model,
+            'size_raw'         => $this->size_raw,
+            'load_speed_index' => $this->load_speed_index,
+            'ply_rating'       => $this->ply_rating,
+            'specification'    => $this->specification,
+            'tube_type'        => $this->tube_type,
+        ]);
+        $draft->setRelation('brand', $this->brand_id ? Brand::find($this->brand_id) : null);
+        $draft->setRelation('productType', $this->product_type_id ? ProductType::find($this->product_type_id) : null);
+
+        $seo = $draft->defaultSeo();
+
+        if (blank($this->seo_title))       { $this->seo_title = $seo['title']; }
+        if (blank($this->seo_description)) { $this->seo_description = $seo['description']; }
+        if (blank($this->seo_h1))          { $this->seo_h1 = $seo['h1']; }
+
+        session()->flash('success', 'SEO-поля згенеровано (порожні заповнено)');
+    }
+
     /** Характеристики, доступні для обраного типу товару (власні + спільні). */
     private function attributesForType(): Collection
     {

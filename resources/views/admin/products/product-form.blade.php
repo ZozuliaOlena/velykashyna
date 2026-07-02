@@ -308,6 +308,10 @@
         {{-- ── SEO ─────────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>SEO</strong></legend>
+            <div style="margin-bottom:.6rem">
+                <button type="button" wire:click="generateSeo">Згенерувати SEO з даних товару</button>
+                <small style="color:#666; display:block; margin-top:.25rem">Заповнить лише порожні поля. Щоб перегенерувати — очистіть поле й натисніть знову.</small>
+            </div>
             <div>
                 <label>Title</label><br>
                 <input wire:model="seo_title" type="text" style="width:100%">

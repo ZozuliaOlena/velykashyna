@@ -64,6 +64,25 @@ class PostForm extends Component
         ];
     }
 
+    /**
+     * Авто-генерація SEO з поточних даних статті. Заповнює лише порожні поля.
+     */
+    public function generateSeo(): void
+    {
+        $draft = new Post([
+            'title'   => $this->title,
+            'excerpt' => $this->excerpt,
+            'content' => $this->content,
+        ]);
+
+        $seo = $draft->defaultSeo();
+
+        if (blank($this->seo_title))       { $this->seo_title = $seo['title']; }
+        if (blank($this->seo_description)) { $this->seo_description = $seo['description']; }
+
+        session()->flash('success', 'SEO-поля згенеровано (порожні заповнено)');
+    }
+
     public function save()
     {
         $data = $this->validate();

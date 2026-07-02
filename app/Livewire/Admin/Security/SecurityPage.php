@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Security;
 
+use App\Livewire\Concerns\WithAdminToast;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -18,6 +19,8 @@ use Livewire\Component;
  */
 class SecurityPage extends Component
 {
+    use WithAdminToast;
+
     public string $password = '';      // підтвердження пароля для критичних дій
     public string $code = '';          // 6-значний код із застосунку (для підтвердження)
 

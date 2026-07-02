@@ -23,6 +23,25 @@ class Category extends Model
 
     protected $casts = ['is_active' => 'boolean'];
 
+    /**
+     * Автоматичні SEO-теги категорії (title / description / h1) з її назви.
+     *
+     * @return array{title: string, description: string, h1: string}
+     */
+    public function defaultSeo(): array
+    {
+        $name  = trim((string) $this->name);
+        $title = trim($name . ' — купити в Україні | Велика Шина');
+        $desc  = 'Купити ' . $name . ' за вигідною ціною. Великий вибір, доставка '
+            . 'по всій Україні, консультація та підбір. «Велика Шина».';
+
+        return [
+            'title'       => mb_substr($title, 0, 255),
+            'description' => mb_substr(trim(preg_replace('/\s+/', ' ', $desc)), 0, 300),
+            'h1'          => $name,
+        ];
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

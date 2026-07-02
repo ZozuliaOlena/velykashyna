@@ -1233,6 +1233,28 @@ body.admin-body {
             &:last-of-type { border-right: none; }
         }
 
+        // Панель масового курсу валют — окремий, «спокійний» акцент (синій),
+        // щоб відрізнявся від червоної панелі масових дій над виділенням.
+        .rate-bar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            background: #f4f8ff;
+            border: 1px solid #cfe0ff;
+            border-left: 4px solid #1d4ed8;
+            border-radius: 10px;
+        }
+
+        // Неактивні кнопки (напр. «Застосувати курс», поки не заповнено поля).
+        .rate-bar button:disabled,
+        .bulk-bar button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         // ── Перемикачі в рядку таблиці (Merchant / Активний) ─────────────
         .row-toggle {
             min-width: 54px;
@@ -1595,25 +1617,44 @@ body.admin-body {
 
     .admin-toast {
         pointer-events: auto;
-        min-width: 260px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 240px;
         max-width: 520px;
-        padding: 14px 22px;
-        border-radius: 10px;
+        padding: 13px 18px;
+        border-radius: 12px;
         font-weight: 600;
-        font-size: 15px;
+        font-size: 14.5px;
         color: #fff;
-        text-align: center;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+        text-align: left;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
         cursor: pointer;
-        animation: admin-toast-in 0.2s ease;
+        animation: admin-toast-in 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 
-        &--success { background: #2e7d32; }
-        &--error { background: $primary-red; }
+        &__ico {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        &__msg { flex: 1; }
+
+        &--success { background: linear-gradient(180deg, #34a853, #2e7d32); }
+        &--error { background: linear-gradient(180deg, #ef4444, $primary-red); }
     }
 
     @keyframes admin-toast-in {
-        from { opacity: 0; transform: translateX(20px); }
-        to { opacity: 1; transform: translateX(0); }
+        from { opacity: 0; transform: translateY(12px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     @keyframes admin-badge-pulse {

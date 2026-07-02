@@ -4,7 +4,6 @@
         <button wire:click="openCreate">+ Додати заявку</button>
     </div>
 
-    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
 
     <div class="lead-tabs">
         <button type="button" @class(['lead-tab', 'is-active' => $tab === 'active'])
