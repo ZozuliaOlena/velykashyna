@@ -180,8 +180,11 @@ document.addEventListener('alpine:init', () => {
             this.start();
         },
         playActive() {
-            ['v0', 'v1'].forEach((ref, i) => {
-                const v = this.$refs[ref];
+            // Відтворюємо відео активного слайда, решту ставимо на паузу.
+            // Кількість слайдів довільна (керується з адмінки), тож шукаємо
+            // <video> у кожному .hs-slide за індексом, а не за фіксованим ref.
+            this.$root.querySelectorAll('.hs-slide').forEach((el, i) => {
+                const v = el.querySelector('video');
                 if (!v) return;
                 if (i === this.active) {
                     try {
