@@ -21,20 +21,26 @@
         <x-admin.select model="filterStatus" placeholder="— Усі статуси —"
             wire:key="status-filter-{{ $tab }}"
             :options="collect($tabStatuses)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
+        <x-admin.select model="filterSource" placeholder="— Усі типи —"
+            :options="collect($sources)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
     </div>
 
     <div class="table-scroll">
     <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse">
         <thead>
-            <tr><th>#</th><th>Клієнт</th><th>Телефон</th><th>Спосіб</th><th>Місто</th><th>Доставка</th><th>Позицій</th><th>Статус</th><th>Дата</th><th>Дії</th></tr>
+            <tr><th>#</th><th>Тип</th><th>Клієнт</th><th>Телефон</th><th>Місто</th><th>Доставка</th><th>Позицій</th><th>Статус</th><th>Дата</th><th>Дії</th></tr>
         </thead>
         <tbody>
             @forelse($leads as $lead)
             <tr wire:key="lead-{{ $lead->id }}" @class(['is-new-lead' => $lead->status === 'new'])>
                 <td data-label="#">{{ $lead->id }}</td>
+                <td data-label="Тип">
+                    <span class="lead-source lead-source--{{ $lead->source ?? 'cart' }}">
+                        {{ $sources[$lead->source] ?? 'Кошик' }}
+                    </span>
+                </td>
                 <td data-label="Клієнт">{{ $lead->customer_name }}</td>
                 <td data-label="Телефон">{{ $lead->phone }}</td>
-                <td data-label="Спосіб">{{ $lead->contact_method ?? '—' }}</td>
                 <td data-label="Місто">{{ $lead->city ?? '—' }}</td>
                 <td data-label="Доставка">{{ trim(($lead->delivery_method ?? '') . ($lead->delivery_address ? ', ' . $lead->delivery_address : '')) ?: '—' }}</td>
                 <td data-label="Позицій">{{ $lead->items_count }}</td>
@@ -67,10 +73,6 @@
             <label>Телефон *</label>
             <input wire:model="phone" type="text" style="width:100%">
             @error('phone') <span style="color:red">{{ $message }}</span> @enderror
-        </div>
-        <div>
-            <label>Спосіб зв'язку</label>
-            <input wire:model="contact_method" type="text" style="width:100%">
         </div>
         <div>
             <label>Місто</label>
