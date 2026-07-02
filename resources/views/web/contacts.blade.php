@@ -122,7 +122,7 @@
 
             {{-- ПРАВА КОЛОНКА: форма заявки --}}
             <div class="contacts-form" data-aos="fade-up" data-aos-delay="80"
-                x-data="{ sent: false, submit() { this.sent = true } }">
+                x-data="consultationForm('{{ route('api.consultations.store') }}')">
                 <div class="cform" x-show="!sent">
                     <h2 class="cform__title">Залишити заявку</h2>
                     <p class="cform__sub">Заповніть форму — менеджер передзвонить і допоможе з підбором.</p>
@@ -131,19 +131,23 @@
                         <div class="cform__row">
                             <label class="cform__field">
                                 <span>Ваше ім'я</span>
-                                <input type="text" name="name" placeholder="Як до вас звертатися" required />
+                                <input type="text" name="name" x-model="form.name" placeholder="Як до вас звертатися" required />
                             </label>
                             <label class="cform__field">
                                 <span>Телефон</span>
-                                <input type="tel" name="phone" value="+38 " placeholder="+38 (0__) ___ __ __" required />
+                                <input type="tel" name="phone" x-model="form.phone" placeholder="+38 (0__) ___ __ __" required />
                             </label>
                         </div>
                         <label class="cform__field">
                             <span>Що вас цікавить?</span>
-                            <textarea name="message" rows="4"
+                            <textarea name="message" x-model="form.message" rows="4"
                                 placeholder="Напр.: потрібні шини 800/65 R32 на трактор John Deere"></textarea>
                         </label>
-                        <button type="submit" class="btn btn--primary btn--block">Надіслати заявку</button>
+                        <button type="submit" class="btn btn--primary btn--block" :disabled="loading">
+                            <span x-show="!loading">Надіслати заявку</span>
+                            <span x-show="loading" x-cloak>Надсилаємо…</span>
+                        </button>
+                        <p class="cform__err" x-show="error" x-cloak x-text="error"></p>
                         <p class="cform__note">Натискаючи кнопку, ви погоджуєтесь на обробку персональних даних.</p>
                     </form>
                 </div>

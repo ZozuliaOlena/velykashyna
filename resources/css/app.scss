@@ -5433,6 +5433,13 @@ button {
         text-align: center;
     }
 
+    &__err {
+        margin-top: 12px;
+        font-size: 13px;
+        color: $red;
+        text-align: center;
+    }
+
     // Екран подяки після відправлення
     &__success {
         text-align: center;

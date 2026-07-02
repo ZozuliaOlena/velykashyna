@@ -486,6 +486,43 @@ document.addEventListener('alpine:init', () => {
     }));
 
     /**
+     * Форма «Залишити заявку» (контакти): надсилає заявку-консультацію
+     * на публічний endpoint (source='consultation' → окремий тип в адмінці).
+     */
+    Alpine.data('consultationForm', (endpoint) => ({
+        sent: false,
+        loading: false,
+        error: '',
+        form: { name: '', phone: '+38 ', message: '' },
+        async submit() {
+            const digits = this.form.phone.replace(/\D/g, '');
+            if (!this.form.name.trim() || digits.length < 10) {
+                this.error = 'Вкажіть імʼя та коректний телефон.';
+                return;
+            }
+            this.error = '';
+            this.loading = true;
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        customer_name: this.form.name,
+                        phone: this.form.phone.replace(/\s+/g, ''),
+                        message: this.form.message,
+                    }),
+                });
+                if (!res.ok) throw new Error();
+                this.sent = true;
+            } catch (e) {
+                this.error = 'Не вдалося надіслати заявку. Спробуйте ще раз або зателефонуйте нам.';
+            } finally {
+                this.loading = false;
+            }
+        },
+    }));
+
+    /**
      * Горизонтальна стрічка вкладок зі стрілками.
      * Стрілки показуються лише коли контент не вміщується.
      */
