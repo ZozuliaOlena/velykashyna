@@ -74,7 +74,8 @@ class LeadController extends Controller
                 $lead->items()->create([
                     'product_id'       => $product->id,
                     'qty'              => $qty,
-                    'price_at_request' => $product->effectivePrice(),
+                    // Ціна, яку бачив клієнт — у гривнях (валютні перераховані за курсом).
+                    'price_at_request' => $product->priceUah(),
                 ]);
             }
 

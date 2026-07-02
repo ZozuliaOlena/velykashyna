@@ -13,10 +13,12 @@
      решта — рядком. --}}
 @php($fullDesignation = $product->fullName())
 @php($fullRest = ($typeName && str_starts_with($fullDesignation, $typeName)) ? trim(mb_substr($fullDesignation, mb_strlen($typeName))) : $fullDesignation)
-@php($priceMode = $product->price_mode)
-@php($price = $product->effectivePrice())
-@php($oldPrice = $product->oldPrice())
-@php($cur = $product->currency === 'UAH' ? 'грн' : $product->currency)
+{{-- Ціни на сайті — завжди у гривнях (валютні перераховуються за курсом exchange_rate;
+     якщо курс не заданий — показуємо «уточнюйте», а не некоректну суму). --}}
+@php($priceMode = $product->priceModeForSite())
+@php($price = $product->priceUah())
+@php($oldPrice = $product->oldPriceUah())
+@php($cur = 'грн')
 {{-- «Знижка» прибираємо — на фото показуємо бейдж відсотка («-20%»). --}}
 @php($promos = collect($product->cardPromos())->reject(fn ($x) => $x === 'Знижка')->values()->all())
 @php($discountBadge = $product->discount_type === 'percent' ? $product->discountLabel() : null)
@@ -58,7 +60,7 @@
 @php($ld['offers'] = [
 '@type' => 'Offer',
 'url' => route('product', $product->slug),
-'priceCurrency' => $product->currency ?: 'UAH',
+'priceCurrency' => 'UAH',
 'price' => number_format((float) $price, 2, '.', ''),
 'availability' => $inStock ? 'https://schema.org/InStock' : ($product->stock_status === 'on_order' ? 'https://schema.org/BackOrder' : 'https://schema.org/OutOfStock'),
 'itemCondition' => 'https://schema.org/NewCondition',
@@ -156,7 +158,7 @@
                     <div class="product-price product-price--{{ $priceMode }} {{ $oldPrice ? 'product-price--sale' : '' }}">
                         @if ($priceMode === 'fixed' || $priceMode === 'from')
                         @if ($oldPrice)
-                        @php($save = $product->savedAmount())
+                        @php($save = $product->toUah($product->savedAmount()))
                         <span class="product-price__oldrow">
                             <span class="product-price__old">
                                 @if ($priceMode === 'from')від @endif{{ number_format($oldPrice, 0, '', ' ') }} {{ $cur }}
