@@ -115,14 +115,14 @@
                     data-confirm="Прибрати знижку з вибраних товарів?">Прибрати знижку</button>
             </span>
 
-            {{-- Каталожне фото (одне на кілька товарів) --}}
+            {{-- Основне фото (одне на кілька товарів) --}}
             <span class="bulk-group">
-                <label class="file-pick" title="Каталожне (стокове) фото для вибраних товарів">
+                <label class="file-pick" title="Основне фото для вибраних товарів (одне на кілька)">
                     <input type="file" wire:model="bulkCatalogPhoto" accept="image/*">
-                    <span>📷 Каталожне фото…</span>
+                    <span>📷 Основне фото…</span>
                 </label>
                 @if($bulkCatalogPhoto)
-                    {{-- прев'ю вибраного каталожного фото --}}
+                    {{-- прев'ю вибраного основного фото --}}
                     <img src="{{ $bulkCatalogPhoto->temporaryUrl() }}" alt=""
                         style="height:34px; width:34px; object-fit:contain; border:1px solid #ddd; border-radius:6px; background:#fff">
                     <button wire:click="bulkSetCatalogPhoto">Застосувати</button>

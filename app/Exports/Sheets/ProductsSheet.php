@@ -28,7 +28,7 @@ class ProductsSheet implements FromArray, WithHeadings, WithTitle
             'Посадковий діаметр', 'R/D', 'Протектор', 'Специфікація',
             'TT/TL', 'PR', 'LI/SS', 'Наявність', 'Режим ціни', 'Ціна',
             'Валюта', 'Знижка', 'Тип знижки', 'Merchant', 'Стан', 'Активний',
-            'SEO Title', 'SEO Description', 'SEO H1', 'URL', 'Категорії', 'Фото', 'Каталожне фото',
+            'SEO Title', 'SEO Description', 'SEO H1', 'URL', 'Категорії', 'Фото', 'Основне фото',
         ], $this->attributes->pluck('name')->all());
     }
 

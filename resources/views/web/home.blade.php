@@ -18,39 +18,39 @@
 
 @section('content')
 {{-- ===================== HERO-СЛАЙДЕР ======================= --}}
-@php($slides = [
-['w1' => 'ВЕЛИКА', 'w2' => 'ДОВІРА', 'sub' => $years . ' років досвіду'],
-['w1' => 'ВЕЛИКИЙ', 'w2' => 'СКЛАД', 'sub' => 'офіційні поставки з усього світу'],
-['w1' => 'ВЕЛИКІ', 'w2' => 'ПРОФІ', 'sub' => 'підбираємо правильні шини'],
+{{-- Слайди керуються в адмінці («Налаштування сайту»). Якщо їх ще немає —
+     показуємо стандартні (як було), щоб шапка не була порожньою. --}}
+@php($slides = (! empty($heroSlides)) ? $heroSlides : [
+    ['title' => 'ВЕЛИКА ДОВІРА', 'subtitle' => $years . ' років досвіду', 'type' => 'video', 'src' => '/images/details/slide1.mp4', 'poster' => '/images/details/slide1.png'],
+    ['title' => 'ВЕЛИКИЙ СКЛАД', 'subtitle' => 'офіційні поставки з усього світу', 'type' => 'video', 'src' => '/images/details/slide2.mp4', 'poster' => '/images/details/kara.png'],
+    ['title' => 'ВЕЛИКІ ПРОФІ', 'subtitle' => 'підбираємо правильні шини', 'type' => 'image', 'src' => '/images/details/slide3.png'],
 ])
-<section class="hero-slider" x-data="heroSlider(@js($slides))" @mouseenter="stop()" @mouseleave="start()">
+<section class="hero-slider" x-data="heroSlider(@js(array_map(fn ($s) => ['title' => $s['title'] ?? '', 'subtitle' => $s['subtitle'] ?? ''], $slides)))"
+    @mouseenter="stop()" @mouseleave="start()">
     <div class="hs-bg">
-        <div class="hs-slide" :class="{ active: active === 0 }">
-            <video class="hs-media" x-ref="v0" muted loop playsinline preload="none"
-                poster="/images/details/slide1.png">
-                <source src="/images/details/slide1.mp4" type="video/mp4" />
-            </video>
-        </div>
-        <div class="hs-slide" :class="{ active: active === 1 }">
-            <video class="hs-media" x-ref="v1" muted loop playsinline preload="none"
-                poster="/images/details/kara.png">
-                <source src="/images/details/slide2.mp4" type="video/mp4" />
-            </video>
-        </div>
-        <div class="hs-slide" :class="{ active: active === 2 }">
-            <img class="hs-media" src="/images/details/slide3.png" alt="" />
-        </div>
+        @foreach($slides as $i => $s)
+            <div class="hs-slide" :class="{ active: active === {{ $i }} }">
+                @if(($s['type'] ?? 'image') === 'youtube' && ! empty($s['src']))
+                    <iframe class="hs-media" tabindex="-1" frameborder="0" allow="autoplay; encrypted-media"
+                        style="pointer-events:none; border:0"
+                        src="https://www.youtube.com/embed/{{ $s['src'] }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $s['src'] }}&playsinline=1&modestbranding=1&rel=0&showinfo=0"></iframe>
+                @elseif(($s['type'] ?? 'image') === 'video' && ! empty($s['src']))
+                    <video class="hs-media" muted loop playsinline preload="none" @if(! empty($s['poster'])) poster="{{ $s['poster'] }}" @endif>
+                        <source src="{{ $s['src'] }}" type="video/mp4" />
+                    </video>
+                @elseif(! empty($s['src']))
+                    <img class="hs-media" src="{{ $s['src'] }}" alt="" />
+                @endif
+            </div>
+        @endforeach
     </div>
     <div class="hs-shade"></div>
 
     <div class="hs-content">
         <div class="container">
             <div class="hs-text" :key="active" x-transition.opacity.duration.500ms>
-                <h1 class="hs-title">
-                    <span x-text="slides[active].w1">ВЕЛИКА</span>
-                    <span x-text="slides[active].w2">ДОВІРА</span>
-                </h1>
-                <p class="hs-sub" x-text="slides[active].sub">{{ $years }} років досвіду</p>
+                <h1 class="hs-title"><span x-text="slides[active].title"></span></h1>
+                <p class="hs-sub" x-text="slides[active].subtitle"></p>
             </div>
             <div class="hs-progress">
                 <template x-for="(s, i) in slides" :key="i">

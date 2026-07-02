@@ -31,6 +31,9 @@ class HomeController extends Controller
             'dbCategories' => $this->topCategories(),
             'dbMachinery' => $this->machineryTypes(),
             'filters' => $this->filterData(),
+            'heroSlides' => \App\Models\HeroSlide::query()
+                ->where('is_active', true)->ordered()->get()
+                ->map(fn ($s) => $s->toHeroArray())->all(),
         ]);
     }
 
