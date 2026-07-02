@@ -77,6 +77,23 @@
                     data-confirm="Ви дійсно хочете змінити ціну вибраних товарів на вказаний відсоток?">Змінити ціну на %</button>
             </span>
 
+            {{-- Знижка (масово): у відсотках або на суму --}}
+            <span class="bulk-group">
+                <select wire:model.live="bulkDiscountType">
+                    <option value="">Знижка…</option>
+                    <option value="percent">Відсоток (%)</option>
+                    <option value="amount">Сума (грн)</option>
+                </select>
+                @if($bulkDiscountType === 'percent' || $bulkDiscountType === 'amount')
+                    <input wire:model="bulkDiscountValue" type="number" step="0.01" min="0"
+                        placeholder="{{ $bulkDiscountType === 'percent' ? '%' : 'грн' }}" style="width:90px">
+                    <button wire:click="bulkSetDiscount"
+                        data-confirm="Встановити знижку для вибраних товарів?">Застосувати</button>
+                @endif
+                <button wire:click="bulkClearDiscount"
+                    data-confirm="Прибрати знижку з вибраних товарів?">Прибрати знижку</button>
+            </span>
+
             {{-- Каталожне фото (одне на кілька товарів) --}}
             <span class="bulk-group">
                 <label class="file-pick" title="Каталожне (стокове) фото для вибраних товарів">
@@ -84,6 +101,9 @@
                     <span>📷 Каталожне фото…</span>
                 </label>
                 @if($bulkCatalogPhoto)
+                    {{-- прев'ю вибраного каталожного фото --}}
+                    <img src="{{ $bulkCatalogPhoto->temporaryUrl() }}" alt=""
+                        style="height:34px; width:34px; object-fit:contain; border:1px solid #ddd; border-radius:6px; background:#fff">
                     <button wire:click="bulkSetCatalogPhoto">Застосувати</button>
                 @endif
                 <span wire:loading wire:target="bulkCatalogPhoto" style="color:#666">Завантаження…</span>
