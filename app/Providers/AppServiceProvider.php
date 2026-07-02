@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Дані меню каталогу (типи / техніка / категорії) для шапки й
         // мобільного меню; $headerLinks — топ-3 техніки для чипів.
-        View::composer(['partials.header', 'partials.mobile-menu'], function ($view) {
+        View::composer(['partials.header', 'partials.mobile-menu', 'partials.footer'], function ($view) {
             $menu = $this->catalogMenu();
             $view->with('catalogMenu', $menu);
             $view->with('headerLinks', $menu['chips']);

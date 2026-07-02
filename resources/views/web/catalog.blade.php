@@ -22,39 +22,70 @@
 
         {{-- Швидкий вибір + пошук за назвою --}}
         <div class="catalog-quick">
+            @php($searchIco = '<svg class="ssel__search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>')
+            @php($diameterOpts = collect($diameters)->map(fn ($d) => ['value' => request()->fullUrlWithQuery(['diameter' => $d, 'page' => null]), 'label' => (string) $d])->values())
+            @php($sizeOpts = collect($sizes)->map(fn ($s) => ['value' => request()->fullUrlWithQuery(['size' => $s, 'page' => null]), 'label' => (string) $s, 'active' => in_array($s, $selected['size'], true)])->values())
+            @php($brandOpts = collect($brands)->map(fn ($b) => ['value' => request()->fullUrlWithQuery(['brand' => $b, 'page' => null]), 'label' => (string) $b, 'active' => in_array($b, $selected['brand'], true)])->values())
+
             <div class="catalog-quick__selects">
-                <div class="select">
-                    <select onchange="if(this.value)location.href=this.value">
-                        <option value="{{ request()->fullUrlWithQuery(['diameter' => null, 'page' => null]) }}"
-                            @selected(!$selected['diameter'])>Діаметр</option>
-                        @foreach ($diameters as $d)
-                        <option value="{{ request()->fullUrlWithQuery(['diameter' => $d, 'page' => null]) }}"
-                            @selected($selected['diameter'] === $d)>{{ $d }}</option>
-                        @endforeach
-                    </select>
-                    {!! $chev !!}
+                {{-- Діаметр --}}
+                <div class="ssel" x-data="searchSelect({ placeholder: 'Діаметр', options: @js($diameterOpts) })"
+                    @click.outside="close()" @keydown.escape.window="close()">
+                    <button type="button" class="ssel__btn {{ $selected['diameter'] ? 'is-set' : '' }}" @click="toggle()">
+                        <span class="ssel__val">{{ $selected['diameter'] ?: 'Діаметр' }}</span>
+                        {!! $chev !!}
+                    </button>
+                    <div class="ssel__backdrop" x-show="open" x-cloak @click="close()"></div>
+                    <div class="ssel__panel" x-show="open" x-cloak x-transition.opacity.duration.150ms>
+                        <div class="ssel__search">{!! $searchIco !!}<input x-ref="search" x-model="term" type="text" placeholder="Пошук діаметра…" /></div>
+                        <div class="ssel__list">
+                            <a href="{{ request()->fullUrlWithQuery(['diameter' => null, 'page' => null]) }}" class="ssel__opt {{ !$selected['diameter'] ? 'is-active' : '' }}">Усі діаметри</a>
+                            <template x-for="o in filtered()" :key="o.value">
+                                <a :href="o.value" class="ssel__opt {{ '' }}" :class="{ 'is-active': o.label === @js((string) $selected['diameter']) }" x-text="o.label"></a>
+                            </template>
+                            <p class="ssel__empty" x-show="filtered().length === 0">Нічого не знайдено</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="select">
-                    <select onchange="if(this.value)location.href=this.value">
-                        <option value="{{ request()->fullUrlWithQuery(['size' => null, 'page' => null]) }}"
-                            @selected(empty($selected['size']))>Розмір</option>
-                        @foreach ($sizes as $s)
-                        <option value="{{ request()->fullUrlWithQuery(['size' => $s, 'page' => null]) }}"
-                            @selected(in_array($s, $selected['size'], true))>{{ $s }}</option>
-                        @endforeach
-                    </select>
-                    {!! $chev !!}
+
+                {{-- Розмір --}}
+                <div class="ssel" x-data="searchSelect({ placeholder: 'Розмір', options: @js($sizeOpts) })"
+                    @click.outside="close()" @keydown.escape.window="close()">
+                    <button type="button" class="ssel__btn {{ count($selected['size']) ? 'is-set' : '' }}" @click="toggle()">
+                        <span class="ssel__val">{{ count($selected['size']) === 1 ? $selected['size'][0] : (count($selected['size']) > 1 ? 'Розміри: ' . count($selected['size']) : 'Розмір') }}</span>
+                        {!! $chev !!}
+                    </button>
+                    <div class="ssel__backdrop" x-show="open" x-cloak @click="close()"></div>
+                    <div class="ssel__panel" x-show="open" x-cloak x-transition.opacity.duration.150ms>
+                        <div class="ssel__search">{!! $searchIco !!}<input x-ref="search" x-model="term" type="text" placeholder="Пошук розміру, напр. 800/65R32" /></div>
+                        <div class="ssel__list">
+                            <a href="{{ request()->fullUrlWithQuery(['size' => null, 'page' => null]) }}" class="ssel__opt {{ empty($selected['size']) ? 'is-active' : '' }}">Усі розміри</a>
+                            <template x-for="o in filtered()" :key="o.value">
+                                <a :href="o.value" class="ssel__opt" :class="{ 'is-active': o.active }" x-text="o.label"></a>
+                            </template>
+                            <p class="ssel__empty" x-show="filtered().length === 0">Нічого не знайдено</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="select">
-                    <select onchange="if(this.value)location.href=this.value">
-                        <option value="{{ request()->fullUrlWithQuery(['brand' => null, 'page' => null]) }}"
-                            @selected(empty($selected['brand']))>Виробник</option>
-                        @foreach ($brands as $b)
-                        <option value="{{ request()->fullUrlWithQuery(['brand' => $b, 'page' => null]) }}"
-                            @selected(in_array($b, $selected['brand'], true))>{{ $b }}</option>
-                        @endforeach
-                    </select>
-                    {!! $chev !!}
+
+                {{-- Виробник --}}
+                <div class="ssel" x-data="searchSelect({ placeholder: 'Виробник', options: @js($brandOpts) })"
+                    @click.outside="close()" @keydown.escape.window="close()">
+                    <button type="button" class="ssel__btn {{ count($selected['brand']) ? 'is-set' : '' }}" @click="toggle()">
+                        <span class="ssel__val">{{ count($selected['brand']) === 1 ? $selected['brand'][0] : (count($selected['brand']) > 1 ? 'Бренди: ' . count($selected['brand']) : 'Виробник') }}</span>
+                        {!! $chev !!}
+                    </button>
+                    <div class="ssel__backdrop" x-show="open" x-cloak @click="close()"></div>
+                    <div class="ssel__panel" x-show="open" x-cloak x-transition.opacity.duration.150ms>
+                        <div class="ssel__search">{!! $searchIco !!}<input x-ref="search" x-model="term" type="text" placeholder="Пошук бренду…" /></div>
+                        <div class="ssel__list">
+                            <a href="{{ request()->fullUrlWithQuery(['brand' => null, 'page' => null]) }}" class="ssel__opt {{ empty($selected['brand']) ? 'is-active' : '' }}">Усі бренди</a>
+                            <template x-for="o in filtered()" :key="o.value">
+                                <a :href="o.value" class="ssel__opt" :class="{ 'is-active': o.active }" x-text="o.label"></a>
+                            </template>
+                            <p class="ssel__empty" x-show="filtered().length === 0">Нічого не знайдено</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <form class="catalog-search" action="{{ route('catalog') }}" method="GET" role="search">
@@ -82,7 +113,10 @@
                     <polyline points="15 18 9 12 15 6" />
                 </svg>
             </button>
-            <div class="catalog-tabs" x-ref="track" @scroll.passive="update()">
+            <div class="catalog-tabs" x-ref="track" @scroll.passive="update()"
+                @pointerdown="dragStart($event)" @pointermove="dragMove($event)"
+                @pointerup="dragEnd()" @pointerleave="dragEnd()" @pointercancel="dragEnd()"
+                @click.capture="dragClick($event)">
                 @foreach ($tabs as $t)
                 <a href="{{ $t['url'] }}" class="cat-tab {{ $t['active'] ? 'is-active' : '' }}">
                     <span class="mask-ico"

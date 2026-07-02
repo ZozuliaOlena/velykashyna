@@ -2283,6 +2283,7 @@ button {
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
+        cursor: grab;
 
         &::-webkit-scrollbar {
             height: 4px;
@@ -2291,6 +2292,18 @@ button {
         &::-webkit-scrollbar-thumb {
             background: $line;
             border-radius: 4px;
+        }
+
+        // Перетягування мишею: миттєвий рух, без snap і виділення.
+        &.is-dragging {
+            cursor: grabbing;
+            scroll-snap-type: none;
+            scroll-behavior: auto;
+            user-select: none;
+        }
+
+        a {
+            -webkit-user-drag: none;
         }
     }
 
@@ -2543,9 +2556,21 @@ button {
     padding-bottom: 18px;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    cursor: grab;
 
     &::-webkit-scrollbar {
         height: 0;
+    }
+
+    // Перетягування мишею: миттєвий рух, без виділення.
+    &.is-dragging {
+        cursor: grabbing;
+        scroll-behavior: auto;
+        user-select: none;
+
+        .cat-tab {
+            -webkit-user-drag: none;
+        }
     }
 
     .cat-tab {
@@ -3637,6 +3662,10 @@ button {
         &.order {
             color: $muted;
         }
+
+        &.inquiry {
+            color: #c2691a;
+        }
     }
 
     &__cart {
@@ -4114,11 +4143,11 @@ button {
         display: none;
     }
 
-    // Характеристики в один ряд; «Специфікація» забирає решту місця
-    // й не переноситься. На вузьких екранах — перенос у сітку.
+    // Характеристики в один ряд, коли є місце; якщо не вміщаються (напр.
+    // відкриті фільтри) — переносяться, щоб не виштовхувати ціну/кошик.
     .cat-prod__listspecs {
         display: flex;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         align-items: flex-start;
         gap: 12px 26px;
         margin-bottom: 10px;
@@ -4128,16 +4157,11 @@ button {
         }
 
         .lf--spec {
-            flex: 1 1 220px;
+            flex: 1 1 200px;
         }
 
         @media (max-width: $bp-lg) {
-            flex-wrap: wrap;
             gap: 12px 20px;
-
-            .lf {
-                flex: 0 1 auto;
-            }
 
             .lf--spec {
                 flex: 1 1 100%;
@@ -5785,6 +5809,10 @@ button {
 
     &.order {
         color: $muted;
+    }
+
+    &.inquiry {
+        color: #c2691a;
     }
 }
 
@@ -8345,5 +8373,226 @@ button {
             font-size: 14px;
             color: $ink;
         }
+    }
+}
+
+/* ============ Select із пошуком (searchSelect) =============== */
+.ssel {
+    position: relative;
+    min-width: 0;
+
+    &__btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 46px;
+        padding: 0 12px 0 14px;
+        border: 1px solid $line;
+        border-radius: $radius-sm;
+        background: #fff;
+        color: $ink;
+        font-family: $font-body;
+        font-size: 14px;
+        cursor: pointer;
+        text-align: left;
+        transition: border-color 0.15s ease;
+
+        &:hover {
+            border-color: $muted-2;
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+            margin-left: auto;
+            flex: none;
+            color: $muted;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    &__val {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    // Плейсхолдер (нічого не обрано) — приглушено.
+    &__btn:not(.is-set) &__val {
+        color: $muted;
+    }
+
+    &__btn.is-set {
+        border-color: $red;
+    }
+
+    // ── Випадаюча панель ──────────────────────────────────────
+    &__panel {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        z-index: 60;
+        background: #fff;
+        border: 1px solid $line;
+        border-radius: $radius;
+        box-shadow: $shadow-md;
+        overflow: hidden;
+    }
+
+    &__search {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-bottom: 1px solid $line;
+
+        .ssel__search-ico {
+            width: 16px;
+            height: 16px;
+            color: $muted;
+            flex: none;
+        }
+
+        input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 4px 6px 4px 10px;
+            font-family: $font-body;
+            font-size: 14px;
+            color: $ink;
+            background: transparent;
+
+            &::placeholder {
+                color: $muted-2;
+            }
+        }
+    }
+
+    &__list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 6px;
+        overscroll-behavior: contain;
+    }
+
+    &__opt {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 7px;
+        background: none;
+        color: $ink;
+        font-family: $font-body;
+        font-size: 14px;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+            background: $bg-soft;
+        }
+
+        &.is-active {
+            background: $red-soft;
+            color: $red;
+            font-weight: 700;
+        }
+    }
+
+    &__empty {
+        margin: 0;
+        padding: 16px 12px;
+        text-align: center;
+        color: $muted;
+        font-size: 14px;
+    }
+
+    // Затемнення — лише на мобільних (bottom-sheet).
+    &__backdrop {
+        display: none;
+    }
+}
+
+// Тема тёмного фільтра на головній (hero).
+.filter-bar .ssel {
+    &__btn {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.18);
+        color: #fff;
+
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        svg {
+            color: rgba(255, 255, 255, 0.7);
+        }
+    }
+
+    &__btn:not(.is-set) &__val {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    &__btn.is-set {
+        border-color: $red;
+    }
+}
+
+// Каталог: селекти в ряд рівної ширини.
+.catalog-quick__selects .ssel {
+    flex: 1;
+}
+
+// ── Мобільний: панель стає нижнім листом (bottom-sheet) ───────
+@media (max-width: $bp-sm) {
+    .ssel__backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 70;
+        background: rgba(16, 18, 22, 0.45);
+    }
+
+    .ssel__panel {
+        position: fixed;
+        top: auto;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 71;
+        border-radius: $radius-lg $radius-lg 0 0;
+        border: none;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.28);
+        // Фіксована висота — панель не «стрибає» під час пошуку/фільтрації.
+        height: 72vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ssel__search {
+        padding: 16px 16px 12px;
+    }
+
+    .ssel__list {
+        max-height: none;
+        flex: 1;
+        padding: 8px 8px calc(12px + env(safe-area-inset-bottom, 0));
+    }
+
+    .ssel__opt {
+        padding: 13px 14px;
+        font-size: 15px;
+    }
+}
+
+body.ssel-open {
+    @media (max-width: $bp-sm) {
+        overflow: hidden;
     }
 }

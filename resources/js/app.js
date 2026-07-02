@@ -450,6 +450,10 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('tabsScroller', () => ({
         canLeft: false,
         canRight: false,
+        _down: false,
+        _startX: 0,
+        _startLeft: 0,
+        _moved: false,
         init() {
             this.$nextTick(() => this.update());
             window.addEventListener('resize', () => this.update());
@@ -462,6 +466,34 @@ document.addEventListener('alpine:init', () => {
         },
         scroll(dir) {
             this.$refs.track.scrollBy({ left: dir * 240, behavior: 'smooth' });
+        },
+        // Свайп-перетягування мишею (тач лишаємо нативному скролу).
+        dragStart(e) {
+            if (e.pointerType === 'touch') return;
+            this._down = true;
+            this._moved = false;
+            this._startX = e.clientX;
+            this._startLeft = this.$refs.track.scrollLeft;
+            this.$refs.track.classList.add('is-dragging');
+        },
+        dragMove(e) {
+            if (!this._down) return;
+            const dx = e.clientX - this._startX;
+            if (Math.abs(dx) > 4) this._moved = true;
+            this.$refs.track.scrollLeft = this._startLeft - dx;
+            this.update();
+        },
+        dragEnd() {
+            if (!this._down) return;
+            this._down = false;
+            this.$refs.track.classList.remove('is-dragging');
+        },
+        dragClick(e) {
+            if (this._moved) {
+                e.preventDefault();
+                e.stopPropagation();
+                this._moved = false;
+            }
         },
     }));
 
@@ -542,6 +574,92 @@ document.addEventListener('alpine:init', () => {
         reset() {
             this.machinery = this.category = this.brand = this.size = '';
             this.load();
+        },
+    }));
+
+    /**
+     * Горизонтальний скрол перетягуванням мишею (свайп, як на тачі).
+     * Тач лишаємо нативному скролу. Елемент зі скролом — x-ref="track".
+     */
+    Alpine.data('dragScroll', () => ({
+        _down: false,
+        _startX: 0,
+        _startLeft: 0,
+        _moved: false,
+
+        // Прокрутка стрілками (крок ~ ширина видимої області).
+        scroll(dir) {
+            const t = this.$refs.track;
+            const step = Math.max(240, Math.round(t.clientWidth * 0.8));
+            t.scrollBy({ left: dir * step, behavior: 'smooth' });
+        },
+        dragStart(e) {
+            if (e.pointerType === 'touch') return; // тач → нативний скрол
+            this._down = true;
+            this._moved = false;
+            this._startX = e.clientX;
+            this._startLeft = this.$refs.track.scrollLeft;
+            this.$refs.track.classList.add('is-dragging');
+        },
+        dragMove(e) {
+            if (!this._down) return;
+            const dx = e.clientX - this._startX;
+            if (Math.abs(dx) > 4) this._moved = true;
+            this.$refs.track.scrollLeft = this._startLeft - dx;
+        },
+        dragEnd() {
+            if (!this._down) return;
+            this._down = false;
+            this.$refs.track.classList.remove('is-dragging');
+        },
+        // Якщо тягнули — не переходимо за посиланням картки.
+        dragClick(e) {
+            if (this._moved) {
+                e.preventDefault();
+                e.stopPropagation();
+                this._moved = false;
+            }
+        },
+    }));
+
+    /**
+     * Select із пошуком усередині (для фільтрів з багатьма значеннями:
+     * розмір, бренд тощо). Керує лише станом відкриття/пошуку — самі опції
+     * та вибір лишаються у розмітці (щоб працювало і зі статичними
+     * посиланнями каталогу, і з реактивними опціями каскаду головної).
+     */
+    Alpine.data('searchSelect', (config = {}) => ({
+        open: false,
+        term: '',
+        placeholder: config.placeholder || 'Виберіть',
+        options: config.options || null,
+
+        // Статичні опції, відфільтровані пошуком (для каталогу).
+        filtered() {
+            return (this.options || []).filter((o) => this.matches(o.label));
+        },
+
+        toggle() {
+            this.open = !this.open;
+            if (this.open) {
+                this.term = '';
+                document.body.classList.add('ssel-open');
+                this.$nextTick(() => this.$refs.search && this.$refs.search.focus());
+            } else {
+                document.body.classList.remove('ssel-open');
+            }
+        },
+        close() {
+            if (!this.open) return;
+            this.open = false;
+            this.term = '';
+            document.body.classList.remove('ssel-open');
+        },
+        // Чи підходить підпис опції під поточний пошук (без регістру).
+        matches(label) {
+            const t = this.term.trim().toLowerCase();
+            if (!t) return true;
+            return String(label == null ? '' : label).toLowerCase().includes(t);
         },
     }));
 
