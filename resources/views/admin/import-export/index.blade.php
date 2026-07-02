@@ -127,12 +127,12 @@
         @endif
     </fieldset>
 
-    {{-- ── Каталожні фото за іменем (одне на кілька товарів) ── --}}
+    {{-- ── Основні фото за іменем (одне на кілька товарів) ── --}}
     <fieldset style="margin-top:1rem">
-        <legend><strong>Каталожні фото (за іменем файлу)</strong></legend>
+        <legend><strong>Основні фото (за іменем файлу)</strong></legend>
         <p style="color:#666">
-            Для «не живих» (стокових) фото, спільних для кількох товарів. У колонці
-            <code>Каталожне фото</code> імпорту вкажіть імʼя файлу (напр. <code>agro-710.jpg</code>) —
+            Спільне основне фото для кількох товарів. У колонці
+            <code>Основне фото</code> імпорту вкажіть імʼя файлу (напр. <code>agro-710.jpg</code>) —
             однакове для всіх товарів з цим зображенням. Потім завантажте сюди самі файли:
             вони звʼяжуться за іменем одразу з усіма такими товарами. Порядок не важливий
             (можна спершу фото, потім імпорт). Пізніше кожному товару можна додати власні «живі» фото.
@@ -154,7 +154,7 @@
         @endif
 
         <div style="margin-top:.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
-            <button wire:click="uploadCatalogImages" wire:loading.attr="disabled" wire:target="uploadCatalogImages">Завантажити каталожні фото</button>
+            <button wire:click="uploadCatalogImages" wire:loading.attr="disabled" wire:target="uploadCatalogImages">Завантажити основні фото</button>
             <span class="spinner-line" wire:loading wire:target="uploadCatalogImages"><span class="spinner"></span> Обробка…</span>
         </div>
 

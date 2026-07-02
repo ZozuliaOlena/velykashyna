@@ -349,7 +349,7 @@ class ProductIndex extends Component
             ['bulkCatalogPhoto' => 'фото']
         );
 
-        $catalogImage = CatalogImage::create(['label' => 'Каталожне фото']);
+        $catalogImage = CatalogImage::create(['label' => 'Основне фото']);
         $catalogImage->addMedia($this->bulkCatalogPhoto->getRealPath())
             ->usingFileName(Str::random(24) . '.' . $this->bulkCatalogPhoto->getClientOriginalExtension())
             ->toMediaCollection('image');
@@ -359,7 +359,7 @@ class ProductIndex extends Component
 
         $this->afterBulk();
         $this->reset('bulkCatalogPhoto');
-        session()->flash('success', "Каталожне фото застосовано до товарів: {$count}");
+        session()->flash('success', "Основне фото застосовано до товарів: {$count}");
     }
 
     public function bulkDelete(): void

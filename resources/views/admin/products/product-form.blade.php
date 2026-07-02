@@ -342,16 +342,8 @@
                 <p style="color:#666">Фото завантажаться разом зі збереженням товару.</p>
             @endunless
 
-            {{-- Спільне каталожне фото (призначається масово на сторінці товарів) --}}
-            @if($catalogImageUrl)
-                <div style="margin-bottom:1rem">
-                    <label>Каталожне фото (спільне)</label><br>
-                    <div class="photo-thumb"><img src="{{ $catalogImageUrl }}" alt=""></div>
-                    <small style="color:#666">Використовується, поки немає власних фото. Призначається масово на сторінці «Товари».</small>
-                </div>
-            @endif
-
-            {{-- Основне фото --}}
+            {{-- Основне фото. Може бути призначене масово (одне на кілька
+                 товарів) на сторінці «Товари», або власне — завантажене тут. --}}
             <div style="margin-bottom:1rem">
                 <label>Основне фото</label><br>
                 @if($mainMedia)
@@ -360,6 +352,10 @@
                         <button type="button" class="photo-del" wire:click="deleteMedia({{ $mainMedia->id }})"
                             data-confirm="Ви дійсно хочете видалити основне фото?">×</button>
                     </div>
+                @elseif($catalogImageUrl)
+                    {{-- Спільне фото, призначене масово. Завантаження задасть власне. --}}
+                    <div class="photo-thumb"><img src="{{ $catalogImageUrl }}" alt=""></div>
+                    <small style="color:#666; display:block; margin-bottom:.4rem">Спільне фото (призначене масово). Завантажте, щоб задати власне для цього товару.</small>
                 @endif
                 <x-admin.image-upload model="mainPhoto" />
                 @error('mainPhoto') <span style="color:red">{{ $message }}</span> @enderror

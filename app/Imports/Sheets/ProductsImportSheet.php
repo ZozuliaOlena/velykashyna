@@ -25,7 +25,7 @@ class ProductsImportSheet implements ToCollection
         'посадковий діаметр', 'r/d', 'протектор', 'специфікація',
         'tt/tl', 'pr', 'li/ss', 'наявність', 'режим ціни', 'ціна',
         'валюта', 'знижка', 'тип знижки', 'merchant', 'стан', 'активний',
-        'seo title', 'seo description', 'seo h1', 'url', 'категорії', 'фото', 'каталожне фото',
+        'seo title', 'seo description', 'seo h1', 'url', 'категорії', 'фото', 'основне фото', 'каталожне фото',
     ];
 
     public function __construct(private CatalogImport $import)
@@ -162,10 +162,13 @@ class ProductsImportSheet implements ToCollection
             $product->slug = $this->uniqueSlug($v, $product->id);
         }
 
-        // Каталожне фото за іменем файлу: один файл — багато товарів.
-        // Створюємо запис CatalogImage за іменем (сам файл підвантажується масово окремо).
-        if ($this->has('каталожне фото')) {
-            $fname = trim((string) $this->val($row, 'Каталожне фото'));
+        // Основне фото за іменем файлу: один файл — багато товарів.
+        // Приймаємо і нову назву колонки «Основне фото», і стару «Каталожне
+        // фото» — для сумісності зі старими файлами.
+        $photoCol = $this->has('основне фото') ? 'основне фото'
+            : ($this->has('каталожне фото') ? 'каталожне фото' : null);
+        if ($photoCol) {
+            $fname = trim((string) $this->val($row, $photoCol));
             if ($fname === '') {
                 $product->catalog_image_id = null;
             } else {
