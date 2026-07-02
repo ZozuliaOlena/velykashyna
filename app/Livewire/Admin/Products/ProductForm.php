@@ -151,6 +151,14 @@ class ProductForm extends Component
         }
     }
 
+    /** У гривні курс не потрібен — очищаємо, щоб не лишалося зайвого значення. */
+    public function updatedCurrency(): void
+    {
+        if ($this->currency === 'UAH') {
+            $this->exchange_rate = null;
+        }
+    }
+
     /**
      * Авто-генерація SEO з поточних даних форми. Заповнює лише порожні поля,
      * щоб не затирати те, що менеджер написав вручну (щоб перегенерувати —
