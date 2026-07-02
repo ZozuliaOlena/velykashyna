@@ -4,7 +4,6 @@
         <button wire:click="openCreate">+ Додати серію</button>
     </div>
 
-    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по назві...">

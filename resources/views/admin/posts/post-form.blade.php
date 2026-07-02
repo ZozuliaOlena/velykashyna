@@ -92,6 +92,10 @@
         {{-- ── SEO ─────────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>SEO</strong></legend>
+            <div class="is-full" style="margin-bottom:.6rem">
+                <button type="button" wire:click="generateSeo">Згенерувати SEO зі статті</button>
+                <small style="color:#666; display:block; margin-top:.25rem">Заповнить лише порожні поля.</small>
+            </div>
             <div class="is-full">
                 <label>SEO Title</label>
                 <input wire:model="seo_title" type="text" style="width:100%">

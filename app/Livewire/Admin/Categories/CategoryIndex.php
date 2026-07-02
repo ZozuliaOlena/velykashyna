@@ -48,6 +48,25 @@ class CategoryIndex extends Component
         $this->showModal = true;
     }
 
+    /**
+     * Авто-генерація SEO з назви категорії. Заповнює лише порожні поля.
+     */
+    public function generateSeo(): void
+    {
+        if (blank($this->name)) {
+            session()->flash('error', 'Спершу вкажіть назву категорії');
+            return;
+        }
+
+        $seo = (new Category(['name' => $this->name]))->defaultSeo();
+
+        if (blank($this->seo_title))       { $this->seo_title = $seo['title']; }
+        if (blank($this->seo_description)) { $this->seo_description = $seo['description']; }
+        if (blank($this->seo_h1))          { $this->seo_h1 = $seo['h1']; }
+
+        session()->flash('success', 'SEO-поля згенеровано (порожні заповнено)');
+    }
+
     public function openEdit(int $id): void
     {
         $cat = Category::findOrFail($id);

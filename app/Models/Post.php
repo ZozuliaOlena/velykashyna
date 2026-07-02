@@ -97,6 +97,22 @@ class Post extends Model implements HasMedia
         return Str::words(trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->content))), $words, '…');
     }
 
+    /**
+     * Автоматичні SEO-теги статті (title / description) з її даних.
+     *
+     * @return array{title: string, description: string}
+     */
+    public function defaultSeo(): array
+    {
+        $title = trim($this->title . ' — Блог | Велика Шина');
+        $desc  = trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->teaser(32))));
+
+        return [
+            'title'       => mb_substr($title, 0, 255),
+            'description' => mb_substr($desc, 0, 300),
+        ];
+    }
+
     /** Приблизний час читання у хвилинах (≈200 слів/хв). */
     public function readingTime(): int
     {

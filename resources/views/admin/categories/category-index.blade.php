@@ -4,8 +4,6 @@
         <button wire:click="openCreate">+ Додати категорію</button>
     </div>
 
-    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
-    @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по назві...">
@@ -84,6 +82,10 @@
 
         <fieldset class="is-full">
             <legend>SEO</legend>
+            <div style="margin-bottom:.6rem">
+                <button type="button" wire:click="generateSeo">Згенерувати SEO з назви</button>
+                <small style="color:#666; display:block; margin-top:.25rem">Заповнить лише порожні поля.</small>
+            </div>
             <div><label>Title</label><br><input wire:model="seo_title" type="text" style="width:100%"></div>
             <div><label>Description</label><br><textarea wire:model="seo_description" rows="2" style="width:100%"></textarea></div>
             <div><label>H1</label><br><input wire:model="seo_h1" type="text" style="width:100%"></div>

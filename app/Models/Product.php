@@ -330,6 +330,33 @@ class Product extends Model implements HasMedia
         return trim(preg_replace('/\s+/', ' ', implode(' ', array_filter($parts))));
     }
 
+    /**
+     * Автоматичні SEO-теги з даних товару (title / description / h1).
+     * Використовується для авто-заповнення порожніх SEO-полів в адмінці.
+     *
+     * @return array{title: string, description: string, h1: string}
+     */
+    public function defaultSeo(): array
+    {
+        $full = $this->fullName() ?: $this->name;
+
+        $title = trim($full . ' — купити в Україні | Велика Шина');
+
+        $descParts = array_filter([
+            'Купити ' . $full,
+            $this->constructionLabel() ?: null,
+            $this->load_speed_index ? 'індекс ' . $this->load_speed_index : null,
+        ]);
+        $desc = trim(implode(', ', $descParts))
+            . '. Вигідна ціна, доставка по всій Україні, консультація та підбір. «Велика Шина».';
+
+        return [
+            'title'       => mb_substr($title, 0, 255),
+            'description' => mb_substr(trim(preg_replace('/\s+/', ' ', $desc)), 0, 300),
+            'h1'          => $full,
+        ];
+    }
+
     /** Промо-бейджі для картки (узгоджено з partials/product-card). */
     public function cardPromos(): array
     {

@@ -44,7 +44,10 @@ class ProductIndex extends Component
     public string $bulkStock = '';
     public string $bulkPriceMode = '';
     public ?string $bulkPrice = null;
+    public string $bulkCurrency = '';        // '' = не змінювати | UAH | USD | EUR
     public ?string $bulkPricePercent = null;
+    public string $bulkRateCurrency = '';    // валюта, для якої масово ставимо курс
+    public ?string $bulkRateValue = null;    // значення курсу (грн за 1 од. валюти)
     public string $bulkDiscountType = '';    // '' | 'percent' | 'amount'
     public ?string $bulkDiscountValue = null;
     public $bulkCatalogPhoto = null; // каталожне фото для масового призначення
@@ -165,28 +168,93 @@ class ProductIndex extends Component
         if (empty($this->selected)) {
             return;
         }
-        if (! in_array($this->bulkPriceMode, ['fixed', 'from', 'inquiry'], true)) {
-            session()->flash('error', 'Оберіть режим ціни');
+
+        $hasMode     = in_array($this->bulkPriceMode, ['fixed', 'from', 'inquiry'], true);
+        $hasCurrency = in_array($this->bulkCurrency, ['UAH', 'USD', 'EUR'], true);
+
+        if (! $hasMode && ! $hasCurrency) {
+            session()->flash('error', 'Оберіть режим ціни або валюту');
             return;
         }
 
-        $data = ['price_mode' => $this->bulkPriceMode];
+        $data = [];
 
-        if ($this->bulkPriceMode === 'inquiry') {
-            // "Уточнюйте" — ціна не зберігається
-            $data['price'] = null;
-        } else {
-            if (! is_numeric($this->bulkPrice) || (float) $this->bulkPrice < 0) {
-                session()->flash('error', 'Вкажіть коректну ціну');
-                return;
+        if ($hasMode) {
+            $data['price_mode'] = $this->bulkPriceMode;
+
+            if ($this->bulkPriceMode === 'inquiry') {
+                // "Уточнюйте" — ціна не зберігається
+                $data['price'] = null;
+            } else {
+                if (! is_numeric($this->bulkPrice) || (float) $this->bulkPrice < 0) {
+                    session()->flash('error', 'Вкажіть коректну ціну');
+                    return;
+                }
+                $data['price'] = $this->bulkPrice;
             }
-            $data['price'] = $this->bulkPrice;
+        }
+
+        if ($hasCurrency) {
+            $data['currency'] = $this->bulkCurrency;
         }
 
         Product::whereIn('id', $this->selected)->update($data);
         $this->afterBulk();
-        $this->reset('bulkPrice', 'bulkPriceMode');
+        $this->reset('bulkPrice', 'bulkPriceMode', 'bulkCurrency');
         session()->flash('success', 'Ціни оновлено');
+    }
+
+    /**
+     * Масово виставити курс валюти на ВСІ товари у цій валюті (напр. усім
+     * товарам у EUR — курс 45). Значення пишеться в exchange_rate.
+     */
+    public function bulkSetExchangeRate(): void
+    {
+        if (! in_array($this->bulkRateCurrency, ['UAH', 'USD', 'EUR'], true)) {
+            session()->flash('error', 'Оберіть валюту, для якої встановити курс');
+            return;
+        }
+        if (! is_numeric($this->bulkRateValue) || (float) $this->bulkRateValue <= 0) {
+            session()->flash('error', 'Вкажіть курс (більше за 0)');
+            return;
+        }
+
+        $count = Product::where('currency', $this->bulkRateCurrency)
+            ->update(['exchange_rate' => (float) $this->bulkRateValue]);
+
+        $this->reset('bulkRateValue');
+        session()->flash('success', "Курс для {$this->bulkRateCurrency} застосовано (товарів: {$count})");
+    }
+
+    /**
+     * Масова авто-генерація SEO для вибраних товарів: заповнює лише порожні
+     * seo_title / seo_description / seo_h1 з даних товару (наявні не чіпає).
+     */
+    public function bulkGenerateSeo(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $filled = 0;
+        $products = Product::with(['brand', 'productType'])->whereIn('id', $this->selected)->get();
+
+        foreach ($products as $product) {
+            $seo    = $product->defaultSeo();
+            $update = [];
+
+            if (blank($product->seo_title))       { $update['seo_title'] = $seo['title']; }
+            if (blank($product->seo_description)) { $update['seo_description'] = $seo['description']; }
+            if (blank($product->seo_h1))          { $update['seo_h1'] = $seo['h1']; }
+
+            if ($update) {
+                $product->update($update);
+                $filled++;
+            }
+        }
+
+        $this->afterBulk();
+        session()->flash('success', "SEO згенеровано для товарів: {$filled}");
     }
 
     /** Масово підняти ціну на відсоток (наприклад, +10%). */
@@ -338,6 +406,11 @@ class ProductIndex extends Component
             'categories'   => Category::treeOrdered(),
             'sizes'        => Product::whereNotNull('size_raw')->where('size_raw', '!=', '')
                 ->distinct()->orderBy('size_raw')->pluck('size_raw'),
+            // Скільки товарів у кожній валюті — для панелі масового курсу.
+            'currencyCounts' => Product::query()
+                ->selectRaw('currency, COUNT(*) as c')
+                ->groupBy('currency')
+                ->pluck('c', 'currency'),
         ])->layout('admin.layouts.admin');
     }
 }

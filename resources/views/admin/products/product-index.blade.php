@@ -6,8 +6,6 @@
         </a>
     </div>
 
-    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
-    @if(session('error')) <p style="color:red">{{ session('error') }}</p> @endif
 
     {{-- Фільтри --}}
     <div class="admin-filters">
@@ -39,6 +37,25 @@
         <button wire:click="resetFilters">Скинути</button>
     </div>
 
+    {{-- Масовий курс валюти: ставимо exchange_rate одразу ВСІМ товарам у
+         вибраній валюті (не залежить від виділення в таблиці). --}}
+    <div class="rate-bar">
+        <strong>Курс валют (масово):</strong>
+        <span class="bulk-group">
+            <select wire:model="bulkRateCurrency">
+                <option value="">Валюта товарів…</option>
+                <option value="USD">дол (USD) — {{ $currencyCounts['USD'] ?? 0 }} тов.</option>
+                <option value="EUR">євро (EUR) — {{ $currencyCounts['EUR'] ?? 0 }} тов.</option>
+                <option value="UAH">грн (UAH) — {{ $currencyCounts['UAH'] ?? 0 }} тов.</option>
+            </select>
+            <input wire:model="bulkRateValue" type="number" step="0.0001" min="0"
+                placeholder="курс, грн" style="width:110px" title="Скільки гривень за 1 одиницю валюти">
+            <button wire:click="bulkSetExchangeRate"
+                data-confirm="Встановити цей курс усім товарам у вибраній валюті?">Застосувати курс усім</button>
+        </span>
+        <small style="color:#666">Напр.: усім товарам у EUR — курс 45. Курс збережеться у полі «Курс» кожного такого товару.</small>
+    </div>
+
     {{-- Панель масових дій --}}
     @if(count($selected))
         <div class="bulk-bar">
@@ -55,7 +72,7 @@
                 <button wire:click="bulkSetStock">Застосувати</button>
             </span>
 
-            {{-- Ціна / режим ціни --}}
+            {{-- Ціна / режим ціни / валюта --}}
             <span class="bulk-group">
                 <select wire:model.live="bulkPriceMode">
                     <option value="">Режим ціни…</option>
@@ -66,6 +83,12 @@
                 @if($bulkPriceMode === 'fixed' || $bulkPriceMode === 'from')
                     <input wire:model="bulkPrice" type="text" placeholder="Ціна" style="width:90px">
                 @endif
+                <select wire:model="bulkCurrency" title="Валюта (можна змінити й без ціни)">
+                    <option value="">Валюта…</option>
+                    <option value="UAH">грн (UAH)</option>
+                    <option value="USD">дол (USD)</option>
+                    <option value="EUR">євро (EUR)</option>
+                </select>
                 <button wire:click="bulkSetPrice">Застосувати</button>
             </span>
 
@@ -120,6 +143,12 @@
             <span class="bulk-group">
                 <button wire:click="bulkSetActive(true)">Активувати</button>
                 <button wire:click="bulkSetActive(false)">Деактивувати</button>
+            </span>
+
+            {{-- SEO --}}
+            <span class="bulk-group">
+                <button wire:click="bulkGenerateSeo"
+                    data-confirm="Згенерувати SEO для вибраних товарів? (заповняться лише порожні поля)">Згенерувати SEO</button>
             </span>
 
             {{-- Акція --}}

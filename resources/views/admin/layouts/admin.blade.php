@@ -150,7 +150,8 @@
     <template x-for="t in items" :key="t.id">
         <div class="admin-toast" :class="'admin-toast--' + t.type"
              x-on:click="items = items.filter(i => i.id !== t.id)">
-            <span x-text="t.message"></span>
+            <span class="admin-toast__ico" x-text="t.type === 'error' ? '!' : '✓'"></span>
+            <span class="admin-toast__msg" x-text="t.message"></span>
         </div>
     </template>
 </div>

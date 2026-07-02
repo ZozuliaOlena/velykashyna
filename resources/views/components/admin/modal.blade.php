@@ -37,8 +37,9 @@
             // Alpine-компоненти встигли відрендерити свої значення.
             this.$nextTick(() => this.$nextTick(() => { this.snapshot = this.serialize(); }));
         },
+        isDirty() { return this.serialize() !== this.snapshot; },
         attemptClose() {
-            if (this.serialize() === this.snapshot) {
+            if (! this.isDirty()) {
                 this.close();
                 return;
             }
@@ -49,9 +50,27 @@
                 },
             }));
         },
+        // Перехід геть (меню, ← назад) при відкритій модалці з правками —
+        // спиняємо й питаємо підтвердження, як на повноекранних формах.
+        onNavigate(e) {
+            if (! this.isDirty()) return;
+            const url = e.detail?.url?.toString();
+            e.preventDefault();
+            window.dispatchEvent(new CustomEvent('admin-confirm', {
+                detail: {
+                    message: 'Є незбережені зміни. Залишити сторінку без збереження?',
+                    accept: () => {
+                        this.snapshot = this.serialize();
+                        if (url && window.Livewire?.navigate) window.Livewire.navigate(url);
+                    },
+                },
+            }));
+        },
         close() { this.$wire.set('showModal', false); }
      }"
-     x-on:click.self="attemptClose()">
+     x-on:click.self="attemptClose()"
+     x-on:keydown.escape.window="attemptClose()"
+     x-on:livewire:navigate.window="onNavigate($event)">
     <div x-ref="box" {{ $attributes->merge(['class' => 'admin-modal__box'.($wide ? ' admin-modal__box--wide' : '')]) }}>
         @if($title !== null)
             <div class="admin-modal__head"><h2>{{ $title }}</h2></div>
