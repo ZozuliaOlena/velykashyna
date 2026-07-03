@@ -1,6 +1,6 @@
 <div>
     <div style="display:flex; justify-content:space-between; align-items:center">
-        <h1>Налаштування сайту — слайдер</h1>
+        <h1>Слайдер головної сторінки</h1>
         <button wire:click="openCreate">+ Додати слайд</button>
     </div>
 
@@ -36,7 +36,7 @@
                         <img src="https://img.youtube.com/vi/{{ $slide->youtubeId() }}/hqdefault.jpg"
                             alt="" style="width:100px; height:56px; object-fit:cover; border-radius:6px">
                     @elseif($slide->bg_type === 'video' && $slide->bgUrl())
-                        <video src="{{ $slide->bgUrl() }}" muted style="width:100px; height:56px; object-fit:cover; border-radius:6px"></video>
+                        <video src="{{ $slide->bgUrl() }}" muted preload="metadata" style="width:100px; height:56px; object-fit:cover; border-radius:6px"></video>
                     @elseif($slide->bgUrl())
                         <img src="{{ $slide->bgUrl() }}" alt="" style="width:100px; height:56px; object-fit:cover; border-radius:6px">
                     @else
@@ -110,7 +110,7 @@
                 @if($currentBg)
                     <div class="photo-thumb" style="width:160px; height:90px">
                         @if($bg_type === 'video')
-                            <video src="/storage/{{ ltrim($currentBg, '/') }}" muted style="width:100%; height:100%; object-fit:cover"></video>
+                            <video src="/storage/{{ ltrim($currentBg, '/') }}" muted controls preload="metadata" style="width:100%; height:100%; object-fit:cover"></video>
                         @else
                             <img src="/storage/{{ ltrim($currentBg, '/') }}" alt="" style="width:100%; height:100%; object-fit:cover">
                         @endif
