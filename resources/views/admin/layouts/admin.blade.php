@@ -103,7 +103,7 @@
                 <div class="admin-nav__sub" x-show="openGroup === 'system'" x-transition x-cloak>
                     <a href="{{ route('admin.users.index') }}" class="admin-nav__item {{ $nav('admin.users.*') }}" wire:navigate>Користувачі</a>
                     <a href="{{ route('admin.settings.index') }}" class="admin-nav__item {{ $nav('admin.settings.*') }}" wire:navigate>Налаштування</a>
-                    <a href="{{ route('admin.site-settings.index') }}" class="admin-nav__item {{ $nav('admin.site-settings.*') }}" wire:navigate>Налаштування сайту</a>
+                    <a href="{{ route('admin.site-settings.index') }}" class="admin-nav__item {{ $nav('admin.site-settings.*') }}" wire:navigate>Слайдер головної</a>
                     <a href="{{ route('admin.security.index') }}" class="admin-nav__item {{ $nav('admin.security.*') }}" wire:navigate>Безпека</a>
                 </div>
             </div>
