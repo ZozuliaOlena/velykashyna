@@ -122,33 +122,84 @@
     </div>
 </section>
 
+{{-- ================== РЕБРЕНДИНГ (слайдер до/після) ========= --}}
+@php($rebrandPoints = [
+['t' => 'Новий вигляд', 'svg' => '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>'],
+['t' => 'Новий сайт', 'svg' => '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'],
+['t' => 'Ті самі люди', 'svg' => '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'],
+['t' => 'Ті самі цінності', 'svg' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'],
+])
+<section class="section rebrand">
+    <div class="container">
+        <div class="section-head about-center" data-aos="fade-up">
+            <div>
+                <span class="about-kicker">{{ $years }} років розвитку</span>
+                <h2 class="section-title">Оновились зовні — <span>лишились собою</span></h2>
+                <p class="about-sub">Новий сайт і сучасний вигляд — та сама команда, досвід і цінності з {{ $foundedYear }} року.</p>
+            </div>
+        </div>
+
+        {{-- Інтерактивний слайдер «до / після» --}}
+        <div class="ba" x-data="logoReveal()" x-ref="frame" data-aos="fade-up"
+            @pointerdown="down($event)" @pointermove="moveTo($event)"
+            @pointerup="up()" @pointerleave="up()" @pointercancel="up()">
+
+            {{-- Нове лого — базовий шар --}}
+            <div class="ba__pane ba__pane--new">
+                <img src="/images/logo.png" alt="Нове лого Велика Шина" draggable="false" loading="lazy" />
+                <span class="ba__tag ba__tag--new">Нове · {{ now()->year }}</span>
+            </div>
+
+            {{-- Старе лого — верхній шар, обрізається повзунком --}}
+            <div class="ba__pane ba__pane--old" :style="`clip-path: inset(0 ${100 - pos}% 0 0)`">
+                <img src="/images/old-logo.png" alt="Старе лого Велика Шина" draggable="false" loading="lazy" />
+                <span class="ba__tag ba__tag--old">Старе · {{ $foundedYear }}</span>
+            </div>
+
+            {{-- Роздільник + ручка --}}
+            <div class="ba__divider" :style="`left: ${pos}%`">
+                <span class="ba__handle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m9 7-5 5 5 5" /><path d="m15 7 5 5-5 5" />
+                    </svg>
+                </span>
+            </div>
+        </div>
+
+        {{-- Що змінилось / що лишилось --}}
+        <ul class="rebrand__points" data-aos="fade-up">
+            @foreach ($rebrandPoints as $p)
+            <li>
+                <span class="rebrand__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{!! $p['svg'] !!}</svg>
+                </span>
+                {{ $p['t'] }}
+            </li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+
 {{-- ================== ЛІЧИЛЬНИК ДОСВІДУ ====================== --}}
 @include('partials.experience-counter')
 
 {{-- =============== ЧОМУ ОБИРАЮТЬ ВЕЛИКУ ШИНУ ================= --}}
 @php($values = [
-['t' => 'Досвід з ' . $foundedYear . ' року', 'd' => 'Понад ' . $years . ' років у шинному бізнесі. Знаємо шини та техніку не з каталогу, а з реальної практики.', 'svg' => '
-<path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z" />'],
-['t' => 'Широкий вибір', 'd' => 'Шини, камери та диски під різну техніку — від світових брендів до робочих бюджетних рішень.', 'svg' => '
+['t' => $years . ' років досвіду', 'd' => 'Працюємо в агро, індустрії та з вантажною технікою. Нам довіряють з ' . $foundedYear . ' року.', 'svg' => '
+<circle cx="12" cy="8" r="6" />
+<path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5" />'],
+['t' => 'Великий асортимент', 'd' => 'Шини, камери та диски під різну техніку — від світових брендів до робочих бюджетних рішень.', 'svg' => '
 <rect x="3" y="3" width="7" height="7" />
 <rect x="14" y="3" width="7" height="7" />
 <rect x="14" y="14" width="7" height="7" />
 <rect x="3" y="14" width="7" height="7" />'],
-['t' => 'Експертний підбір', 'd' => 'Підбираємо шину під конкретну техніку та задачу, а не просто «за розміром». Радимо те, що дійсно працює.', 'svg' => '
-<circle cx="12" cy="12" r="10" />
-<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-<line x1="12" y1="17" x2="12.01" y2="17" />'],
-['t' => 'Наявність і доставка', 'd' => 'Ходові розміри тримаємо в наявності, решту — оперативно привозимо. Доставка по всій Україні.', 'svg' => '
-<rect x="1" y="3" width="15" height="13" />
-<polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-<circle cx="5.5" cy="18.5" r="2.5" />
-<circle cx="18.5" cy="18.5" r="2.5" />'],
-['t' => 'Оригінальна продукція', 'd' => 'Офіційні поставки та оригінальні шини з гарантією від виробника. Жодних сумнівних аналогів.', 'svg' => '
+['t' => 'Власний склад', 'd' => 'Ходові розміри тримаємо в наявності — швидка доставка по всій Україні.', 'svg' => '
+<path d="M3 21V8l9-5 9 5v13" />
+<path d="M9 21v-7h6v7" />
+<line x1="2" y1="21" x2="22" y2="21" />'],
+['t' => 'Якісний сервіс', 'd' => 'Проконсультуємо та допоможемо замовити. Самі користуємось технікою — тож знаємо, що радимо.', 'svg' => '
 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
 <polyline points="9 12 11 14 15 10" />'],
-['t' => 'Чесність і підтримка', 'd' => 'Супроводжуємо до, під час і після покупки. Цінуємо клієнтів, які працюють з нами роками.', 'svg' => '
-<path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-<path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />'],
 ])
 <section class="section">
     <div class="container">
@@ -173,37 +224,33 @@
 </section>
 
 {{-- =============== БРЕНДИ, ЯКІ МИ ПОСТАЧАЄМО ================= --}}
-@php($brandsWall = ['Michelin', 'Continental', 'BKT', 'Trelleborg', 'Mitas', 'Galaxy', 'Alliance', 'Nexen', 'Rovelo', 'Kenda'])
-@php($brandsRev = array_reverse($brandsWall))
+@php($brandLogos = [
+['name' => 'Michelin', 'img' => 'michelin.png'],
+['name' => 'BKT', 'img' => 'BKTlogo.jpg'],
+['name' => 'Mitas', 'img' => 'mitas.png'],
+['name' => 'Alliance', 'img' => 'alliance.png'],
+['name' => 'Trelleborg', 'img' => 'Trelleborg.svg'],
+['name' => 'Ceat', 'img' => 'Ceat.jpg'],
+['name' => 'Kabat', 'img' => 'kabat.jpg'],
+])
 <section class="section about-brands-sec">
     <div class="container">
         <div class="section-head about-center" data-aos="fade-up">
             <div>
                 <span class="about-kicker">Офіційні поставки</span>
-                <h2 class="section-title">Бренди, яким <span>довіряють</span> аграрії</h2>
+                <h2 class="section-title">Працюємо з провідними <span>світовими брендами</span></h2>
                 <p class="about-sub">Працюємо напряму зі світовими виробниками шин. Лише оригінальна продукція — жодних сумнівних аналогів.</p>
             </div>
         </div>
-    </div>
 
-    <div class="about-brands">
-        <div class="about-brands__row">
-            <div class="about-brands__track">
-                @foreach (array_merge($brandsWall, $brandsWall) as $b)
-                <span class="about-brand">{{ $b }}</span>
-                @endforeach
-            </div>
+        <div class="about-logos" data-aos="fade-up">
+            @foreach ($brandLogos as $b)
+            <span class="about-logo">
+                <img src="/images/company-logo/{{ $b['img'] }}" alt="{{ $b['name'] }}" loading="lazy" />
+            </span>
+            @endforeach
         </div>
-        <div class="about-brands__row">
-            <div class="about-brands__track about-brands__track--rev">
-                @foreach (array_merge($brandsRev, $brandsRev) as $b)
-                <span class="about-brand">{{ $b }}</span>
-                @endforeach
-            </div>
-        </div>
-    </div>
 
-    <div class="container">
         <div class="about-brands__note" data-aos="fade-up">
             @foreach (['Офіційний постачальник', 'Оригінальна продукція', 'Гарантія від виробника'] as $note)
             <span>
@@ -219,10 +266,10 @@
 
 {{-- ==================== ЯК МИ ПРАЦЮЄМО ======================= --}}
 @php($steps = [
-['t' => 'Заявка або дзвінок', 'd' => 'Ви називаєте типорозмір (напр. 800/65R32) або просто свою техніку.'],
-['t' => 'Підбір', 'd' => 'Наші спеціалісти підбирають оптимальний варіант під ваші умови та бюджет.'],
-['t' => 'Наявність і ціна', 'd' => 'Перевіряємо склад, узгоджуємо ціну та умови оплати й доставки.'],
-['t' => 'Доставка', 'd' => 'Відправляємо по всій Україні. Залишаємось на зв\'язку після покупки.'],
+['t' => 'Заявка або дзвінок', 'd' => 'Ви називаєте типорозмір (напр. 800/65R32) або просто свою техніку.', 'svg' => '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'],
+['t' => 'Підбір', 'd' => 'Наші спеціалісти підбирають оптимальний варіант під ваші умови та бюджет.', 'svg' => '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'],
+['t' => 'Наявність і ціна', 'd' => 'Перевіряємо склад, узгоджуємо ціну та умови оплати й доставки.', 'svg' => '<path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>'],
+['t' => 'Доставка', 'd' => 'Відправляємо по всій Україні. Залишаємось на зв\'язку після покупки.', 'svg' => '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'],
 ])
 <section class="section about-steps-sec">
     <div class="container">
@@ -236,6 +283,9 @@
             @foreach ($steps as $i => $s)
             <div class="about-step" data-aos="fade-up" data-aos-delay="{{ $i * 70 }}">
                 <span class="about-step__num">{{ $i + 1 }}</span>
+                <span class="about-step__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{!! $s['svg'] !!}</svg>
+                </span>
                 <h3 class="about-step__title">{{ $s['t'] }}</h3>
                 <p class="about-step__text">{{ $s['d'] }}</p>
             </div>
@@ -271,7 +321,14 @@
 </section>
 
 {{-- ===================== ГАЛЕРЕЯ РОБІТ ======================= --}}
-@php($gallery = ['portfolio3.jpg', 'portfolio7.jpg', 'portfolio4.jpg', 'portfolio9.jpg', 'portfolio6.jpg', 'portfolio8.jpg'])
+@php($gallery = [
+['img' => 'portfolio3.jpg', 'cap' => 'Склад великогабаритних шин'],
+['img' => 'portfolio7.jpg', 'cap' => 'Відвантаження клієнту'],
+['img' => 'portfolio4.jpg', 'cap' => 'Асортимент у наявності'],
+['img' => 'portfolio9.jpg', 'cap' => 'Робота з технікою'],
+['img' => 'portfolio6.jpg', 'cap' => 'Готово до відправлення'],
+['img' => 'portfolio8.jpg', 'cap' => 'Щоденна робота складу'],
+])
 <section class="section" x-data="{ open: false, src: '' }">
     <div class="container">
         <div class="section-head about-center" data-aos="fade-up">
@@ -283,18 +340,16 @@
         </div>
 
         <div class="about-gallery">
-            @foreach ($gallery as $i => $img)
+            @foreach ($gallery as $i => $g)
             <button type="button" class="about-gallery__item" data-aos="zoom-in" data-aos-delay="{{ $i % 3 * 70 }}"
-                @click="src = '/images/about/{{ $img }}'; open = true">
-                <img src="/images/about/{{ $img }}" alt="Велика Шина — фото {{ $i + 1 }}" loading="lazy" />
+                @click="src = '/images/about/{{ $g['img'] }}'; open = true">
+                <img src="/images/about/{{ $g['img'] }}" alt="{{ $g['cap'] }}" loading="lazy" />
                 <span class="about-gallery__zoom">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                        <line x1="11" y1="8" x2="11" y2="14" />
-                        <line x1="8" y1="11" x2="14" y2="11" />
+                        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
                     </svg>
                 </span>
+                <span class="about-gallery__cap">{{ $g['cap'] }}</span>
             </button>
             @endforeach
         </div>
@@ -310,6 +365,74 @@
             </svg>
         </button>
         <img :src="src" alt="" @click.stop />
+    </div>
+</section>
+
+{{-- ==================== НАШ ПІДХІД =========================== --}}
+@php($approach = [
+['t' => 'Техніка', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/tehnics/tractor.svg\');mask-image:url(\'/images/svg/tehnics/tractor.svg\')"></span>'],
+['t' => 'Завдання', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14l2 2 4-4"/></svg>'],
+['t' => 'Підбір', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>'],
+['t' => 'Результат', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'],
+])
+<section class="section approach-sec">
+    <div class="container">
+        <div class="section-head about-center" data-aos="fade-up">
+            <div>
+                <span class="about-kicker">Наш підхід</span>
+                <h2 class="section-title">Спочатку розуміємо техніку.<br>Потім <span>підбираємо шину</span></h2>
+            </div>
+        </div>
+
+        <div class="approach-flow" data-aos="fade-up">
+            @foreach ($approach as $a)
+            <div class="approach-step">
+                <span class="approach-step__icon">{!! $a['ico'] !!}</span>
+                <span class="approach-step__label">{{ $a['t'] }}</span>
+            </div>
+            @if (! $loop->last)
+            <svg class="approach-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+            @endif
+            @endforeach
+        </div>
+
+        <p class="approach-note">Чесний підбір та індивідуальний підхід з {{ $foundedYear }} року</p>
+    </div>
+</section>
+
+{{-- ==================== ЧАСТІ ЗАПИТАННЯ ====================== --}}
+@php($faqs = [
+['q' => 'Чи доставляєте шини, камери та диски?', 'a' => 'Так — відправляємо по всій Україні (Нова Пошта, транспортні компанії, адресна доставка). Ходові розміри тримаємо в наявності, решту оперативно привозимо.'],
+['q' => 'Чи є гарантія на продукцію?', 'a' => 'Так. Ми офіційний постачальник і продаємо лише оригінальну продукцію з гарантією від виробника — жодних сумнівних аналогів.'],
+['q' => 'Чи працюєте з ПДВ?', 'a' => 'Так, працюємо як з ПДВ, так і без. Для юридичних осіб оформлюємо всі необхідні документи.'],
+['q' => 'Чи можна отримати консультацію телефоном або в месенджерах?', 'a' => 'Звісно. Телефонуйте або пишіть у Viber / Telegram / WhatsApp — підкажемо розмір і підберемо шину під вашу техніку.'],
+])
+<section class="section faq-sec">
+    <div class="container">
+        <div class="section-head about-center" data-aos="fade-up">
+            <div>
+                <span class="about-kicker">FAQ</span>
+                <h2 class="section-title">Часті <span>запитання</span></h2>
+            </div>
+        </div>
+
+        <div class="faq" x-data="{ open: 0 }" data-aos="fade-up">
+            @foreach ($faqs as $i => $f)
+            <div class="faq-item" :class="{ 'is-open': open === {{ $i }} }">
+                <button type="button" class="faq-q" @click="open = open === {{ $i }} ? null : {{ $i }}">
+                    <span>{{ $f['q'] }}</span>
+                    <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </button>
+                <div class="faq-a">
+                    <p>{{ $f['a'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
     </div>
 </section>
 

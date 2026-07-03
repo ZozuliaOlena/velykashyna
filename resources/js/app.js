@@ -155,11 +155,31 @@ document.addEventListener('alpine:init', () => {
      * Повноекранний hero-слайдер (відео/зображення) з автопрогортанням.
      * Грає лише активне відео, решта — на паузі.
      */
+    // Нескінченна карусель. У DOM стрічка з клонами:
+    // [клон останнього][реальні 0..n-1][клон першого]. pos — позиція у стрічці.
+    // Доїжджаємо на клон плавно, потім миттєво (noAnim) стрибаємо на реальний
+    // слайд — стик непомітний, тож немає ні чорного екрана, ні ривка.
     Alpine.data('heroSlider', (slides) => ({
         slides,
-        active: 0,
+        pos: 1,
+        dx: 0,
+        dragging: false,
+        noAnim: false,
+        _startX: 0,
         timer: null,
+        get n() {
+            return this.slides.length;
+        },
+        get looped() {
+            return this.n > 1;
+        },
+        // Логічний індекс активного слайда (для тексту/прогрес-барів).
+        get active() {
+            if (!this.looped) return 0;
+            return ((this.pos - 1) % this.n + this.n) % this.n;
+        },
         init() {
+            this.pos = this.looped ? 1 : 0;
             this.$nextTick(() => this.playActive());
             this.start();
         },
@@ -170,23 +190,67 @@ document.addEventListener('alpine:init', () => {
         stop() {
             if (this.timer) clearInterval(this.timer);
         },
-        next() {
-            this.active = (this.active + 1) % this.slides.length;
+        trackStyle() {
+            const base = -this.pos * 100;
+            const t = (this.dragging || this.noAnim) ? ' transition:none;' : '';
+            return `transform: translateX(calc(${base}% + ${this.dx}px));${t}`;
+        },
+        _snap(pos) {
+            this.noAnim = true;
+            this.pos = pos;
             this.playActive();
+            requestAnimationFrame(() => requestAnimationFrame(() => { this.noAnim = false; }));
+        },
+        next() {
+            if (!this.looped) return;
+            this.pos++;
+            this.playActive();
+            if (this.pos === this.n + 1) {
+                // з'їхали на клон першого — після переходу стрибаємо на реальний перший
+                setTimeout(() => { if (this.pos === this.n + 1) this._snap(1); }, 520);
+            }
+        },
+        prev() {
+            if (!this.looped) return;
+            this.pos--;
+            this.playActive();
+            if (this.pos === 0) {
+                setTimeout(() => { if (this.pos === 0) this._snap(this.n); }, 520);
+            }
         },
         go(i) {
-            this.active = i;
+            this.pos = this.looped ? i + 1 : 0;
             this.playActive();
             this.start();
         },
+        // Перетягування мишею/пальцем — стрічка їде за вказівником.
+        dragStart(e) {
+            this._startX = e.clientX;
+            this.dragging = true;
+            this.dx = 0;
+            this.stop();
+            try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+        },
+        dragMove(e) {
+            if (this.dragging) this.dx = e.clientX - this._startX;
+        },
+        dragEnd() {
+            if (!this.dragging) return;
+            this.dragging = false;
+            const dx = this.dx;
+            this.dx = 0;
+            if (Math.abs(dx) > 60) {
+                dx < 0 ? this.next() : this.prev();
+            }
+            this.start();
+        },
         playActive() {
-            // Відтворюємо відео активного слайда, решту ставимо на паузу.
-            // Кількість слайдів довільна (керується з адмінки), тож шукаємо
-            // <video> у кожному .hs-slide за індексом, а не за фіксованим ref.
+            // Відтворюємо відео слайда, що зараз у кадрі (за DOM-позицією pos,
+            // включно з клонами), решту ставимо на паузу.
             this.$root.querySelectorAll('.hs-slide').forEach((el, i) => {
                 const v = el.querySelector('video');
                 if (!v) return;
-                if (i === this.active) {
+                if (i === this.pos) {
                     try {
                         v.currentTime = 0;
                         const p = v.play();
@@ -204,6 +268,28 @@ document.addEventListener('alpine:init', () => {
      * зберігаються у localStorage, щоб не скидались під час пагінації
      * (повне перезавантаження сторінки). filtersOpen (моб. шторка) — ні.
      */
+    // Слайдер «до / після» для логотипу (перетягуй роздільник).
+    Alpine.data('logoReveal', () => ({
+        pos: 50,
+        drag: false,
+        setFrom(e) {
+            const r = this.$refs.frame.getBoundingClientRect();
+            const p = ((e.clientX - r.left) / r.width) * 100;
+            this.pos = Math.min(100, Math.max(0, p));
+        },
+        down(e) {
+            this.drag = true;
+            this.setFrom(e);
+            try { this.$refs.frame.setPointerCapture(e.pointerId); } catch (_) {}
+        },
+        moveTo(e) {
+            if (this.drag) this.setFrom(e);
+        },
+        up() {
+            this.drag = false;
+        },
+    }));
+
     Alpine.data('catalogUi', () => ({
         filtersOpen: false,
         view: localStorage.getItem('catalogView') === 'list' ? 'list' : 'grid',
@@ -753,23 +839,58 @@ document.addEventListener('alpine:init', () => {
         years: 0,
         days: '0',
         hours: '0',
+        _started: false,
         init() {
-            this.tick();
-            setInterval(() => this.tick(), 1000);
+            // Ефект: числа «набігають» від 0, коли блок з'являється у в'юпорті,
+            // після чого продовжують оновлюватись щосекунди.
+            if (!('IntersectionObserver' in window)) {
+                this.startTick();
+                return;
+            }
+            const io = new IntersectionObserver((entries) => {
+                if (!this._started && entries.some((e) => e.isIntersecting)) {
+                    this._started = true;
+                    io.disconnect();
+                    this.countUp();
+                }
+            }, { threshold: 0.3 });
+            io.observe(this.$el);
         },
-        tick() {
+        target() {
             const start = new Date(startIso);
             const now = new Date();
             const ms = Math.max(0, now - start);
-
             let years = now.getFullYear() - start.getFullYear();
             const anniversary = new Date(start);
             anniversary.setFullYear(start.getFullYear() + years);
             if (anniversary > now) years -= 1;
-
-            this.years = years;
-            this.days = this.fmt(Math.floor(ms / 86400000));
-            this.hours = this.fmt(Math.floor(ms / 3600000));
+            return { years, days: Math.floor(ms / 86400000), hours: Math.floor(ms / 3600000) };
+        },
+        countUp() {
+            const t = this.target();
+            const dur = 1400;
+            const t0 = performance.now();
+            const ease = (x) => 1 - Math.pow(1 - x, 3);
+            const step = (now) => {
+                const k = Math.min(1, (now - t0) / dur);
+                const e = ease(k);
+                this.years = Math.round(t.years * e);
+                this.days = this.fmt(Math.round(t.days * e));
+                this.hours = this.fmt(Math.round(t.hours * e));
+                if (k < 1) requestAnimationFrame(step);
+                else this.startTick();
+            };
+            requestAnimationFrame(step);
+        },
+        startTick() {
+            this.tick();
+            setInterval(() => this.tick(), 1000);
+        },
+        tick() {
+            const t = this.target();
+            this.years = t.years;
+            this.days = this.fmt(t.days);
+            this.hours = this.fmt(t.hours);
         },
         fmt(n) {
             return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');

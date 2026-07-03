@@ -26,14 +26,20 @@
     ['title' => 'ВЕЛИКІ ПРОФІ', 'subtitle' => 'підбираємо правильні шини', 'type' => 'image', 'src' => '/images/details/slide3.png'],
 ])
 <section class="hero-slider" x-data="heroSlider(@js(array_map(fn ($s) => ['title' => $s['title'] ?? '', 'subtitle' => $s['subtitle'] ?? ''], $slides)))"
-    @mouseenter="stop()" @mouseleave="start()">
-    <div class="hs-bg">
-        @foreach($slides as $i => $s)
-            <div class="hs-slide" :class="{ active: active === {{ $i }} }">
+    @mouseenter="stop()" @mouseleave="start()"
+    @pointerdown="dragStart($event)" @pointermove="dragMove($event)" @pointerup="dragEnd($event)" @pointercancel="dragEnd($event)">
+    {{-- Стрічка з клонами для безшовного циклу: [клон останнього][реальні][клон першого] --}}
+    @php($sv = array_values($slides))
+    @php($loop = count($sv) > 1 ? array_merge([$sv[count($sv) - 1]], $sv, [$sv[0]]) : $sv)
+    <div class="hs-bg" :style="trackStyle()" @if(count($sv) > 1) style="transform:translateX(-100%)" @endif>
+        @foreach($loop as $s)
+            <div class="hs-slide">
                 @if(($s['type'] ?? 'image') === 'youtube' && ! empty($s['src']))
                     <iframe class="hs-media" tabindex="-1" frameborder="0" allow="autoplay; encrypted-media"
                         style="pointer-events:none; border:0"
-                        src="https://www.youtube.com/embed/{{ $s['src'] }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $s['src'] }}&playsinline=1&modestbranding=1&rel=0&showinfo=0"></iframe>
+                        src="https://www.youtube.com/embed/{{ $s['src'] }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $s['src'] }}&playsinline=1&modestbranding=1&rel=0&showinfo=0&cc_load_policy=0&iv_load_policy=3&disablekb=1&fs=0"></iframe>
+                    {{-- Обкладинка (превью YouTube) ховає стартовий хром плеєра, поки відео не почалось; далі зникає. --}}
+                    <span class="hs-yt-cover" style="background-image:url('https://i.ytimg.com/vi/{{ $s['src'] }}/maxresdefault.jpg')"></span>
                 @elseif(($s['type'] ?? 'image') === 'video' && ! empty($s['src']))
                     <video class="hs-media" muted loop playsinline preload="none" @if(! empty($s['poster'])) poster="{{ $s['poster'] }}" @endif>
                         <source src="{{ $s['src'] }}" type="video/mp4" />
