@@ -20,6 +20,31 @@ class SettingIndex extends Component
     public string $key = '';
     public ?string $value = null;
 
+    // ── Google Аналітика та реклама ──────────────────────────────
+    public ?string $gaId = null;         // GA4 Measurement ID (G-XXXX)
+    public ?string $gtmId = null;        // Google Tag Manager (GTM-XXXX)
+    public ?string $adsId = null;        // Google Ads (AW-XXXX)
+    public ?string $trackingHead = null; // будь-який код у <head> (можна вставити цілий скрипт)
+
+    public function mount(): void
+    {
+        $this->gaId         = Setting::get('ga_measurement_id');
+        $this->gtmId        = Setting::get('gtm_container_id');
+        $this->adsId        = Setting::get('google_ads_id');
+        $this->trackingHead = Setting::get('tracking_head_code');
+    }
+
+    /** Зберегти налаштування аналітики/реклами (порожнє поле — очищає ключ). */
+    public function saveAnalytics(): void
+    {
+        Setting::set('ga_measurement_id', trim((string) $this->gaId) ?: null);
+        Setting::set('gtm_container_id', trim((string) $this->gtmId) ?: null);
+        Setting::set('google_ads_id', trim((string) $this->adsId) ?: null);
+        Setting::set('tracking_head_code', $this->trackingHead ?: null);
+
+        session()->flash('success', 'Налаштування аналітики збережено');
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -68,7 +93,9 @@ class SettingIndex extends Component
 
     public function delete(string $key): void
     {
-        Setting::where('key', $key)->delete();
+        // find()->delete() (а не масовий where-delete) — щоб спрацював подієвий
+        // хук моделі й скинув кеш налаштувань у пам'яті запиту.
+        Setting::find($key)?->delete();
         session()->flash('success', 'Видалено');
     }
 

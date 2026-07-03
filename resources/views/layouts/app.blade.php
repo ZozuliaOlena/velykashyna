@@ -18,10 +18,18 @@
 
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 
+    @include('partials.analytics')
+
     @stack('head')
 </head>
 
 <body>
+    @php($gtmId = trim((string) \App\Models\Setting::get('gtm_container_id')))
+    @if($gtmId)
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ $gtmId }}"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    @endif
+
     @include('partials.header')
     @include('partials.mobile-menu')
 
