@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
 use App\Models\Product;
+use App\Services\TelegramNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -91,6 +92,9 @@ class LeadController extends Controller
             return $lead;
         });
 
+        // Сповіщення в Telegram (не блокує відповідь — помилки лише в лог).
+        app(TelegramNotifier::class)->notifyNewLead($lead);
+
         return response()->json([
             'ok'          => true,
             'lead_id'     => $lead->id,
@@ -122,6 +126,8 @@ class LeadController extends Controller
             'status'           => 'new',
             'source'           => 'consultation',
         ]);
+
+        app(TelegramNotifier::class)->notifyNewLead($lead);
 
         return response()->json([
             'ok'      => true,
