@@ -43,6 +43,9 @@
                     </svg>
                     <div>
                         <a href="tel:{{ $c['phone_href'] }}" class="fc-strong">{{ $c['phone'] }}</a>
+                        @if(!empty($c['phone2']))
+                            <a href="tel:{{ $c['phone2_href'] }}" class="fc-strong">{{ $c['phone2'] }}</a>
+                        @endif
                         <div class="fc-note">Ми на зв'язку 24/7</div>
                     </div>
                 </div>

@@ -6,7 +6,8 @@
 
 @php($c = config('site.contacts'))
 @php($socials = config('site.socials'))
-@php($mapQuery = "пров. В'ячеслава Чорновола, 54а, Київ, 08132")
+@php($mapQuery = $c['map_query'] ?? $c['address'])
+@php($mapEmbed = $c['map_embed'] ?? null)
 
 @section('content')
 <section class="section contacts-page">
@@ -45,6 +46,9 @@
                     <div class="contact-card__body">
                         <span class="contact-card__label">Телефон</span>
                         <span class="contact-card__value">{{ $c['phone'] }}</span>
+                        @if(!empty($c['phone2']))
+                            <span class="contact-card__value">{{ $c['phone2'] }}</span>
+                        @endif
                         <span class="contact-card__note">Телефонуйте будь-коли — ми на зв'язку 24/7</span>
                     </div>
                 </a>
@@ -169,12 +173,13 @@
 
     {{-- КАРТА --}}
     <div class="container">
+        @if($mapEmbed)
         <div class="contacts-map" data-aos="fade-up">
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d81394.49698227287!2d30.419900329908486!3d50.3930642649235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4c96e0f33485f%3A0x84d853a4a16a3092!2sVelyka%20Shyna!5e0!3m2!1sru!2sde!4v1782401549123!5m2!1sru!2sde"
+            <iframe src="{{ $mapEmbed }}"
                 title="Велика Шина на мапі" loading="lazy" allowfullscreen
                 referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
+        @endif
     </div>
 </section>
 @endsection
