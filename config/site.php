@@ -42,14 +42,16 @@ return [
         ['days' => 'Нд', 'hours' => 'вихідний'],
     ],
 
+    // Порожнє (null) — посилання не показується на сайті.
+    // Реальні значення задаються в адмінці («Контакти сайту»).
     'socials' => [
-        'facebook' => '#',
-        'instagram' => '#',
-        'youtube' => '#',
-        'tiktok' => '#',
-        'telegram' => '#',
-        'viber' => '#',
-        'whatsapp' => '#',
+        'facebook' => null,
+        'instagram' => null,
+        'youtube' => null,
+        'tiktok' => null,
+        'telegram' => null,
+        'viber' => null,
+        'whatsapp' => null,
     ],
 
     // Маркетингова статистика для головної сторінки.

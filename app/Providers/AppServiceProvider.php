@@ -98,11 +98,14 @@ class AppServiceProvider extends ServiceProvider
             config(['site.contacts.map_embed' => $me]);
         }
 
-        foreach (['facebook', 'instagram', 'youtube', 'tiktok', 'telegram', 'viber', 'whatsapp'] as $soc) {
-            if ($link = $val("social_{$soc}")) {
-                config(["site.socials.{$soc}" => $link]);
-            }
+        // Соцмережі: значення з адмінки перекриває дефолт; порожнє або "#"
+        // нормалізуємо до null — щоб порожнє посилання не показувалось на сайті.
+        $socials = (array) config('site.socials', []);
+        foreach (array_keys($socials) as $soc) {
+            $link = $val("social_{$soc}") ?? $socials[$soc];
+            $socials[$soc] = ($link && $link !== '#') ? $link : null;
         }
+        config(['site.socials' => $socials]);
     }
 
     private function catalogMenu(): array
