@@ -42,6 +42,16 @@ class Product extends Model implements HasMedia
         'rim_diameter' => 'decimal:2',
     ];
 
+    protected static function booted(): void
+    {
+        // Тримаємо size_digits синхронізованим — лише цифри з типорозміру.
+        static::saving(function (self $product) {
+            $product->size_digits = $product->size_raw
+                ? (preg_replace('/\D+/', '', $product->size_raw) ?: null)
+                : null;
+        });
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         // Авто-генерація з назви лише при створенні (якщо slug не заданий явно).
@@ -319,6 +329,10 @@ class Product extends Model implements HasMedia
         return $query->where(function ($outer) use ($words) {
             foreach ($words as $word) {
                 $norm = mb_strtolower(str_replace([' ', '-'], '', $word));
+                // Лише цифри — для пошуку типорозміру, стійкого до розділювачів
+                // (/, R, VF-префікс, пробіли, дефіси): «VF270/95R32», «270-95-32»,
+                // «270 95 32», «2709532», «vf2709532» → «2709532».
+                $digits = preg_replace('/\D+/', '', $word);
 
                 // Тип за стемом («шини» → tire тощо).
                 $typeCodes = [];
@@ -329,7 +343,7 @@ class Product extends Model implements HasMedia
                 }
                 $typeCodes = array_keys($typeCodes);
 
-                $outer->where(function ($w) use ($word, $norm, $typeCodes) {
+                $outer->where(function ($w) use ($word, $norm, $digits, $typeCodes) {
                     $w->where('sku', 'like', "%{$word}%")
                         ->orWhere('model', 'like', "%{$word}%")
                         ->orWhere('load_speed_index', 'like', "%{$word}%")
@@ -346,6 +360,11 @@ class Product extends Model implements HasMedia
                                 $t->orWhereIn('code', $typeCodes);
                             }
                         });
+
+                    // Розмір «лише цифрами» (окрема нормалізована колонка).
+                    if (strlen($digits) >= 2) {
+                        $w->orWhere('size_digits', 'like', "%{$digits}%");
+                    }
                 });
             }
         });
