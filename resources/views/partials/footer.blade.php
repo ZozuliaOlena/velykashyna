@@ -43,6 +43,9 @@
                     </svg>
                     <div>
                         <a href="tel:{{ $c['phone_href'] }}" class="fc-strong">{{ $c['phone'] }}</a>
+                        @if(!empty($c['phone2']))
+                            <a href="tel:{{ $c['phone2_href'] }}" class="fc-strong">{{ $c['phone2'] }}</a>
+                        @endif
                         <div class="fc-note">Ми на зв'язку 24/7</div>
                     </div>
                 </div>
@@ -91,10 +94,13 @@
                 <div class="fcol-title">Контакти</div>
                 <ul>
                     <li><a href="tel:{{ $c['phone_href'] }}">{{ $c['phone'] }}</a></li>
+                    @if(!empty($c['phone2']))
+                    <li><a href="tel:{{ $c['phone2_href'] }}">{{ $c['phone2'] }}</a></li>
+                    @endif
                     <li><a href="mailto:{{ $c['email'] }}">{{ $c['email'] }}</a></li>
-                    <li><a href="{{ config('site.socials.telegram') }}">Telegram</a></li>
-                    <li><a href="{{ config('site.socials.viber') }}">Viber</a></li>
-                    <li><a href="{{ config('site.socials.whatsapp') }}">WhatsApp</a></li>
+                    @if(config('site.socials.telegram'))<li><a href="{{ config('site.socials.telegram') }}">Telegram</a></li>@endif
+                    @if(config('site.socials.viber'))<li><a href="{{ config('site.socials.viber') }}">Viber</a></li>@endif
+                    @if(config('site.socials.whatsapp'))<li><a href="{{ config('site.socials.whatsapp') }}">WhatsApp</a></li>@endif
                 </ul>
             </div>
 
@@ -157,12 +163,13 @@
                     'Гарантія' => route('pages.warranty'),
                     'Політика конфіденційності' => route('pages.privacy'),
                 ],
-                'Контакти' => [
+                'Контакти' => array_filter([
                     $c['phone'] => 'tel:' . $c['phone_href'],
+                    ($c['phone2'] ?? '') => $c['phone2'] ? 'tel:' . $c['phone2_href'] : null,
                     $c['email'] => 'mailto:' . $c['email'],
                     'Telegram' => config('site.socials.telegram'),
                     'Viber' => config('site.socials.viber'),
-                ],
+                ]),
             ])
             @foreach ($accordions as $title => $links)
                 <div class="fm-accordion" x-data="{ open: false }">

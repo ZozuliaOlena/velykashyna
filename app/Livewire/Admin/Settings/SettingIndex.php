@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Settings;
 
 use App\Models\Setting;
 use App\Livewire\Concerns\WithAdminToast;
+use App\Services\TelegramNotifier;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -26,12 +27,42 @@ class SettingIndex extends Component
     public ?string $adsId = null;        // Google Ads (AW-XXXX)
     public ?string $trackingHead = null; // будь-який код у <head> (можна вставити цілий скрипт)
 
+    // ── Telegram-сповіщення про заявки ───────────────────────────
+    public ?string $tgBotToken = null;
+    public ?string $tgChatIds = null;    // ID отримувачів (через кому)
+
     public function mount(): void
     {
         $this->gaId         = Setting::get('ga_measurement_id');
         $this->gtmId        = Setting::get('gtm_container_id');
         $this->adsId        = Setting::get('google_ads_id');
         $this->trackingHead = Setting::get('tracking_head_code');
+        $this->tgBotToken   = Setting::get('telegram_bot_token');
+        $this->tgChatIds    = Setting::get('telegram_chat_ids');
+    }
+
+    /** Зберегти налаштування Telegram-сповіщень. */
+    public function saveTelegram(): void
+    {
+        Setting::set('telegram_bot_token', trim((string) $this->tgBotToken) ?: null);
+        Setting::set('telegram_chat_ids', trim((string) $this->tgChatIds) ?: null);
+
+        session()->flash('success', 'Налаштування Telegram збережено');
+    }
+
+    /** Надіслати тестове повідомлення заданим отримувачам. */
+    public function sendTelegramTest(): void
+    {
+        // Спершу зберігаємо, щоб тест ішов за поточними даними форми.
+        $this->saveTelegram();
+
+        $sent = app(TelegramNotifier::class)->sendTest();
+
+        if ($sent > 0) {
+            session()->flash('success', "Тест надіслано (отримувачів: {$sent})");
+        } else {
+            session()->flash('error', 'Не вдалося надіслати. Перевірте токен і ID, і що кожен отримувач написав боту /start.');
+        }
     }
 
     /** Зберегти налаштування аналітики/реклами (порожнє поле — очищає ключ). */

@@ -42,6 +42,42 @@
         </div>
     </fieldset>
 
+    {{-- ── Telegram-сповіщення про заявки ─────────────────────────── --}}
+    <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
+        <legend style="padding:0 8px"><strong>Telegram-сповіщення про заявки</strong></legend>
+        <p style="color:#666; margin:0 0 1rem">
+            Бот надсилатиме повідомлення про кожну нову заявку з сайту — і з кошика, і консультації.
+        </p>
+
+        <div style="margin-bottom:14px">
+            <label>Токен бота</label>
+            <input wire:model="tgBotToken" type="text" style="width:100%" placeholder="1234567890:AA...">
+            @error('tgBotToken') <span style="color:red">{{ $message }}</span> @enderror
+        </div>
+
+        <div>
+            <label>ID отримувачів</label>
+            <textarea wire:model="tgChatIds" rows="2" style="width:100%"
+                placeholder="Напр.: 123456789, 987654321"></textarea>
+            @error('tgChatIds') <span style="color:red">{{ $message }}</span> @enderror
+            <small style="color:#888; display:block">Кілька ID — через кому. Кожному приходитиме сповіщення.</small>
+        </div>
+
+        <div style="margin-top:1rem; display:flex; gap:10px; flex-wrap:wrap">
+            <button wire:click="saveTelegram" data-confirm="Зберегти налаштування Telegram?">Зберегти</button>
+            <button wire:click="sendTelegramTest">Надіслати тест</button>
+        </div>
+
+        <div style="margin-top:1rem; padding:12px 14px; background:#f4f8ff; border:1px solid #cfe0ff; border-radius:8px; font-size:13px; color:#33455f">
+            <strong>Як налаштувати:</strong>
+            <ol style="margin:.4rem 0 0; padding-left:1.2rem">
+                <li>У Telegram напишіть <b>@BotFather</b> → <code>/newbot</code> → отримайте <b>токен</b> і вставте вище.</li>
+                <li>Кожен отримувач має знайти вашого бота й натиснути <b>«Запустити» (/start)</b> — інакше бот не зможе йому написати.</li>
+                <li>Щоб дізнатись свій <b>ID</b>: напишіть боту <b>@userinfobot</b> — він відповість числом. Це і є ID.</li>
+            </ol>
+        </div>
+    </fieldset>
+
     <h2 style="font-size:18px; margin:0 0 .5rem">Інші параметри</h2>
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по ключу...">

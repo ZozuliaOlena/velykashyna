@@ -539,7 +539,7 @@ document.addEventListener('alpine:init', () => {
         async submit() {
             const items = this.$store.cart.items;
             if (!items.length) return;
-            // Валідація контактних даних (телефон «+38» без цифр не пропускаємо).
+            // Телефон обов'язковий — перевіряємо реальні цифри (а не «+38»).
             const digits = this.form.phone.replace(/\D/g, '');
             if (!this.form.name.trim() || digits.length < 10) {
                 this.error = 'Вкажіть імʼя та коректний номер телефону.';
@@ -562,8 +562,13 @@ document.addEventListener('alpine:init', () => {
                         items: items.map((i) => ({ product_id: i.id, qty: i.qty })),
                     }),
                 });
-                if (!res.ok) throw new Error();
-                const data = await res.json();
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    // Показуємо конкретну помилку сервера (напр. про телефон).
+                    this.error = data?.errors?.phone?.[0] || data?.errors?.customer_name?.[0]
+                        || data?.message || 'Не вдалося оформити замовлення. Спробуйте ще раз або зателефонуйте нам.';
+                    return;
+                }
                 this.orderId = data.lead_id;
                 this.sent = true;
                 this.$store.cart.clear();

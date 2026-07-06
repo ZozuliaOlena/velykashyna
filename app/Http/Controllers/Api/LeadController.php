@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
 use App\Models\Product;
+use App\Services\TelegramNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,27 +18,20 @@ use Illuminate\Validation\ValidationException;
  */
 class LeadController extends Controller
 {
-    /**
-     * Правила для телефону: рядок із щонайменше 10 цифр (щоб «+38» без
-     * номера не проходило). Пробіли/дужки/плюс ігноруються при підрахунку.
-     */
-    private function phoneRules(): array
-    {
-        return [
-            'required', 'string', 'max:255',
-            function (string $attribute, mixed $value, \Closure $fail) {
-                if (strlen(preg_replace('/\D/', '', (string) $value)) < 10) {
-                    $fail('Вкажіть коректний номер телефону.');
-                }
-            },
-        ];
-    }
+    // Телефон обов'язковий і має містити щонайменше 10 цифр (реальний номер),
+    // щоб не оформлювали заявку з порожнім чи «+38».
+    private const PHONE_RULES = ['required', 'string', 'max:255', 'regex:/(?:\D*\d){10,}/'];
+
+    private const PHONE_MESSAGES = [
+        'phone.required' => 'Вкажіть номер телефону.',
+        'phone.regex'    => 'Вкажіть коректний номер телефону.',
+    ];
 
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'customer_name'      => ['required', 'string', 'max:255'],
-            'phone'              => $this->phoneRules(),
+            'phone'              => self::PHONE_RULES,
             'contact_method'     => ['nullable', 'string', 'max:255'],
             'city'               => ['nullable', 'string', 'max:255'],
             'delivery_method'    => ['nullable', 'string', 'max:255'],
@@ -47,7 +41,7 @@ class LeadController extends Controller
             'items'              => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'integer'],
             'items.*.qty'        => ['required', 'integer', 'min:1', 'max:1000'],
-        ]);
+        ], self::PHONE_MESSAGES);
 
         // Доставку/оплату зберігаємо окремими полями (нижче), у коментар —
         // лише власне повідомлення клієнта.
@@ -98,6 +92,9 @@ class LeadController extends Controller
             return $lead;
         });
 
+        // Сповіщення в Telegram (не блокує відповідь — помилки лише в лог).
+        app(TelegramNotifier::class)->notifyNewLead($lead);
+
         return response()->json([
             'ok'          => true,
             'lead_id'     => $lead->id,
@@ -115,12 +112,12 @@ class LeadController extends Controller
     {
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
-            'phone'         => $this->phoneRules(),
+            'phone'         => self::PHONE_RULES,
             // Повідомлення клієнта (напр. «Що вас цікавить?»). Приймаємо і
             // 'comment', і 'message' — щоб форму було зручно підключити.
             'comment'       => ['nullable', 'string', 'max:2000'],
             'message'       => ['nullable', 'string', 'max:2000'],
-        ]);
+        ], self::PHONE_MESSAGES);
 
         $lead = Lead::create([
             'customer_name'    => $data['customer_name'],
@@ -129,6 +126,8 @@ class LeadController extends Controller
             'status'           => 'new',
             'source'           => 'consultation',
         ]);
+
+        app(TelegramNotifier::class)->notifyNewLead($lead);
 
         return response()->json([
             'ok'      => true,
