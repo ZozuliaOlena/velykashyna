@@ -5757,6 +5757,16 @@ button {
             font-weight: 600;
             line-height: 1.4;
         }
+
+        // Номери телефонів — окремі посилання (картка може містити два).
+        &--link {
+            align-self: flex-start;
+            transition: color 0.2s ease;
+
+            &:hover {
+                color: $red;
+            }
+        }
     }
 
     &__note {
@@ -5806,73 +5816,44 @@ button {
     }
 }
 
-// --- Месенджери ------------------------------------------------------
-.messengers {
-    display: flex;
-    gap: 10px;
-    margin-top: 4px;
-
-    @media (max-width: $bp-sm) {
-        flex-direction: column;
-    }
-}
-
-.messenger {
-    flex: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    padding: 14px 12px;
-    border-radius: $radius;
-    color: #fff;
-    font-family: $font-head;
-    font-weight: 700;
-    font-size: 14px;
-    transition: filter 0.2s ease, transform 0.2s ease;
-
-    svg {
-        width: 19px;
-        height: 19px;
-    }
-
-    &:hover {
-        filter: brightness(1.07);
-        transform: translateY(-2px);
-    }
-
-    &--tg {
-        background: #2aabee;
-    }
-
-    &--viber {
-        background: #7360f2;
-    }
-
-    &--wa {
-        background: #25d366;
-    }
-}
-
-.contacts-socials {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 4px;
-    flex-wrap: wrap;
+// --- Месенджери та соцмережі -----------------------------------------
+// Однотипні монохромні іконки без фону (Telegram, Viber, WhatsApp,
+// Facebook, YouTube, Instagram) — єдиний стиль, акцент кольором на hover.
+.contact-channels {
+    margin-top: 6px;
 
     &__label {
+        display: block;
         font-family: $font-head;
         font-weight: 700;
         font-size: 12px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         color: $muted;
+        margin-bottom: 14px;
     }
 
-    .footer-socials a {
-        color: $ink;
-        border-color: $line;
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+}
+
+.channel-ico {
+    display: inline-flex;
+    color: $ink;
+    transition: color 0.2s ease, transform 0.2s ease;
+
+    svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    &:hover {
+        color: $red;
+        transform: translateY(-2px);
     }
 }
 
@@ -6149,9 +6130,9 @@ button {
         font-size: 24px;
     }
 
-    // Тип товару у заголовку: для не-шин (диск/камера…) — червоний акцент.
+    // Тип товару у заголовку (диск/камера…) завжди чорний — без червоного акценту.
     &__type.is-accent {
-        color: $red;
+        color: $ink;
     }
 }
 
@@ -6522,6 +6503,8 @@ button {
     &__err {
         color: $red;
         font-size: 13px;
+        text-align: center;
+        padding: 10px 14px 2px;
     }
 
     &__note {
@@ -8444,7 +8427,6 @@ button {
         position: sticky;
         left: 0;
         z-index: 2;
-        background: $bg-soft;
         font-family: $font-head;
         font-weight: 700;
         color: $ink;
@@ -8453,15 +8435,31 @@ button {
 
     &__corner {
         z-index: 3;
+        background: #fff;
     }
 
-    // Підсвічування рядків з відмінностями — нейтральне (без червоного).
-    tr.is-diff td {
+    // Зебра: смуги через рядок на всю ширину (враховуючи липку першу колонку).
+    // Шапка (картки товарів) — біла; далі чергуємо, починаючи з сірого.
+    // Це базовий варіант (без JS / до ініціалізації Alpine).
+    tbody tr:nth-child(odd) > * {
         background: $bg-soft;
     }
 
-    tr.is-diff .compare-table__label {
-        color: $ink;
+    tbody tr:nth-child(even) > * {
+        background: #fff;
+    }
+
+    // Коли активний фільтр «Лише відмінності», приховані рядки випадають, і
+    // nth-child «збивається». Тому смуги перераховує JS за видимими рядками
+    // (клас .is-alt), а тут лише вимикаємо базову зебру на користь JS-версії.
+    &.is-js-zebra {
+        tbody tr > * {
+            background: #fff;
+        }
+
+        tbody tr.is-alt > * {
+            background: $bg-soft;
+        }
     }
 }
 

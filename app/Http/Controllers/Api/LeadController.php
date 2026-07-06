@@ -17,9 +17,9 @@ use Illuminate\Validation\ValidationException;
  */
 class LeadController extends Controller
 {
-    // Телефон обов'язковий і має містити щонайменше 9 цифр (реальний номер),
+    // Телефон обов'язковий і має містити щонайменше 10 цифр (реальний номер),
     // щоб не оформлювали заявку з порожнім чи «+38».
-    private const PHONE_RULES = ['required', 'string', 'max:255', 'regex:/(?:\D*\d){9,}/'];
+    private const PHONE_RULES = ['required', 'string', 'max:255', 'regex:/(?:\D*\d){10,}/'];
 
     private const PHONE_MESSAGES = [
         'phone.required' => 'Вкажіть номер телефону.',
