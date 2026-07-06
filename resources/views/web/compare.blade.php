@@ -1,11 +1,23 @@
 {{-- resources/views/web/compare.blade.php — порівняння шин --}}
 @extends('layouts.app')
 
-@section('title', 'Порівняння шин — Велика Шина')
+@section('title', ($heading ?? 'Порівняння') . ' — Велика Шина')
 
 @section('content')
-<section class="section compare" x-data="{ onlyDiff: false }"
-    x-init="$store.compare.seed(@js($cards))">
+<section class="section compare"
+    x-data="{
+        onlyDiff: false,
+        restripe() {
+            const table = $root.querySelector('.compare-table');
+            if (!table) return;
+            table.classList.add('is-js-zebra');
+            const rows = [...table.querySelectorAll('tbody tr')]
+                .filter(r => r.offsetParent !== null);
+            rows.forEach((r, i) => r.classList.toggle('is-alt', i % 2 === 0));
+        }
+    }"
+    x-init="$store.compare.seed(@js($cards))"
+    x-effect="onlyDiff; $nextTick(() => restripe())">
     <div class="container">
         <nav class="breadcrumbs">
             <a href="{{ route('home') }}">Головна</a>
@@ -14,7 +26,7 @@
         </nav>
 
         <div class="compare__head">
-            <h1 class="page-title">Порівняння шин</h1>
+            <h1 class="page-title">{{ $heading ?? 'Порівняння' }}</h1>
             @if ($products->isNotEmpty())
             <label class="compare__toggle">
                 <input type="checkbox" x-model="onlyDiff">

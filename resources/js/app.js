@@ -539,6 +539,12 @@ document.addEventListener('alpine:init', () => {
         async submit() {
             const items = this.$store.cart.items;
             if (!items.length) return;
+            // Валідація контактних даних (телефон «+38» без цифр не пропускаємо).
+            const digits = this.form.phone.replace(/\D/g, '');
+            if (!this.form.name.trim() || digits.length < 10) {
+                this.error = 'Вкажіть імʼя та коректний номер телефону.';
+                return;
+            }
             this.error = '';
             this.loading = true;
             try {

@@ -17,11 +17,27 @@ use Illuminate\Validation\ValidationException;
  */
 class LeadController extends Controller
 {
+    /**
+     * Правила для телефону: рядок із щонайменше 10 цифр (щоб «+38» без
+     * номера не проходило). Пробіли/дужки/плюс ігноруються при підрахунку.
+     */
+    private function phoneRules(): array
+    {
+        return [
+            'required', 'string', 'max:255',
+            function (string $attribute, mixed $value, \Closure $fail) {
+                if (strlen(preg_replace('/\D/', '', (string) $value)) < 10) {
+                    $fail('Вкажіть коректний номер телефону.');
+                }
+            },
+        ];
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'customer_name'      => ['required', 'string', 'max:255'],
-            'phone'              => ['required', 'string', 'max:255'],
+            'phone'              => $this->phoneRules(),
             'contact_method'     => ['nullable', 'string', 'max:255'],
             'city'               => ['nullable', 'string', 'max:255'],
             'delivery_method'    => ['nullable', 'string', 'max:255'],
@@ -99,7 +115,7 @@ class LeadController extends Controller
     {
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
-            'phone'         => ['required', 'string', 'max:255'],
+            'phone'         => $this->phoneRules(),
             // Повідомлення клієнта (напр. «Що вас цікавить?»). Приймаємо і
             // 'comment', і 'message' — щоб форму було зручно підключити.
             'comment'       => ['nullable', 'string', 'max:2000'],

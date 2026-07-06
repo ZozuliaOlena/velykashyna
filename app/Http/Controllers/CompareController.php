@@ -37,8 +37,34 @@ class CompareController extends Controller
             'products' => $products,
             'cards' => $products->map->toCard()->values()->all(),
             'rows' => $this->rows($products),
+            'heading' => $this->heading($products),
             'showFooterCta' => false,
         ]);
+    }
+
+    /**
+     * Заголовок сторінки: якщо всі товари одного типу — «Порівняння шин /
+     * дисків / камер…», інакше (або мішанина/невідомо) — «Порівняння товарів».
+     */
+    private function heading($products): string
+    {
+        // Родовий відмінок множини за кодом типу товару.
+        $plural = [
+            'tire' => 'шин',
+            'tube' => 'камер',
+            'disk' => 'дисків',
+            'flap' => 'флапів',
+            'valve' => 'вентилів',
+            'ring' => 'ущільнювальних кілець',
+        ];
+
+        $codes = $products->pluck('productType.code')->filter()->unique();
+
+        $word = ($codes->count() === 1 && isset($plural[$codes->first()]))
+            ? $plural[$codes->first()]
+            : 'товарів';
+
+        return 'Порівняння ' . $word;
     }
 
     /**
