@@ -82,10 +82,10 @@
         <form class="filter-bar" action="{{ route('catalog') }}" method="GET"
             x-data="homeFilter(@js($filters))" :class="{ 'is-loading': loading }">
             @php($homeFields = [
-                ['name' => 'machinery', 'label' => 'Тип техніки', 'opts' => 'machineryOptions', 'search' => 'Пошук техніки…'],
-                ['name' => 'category', 'label' => 'Категорія', 'opts' => 'categoryOptions', 'search' => 'Пошук категорії…'],
-                ['name' => 'brand', 'label' => 'Бренд', 'opts' => 'brandOptions', 'search' => 'Пошук бренду…'],
+                ['name' => 'diameter', 'label' => 'Діаметр', 'opts' => 'diameterOptions', 'search' => 'Пошук діаметра…'],
                 ['name' => 'size', 'label' => 'Розмір', 'opts' => 'sizeOptions', 'search' => 'Пошук розміру…'],
+                ['name' => 'machinery', 'label' => 'Тип техніки', 'opts' => 'machineryOptions', 'search' => 'Пошук техніки…'],
+                ['name' => 'brand', 'label' => 'Бренд', 'opts' => 'brandOptions', 'search' => 'Пошук бренду…'],
             ])
             @foreach ($homeFields as $f)
             <div class="field">

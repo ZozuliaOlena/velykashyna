@@ -18,6 +18,7 @@ $bg: #ffffff;
 $bg-soft: #f5f6f8;
 $bg-card: #ffffff;
 $line: #e6e8ec;
+$line-2: #d7dbe2; // чіткіша межа для полів на сірій підкладці
 $line-dark: rgba(255, 255, 255, 0.1);
 
 $ok: #1f9d55;
@@ -1000,10 +1001,11 @@ button {
 }
 
 .filter-bar {
-    background: $ink-2;
+    background: $bg-soft;
+    border: 1px solid $line;
     border-radius: $radius;
     padding: 18px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 20px 44px rgba(20, 24, 40, 0.14);
     display: grid;
     grid-template-columns: repeat(4, 1fr) auto;
     gap: 14px;
@@ -1024,7 +1026,7 @@ button {
 
         label {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.65);
+            color: $ink;
             text-transform: uppercase;
             letter-spacing: 0.4px;
         }
@@ -1035,9 +1037,9 @@ button {
             select {
                 width: 100%;
                 appearance: none;
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid rgba(255, 255, 255, 0.18);
-                color: #fff;
+                background: #fff;
+                border: 1px solid $line;
+                color: $ink;
                 font-family: $font-body;
                 font-size: 14px;
                 padding: 13px 38px 13px 14px;
@@ -2355,8 +2357,10 @@ button {
 //  ЛІЧИЛЬНИК ДОСВІДУ (роки / дні / години)
 // =====================================================================
 .exp-counter {
-    background: $ink-2;
-    color: #fff;
+    background: $bg-soft;
+    border-top: 1px solid $line;
+    border-bottom: 1px solid $line;
+    color: $ink;
     padding: 46px 0;
 
     &__grid {
@@ -2375,13 +2379,13 @@ button {
     padding: 6px 20px;
 
     & + & {
-        border-left: 1px solid rgba(255, 255, 255, 0.12);
+        border-left: 1px solid $line;
     }
 
     @media (max-width: $bp-sm) {
         & + & {
             border-left: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            border-top: 1px solid $line;
             padding-top: 22px;
         }
     }
@@ -2392,7 +2396,7 @@ button {
         font-weight: 800;
         font-size: 40px;
         line-height: 1;
-        color: #fff;
+        color: $ink;
 
         span {
             color: $red;
@@ -2407,7 +2411,7 @@ button {
         display: block;
         margin-top: 12px;
         font-size: 13.5px;
-        color: rgba(255, 255, 255, 0.7);
+        color: $ink;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -9214,21 +9218,22 @@ button {
 // Тема тёмного фільтра на головній (hero).
 .filter-bar .ssel {
     &__btn {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.18);
-        color: #fff;
+        background: #fff;
+        border-color: $line-2;
+        color: $ink;
+        box-shadow: 0 1px 2px rgba(20, 24, 40, 0.05);
 
         &:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: $muted-2;
         }
 
         svg {
-            color: rgba(255, 255, 255, 0.7);
+            color: $muted;
         }
     }
 
     &__btn:not(.is-set) &__val {
-        color: rgba(255, 255, 255, 0.7);
+        color: $muted;
     }
 
     &__btn.is-set {

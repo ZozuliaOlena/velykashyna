@@ -47,7 +47,7 @@ class HomeController extends Controller
     {
         return response()->json($this->facetOptions([
             'machinery' => $request->query('machinery') ?: null,
-            'category' => $request->query('category') ?: null,
+            'diameter' => $request->query('diameter') ?: null,
             'brand' => $request->query('brand') ?: null,
             'size' => $request->query('size') ?: null,
         ]));
@@ -56,14 +56,14 @@ class HomeController extends Controller
     /** Початкові дані фільтра: повні списки всіх полів + ендпоінт. */
     private function filterData(): array
     {
-        $options = $this->facetOptions(['machinery' => null, 'category' => null, 'brand' => null, 'size' => null]);
+        $options = $this->facetOptions(['machinery' => null, 'diameter' => null, 'brand' => null, 'size' => null]);
 
         // Якщо товарів ще немає — підставляємо демо-списки, щоб бар не був порожнім.
         if (empty($options['machinery']) && empty($options['brands']) && empty($options['sizes'])) {
             $mk = fn (array $v) => collect($v)->map(fn ($n) => ['value' => $n, 'label' => $n])->all();
             $options = [
                 'machinery' => $mk(['Трактори', 'Комбайни', 'Обприскувачі', 'Навантажувачі', 'Вантажівки']),
-                'categories' => $mk(['Агрошини', 'Спецшини', 'Вантажні']),
+                'diameters' => $mk(['R32', 'R38', 'R42']),
                 'brands' => $mk(['BKT', 'Michelin', 'Mitas', 'Continental']),
                 'sizes' => $mk(['710/70R38', '800/65R32', '520/85R42']),
             ];
@@ -81,7 +81,7 @@ class HomeController extends Controller
     {
         return [
             'machinery' => $this->machineryFacet($sel),
-            'categories' => $this->categoryFacet($sel),
+            'diameters' => $this->diameterFacet($sel),
             'brands' => $this->brandFacet($sel),
             'sizes' => $this->sizeFacet($sel),
         ];
@@ -93,8 +93,12 @@ class HomeController extends Controller
         if ($except !== 'machinery' && ! empty($sel['machinery'])) {
             $q->whereHas('machineryCompatibility.machineryType', fn ($x) => $x->where('name', $sel['machinery']));
         }
-        if ($except !== 'category' && ! empty($sel['category'])) {
-            $q->whereHas('categories', fn ($x) => $x->where('slug', $sel['category']));
+        if ($except !== 'diameter' && ! empty($sel['diameter'])) {
+            // Значення виду «R32» → числовий посадковий діаметр.
+            $num = (float) preg_replace('/[^0-9.]/', '', (string) $sel['diameter']);
+            if ($num > 0) {
+                $q->where('rim_diameter', $num);
+            }
         }
         if ($except !== 'brand' && ! empty($sel['brand'])) {
             $q->whereHas('brand', fn ($x) => $x->where('name', $sel['brand']));
@@ -117,17 +121,16 @@ class HomeController extends Controller
             ->all();
     }
 
-    private function categoryFacet(array $sel): array
+    private function diameterFacet(array $sel): array
     {
-        return Category::query()
-            ->where('is_active', true)
-            ->whereHas('products', function ($q) use ($sel) {
-                $q->where('is_active', true);
-                $this->applyFilters($q, $sel, 'category');
-            })
-            ->orderBy('sort_order')->orderBy('name')
-            ->get(['name', 'slug'])
-            ->map(fn (Category $c) => ['value' => $c->slug, 'label' => $c->name])
+        $q = Product::query()->where('is_active', true)->whereNotNull('rim_diameter');
+        $this->applyFilters($q, $sel, 'diameter');
+
+        // «R32», «R38»… — як у каталозі; значення = мітці (каталог парсить цифри).
+        return $q->distinct()->orderBy('rim_diameter')->pluck('rim_diameter')
+            ->map(fn ($d) => 'R' . (int) $d)
+            ->unique()->values()
+            ->map(fn ($label) => ['value' => $label, 'label' => $label])
             ->all();
     }
 

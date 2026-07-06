@@ -681,11 +681,11 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('homeFilter', (init) => ({
         endpoint: init.endpoint,
         machinery: '',
-        category: '',
+        diameter: '',
         brand: '',
         size: '',
         machineryOptions: init.machinery || [],
-        categoryOptions: init.categories || [],
+        diameterOptions: init.diameters || [],
         brandOptions: init.brands || [],
         sizeOptions: init.sizes || [],
         loading: false,
@@ -694,7 +694,7 @@ document.addEventListener('alpine:init', () => {
         optsOf(field) {
             return {
                 machinery: this.machineryOptions,
-                category: this.categoryOptions,
+                diameter: this.diameterOptions,
                 brand: this.brandOptions,
                 size: this.sizeOptions,
             }[field];
@@ -711,7 +711,7 @@ document.addEventListener('alpine:init', () => {
 
         async load() {
             const p = new URLSearchParams();
-            ['machinery', 'category', 'brand', 'size'].forEach((f) => {
+            ['machinery', 'diameter', 'brand', 'size'].forEach((f) => {
                 if (this[f]) p.set(f, this[f]);
             });
 
@@ -722,7 +722,7 @@ document.addEventListener('alpine:init', () => {
                 });
                 const data = await res.json();
                 this.machineryOptions = data.machinery || [];
-                this.categoryOptions = data.categories || [];
+                this.diameterOptions = data.diameters || [];
                 this.brandOptions = data.brands || [];
                 this.sizeOptions = data.sizes || [];
             } catch (e) {
@@ -734,7 +734,7 @@ document.addEventListener('alpine:init', () => {
 
         prune(changed) {
             let reset = false;
-            ['machinery', 'category', 'brand', 'size'].forEach((f) => {
+            ['machinery', 'diameter', 'brand', 'size'].forEach((f) => {
                 if (f === changed || !this[f]) return;
                 const exists = this.optsOf(f).some((o) => o.value === this[f]);
                 if (!exists) {
@@ -746,7 +746,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         reset() {
-            this.machinery = this.category = this.brand = this.size = '';
+            this.machinery = this.diameter = this.brand = this.size = '';
             this.load();
         },
     }));
