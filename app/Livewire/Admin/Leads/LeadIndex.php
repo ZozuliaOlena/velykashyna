@@ -82,7 +82,7 @@ class LeadIndex extends Component
     {
         return [
             'customer_name'      => ['required', 'string', 'max:255'],
-            'phone'              => ['required', 'string', 'max:255'],
+            'phone'              => ['required', 'string', 'max:255', 'regex:/(?:\D*\d){9,}/'],
             'city'               => ['nullable', 'string', 'max:255'],
             'delivery_method'    => ['nullable', 'string', 'max:255'],
             'delivery_address'   => ['nullable', 'string', 'max:255'],

@@ -17,11 +17,20 @@ use Illuminate\Validation\ValidationException;
  */
 class LeadController extends Controller
 {
+    // Телефон обов'язковий і має містити щонайменше 9 цифр (реальний номер),
+    // щоб не оформлювали заявку з порожнім чи «+38».
+    private const PHONE_RULES = ['required', 'string', 'max:255', 'regex:/(?:\D*\d){9,}/'];
+
+    private const PHONE_MESSAGES = [
+        'phone.required' => 'Вкажіть номер телефону.',
+        'phone.regex'    => 'Вкажіть коректний номер телефону.',
+    ];
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'customer_name'      => ['required', 'string', 'max:255'],
-            'phone'              => ['required', 'string', 'max:255'],
+            'phone'              => self::PHONE_RULES,
             'contact_method'     => ['nullable', 'string', 'max:255'],
             'city'               => ['nullable', 'string', 'max:255'],
             'delivery_method'    => ['nullable', 'string', 'max:255'],
@@ -31,7 +40,7 @@ class LeadController extends Controller
             'items'              => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'integer'],
             'items.*.qty'        => ['required', 'integer', 'min:1', 'max:1000'],
-        ]);
+        ], self::PHONE_MESSAGES);
 
         // Доставку/оплату зберігаємо окремими полями (нижче), у коментар —
         // лише власне повідомлення клієнта.
@@ -99,12 +108,12 @@ class LeadController extends Controller
     {
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
-            'phone'         => ['required', 'string', 'max:255'],
+            'phone'         => self::PHONE_RULES,
             // Повідомлення клієнта (напр. «Що вас цікавить?»). Приймаємо і
             // 'comment', і 'message' — щоб форму було зручно підключити.
             'comment'       => ['nullable', 'string', 'max:2000'],
             'message'       => ['nullable', 'string', 'max:2000'],
-        ]);
+        ], self::PHONE_MESSAGES);
 
         $lead = Lead::create([
             'customer_name'    => $data['customer_name'],
