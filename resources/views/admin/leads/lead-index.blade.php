@@ -47,7 +47,7 @@
                 <td data-label="Статус">
                     <span class="lead-status lead-status--{{ $lead->status }}">{{ $statuses[$lead->status] ?? $lead->status }}</span>
                 </td>
-                <td data-label="Дата">{{ $lead->created_at?->format('d.m.Y H:i') }}</td>
+                <td data-label="Дата">{{ $lead->created_at?->timezone(config('app.display_timezone'))->format('d.m.Y H:i') }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openView({{ $lead->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
                     <button class="icon-btn" wire:click="delete({{ $lead->id }})" data-confirm="Ви дійсно хочете видалити заявку?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>

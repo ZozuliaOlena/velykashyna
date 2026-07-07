@@ -67,6 +67,9 @@ return [
 
     'timezone' => 'UTC',
 
+    // Часовий пояс для показу дат в адмінці (зберігаємо в UTC, показуємо тут).
+    'display_timezone' => 'Europe/Kyiv',
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
