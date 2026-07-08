@@ -7,6 +7,12 @@
 <section class="section compare"
     x-data="{
         onlyDiff: false,
+        swiped: false,
+        overflows: false,
+        checkOverflow() {
+            const w = $root.querySelector('.compare-table-wrap');
+            this.overflows = !!w && w.scrollWidth > w.clientWidth + 4;
+        },
         restripe() {
             const table = $root.querySelector('.compare-table');
             if (!table) return;
@@ -16,7 +22,7 @@
             rows.forEach((r, i) => r.classList.toggle('is-alt', i % 2 === 0));
         }
     }"
-    x-init="$store.compare.seed(@js($cards))"
+    x-init="$store.compare.seed(@js($cards)); $nextTick(() => checkOverflow()); window.addEventListener('resize', () => checkOverflow())"
     x-effect="onlyDiff; $nextTick(() => restripe())">
     <div class="container">
         <nav class="breadcrumbs">
@@ -49,7 +55,17 @@
         </div>
         @else
         @php($cur = config('site.contacts'))
-        <div class="compare-table-wrap">
+        {{-- Підказка для мобільних: показуємо, лише коли таблиця не влазить,
+             і ховаємо, щойно користувач її гортає. --}}
+        <div class="compare-hint" x-show="overflows && !swiped" x-cloak x-transition aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="7 8 3 12 7 16" />
+                <polyline points="17 8 21 12 17 16" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+            </svg>
+            <span>Гортайте таблицю вбік, щоб порівняти інші товари</span>
+        </div>
+        <div class="compare-table-wrap" @scroll.passive="swiped = true">
             <table class="compare-table">
                 <thead>
                     <tr>

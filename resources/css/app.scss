@@ -4348,15 +4348,20 @@ button {
 .about-hero {
     position: relative;
     display: flex;
-    align-items: flex-end;
-    min-height: 680px;
+    // Контент по центру, а не приклеєний до низу — щоб на високих
+    // екранах не було великого порожнього простору зверху.
+    align-items: center;
+    // Заповнюємо рівно висоту екрана: на великих моніторах немає білої
+    // смуги знизу, на невисоких — герой не «вилазить» за екран.
+    // svh (small viewport height) стабільний і не стрибає під мобільні панелі.
+    min-height: 100vh;
+    min-height: 100svh;
     // верхній відступ враховує прозору шапку, що накладається зверху
     padding: 170px 0 60px;
     color: #fff;
     overflow: hidden;
 
     @media (max-width: $bp-md) {
-        min-height: 540px;
         padding: 104px 0 44px;
     }
 
@@ -6115,7 +6120,41 @@ button {
             max-height: 100%;
             object-fit: contain;
             mix-blend-mode: multiply;
+            transition: transform 0.18s ease;
         }
+
+        // Можна збільшити: курсор-лупа, а на наведенні фото зумиться за курсором.
+        &.is-zoomable {
+            cursor: zoom-in;
+        }
+    }
+
+    // Значок-підказка «збільшити» у куті головного фото.
+    &__zoom {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.92);
+        color: $ink;
+        box-shadow: $shadow-sm;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    // Під час зуму ховаємо підказку, щоб не заважала.
+    &__main.is-zoom &__zoom {
+        opacity: 0;
     }
 
     &__ph {
@@ -6164,12 +6203,164 @@ button {
     }
 }
 
+// Повноекранний перегляд фото товару: біле вікно із шапкою (назва + хрестик),
+// щоб кнопку закриття було чітко видно, особливо на мобільному.
+.product-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 16, 18, 0.72);
+    backdrop-filter: blur(4px);
+
+    @media (max-width: $bp-sm) {
+        padding: 0;
+    }
+
+    &__sheet {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 620px;
+        max-height: 90vh;
+        background: #fff;
+        border-radius: $radius-lg;
+        overflow: hidden;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+
+        @media (max-width: $bp-sm) {
+            max-width: none;
+            max-height: none;
+            height: 100%;
+            border-radius: 0;
+        }
+    }
+
+    &__bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 11px 11px 11px 18px;
+        border-bottom: 1px solid $line;
+        flex-shrink: 0;
+    }
+
+    &__title {
+        font-family: $font-head;
+        font-weight: 700;
+        font-size: 15px;
+        color: $ink;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__close {
+        flex-shrink: 0;
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50%;
+        background: $bg-soft;
+        color: $ink;
+        cursor: pointer;
+        transition: background 0.2s ease;
+
+        &:hover {
+            background: $line;
+        }
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__body {
+        // Десктоп: висота за фото (вікно центроване, не схлопується).
+        flex: 0 1 auto;
+        min-height: 0;
+        // Фото ніколи не «вилазить» за межі області (не перекриває шапку/крапки).
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: #fff;
+
+        img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            // Вписуємо у вікно за висотою напряму (десктоп: 90vh мінус шапка+крапки),
+            // щоб не залежати від «схлопування» flex-висоти — фото ніколи не вилазить.
+            max-height: calc(90vh - 150px);
+            object-fit: contain;
+        }
+    }
+
+    // Мобільний: вікно на весь екран, фото тягнеться й центрується у вільному
+    // просторі, за висотою екрана мінус шапка/крапки.
+    @media (max-width: $bp-sm) {
+        &__body {
+            flex: 1 1 auto;
+        }
+
+        &__body img {
+            max-height: calc(100vh - 150px);
+            max-height: calc(100dvh - 150px);
+        }
+    }
+
+    &__dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 0 16px;
+        flex-shrink: 0;
+    }
+
+    &__dot {
+        width: 8px;
+        height: 8px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: $line;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+
+        &.active {
+            background: $red;
+            transform: scale(1.25);
+        }
+    }
+}
+
 // --- Основна інформація ---------------------------------------------
 .product-main__head {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 16px;
+
+    // Заголовок може стискатись/переноситись, лого бренду — ні (не наїжджають).
+    > div:first-child {
+        min-width: 0;
+    }
+}
+
+.product-brand {
+    flex-shrink: 0;
 }
 
 .product-title {
@@ -6381,6 +6572,21 @@ button {
     .btn {
         flex: 1;
         height: 46px;
+    }
+
+    // На вузьких екранах кнопка кошика тягнеться й забирає вільне місце,
+    // щоб рядок (лічильник + кошик + обране + порівняння) вмістився в екран.
+    @media (max-width: $bp-sm) {
+        gap: 10px;
+
+        .product-buy__cart {
+            flex: 1;
+            padding: 0;
+        }
+
+        .product-buy__cart + .product-buy__icon {
+            margin-left: 0;
+        }
     }
 }
 
@@ -8443,6 +8649,51 @@ button {
         gap: 14px;
         margin-top: 26px;
         flex-wrap: wrap;
+
+        // На мобільному кнопки — в стовпчик і на всю ширину (однакові).
+        @media (max-width: $bp-sm) {
+            flex-direction: column;
+
+            .btn {
+                width: 100%;
+            }
+        }
+    }
+}
+
+// Підказка «гортайте таблицю» на сторінці порівняння (переважно мобільні).
+.compare-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 11px 16px;
+    border-radius: $radius;
+    background: $red-soft;
+    color: $red;
+    font-family: $font-head;
+    font-weight: 700;
+    font-size: 13.5px;
+    text-align: center;
+    line-height: 1.3;
+
+    svg {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        animation: compare-swipe 1.4s ease-in-out infinite;
+    }
+}
+
+@keyframes compare-swipe {
+    0%,
+    100% {
+        transform: translateX(-4px);
+    }
+
+    50% {
+        transform: translateX(4px);
     }
 }
 
