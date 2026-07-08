@@ -61,7 +61,7 @@
                     <td data-label="Статус">
                         <span class="lead-status lead-status--{{ $lead->status }}">{{ $leadStatuses[$lead->status] ?? $lead->status }}</span>
                     </td>
-                    <td data-label="Дата">{{ $lead->created_at?->format('d.m.Y H:i') }}</td>
+                    <td data-label="Дата">{{ $lead->created_at?->timezone(config('app.display_timezone'))->format('d.m.Y H:i') }}</td>
                     <td class="cell-actions">
                         <a class="icon-btn" href="{{ route('admin.leads.index') }}" title="Відкрити" aria-label="Відкрити"><x-icon name="eye"/></a>
                     </td>
