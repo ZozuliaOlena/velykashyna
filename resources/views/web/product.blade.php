@@ -41,8 +41,8 @@
 'stock' => $inStock,
 ])
 
-@section('title', $product->seo_title ?: $fullName . ' — Велика Шина')
-@section('meta_description', $product->seo_description ?: 'Купити ' . $fullName . ' у компанії «Велика Шина». Підбір, консультація та доставка по Україні.')
+@section('title', $product->seo_title ?: $fullName . ' — ВЕЛИКА ШИНА')
+@section('meta_description', $product->seo_description ?: 'Купити ' . $fullName . ' у компанії ВЕЛИКА ШИНА. Підбір, консультація та доставка по Україні.')
 
 {{-- Структуровані дані Product (узгоджені з Merchant-фідом) --}}
 @push('head')
@@ -52,7 +52,7 @@
 'name' => $fullName,
 'sku' => $product->sku,
 'mpn' => $product->sku,
-'description' => $product->seo_description ?: ('Купити ' . $fullName . ' у «Велика Шина».'),
+'description' => $product->seo_description ?: ('Купити ' . $fullName . ' у ВЕЛИКА ШИНА.'),
 'image' => collect($images)->map(fn ($u) => url($u))->values()->all(),
 'brand' => $product->brand?->name ? ['@type' => 'Brand', 'name' => $product->brand->name] : null,
 ]))
@@ -313,7 +313,7 @@
                     </svg>
                 </div>
                 <div class="expert-note__body">
-                    <span class="expert-note__title">Думка експерта «Велика Шина»</span>
+                    <span class="expert-note__title">Думка експерта ВЕЛИКА ШИНА</span>
                     <div class="product-prose">{!! nl2br(e($product->expert_note)) !!}</div>
                 </div>
             </div>

@@ -6,7 +6,7 @@
     @keydown.escape.window="$store.ui.closeMenu()">
     <div class="mm-top">
         <a href="{{ route('home') }}" @click="$store.ui.closeMenu()">
-            <img src="/images/logo.png" alt="Велика Шина" />
+            <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" />
         </a>
         <div class="mm-top-actions">
             <a href="tel:{{ $c['phone_href'] }}" class="mm-call" aria-label="Подзвонити">

@@ -265,7 +265,7 @@
 <section class="section">
     <div class="container">
         <div class="section-head" data-aos="fade-up" style="flex-direction:column;align-items:flex-start;gap:8px">
-            <h2 class="section-title">Чому <span>Велика Шина</span>?</h2>
+            <h2 class="section-title">Чому <span>ВЕЛИКА ШИНА</span>?</h2>
             <p style="color:#6b7280"><b style="color:#e31e24">ВЕЛИКА</b> — не тільки про розмір шини.</p>
         </div>
         @php($why = [

@@ -1,8 +1,10 @@
 {{-- resources/views/web/about.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Про нас — Велика Шина | Шини для агро, спец та вантажної техніки з 2009 року')
-@section('meta_description', 'Велика Шина — український постачальник шин, камер і дисків для сільгосп-, спеціальної та вантажної техніки з 2009 року. 20 000+ позицій, 253 бренди, 14 складів, доставка по всій Україні.')
+@section('body_class', 'page-about')
+
+@section('title', 'Про нас - ВЕЛИКА ШИНА | Шини для агро, спец та вантажної техніки з 2009 року')
+@section('meta_description', 'ВЕЛИКА ШИНА - український постачальник шин, камер і дисків для сільгосп-, спеціальної та вантажної техніки з 2009 року. 20 000+ позицій, 253 бренди, 14 складів, доставка по всій Україні.')
 
 @php($years = now()->year - config('site.founded_year'))
 @php($stats = config('site.stats'))
@@ -15,7 +17,7 @@
 {{-- ======================== HERO ============================= --}}
 <section class="about-hero">
     <div class="about-hero__bg">
-        <img src="/images/about/portfolio5.jpg" alt="Велика Шина — великогабаритні шини" />
+        <img src="/images/about/portfolio5.jpg" alt="ВЕЛИКА ШИНА - великогабаритні шини" />
     </div>
     <div class="about-hero__shade"></div>
 
@@ -28,11 +30,11 @@
 
         <span class="about-eyebrow">Офіційний сайт &middot; на ринку з {{ $foundedYear }} року</span>
 
-        <h1 class="about-hero__title">Велика Шина —<br><span>великий досвід</span> у кожній шині</h1>
+        <h1 class="about-hero__title">ВЕЛИКА ШИНА -<br><span>великий досвід</span> у кожній шині</h1>
 
         <p class="about-hero__lead">
             Підбираємо та постачаємо шини, камери й диски для сільськогосподарської,
-            спеціальної та вантажної техніки по всій Україні. Не з каталогу — з практики.
+            спеціальної та вантажної техніки по всій Україні. Не з каталогу - з практики.
         </p>
 
         <div class="about-hero__actions">
@@ -70,7 +72,7 @@
 <section class="section about-intro">
     <div class="container about-intro__grid">
         <div class="about-intro__media" data-aos="fade-right">
-            <img src="/images/about/portfolio8.jpg" alt="Склад та відвантаження Велика Шина" loading="lazy" />
+            <img src="/images/about/portfolio8.jpg" alt="Склад та відвантаження ВЕЛИКА ШИНА" loading="lazy" />
             <div class="about-intro__badge">
                 <span class="big">з {{ $foundedYear }}</span>
                 <span class="small">року на ринку</span>
@@ -79,15 +81,15 @@
 
         <div class="about-intro__text" data-aos="fade-left">
             <span class="about-kicker">Хто ми</span>
-            <h2 class="section-title">Та сама <span>Велика Шина</span> — лише сучасніша</h2>
+            <h2 class="section-title">Та сама <span>ВЕЛИКА ШИНА</span> - лише сучасніша</h2>
 
             <p class="about-lead">
-                «Велика Шина» — українська компанія, що працює на ринку шин для агро-, спец-
+                ВЕЛИКА ШИНА - українська компанія, що працює на ринку шин для агро-, спец-
                 та вантажної техніки з {{ $foundedYear }} року. За цей час ми стали одним із
                 найбільших постачальників великогабаритних шин у країні.
             </p>
             <p>
-                Ми не просто продаємо шини — ми знаємо техніку, умови експлуатації та задачі,
+                Ми не просто продаємо шини - ми знаємо техніку, умови експлуатації та задачі,
                 які вона виконує. Тому підбираємо саме те, що працюватиме у полі, у кар'єрі
                 чи на дорозі, а не просто «підходить за розміром».
             </p>
@@ -103,13 +105,13 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12" />
                     </svg>
-                    Бренди <b>на будь-який бюджет</b> — від світових лідерів до робочих рішень
+                    Бренди <b>на будь-який бюджет</b> - від світових лідерів до робочих рішень
                 </li>
                 <li>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12" />
                     </svg>
-                    Ходові розміри <b>в наявності</b>, решта — оперативно під замовлення
+                    Ходові розміри <b>в наявності</b>, решта - оперативно під замовлення
                 </li>
                 <li>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -134,8 +136,8 @@
         <div class="section-head about-center" data-aos="fade-up">
             <div>
                 <span class="about-kicker">{{ $years }} років розвитку</span>
-                <h2 class="section-title">Оновились зовні — <span>лишились собою</span></h2>
-                <p class="about-sub">Новий сайт і сучасний вигляд — та сама команда, досвід і цінності з {{ $foundedYear }} року.</p>
+                <h2 class="section-title">Оновились зовні - <span>лишились собою</span></h2>
+                <p class="about-sub">Новий сайт і сучасний вигляд - та сама команда, досвід і цінності з {{ $foundedYear }} року.</p>
             </div>
         </div>
 
@@ -144,16 +146,14 @@
             @pointerdown="down($event)" @pointermove="moveTo($event)"
             @pointerup="up()" @pointerleave="up()" @pointercancel="up()">
 
-            {{-- Нове лого — базовий шар --}}
+            {{-- Нове лого - базовий шар --}}
             <div class="ba__pane ba__pane--new">
-                <img src="/images/logo.png" alt="Нове лого Велика Шина" draggable="false" loading="lazy" />
-                <span class="ba__tag ba__tag--new">Нове · {{ now()->year }}</span>
+                <img src="/images/logo.png" alt="Нове лого ВЕЛИКА ШИНА" draggable="false" loading="lazy" />
             </div>
 
-            {{-- Старе лого — верхній шар, обрізається повзунком --}}
+            {{-- Старе лого - верхній шар, обрізається повзунком --}}
             <div class="ba__pane ba__pane--old" :style="`clip-path: inset(0 ${100 - pos}% 0 0)`">
-                <img src="/images/old-logo.png" alt="Старе лого Велика Шина" draggable="false" loading="lazy" />
-                <span class="ba__tag ba__tag--old">Старе · {{ $foundedYear }}</span>
+                <img src="/images/old-logo.png" alt="Старе лого ВЕЛИКА ШИНА" draggable="false" loading="lazy" />
             </div>
 
             {{-- Роздільник + ручка --}}
@@ -188,16 +188,16 @@
 ['t' => $years . ' років досвіду', 'd' => 'Працюємо в агро, індустрії та з вантажною технікою. Нам довіряють з ' . $foundedYear . ' року.', 'svg' => '
 <circle cx="12" cy="8" r="6" />
 <path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5" />'],
-['t' => 'Великий асортимент', 'd' => 'Шини, камери та диски під різну техніку — від світових брендів до робочих бюджетних рішень.', 'svg' => '
+['t' => 'Великий асортимент', 'd' => 'Шини, камери та диски під різну техніку - від світових брендів до робочих бюджетних рішень.', 'svg' => '
 <rect x="3" y="3" width="7" height="7" />
 <rect x="14" y="3" width="7" height="7" />
 <rect x="14" y="14" width="7" height="7" />
 <rect x="3" y="14" width="7" height="7" />'],
-['t' => 'Власний склад', 'd' => 'Ходові розміри тримаємо в наявності — швидка доставка по всій Україні.', 'svg' => '
+['t' => 'Власний склад', 'd' => 'Ходові розміри тримаємо в наявності - швидка доставка по всій Україні.', 'svg' => '
 <path d="M3 21V8l9-5 9 5v13" />
 <path d="M9 21v-7h6v7" />
 <line x1="2" y1="21" x2="22" y2="21" />'],
-['t' => 'Якісний сервіс', 'd' => 'Проконсультуємо та допоможемо замовити. Самі користуємось технікою — тож знаємо, що радимо.', 'svg' => '
+['t' => 'Якісний сервіс', 'd' => 'Проконсультуємо та допоможемо замовити. Самі користуємось технікою - тож знаємо, що радимо.', 'svg' => '
 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
 <polyline points="9 12 11 14 15 10" />'],
 ])
@@ -206,7 +206,7 @@
         <div class="section-head about-center" data-aos="fade-up">
             <div>
                 <span class="about-kicker">Наші переваги</span>
-                <h2 class="section-title">Чому обирають <span>Велику Шину</span></h2>
+                <h2 class="section-title">Чому обирають <span>ВЕЛИКА ШИНА</span></h2>
             </div>
         </div>
         <div class="about-values">
@@ -239,16 +239,40 @@
             <div>
                 <span class="about-kicker">Офіційні поставки</span>
                 <h2 class="section-title">Працюємо з провідними <span>світовими брендами</span></h2>
-                <p class="about-sub">Працюємо напряму зі світовими виробниками шин. Лише оригінальна продукція — жодних сумнівних аналогів.</p>
+                <p class="about-sub">Працюємо напряму зі світовими виробниками шин. Лише оригінальна продукція - жодних сумнівних аналогів.</p>
             </div>
         </div>
 
-        <div class="about-logos" data-aos="fade-up">
-            @foreach ($brandLogos as $b)
-            <span class="about-logo">
-                <img src="/images/company-logo/{{ $b['img'] }}" alt="{{ $b['name'] }}" loading="lazy" />
-            </span>
-            @endforeach
+        {{-- Логотипи брендів: тягнемо з БД (активні бренди з лого), статичний
+             список - резерв, якщо в БД ще нічого не завантажено. Стрічка
+             автопрокручується - гарно виглядає і на 7, і на 40 брендів. --}}
+        @php($logos = ($brands ?? collect())
+            ->map(fn ($b) => ['name' => $b->name, 'src' => $b->logoUrl()])
+            ->filter(fn ($x) => ! empty($x['src']))
+            ->values())
+        @php($logos = $logos->isNotEmpty()
+            ? $logos
+            : collect($brandLogos)->map(fn ($b) => ['name' => $b['name'], 'src' => '/images/company-logo/' . $b['img']]))
+        @php($marqueeDur = max(18, $logos->count() * 3.2))
+
+        <div class="brand-marquee" data-aos="fade-up" style="--marquee-dur: {{ $marqueeDur }}s">
+            <div class="brand-marquee__track">
+                {{-- Клік по лого → каталог, відфільтрований за цим брендом.
+                     Два однакові набори поспіль - для безшовного циклу прокрутки;
+                     клони (другий набір) ховаємо від фокусу/скрінрідерів. --}}
+                @foreach ($logos as $b)
+                <a href="{{ route('catalog') }}?brand={{ urlencode($b['name']) }}"
+                    class="about-logo brand-marquee__item" title="Усі товари {{ $b['name'] }}">
+                    <img src="{{ $b['src'] }}" alt="{{ $b['name'] }}" loading="lazy" />
+                </a>
+                @endforeach
+                @foreach ($logos as $b)
+                <a href="{{ route('catalog') }}?brand={{ urlencode($b['name']) }}"
+                    class="about-logo brand-marquee__item" aria-hidden="true" tabindex="-1">
+                    <img src="{{ $b['src'] }}" alt="" loading="lazy" />
+                </a>
+                @endforeach
+            </div>
         </div>
 
         <div class="about-brands__note" data-aos="fade-up">
@@ -297,7 +321,7 @@
 {{-- ================= ОФІЦІЙНИЙ САЙТ / ДОВІРА ================= --}}
 <section class="about-trust">
     <div class="about-trust__bg">
-        <img src="/images/about/portfolio10.jpg" alt="Велика Шина" loading="lazy" />
+        <img src="/images/about/portfolio11.jpg" alt="ВЕЛИКА ШИНА" loading="lazy" />
     </div>
     <div class="about-trust__shade"></div>
     <div class="container about-trust__inner" data-aos="fade-up">
@@ -307,11 +331,11 @@
                 <polyline points="9 12 11 14 15 10" />
             </svg>
         </div>
-        <h2 class="about-trust__title">Це офіційний сайт компанії «Велика Шина»</h2>
+        <h2 class="about-trust__title">Це офіційний сайт компанії ВЕЛИКА&nbsp;ШИНА</h2>
         <p class="about-trust__text">
-            Остерігайтеся підробок. Перед вами офіційний ресурс компанії «Велика Шина»,
+            Остерігайтеся підробок. Перед вами офіційний ресурс компанії ВЕЛИКА ШИНА,
             що працює на ринку з {{ $foundedYear }} року. Тут ви завжди отримаєте оригінальну
-            продукцію, чесну консультацію та реальну підтримку — ті самі, що й роками раніше.
+            продукцію, чесну консультацію та реальну підтримку - ті самі, що й роками раніше.
         </p>
         <div class="about-trust__actions">
             <a href="{{ route('catalog') }}" class="btn btn--primary">Обрати шину</a>
@@ -333,9 +357,7 @@
     <div class="container">
         <div class="section-head about-center" data-aos="fade-up">
             <div>
-                <span class="about-kicker">Наша робота</span>
-                <h2 class="section-title">Реальні фото зі <span>складу</span></h2>
-                <p class="about-sub">Великогабаритні шини, відвантаження та щоденна робота — без стокових картинок.</p>
+                <h2 class="section-title">ВЕЛИКА ШИНА <span>В РОБОТІ</span></h2>
             </div>
         </div>
 
@@ -343,13 +365,14 @@
             @foreach ($gallery as $i => $g)
             <button type="button" class="about-gallery__item" data-aos="zoom-in" data-aos-delay="{{ $i % 3 * 70 }}"
                 @click="src = '/images/about/{{ $g['img'] }}'; open = true">
+                {{-- alt лишаємо описовим - саме воно несе SEO/доступність;
+                     видимі підписи-бейджі прибрано (візуально чистіше). --}}
                 <img src="/images/about/{{ $g['img'] }}" alt="{{ $g['cap'] }}" loading="lazy" />
                 <span class="about-gallery__zoom">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
                     </svg>
                 </span>
-                <span class="about-gallery__cap">{{ $g['cap'] }}</span>
             </button>
             @endforeach
         </div>
@@ -404,10 +427,10 @@
 
 {{-- ==================== ЧАСТІ ЗАПИТАННЯ ====================== --}}
 @php($faqs = [
-['q' => 'Чи доставляєте шини, камери та диски?', 'a' => 'Так — відправляємо по всій Україні (Нова Пошта, транспортні компанії, адресна доставка). Ходові розміри тримаємо в наявності, решту оперативно привозимо.'],
-['q' => 'Чи є гарантія на продукцію?', 'a' => 'Так. Ми офіційний постачальник і продаємо лише оригінальну продукцію з гарантією від виробника — жодних сумнівних аналогів.'],
+['q' => 'Чи доставляєте шини, камери та диски?', 'a' => 'Так - відправляємо по всій Україні (Нова Пошта, транспортні компанії, адресна доставка). Ходові розміри тримаємо в наявності, решту оперативно привозимо.'],
+['q' => 'Чи є гарантія на продукцію?', 'a' => 'Так. Ми офіційний постачальник і продаємо лише оригінальну продукцію з гарантією від виробника - жодних сумнівних аналогів.'],
 ['q' => 'Чи працюєте з ПДВ?', 'a' => 'Так, працюємо як з ПДВ, так і без. Для юридичних осіб оформлюємо всі необхідні документи.'],
-['q' => 'Чи можна отримати консультацію телефоном або в месенджерах?', 'a' => 'Звісно. Телефонуйте або пишіть у Viber / Telegram / WhatsApp — підкажемо розмір і підберемо шину під вашу техніку.'],
+['q' => 'Чи можна отримати консультацію телефоном або в месенджерах?', 'a' => 'Звісно. Телефонуйте або пишіть у Viber / Telegram / WhatsApp - підкажемо розмір і підберемо шину під вашу техніку.'],
 ])
 <section class="section faq-sec">
     <div class="container">
@@ -443,7 +466,7 @@
             <div class="cta-bg"><img src="/images/back.png" alt="" /></div>
             <div class="cta-content">
                 <h3>Не впевнені, які шини потрібні?</h3>
-                <p>Наші спеціалісти допоможуть підібрати оптимальний варіант для вашої техніки — швидко й безкоштовно.</p>
+                <p>Наші спеціалісти допоможуть підібрати оптимальний варіант для вашої техніки - швидко й безкоштовно.</p>
             </div>
             <div class="cta-actions">
                 <a href="{{ route('catalog') }}" class="btn btn--primary">Підібрати шини</a>

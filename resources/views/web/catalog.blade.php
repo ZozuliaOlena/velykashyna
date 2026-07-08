@@ -1,7 +1,7 @@
 {{-- resources/views/web/catalog.blade.php — каталог із БД (фільтри, сортування, пагінація) --}}
 @extends('layouts.app')
 
-@section('title', 'Каталог — Велика Шина')
+@section('title', 'Каталог — ВЕЛИКА ШИНА')
 
 @php($chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>')
 
@@ -555,7 +555,7 @@
                     </div>
                 </div>
                 <div class="fc-media">
-                    <img src="/images/details/kara.png" alt="Велика Шина" loading="lazy" />
+                    <img src="/images/details/kara.png" alt="ВЕЛИКА ШИНА" loading="lazy" />
                 </div>
             </div>
         </div>

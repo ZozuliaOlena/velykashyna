@@ -1894,10 +1894,14 @@ button {
     }
 
     .fc-strong {
+        // Кожен номер — окремим рядком (щоб два телефони не зливались).
+        display: block;
+        width: fit-content;
         font-family: $font-head;
         font-weight: 800;
         color: #fff;
         font-size: 16px;
+        line-height: 1.45;
     }
 
     .fc-note {
@@ -4013,53 +4017,14 @@ button {
 // =====================================================================
 //  ШАПКА-ОВЕРЛЕЙ (скляна, поверх hero; твердне при скролі)
 // =====================================================================
+// Шапка над hero — завжди суцільно біла, така сама, як при скролі.
+// Лишаємо тільки фіксоване позиціонування (щоб hero-верстка не змінилась);
+// фон, тінь і колір тексту успадковуються від базового .site-header (білий).
 .site-header--overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-
-    &:not(.is-scrolled) {
-        background: rgba(16, 18, 22, 0.28);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: none;
-
-        .header-nav a,
-        .header-logo .h-tagline,
-        .hp-note,
-        .h-icon,
-        .hm-btn {
-            color: #fff;
-        }
-
-        .header-bar {
-            border-top-color: rgba(255, 255, 255, 0.18);
-        }
-
-        .header-search input {
-            background: rgba(255, 255, 255, 0.14);
-            border-color: rgba(255, 255, 255, 0.32);
-            color: #fff;
-
-            &::placeholder {
-                color: rgba(255, 255, 255, 0.7);
-            }
-        }
-
-        .header-cats a {
-            background: rgba(255, 255, 255, 0.12);
-            color: #fff;
-
-            svg {
-                color: #fff;
-            }
-
-            &:hover {
-                background: rgba(255, 255, 255, 0.22);
-            }
-        }
-    }
 }
 
 // =====================================================================
@@ -4432,8 +4397,9 @@ button {
         max-width: 760px;
         text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
 
+        // Увесь заголовок білий (без червоного акценту).
         span {
-            color: $red;
+            color: #fff;
         }
 
         @media (max-width: $bp-md) {
@@ -4610,6 +4576,33 @@ button {
     margin-bottom: 14px;
 }
 
+// СТОРІНКА «ПРО НАС»: усі заголовки — один чорний колір і не жирні
+// (без червоних акцентів). Скоуп по body.page-about, тож інші сторінки
+// (та спільні партіали на них) лишаються як були.
+// СТОРІНКИ «ПРО НАС» і «БЛОГ»: заголовки — один чорний колір і не жирні,
+// дрібні eyebrow-надписи теж чорні (без червоних акцентів).
+// Червоний пілл на hero (.about-eyebrow) не чіпаємо.
+.page-about,
+.page-blog {
+    .section-title {
+        font-weight: 500;
+
+        span {
+            color: $ink;
+        }
+    }
+
+    .about-kicker,
+    .approach-note {
+        color: $ink;
+    }
+}
+
+// Лише «Про нас»: заголовок блоку довіри — теж не жирний.
+.page-about .about-trust__title {
+    font-weight: 500;
+}
+
 .about-points {
     margin-top: 22px;
     display: grid;
@@ -4624,7 +4617,7 @@ button {
 
         b {
             color: $ink;
-            font-weight: 700;
+            font-weight: 400;
         }
 
         // Іконка-галочка закріплена зліва, текст тече як звичайне речення.
@@ -4971,6 +4964,83 @@ button {
         max-height: 100%;
         max-width: 155px;
         object-fit: contain;
+    }
+}
+
+// Стрічка логотипів, що безшовно прокручується (marquee).
+// Тягнеться з БД — скільки б брендів не додали (7, 20, 40), виглядає рівно.
+.brand-marquee {
+    margin: 34px 0 30px;
+    overflow: hidden;
+    // М'яке згасання по краях, щоб лого «в'їжджали/виїжджали» плавно.
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+
+    &:hover .brand-marquee__track {
+        animation-play-state: paused;
+    }
+
+    &__track {
+        display: flex;
+        width: max-content;
+        animation: brand-scroll var(--marquee-dur, 40s) linear infinite;
+    }
+
+    &__item {
+        flex: 0 0 auto;
+        margin: 0 34px;
+
+        @media (max-width: $bp-md) {
+            margin: 0 22px;
+        }
+
+        // За замовчуванням — сірий (знебарвлений) відтінок; на наведення
+        // логотип повертає свої оригінальні кольори.
+        img {
+            filter: grayscale(1);
+            opacity: 0.62;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+
+        &:hover img {
+            filter: grayscale(0);
+            opacity: 1;
+        }
+    }
+}
+
+@keyframes brand-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        // Зсув на половину доріжки = рівно один набір (їх два) → безшовно.
+        transform: translateX(-50%);
+    }
+}
+
+// Без анімації для тих, хто вимкнув рух — рівна центрована сітка в один набір.
+@media (prefers-reduced-motion: reduce) {
+    .brand-marquee {
+        -webkit-mask-image: none;
+        mask-image: none;
+
+        &__track {
+            animation: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            gap: 24px 40px;
+        }
+
+        &__item {
+            margin: 0;
+
+            &[aria-hidden='true'] {
+                display: none;
+            }
+        }
     }
 }
 
@@ -5377,7 +5447,7 @@ button {
 .about-trust {
     position: relative;
     padding: 84px 0;
-    color: #fff;
+    color: $ink;
     overflow: hidden;
 
     &__bg {
@@ -5392,11 +5462,13 @@ button {
         }
     }
 
+    // Світла (майже біла) заливка — фото проступає легкою текстурою,
+    // текст темний, щоб читався на світлому.
     &__shade {
         position: absolute;
         inset: 0;
         z-index: 1;
-        background: linear-gradient(180deg, rgba(15, 16, 18, 0.8), rgba(15, 16, 18, 0.88));
+        background: linear-gradient(180deg, rgba(248, 249, 251, 0.85), rgba(242, 244, 247, 0.9));
     }
 
     &__inner {
@@ -5414,6 +5486,7 @@ button {
         height: 66px;
         border-radius: 50%;
         background: $red;
+        color: #fff;
         margin-bottom: 22px;
 
         svg {
@@ -5438,7 +5511,7 @@ button {
     &__text {
         font-size: 16px;
         line-height: 1.7;
-        color: rgba(255, 255, 255, 0.82);
+        color: $muted;
         margin-bottom: 28px;
     }
 
@@ -5513,29 +5586,6 @@ button {
         &:hover img {
             transform: scale(1.07);
         }
-
-        // Постійний градієнт знизу — для читабельності підпису.
-        &::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 45%, rgba(10, 12, 15, 0.72));
-            transition: opacity 0.3s ease;
-        }
-    }
-
-    &__cap {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 2;
-        padding: 14px 16px;
-        font-family: $font-head;
-        font-weight: 700;
-        font-size: 14px;
-        color: #fff;
-        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
     }
 
     // Кнопка-лупа у куті, з'являється на ховері.

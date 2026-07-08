@@ -1,7 +1,7 @@
 {{-- resources/views/web/favorites.blade.php — обране (стан у localStorage) --}}
 @extends('layouts.app')
 
-@section('title', 'Обране — Велика Шина')
+@section('title', 'Обране — ВЕЛИКА ШИНА')
 
 @section('content')
 <section class="section fav-page">

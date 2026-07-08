@@ -1,8 +1,10 @@
 {{-- resources/views/web/blog/index.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Блог — Велика Шина | Корисні статті про шини для агро та спецтехніки')
-@section('meta_description', 'Блог компанії «Велика Шина»: підбір і експлуатація шин для сільгосп-, спец- та вантажної техніки, поради, новини та корисні матеріали.')
+@section('body_class', 'page-blog')
+
+@section('title', 'Блог - ВЕЛИКА ШИНА | Корисні статті про шини для агро та спецтехніки')
+@section('meta_description', 'Блог компанії ВЕЛИКА ШИНА: підбір і експлуатація шин для сільгосп-, спец- та вантажної техніки, поради, новини та корисні матеріали.')
 
 @section('content')
 <section class="section blog">
@@ -15,7 +17,7 @@
 
         <div class="blog__head">
             <span class="about-kicker">Корисне</span>
-            <h1 class="section-title">Блог <span>Великої Шини</span></h1>
+            <h1 class="section-title">Блог <span>ВЕЛИКА ШИНА</span></h1>
             <p class="about-sub">Поради щодо підбору й експлуатації шин, новини компанії та корисні матеріали для власників техніки.</p>
         </div>
 

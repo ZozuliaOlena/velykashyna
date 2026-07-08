@@ -61,7 +61,7 @@
     <table width="100%" class="head"><tr>
         <td>
             @if($logo)
-                <img src="{{ $logo }}" class="logo" alt="Велика Шина">
+                <img src="{{ $logo }}" class="logo" alt="ВЕЛИКА ШИНА">
             @else
                 <span class="brand">ВЕЛИКА ШИНА</span>
             @endif
@@ -117,7 +117,7 @@
         @endif
 
         @if($product->expert_note)
-            <div class="section-title">Думка експерта «Велика Шина»</div>
+            <div class="section-title">Думка експерта ВЕЛИКА ШИНА</div>
             <div class="expert">{{ $product->expert_note }}</div>
         @endif
 

@@ -6,9 +6,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@yield('title', 'Велика Шина — шини для агро, спец та вантажної техніки')</title>
+    <title>@yield('title', 'ВЕЛИКА ШИНА — шини для агро, спец та вантажної техніки')</title>
     <meta name="description"
-        content="@yield('meta_description', 'Велика Шина — каталог шин, камер та дисків для сільськогосподарської, спеціальної та вантажної техніки. Підбір за розміром, брендом і технікою з 2009 року.')" />
+        content="@yield('meta_description', 'ВЕЛИКА ШИНА — каталог шин, камер та дисків для сільськогосподарської, спеціальної та вантажної техніки. Підбір за розміром, брендом і технікою з 2009 року.')" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,7 +23,7 @@
     @stack('head')
 </head>
 
-<body>
+<body class="@yield('body_class')">
     @php($gtmId = trim((string) \App\Models\Setting::get('gtm_container_id')))
     @if($gtmId)
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ $gtmId }}"
