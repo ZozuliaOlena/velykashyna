@@ -1,8 +1,8 @@
 {{-- resources/views/web/contacts.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Контакти — Велика Шина')
-@section('meta_description', 'Контакти компанії «Велика Шина»: телефон, email, адреса в Києві та месенджери. Ми на зв\'язку 24/7 — підберемо шини для вашої техніки.')
+@section('title', 'Контакти — ВЕЛИКА ШИНА')
+@section('meta_description', 'Контакти компанії ВЕЛИКА ШИНА: телефон, email, адреса в Києві та месенджери. Ми на зв\'язку 24/7 — підберемо шини для вашої техніки.')
 
 @php($c = config('site.contacts'))
 @php($socials = config('site.socials'))
@@ -205,7 +205,7 @@
         @if($mapEmbed)
         <div class="contacts-map" data-aos="fade-up">
             <iframe src="{{ $mapEmbed }}"
-                title="Велика Шина на мапі" loading="lazy" allowfullscreen
+                title="ВЕЛИКА ШИНА на мапі" loading="lazy" allowfullscreen
                 referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
         @endif

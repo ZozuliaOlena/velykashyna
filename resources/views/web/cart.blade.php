@@ -1,7 +1,7 @@
 {{-- resources/views/web/cart.blade.php — кошик (стан у localStorage) --}}
 @extends('layouts.app')
 
-@section('title', 'Кошик — Велика Шина')
+@section('title', 'Кошик — ВЕЛИКА ШИНА')
 
 @section('content')
 <section class="section cart-page" x-data="cartCheckout('{{ route('api.leads.store') }}')">

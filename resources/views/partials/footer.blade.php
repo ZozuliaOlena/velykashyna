@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="fc-media">
-                <img src="/images/details/kara.png" alt="Велика Шина" loading="lazy" />
+                <img src="/images/details/kara.png" alt="ВЕЛИКА ШИНА" loading="lazy" />
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
         {{-- ДЕСКТОП --}}
         <div class="footer-grid">
             <div class="footer-brand">
-                <img src="/images/logo.png" alt="Велика Шина" class="f-logo" />
+                <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" class="f-logo" />
                 <p class="f-desc">Підбираємо правильні шини для агро-, спец- та вантажної техніки з
                     {{ config('site.founded_year') }} року.</p>
                 @include('partials.rating')
@@ -116,7 +116,7 @@
         {{-- МОБІЛЬНИЙ --}}
         <div class="footer-mobile">
             <div class="fm-card">
-                <img src="/images/logo.png" alt="Велика Шина" class="f-logo" />
+                <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" class="f-logo" />
                 <p class="f-desc">Підбираємо правильні шини для агро-, спец- та вантажної техніки з
                     {{ config('site.founded_year') }} року.</p>
                 @include('partials.rating')
@@ -198,7 +198,7 @@
     <div class="footer-bottom">
         <div class="container"
             style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;width:100%">
-            <span>© {{ config('site.founded_year') }}–{{ now()->year }} Велика Шина</span>
+            <span>© {{ config('site.founded_year') }}–{{ now()->year }} ВЕЛИКА ШИНА</span>
             <a href="{{ route('pages.privacy') }}">Політика конфіденційності</a>
             <span class="fb-made">Створено з <span style="color:#e31e24">♥</span> в Україні 🇺🇦</span>
         </div>

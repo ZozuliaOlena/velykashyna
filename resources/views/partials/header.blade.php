@@ -13,8 +13,8 @@
     <div class="container">
         {{-- ============== ДЕСКТОП: верхній ярус ============== --}}
         <div class="header-top">
-            <a href="{{ route('home') }}" class="header-logo" aria-label="Велика Шина">
-                <img src="/images/logo.png" alt="Велика Шина" />
+            <a href="{{ route('home') }}" class="header-logo" aria-label="ВЕЛИКА ШИНА">
+                <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" />
                 <span class="h-tagline">Підбираємо правильні шини з {{ config('site.founded_year') }} року</span>
             </a>
 
@@ -81,8 +81,8 @@
 
         {{-- ============== МОБІЛЬНИЙ ============== --}}
         <div class="header-mobile">
-            <a href="{{ route('home') }}" class="hm-logo" aria-label="Велика Шина">
-                <img src="/images/logo.png" alt="Велика Шина" />
+            <a href="{{ route('home') }}" class="hm-logo" aria-label="ВЕЛИКА ШИНА">
+                <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" />
             </a>
 
             <div class="hm-side">

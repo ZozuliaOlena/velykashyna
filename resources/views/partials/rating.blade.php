@@ -8,5 +8,5 @@
             </svg>
         @endfor
     </div>
-    <span class="rating-text"><b>{{ $r['score'] }} з {{ $r['max'] }}</b> — оцінка клієнтів</span>
+    <span class="rating-text"><b>{{ $r['score'] }} з {{ $r['max'] }}</b> - оцінка клієнтів</span>
 </div>

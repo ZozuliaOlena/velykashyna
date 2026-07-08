@@ -55,7 +55,16 @@ Route::get('/in-work/{machineryModel}', [InWorkController::class, 'show'])->name
 
 // Про нас — власний CTA + прозора шапка поверх темного hero (як на головній).
 Route::get('/about', function () {
-    return view('web.about', ['showFooterCta' => false, 'transparentHeader' => true]);
+    return view('web.about', [
+        'showFooterCta' => false,
+        'transparentHeader' => true,
+        // Логотипи брендів для стрічки — активні бренди з завантаженим лого.
+        'brands' => \App\Models\Brand::query()
+            ->where('is_active', true)
+            ->whereNotNull('logo')
+            ->orderBy('name')
+            ->get(),
+    ]);
 })->name('about');
 
 // Контакти — власний блок зв'язку/карти, стандартний CTA футера вимикаємо.

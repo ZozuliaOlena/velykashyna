@@ -1,8 +1,8 @@
 {{-- resources/views/web/pages/delivery.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Доставка й оплата — Велика Шина')
-@section('meta_description', 'Способи доставки (Нова Пошта, САТ, самовивіз) та оплати (післяплата, оплата за реквізитами) у компанії «Велика Шина».')
+@section('title', 'Доставка й оплата — ВЕЛИКА ШИНА')
+@section('meta_description', 'Способи доставки (Нова Пошта, САТ, самовивіз) та оплати (післяплата, оплата за реквізитами) у компанії ВЕЛИКА ШИНА.')
 
 @php($c = config('site.contacts'))
 

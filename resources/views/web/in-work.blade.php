@@ -1,7 +1,7 @@
 {{-- resources/views/web/in-work.blade.php — фото шин «в роботі» на техніці --}}
 @extends('layouts.app')
 
-@section('title', 'Шини в роботі — ' . $label . ' | Велика Шина')
+@section('title', 'Шини в роботі — ' . $label . ' | ВЕЛИКА ШИНА')
 @section('meta_description', 'Реальні фото встановлених шин на ' . $label . ' — приклади застосування з полів та інспекцій.')
 
 @section('content')

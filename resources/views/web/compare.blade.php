@@ -1,7 +1,7 @@
 {{-- resources/views/web/compare.blade.php — порівняння шин --}}
 @extends('layouts.app')
 
-@section('title', ($heading ?? 'Порівняння') . ' — Велика Шина')
+@section('title', ($heading ?? 'Порівняння') . ' — ВЕЛИКА ШИНА')
 
 @section('content')
 <section class="section compare"
