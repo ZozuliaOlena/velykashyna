@@ -164,7 +164,7 @@ class HomeController extends Controller
         return Product::query()
             ->where('is_active', true)
             ->with(['brand', 'catalogImage', 'productType', 'machineryCompatibility.machineryType'])
-            ->orderByDesc('is_promo')
+            ->orderByRaw('promo_badge is not null desc')
             ->latest()
             ->take(8)
             ->get()

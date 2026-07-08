@@ -46,11 +46,15 @@ class CatalogImage extends Model implements HasMedia
         $this->addMediaConversion('thumb')
             ->fit(Fit::Contain, 300, 300)
             ->background('ffffff')
+            ->format('webp')
+            ->quality(80)
             ->nonQueued();
 
         $this->addMediaConversion('uniform')
             ->fit(Fit::Contain, 800, 800)
             ->background('ffffff')
+            ->format('webp')
+            ->quality(80)
             ->nonQueued();
     }
 

@@ -24,7 +24,7 @@
             <tr wire:key="brand-{{ $brand->id }}">
                 <td data-label="Лого">
                     @if($brand->logo)
-                        <img src="{{ $brand->logoUrl() }}" alt="{{ $brand->name }}"
+                        <img src="{{ $brand->logoUrl() }}" alt="{{ $brand->name }}" data-zoom
                             style="height:38px; width:auto; object-fit:contain">
                     @else
                         <span style="color:#bbb">—</span>

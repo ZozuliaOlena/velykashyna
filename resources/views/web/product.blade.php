@@ -22,7 +22,7 @@
 {{-- «Знижка» прибираємо — на фото показуємо бейдж відсотка («-20%»). --}}
 @php($promos = collect($product->cardPromos())->reject(fn ($x) => $x === 'Знижка')->values()->all())
 @php($discountBadge = $product->discount_type === 'percent' ? $product->discountLabel() : null)
-@php($promoStyles = ['Акція' => 'sale', 'Знижка' => 'discount', 'Запитуй знижку' => 'ask', 'Безкоштовна доставка' => 'ship'])
+@php($promoStyles = ['Акція' => 'sale', 'Знижка' => 'discount', 'Запитуй знижку' => 'ask', 'Уточніть вашу ціну' => 'ask', 'Безкоштовна доставка' => 'ship', 'Можлива безкоштовна доставка' => 'ship'])
 @php($brandLogos = ['Michelin' => 'michelin.svg', 'Continental' => 'continental.svg'])
 @php($brandLogo = $product->brand?->logoUrl() ?? (isset($brandLogos[$product->brand?->name]) ? '/images/svg/brands/' . $brandLogos[$product->brand->name] : null))
 @php($inStock = $product->stock_status === 'in_stock')

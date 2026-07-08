@@ -251,14 +251,22 @@
                         </select>
                     </div>
                 </div>
-
-                <div style="margin-top:.5rem; display:flex; gap:1.5rem; flex-wrap:wrap">
-                    <label><input wire:model="is_promo" type="checkbox"> Акція (бейдж на сайті)</label>
-                    <label><input wire:model="free_shipping" type="checkbox"> Безкоштовна доставка</label>
-                </div>
             @else
                 <p style="color:#666">Ціна не показується — клієнт надсилає заявку менеджеру.</p>
             @endif
+
+            <div style="margin-top:.75rem; display:flex; gap:1.5rem; flex-wrap:wrap">
+                <div>
+                    <label>Бейдж акції / ціни</label><br>
+                    <x-admin.select model="promo_badge" :live="false" placeholder="— без бейджа"
+                        :options="collect(\App\Models\Product::PROMO_BADGES)->map(fn ($b) => ['value' => $b, 'label' => $b])->all()" />
+                </div>
+                <div>
+                    <label>Бейдж доставки</label><br>
+                    <x-admin.select model="shipping_badge" :live="false" placeholder="— без бейджа"
+                        :options="collect(\App\Models\Product::SHIPPING_BADGES)->map(fn ($b) => ['value' => $b, 'label' => $b])->all()" />
+                </div>
+            </div>
 
             <div style="margin-top:.5rem">
                 <label>
@@ -335,7 +343,7 @@
                 <label>Основне фото</label><br>
                 @if($mainMedia)
                     <div class="photo-thumb">
-                        <img src="{{ \App\Support\MediaUrl::rel($mainMedia->hasGeneratedConversion('thumb') ? $mainMedia->getUrl('thumb') : $mainMedia->getUrl()) }}" alt="">
+                        <img src="{{ \App\Support\MediaUrl::rel($mainMedia->hasGeneratedConversion('thumb') ? $mainMedia->getUrl('thumb') : $mainMedia->getUrl()) }}" alt="" data-zoom-src="{{ \App\Support\MediaUrl::rel($mainMedia->getUrl()) }}">
                         <button type="button" class="photo-del" wire:click="deleteMedia({{ $mainMedia->id }})"
                             data-confirm="Ви дійсно хочете видалити основне фото?">×</button>
                     </div>
@@ -358,7 +366,7 @@
                         @foreach($galleryMedia as $m)
                             <div class="photo-thumb" wire:key="media-{{ $m->id }}" data-id="{{ $m->id }}">
                                 <span class="drag-handle" title="Перетягнути">⠿</span>
-                                <img src="{{ \App\Support\MediaUrl::rel($m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl()) }}" alt="">
+                                <img src="{{ \App\Support\MediaUrl::rel($m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl()) }}" alt="" data-zoom-src="{{ \App\Support\MediaUrl::rel($m->getUrl()) }}">
                                 <button type="button" class="photo-del" wire:click="deleteMedia({{ $m->id }})"
                                     data-confirm="Ви дійсно хочете видалити фото?">×</button>
                             </div>
@@ -369,7 +377,8 @@
                 <div class="gallery-uploader" wire:ignore
                      data-model="galleryPhotos"
                      data-max="{{ $galleryMax }}"
-                     data-saved="{{ $galleryMedia->count() }}">
+                     data-saved="{{ $galleryMedia->count() }}"
+                     data-immediate="{{ $productId ? '1' : '' }}">
                     <div class="photo-grid" data-pending-grid></div>
                     <label class="upload-btn" data-add>
                         <input type="file" accept="image/*" multiple hidden>

@@ -15,7 +15,7 @@
                 @foreach($photos as $fp)
                     <div class="field-photo" wire:key="fp-{{ $fp->id }}">
                         @php($thumb = $fp->imageUrl('thumb'))
-                        @if($thumb)<img src="{{ $thumb }}" alt="">@endif
+                        @if($thumb)<img src="{{ $thumb }}" alt="" data-zoom-src="{{ $fp->imageUrl('large') }}">@endif
                         <button type="button" class="photo-del" wire:click="delete({{ $fp->id }})"
                             data-confirm="Ви дійсно хочете видалити це фото?">×</button>
                         <div class="field-photo__meta">

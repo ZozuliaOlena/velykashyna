@@ -113,7 +113,7 @@
                     <span>📷 Основне фото…</span>
                 </label>
                 @if($bulkCatalogPhoto)
-                    <img src="{{ $bulkCatalogPhoto->temporaryUrl() }}" alt=""
+                    <img src="{{ $bulkCatalogPhoto->temporaryUrl() }}" alt="" data-zoom
                         style="height:34px; width:34px; object-fit:contain; border:1px solid #ddd; border-radius:6px; background:#fff">
                     <button wire:click="bulkSetCatalogPhoto">Застосувати</button>
                 @endif
@@ -213,17 +213,21 @@
                         <span style="color:#bbb">—</span>
                     @endif
                 </td>
+                @php($promoShort = ['Акція' => 'Акція', 'Запитуй знижку' => 'Знижка?', 'Уточніть вашу ціну' => 'Ціна?'])
+                @php($shipShort = ['Безкоштовна доставка' => 'Безкошт.', 'Можлива безкоштовна доставка' => 'Можл. безкошт.'])
                 <td data-label="Акція">
-                    <button wire:click="togglePromo({{ $product->id }})"
-                        class="row-toggle {{ $product->is_promo ? 'is-on' : 'is-off' }}">
-                        {{ $product->is_promo ? 'Так' : 'Ні' }}
-                    </button>
+                    @if($product->promo_badge)
+                        <span class="badge-tag" title="{{ $product->promo_badge }}">{{ $promoShort[$product->promo_badge] ?? $product->promo_badge }}</span>
+                    @else
+                        <span style="color:#bbb">—</span>
+                    @endif
                 </td>
                 <td data-label="Доставка">
-                    <button wire:click="toggleFreeShipping({{ $product->id }})"
-                        class="row-toggle {{ $product->free_shipping ? 'is-on' : 'is-off' }}">
-                        {{ $product->free_shipping ? 'Безкошт.' : 'Ні' }}
-                    </button>
+                    @if($product->shipping_badge)
+                        <span class="badge-tag" title="{{ $product->shipping_badge }}">{{ $shipShort[$product->shipping_badge] ?? $product->shipping_badge }}</span>
+                    @else
+                        <span style="color:#bbb">—</span>
+                    @endif
                 </td>
                 <td data-label="Merchant">
                     <button wire:click="toggleMerchant({{ $product->id }})"

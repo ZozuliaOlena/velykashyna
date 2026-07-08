@@ -1171,6 +1171,24 @@ body.admin-body {
             white-space: nowrap;
         }
 
+        // Компактний бейдж-мітка (акція/доставка) — легкий, без зайвого місця.
+        .badge-tag {
+            display: inline-block;
+            max-width: 100%;
+            padding: 1px 7px;
+            border-radius: 999px;
+            background: #eef0f3;
+            color: #444;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            cursor: default;
+        }
+
         // SVG-іконка типу техніки в таблиці
         .mtype-icon {
             width: 34px;
@@ -2149,5 +2167,67 @@ body.admin-body {
         .admin-modal__foot button {
             flex: 1 1 100%;
         }
+    }
+}
+
+// ── Перегляд зображень (лайтбокс) ─────────────────────────────────────────
+// Клік по будь-якому контентному зображенню в адмінці відкриває його
+// збільшену версію на весь екран. Логіка — у resources/js/admin.js.
+img[data-zoom],
+.photo-thumb img,
+.field-photo img,
+.product-thumb {
+    cursor: zoom-in;
+}
+
+body.img-zoom-lock {
+    overflow: hidden;
+}
+
+.img-zoom {
+    position: fixed;
+    inset: 0;
+    z-index: 2500;              // вище за модалки (2000) і тости
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.82);
+    cursor: zoom-out;
+
+    &.is-open {
+        display: flex;
+    }
+
+    &__img {
+        max-width: 94vw;
+        max-height: 92vh;
+        object-fit: contain;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+        cursor: default;
+    }
+
+    &__close {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+        font-size: 26px;
+        line-height: 1;
+        cursor: pointer;
+        transition: background 0.15s;
+
+        &:hover { background: rgba(255, 255, 255, 0.28); }
     }
 }

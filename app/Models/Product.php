@@ -19,13 +19,19 @@ class Product extends Model implements HasMedia
 {
     use SoftDeletes, HasSlug, InteractsWithMedia;
 
+    /** Доступні значення бейджа акції/ціни (порожнє = без бейджа). */
+    public const PROMO_BADGES = ['Акція', 'Запитуй знижку', 'Уточніть вашу ціну'];
+
+    /** Доступні значення бейджа доставки (порожнє = без бейджа). */
+    public const SHIPPING_BADGES = ['Безкоштовна доставка', 'Можлива безкоштовна доставка'];
+
     protected $fillable = [
         'sku', 'product_type_id', 'name', 'brand_id', 'model', 'catalog_image_id',
         'size_raw', 'size_width', 'size_profile', 'rim_diameter',
         'rd_type', 'tube_type', 'ply_rating', 'load_speed_index', 'specification',
         'description', 'description_blocks', 'expert_note',
         'stock_status', 'price_mode', 'price', 'currency', 'exchange_rate',
-        'discount_value', 'discount_type', 'is_promo', 'free_shipping', 'merchant_enabled',
+        'discount_value', 'discount_type', 'promo_badge', 'shipping_badge', 'merchant_enabled',
         'condition',
         'seo_title', 'seo_description', 'seo_h1', 'slug', 'is_active',
     ];
@@ -34,8 +40,6 @@ class Product extends Model implements HasMedia
         'description_blocks' => 'array',
         'merchant_enabled' => 'boolean',
         'is_active' => 'boolean',
-        'is_promo' => 'boolean',
-        'free_shipping' => 'boolean',
         'price' => 'decimal:2',
         'size_width' => 'decimal:2',
         'size_profile' => 'decimal:2',
@@ -82,11 +86,15 @@ class Product extends Model implements HasMedia
         $this->addMediaConversion('uniform')
             ->fit(Fit::Contain, 800, 800)
             ->background('ffffff')
+            ->format('webp')
+            ->quality(80)
             ->nonQueued();
 
         $this->addMediaConversion('thumb')
             ->fit(Fit::Contain, 300, 300)
             ->background('ffffff')
+            ->format('webp')
+            ->quality(80)
             ->nonQueued();
     }
 
@@ -436,14 +444,14 @@ class Product extends Model implements HasMedia
     public function cardPromos(): array
     {
         $promos = [];
-        if ($this->is_promo) {
-            $promos[] = 'Акція';
+        if ($this->promo_badge) {
+            $promos[] = $this->promo_badge;
         }
         if ($this->hasDiscount()) {
             $promos[] = 'Знижка';
         }
-        if ($this->free_shipping) {
-            $promos[] = 'Безкоштовна доставка';
+        if ($this->shipping_badge) {
+            $promos[] = $this->shipping_badge;
         }
 
         return $promos;

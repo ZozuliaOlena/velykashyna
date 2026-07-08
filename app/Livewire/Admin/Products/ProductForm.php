@@ -55,8 +55,8 @@ class ProductForm extends Component
     public ?string $discount_type = null;
 
     public bool $merchant_enabled = false;
-    public bool $is_promo = false;
-    public bool $free_shipping = false;
+    public ?string $promo_badge = null;
+    public ?string $shipping_badge = null;
     public string $condition = 'new';
 
     public ?string $seo_title = null;
@@ -116,8 +116,8 @@ class ProductForm extends Component
         $this->discount_value   = $product->discount_value;
         $this->discount_type    = $product->discount_type;
         $this->merchant_enabled = $product->merchant_enabled;
-        $this->is_promo         = $product->is_promo;
-        $this->free_shipping    = $product->free_shipping;
+        $this->promo_badge      = $product->promo_badge;
+        $this->shipping_badge   = $product->shipping_badge;
         $this->condition        = $product->condition ?: 'new';
         $this->seo_title        = $product->seo_title;
         $this->seo_description  = $product->seo_description;
@@ -216,8 +216,8 @@ class ProductForm extends Component
             'exchange_rate'  => ['nullable', 'numeric', 'min:0'],
             'discount_value' => ['nullable', 'numeric', 'min:0'],
             'discount_type'  => ['nullable', 'in:percent,amount'],
-            'is_promo'       => ['boolean'],
-            'free_shipping'  => ['boolean'],
+            'promo_badge'    => ['nullable', Rule::in(Product::PROMO_BADGES)],
+            'shipping_badge' => ['nullable', Rule::in(Product::SHIPPING_BADGES)],
             'condition'      => ['required', 'in:new,used,refurbished'],
 
             'seo_title'       => ['nullable', 'string', 'max:255'],
@@ -274,8 +274,8 @@ class ProductForm extends Component
         [$product->description_blocks, $product->description] = $this->buildDescription();
 
         $product->merchant_enabled = $this->merchant_enabled;
-        $product->is_promo = $this->is_promo;
-        $product->free_shipping = $this->free_shipping;
+        $product->promo_badge = $this->promo_badge ?: null;
+        $product->shipping_badge = $this->shipping_badge ?: null;
         $product->is_active = $this->is_active;
         $product->slug = $this->buildUniqueSlug($this->slug ?: $this->name, $this->productId);
         $product->save();
@@ -346,6 +346,38 @@ class ProductForm extends Component
         session()->flash('success', 'Товар збережено');
 
         return $this->redirectRoute('admin.products.index', navigate: true);
+    }
+
+    public function updatedGalleryPhotos(): void
+    {
+        if (! $this->productId || empty($this->galleryPhotos)) {
+            return;
+        }
+
+        $this->validate(['galleryPhotos.*' => ['image', 'max:5120']]);
+
+        $product = Product::find($this->productId);
+        if (! $product) {
+            $this->galleryPhotos = [];
+            return;
+        }
+
+        $current = $product->getMedia('gallery')->pluck('id')->all();
+        $room = self::GALLERY_MAX - count($current);
+
+        $newIds = [];
+        foreach (array_slice($this->galleryPhotos, 0, max(0, $room)) as $photo) {
+            $media = $product->addMedia($photo->getRealPath())
+                ->usingFileName($this->uploadName($photo))
+                ->toMediaCollection('gallery');
+            $newIds[] = $media->id;
+        }
+
+        if ($newIds) {
+            \Spatie\MediaLibrary\MediaCollections\Models\Media::setNewOrder(array_merge($newIds, $current));
+        }
+
+        $this->galleryPhotos = [];
     }
 
     public function deleteMedia(int $mediaId): void

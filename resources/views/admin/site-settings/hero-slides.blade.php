@@ -34,11 +34,12 @@
                 <td data-label="Фон">
                     @if($slide->bg_type === 'youtube' && $slide->youtubeId())
                         <img src="https://img.youtube.com/vi/{{ $slide->youtubeId() }}/hqdefault.jpg"
+                            data-zoom data-zoom-src="https://img.youtube.com/vi/{{ $slide->youtubeId() }}/maxresdefault.jpg"
                             alt="" style="width:100px; height:56px; object-fit:cover; border-radius:6px">
                     @elseif($slide->bg_type === 'video' && $slide->bgUrl())
                         <video src="{{ $slide->bgUrl() }}" muted preload="metadata" style="width:100px; height:56px; object-fit:cover; border-radius:6px"></video>
                     @elseif($slide->bgUrl())
-                        <img src="{{ $slide->bgUrl() }}" alt="" style="width:100px; height:56px; object-fit:cover; border-radius:6px">
+                        <img src="{{ $slide->bgUrl() }}" alt="" data-zoom style="width:100px; height:56px; object-fit:cover; border-radius:6px">
                     @else
                         <span style="color:#bbb">—</span>
                     @endif

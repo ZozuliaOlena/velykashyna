@@ -27,7 +27,7 @@
                 @if($withIcon)
                 <td data-label="Іконка">
                     @if($item->iconUrl())
-                        <img src="{{ $item->iconUrl() }}" alt="" class="mtype-icon">
+                        <img src="{{ $item->iconUrl() }}" alt="" class="mtype-icon" data-zoom>
                     @else
                         <span style="color:#bbb">—</span>
                     @endif

@@ -86,18 +86,6 @@ class ProductIndex extends Component
         $product->update(['merchant_enabled' => ! $product->merchant_enabled]);
     }
 
-    public function togglePromo(int $id): void
-    {
-        $product = Product::findOrFail($id);
-        $product->update(['is_promo' => ! $product->is_promo]);
-    }
-
-    public function toggleFreeShipping(int $id): void
-    {
-        $product = Product::findOrFail($id);
-        $product->update(['free_shipping' => ! $product->free_shipping]);
-    }
-
     public function delete(int $id): void
     {
         Product::findOrFail($id)->delete();
@@ -127,7 +115,9 @@ class ProductIndex extends Component
         if (empty($this->selected)) {
             return;
         }
-        Product::whereIn('id', $this->selected)->update(['is_promo' => $on]);
+        // Швидка масова дія для типового значення; решту («Запитуй знижку»,
+        // «Уточніть вашу ціну») задають поштучно у формі товару.
+        Product::whereIn('id', $this->selected)->update(['promo_badge' => $on ? 'Акція' : null]);
         $this->afterBulk();
     }
 
@@ -136,7 +126,7 @@ class ProductIndex extends Component
         if (empty($this->selected)) {
             return;
         }
-        Product::whereIn('id', $this->selected)->update(['free_shipping' => $on]);
+        Product::whereIn('id', $this->selected)->update(['shipping_badge' => $on ? 'Безкоштовна доставка' : null]);
         $this->afterBulk();
     }
 

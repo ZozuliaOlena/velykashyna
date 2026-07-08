@@ -39,10 +39,14 @@
 'Знижка' => ['s' => 'discount', 'i' => '<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>'],
 'Запитуй знижку' => ['s' => 'ask', 'i' => '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],
 'Безкоштовна доставка' => ['s' => 'ship', 'i' => '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'],
+'Можлива безкоштовна доставка' => ['s' => 'ship', 'i' => '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'],
+'Уточніть вашу ціну' => ['s' => 'ask', 'i' => '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],
 ])
+{{-- Мітки доставки (перша з них показується зверху зі своєю іконкою). --}}
+@php($shippingLabels = ['Безкоштовна доставка', 'Можлива безкоштовна доставка'])
 {{-- Безкоштовна доставка завжди першою (зверху), далі — решта.
      «Знижка» прибираємо — замість неї показуємо бейдж відсотка («-10%»). --}}
-@php($promoOrder = ['Безкоштовна доставка' => 0, 'Акція' => 1, 'Знижка' => 2, 'Запитуй знижку' => 3])
+@php($promoOrder = ['Безкоштовна доставка' => 0, 'Можлива безкоштовна доставка' => 0, 'Акція' => 1, 'Знижка' => 2, 'Запитуй знижку' => 3, 'Уточніть вашу ціну' => 4])
 @php($promos = collect($p['promos'] ?? [])->reject(fn ($x) => $x === 'Знижка')->sortBy(fn ($x) => $promoOrder[$x] ?? 99)->values()->all())
 
 {{-- Компактний об'єкт товару для кошика/обраного --}}
@@ -68,15 +72,15 @@
         aria-label="{{ trim(($p['type'] ?? '') . ' ' . ($p['size'] ?? '') . ' ' . ($p['brand'] ?? '')) }}" tabindex="-1"></a>
     <div class="cat-prod__media">
         {{-- Доставка завжди першою (зверху), далі бейдж знижки (-%), далі решта. --}}
-        @php($hasShipping = in_array('Безкоштовна доставка', $promos, true))
-        @php($restPromos = array_values(array_filter($promos, fn ($x) => $x !== 'Безкоштовна доставка')))
-        @if ($hasShipping || !empty($p['discount']) || !empty($restPromos))
+        @php($shipping = collect($promos)->first(fn ($x) => in_array($x, $shippingLabels, true)))
+        @php($restPromos = array_values(array_filter($promos, fn ($x) => ! in_array($x, $shippingLabels, true))))
+        @if ($shipping || !empty($p['discount']) || !empty($restPromos))
         <div class="cat-prod__promos">
-            @if ($hasShipping)
-            @php($pc = $promoConfig['Безкоштовна доставка'])
-            <span class="promo promo--{{ $pc['s'] }}" title="Безкоштовна доставка">
+            @if ($shipping)
+            @php($pc = $promoConfig[$shipping])
+            <span class="promo promo--{{ $pc['s'] }}" title="{{ $shipping }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">{!! $pc['i'] !!}</svg>
-                <span>Безкоштовна доставка</span>
+                <span>{{ $shipping }}</span>
             </span>
             @endif
             @if (!empty($p['discount']))

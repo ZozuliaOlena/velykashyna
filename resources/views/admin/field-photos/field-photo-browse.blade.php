@@ -14,7 +14,7 @@
                     @php($thumb = $fp->imageUrl('thumb'))
                     @if($thumb)
                         <a href="{{ $fp->imageUrl('large') }}" target="_blank" rel="noopener">
-                            <img src="{{ $thumb }}" alt="">
+                            <img src="{{ $thumb }}" alt="" data-zoom-src="{{ $fp->imageUrl('large') }}">
                         </a>
                     @endif
                     <div class="field-photo__meta">

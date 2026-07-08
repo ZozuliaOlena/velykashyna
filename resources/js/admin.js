@@ -141,22 +141,23 @@ function initGalleryUploaders() {
         const model = root.dataset.model;
         const max = parseInt(root.dataset.max || '8', 10);
         const saved = parseInt(root.dataset.saved || '0', 10);
+        const immediate = root.dataset.immediate === '1';
         const grid = root.querySelector('[data-pending-grid]');
         const input = root.querySelector('input[type="file"]');
         const addLabel = root.querySelector('[data-add]');
         const hint = root.querySelector('[data-hint]');
 
-        const items = []; // { uid, file, url }
+        const items = [];
         let uidc = 0;
 
         const wireEl = root.closest('[wire\\:id]');
         const comp = () =>
             window.Livewire && wireEl ? window.Livewire.find(wireEl.getAttribute('wire:id')) : null;
 
-        // Збережені фото можуть видалятись на льоту — рахуємо їх щоразу з DOM.
-        const savedGrid = root.parentElement?.querySelector('[data-reorder-gallery]');
-        const savedCount = () =>
-            savedGrid ? savedGrid.querySelectorAll('.photo-thumb').length : saved;
+        const savedCount = () => {
+            const g = root.parentElement?.querySelector('[data-reorder-gallery]');
+            return g ? g.querySelectorAll('.photo-thumb').length : saved;
+        };
         const remaining = () => max - savedCount() - items.length;
 
         function updateHint() {
@@ -165,6 +166,41 @@ function initGalleryUploaders() {
                 ? `Можна додати ще ${r} фото`
                 : `Досягнуто ліміту: ${max} фото`;
             addLabel.style.display = r > 0 ? '' : 'none';
+        }
+
+        async function compressFiles(fileList) {
+            const out = [];
+            for (const f of Array.from(fileList)) {
+                if (max - savedCount() - items.length - out.length <= 0) {
+                    alert(`Можна додати щонайбільше ${max} фото.`);
+                    break;
+                }
+                if (!/^image\//.test(f.type)) continue;
+                const blob = await Promise.resolve(window.adminCompressImage ? window.adminCompressImage(f) : f);
+                const ext = blob.type === 'image/png' ? '.png' : (blob.type === 'image/webp' ? '.webp' : '.jpg');
+                out.push(new File([blob], (f.name || 'image').replace(/\.[^.]+$/, '') + ext, { type: blob.type }));
+            }
+            return out;
+        }
+
+        if (immediate) {
+            input.addEventListener('change', async (e) => {
+                const files = await compressFiles(e.target.files);
+                e.target.value = '';
+                if (!files.length) return;
+                grid.innerHTML = files.map(() =>
+                    '<div class="photo-thumb"><div class="photo-thumb__busy">Завантаження…</div></div>').join('');
+                addLabel.style.display = 'none';
+                const c = comp();
+                if (!c) { grid.innerHTML = ''; updateHint(); return; }
+                c.uploadMultiple(model, files,
+                    () => { grid.innerHTML = ''; updateHint(); },
+                    () => { grid.innerHTML = ''; updateHint(); alert('Не вдалося завантажити деякі фото.'); },
+                    () => {}
+                );
+            });
+            updateHint();
+            return;
         }
 
         function sync() {
@@ -205,28 +241,14 @@ function initGalleryUploaders() {
             sync();
         }
 
-        async function addFiles(fileList) {
-            for (const f of Array.from(fileList)) {
-                if (remaining() <= 0) {
-                    alert(`Можна додати щонайбільше ${max} фото.`);
-                    break;
-                }
-                if (!/^image\//.test(f.type)) continue;
-                const blob = await Promise.resolve(window.adminCompressImage ? window.adminCompressImage(f) : f);
-                const ext = blob.type === 'image/png' ? '.png' : (blob.type === 'image/webp' ? '.webp' : '.jpg');
-                const file = new File([blob], (f.name || 'image').replace(/\.[^.]+$/, '') + ext, { type: blob.type });
-                items.push({ uid: ++uidc, file, url: URL.createObjectURL(file) });
-            }
+        input.addEventListener('change', async (e) => {
+            const files = await compressFiles(e.target.files);
+            e.target.value = '';
+            files.forEach((file) => items.push({ uid: ++uidc, file, url: URL.createObjectURL(file) }));
             render();
             sync();
-        }
-
-        input.addEventListener('change', (e) => {
-            addFiles(e.target.files);
-            e.target.value = '';
         });
 
-        // Перетягування міняє порядок нових фото (і порядок відправки на сервер).
         Sortable.create(grid, {
             handle: '.drag-handle',
             draggable: '.photo-thumb',
@@ -376,12 +398,70 @@ function initDirtyGuard() {
     document.addEventListener('livewire:navigated', () => setDirty(false));
 }
 
+// ── Перегляд зображень (лайтбокс) ─────────────────────────────────────────
+// Один делегований обробник на весь документ: клік по контентному зображенню
+// відкриває його збільшену версію на весь екран. Джерело великого зображення —
+// data-zoom-src (якщо задано), інакше поточний src самого прев'ю.
+// Опрацьовуємо у фазі захоплення, щоб випередити wire:click і посилання
+// (напр. фото «в роботі», огорнуте <a href="…large">).
+function initImageZoom() {
+    if (window.__adminZoomInit) return;
+    window.__adminZoomInit = true;
+
+    const SELECTOR = 'img[data-zoom], .photo-thumb img, .field-photo img, img.product-thumb';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'img-zoom';
+    overlay.innerHTML =
+        '<button type="button" class="img-zoom__close" aria-label="Закрити">×</button>' +
+        '<img class="img-zoom__img" alt="">';
+    document.body.appendChild(overlay);
+    const zoomImg = overlay.querySelector('.img-zoom__img');
+
+    const open = (src) => {
+        zoomImg.src = src;
+        overlay.classList.add('is-open');
+        document.body.classList.add('img-zoom-lock');
+    };
+    const close = () => {
+        overlay.classList.remove('is-open');
+        document.body.classList.remove('img-zoom-lock');
+        zoomImg.src = '';
+    };
+
+    document.addEventListener(
+        'click',
+        (e) => {
+            if (overlay.contains(e.target)) return; // клік усередині лайтбоксу
+            const img = e.target.closest(SELECTOR);
+            if (!img) return;
+
+            const src = img.getAttribute('data-zoom-src') || img.currentSrc || img.src;
+            if (!src) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+            open(src);
+        },
+        true // capture — раніше за обробники Livewire / переходи посилань
+    );
+
+    overlay.addEventListener('click', (e) => {
+        // Клік по тлу або хрестику закриває; по самому зображенні — ні.
+        if (e.target !== zoomImg) close();
+    });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+    });
+}
+
 function boot() {
     initSortables();
     initGalleryUploaders();
     initGallerySaved();
     initConfirm();
     initDirtyGuard();
+    initImageZoom();
     new MutationObserver(scheduleInit).observe(document.body, { childList: true, subtree: true });
 }
 

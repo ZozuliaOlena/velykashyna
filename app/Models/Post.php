@@ -55,10 +55,14 @@ class Post extends Model implements HasMedia
 
         $this->addMediaConversion('thumb')
             ->fit(Fit::Crop, 400, 260)
+            ->format('webp')
+            ->quality(80)
             ->nonQueued();
 
         $this->addMediaConversion('large')
             ->fit(Fit::Max, 1200, 800)
+            ->format('webp')
+            ->quality(80)
             ->nonQueued();
     }
 

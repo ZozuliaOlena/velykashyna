@@ -288,7 +288,7 @@ class CatalogController extends Controller
             'cheap' => $query->orderByRaw('price IS NULL, price ASC'),
             'expensive' => $query->orderByRaw('price IS NULL, price DESC'),
             'new' => $query->latest(),
-            default => $query->orderByDesc('is_promo')->orderByDesc('id'), // популярні
+            default => $query->orderByRaw('promo_badge is not null desc')->orderByDesc('id'), // популярні
         };
     }
 
