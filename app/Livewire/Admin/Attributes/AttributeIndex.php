@@ -29,7 +29,6 @@ class AttributeIndex extends Component
     public bool $is_filterable = false;
     public int $sort_order = 0;
 
-    // для довідника варіантів (data_type = select)
     public string $newOption = '';
 
     public function updating($name): void
@@ -84,7 +83,6 @@ class AttributeIndex extends Component
         $data['is_filterable'] = $this->is_filterable;
 
         $attr = Attribute::updateOrCreate(['id' => $this->editingId], $data);
-        // лишаємось у модалці, якщо це select — щоб додати варіанти
         $this->editingId = $attr->id;
 
         if ($this->data_type !== 'select') {

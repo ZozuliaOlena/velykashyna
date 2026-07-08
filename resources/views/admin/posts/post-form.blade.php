@@ -5,7 +5,6 @@
     </div>
 
     <form wire:submit="save" style="max-width:760px" data-dirty-guard>
-        {{-- ── Основне ─────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Основне</strong></legend>
 
@@ -28,7 +27,6 @@
             </div>
         </fieldset>
 
-        {{-- ── Головне фото ────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Головне фото</strong></legend>
 
@@ -47,7 +45,6 @@
             @endunless
         </fieldset>
 
-        {{-- ── Текст статті (редактор Trix) ────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Текст статті</strong></legend>
             <div class="is-full"
@@ -61,7 +58,6 @@
                         });
                     })
                  ">
-                {{-- Початковий вміст (HTML) для редактора. --}}
                 <input id="post-content" type="hidden" value="{{ $content }}">
                 <trix-editor x-ref="trix" input="post-content"
                     data-upload-url="{{ route('admin.posts.upload-image') }}"
@@ -74,7 +70,6 @@
             @error('content') <span style="color:red">{{ $message }}</span> @enderror
         </fieldset>
 
-        {{-- ── Публікація ──────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Публікація</strong></legend>
             <div style="display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-end">
@@ -89,7 +84,6 @@
             <small style="color:#666; display:block; margin-top:.5rem">Якщо дату не вказано — підставиться момент першої публікації.</small>
         </fieldset>
 
-        {{-- ── SEO ─────────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>SEO</strong></legend>
             <div class="is-full" style="margin-bottom:.6rem">

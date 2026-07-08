@@ -6,16 +6,10 @@ use App\Livewire\Concerns\WithAdminToast;
 use App\Models\Setting;
 use Livewire\Component;
 
-/**
- * «Контакти сайту» — керування телефонами, email, адресою та посиланнями на
- * соцмережі/месенджери. Значення зберігаються в settings і перекривають
- * дефолти з config/site.php на всій клієнтській частині.
- */
 class SiteContacts extends Component
 {
     use WithAdminToast;
 
-    // Месенджери/соцмережі, які є на клієнтській частині.
     public const SOCIALS = [
         'telegram'  => 'Telegram',
         'viber'     => 'Viber',
@@ -30,10 +24,9 @@ class SiteContacts extends Component
     public ?string $phone2 = null;
     public ?string $email = null;
     public ?string $address = null;
-    public ?string $mapQuery = null;   // для кнопки «Прокласти маршрут»
-    public ?string $mapEmbed = null;   // src (або повний iframe) вбудованої карти
+    public ?string $mapQuery = null;
+    public ?string $mapEmbed = null;
 
-    /** @var array<string,string|null> */
     public array $socials = [];
 
     public function mount(): void

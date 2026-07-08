@@ -9,11 +9,6 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-/**
- * Перегляд фото «в роботі» за технікою: фільтр за типом/моделлю —
- * показує всі застосування (по всіх товарах). Напр. клік по «CASE 310»
- * на сторінці моделей веде сюди з вибраною моделлю.
- */
 class FieldPhotoBrowse extends Component
 {
     use WithPagination;

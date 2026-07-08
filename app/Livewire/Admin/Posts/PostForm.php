@@ -23,12 +23,12 @@ class PostForm extends Component
     public ?string $content = null;
 
     public bool $is_published = false;
-    public ?string $published_at = null;   // 'Y-m-d\TH:i' (datetime-local)
+    public ?string $published_at = null;
 
     public ?string $seo_title = null;
     public ?string $seo_description = null;
 
-    public $image = null;   // нове головне фото
+    public $image = null;
 
     public function mount(?int $id = null): void
     {
@@ -64,9 +64,6 @@ class PostForm extends Component
         ];
     }
 
-    /**
-     * Авто-генерація SEO з поточних даних статті. Заповнює лише порожні поля.
-     */
     public function generateSeo(): void
     {
         $draft = new Post([
@@ -96,12 +93,10 @@ class PostForm extends Component
         $post->seo_title       = $data['seo_title'];
         $post->seo_description = $data['seo_description'];
 
-        // Дата публікації: задана вручну, інакше при першій публікації — зараз.
         $post->published_at = $this->published_at
             ? Carbon::parse($this->published_at)
             : ($this->is_published ? ($post->published_at ?? now()) : $post->published_at);
 
-        // Ручний slug; порожній → з заголовка. Завжди унікалізуємо.
         $post->slug = $this->buildUniqueSlug($this->slug ?: $this->title, $this->postId);
         $post->save();
 
@@ -132,7 +127,6 @@ class PostForm extends Component
         return Str::random(24) . '.' . $file->getClientOriginalExtension();
     }
 
-    /** Унікальний slug (укр. транслітерація), із суфіксом -2, -3… при колізії. */
     private function buildUniqueSlug(string $source, ?int $ignoreId): string
     {
         $base = Str::slug(Translit::uk($source)) ?: 'stattya';

@@ -1,8 +1,3 @@
-{{--
-    Спільний шаблон для довідників з одним полем "name"
-    (типи техніки, виробники техніки, позиції).
-    Очікує: $items, $title, $addLabel, опц. $countKey + $countLabel.
---}}
 @php($countKey = $countKey ?? null)
 @php($withIcon = $withIcon ?? false)
 <div>
@@ -65,7 +60,6 @@
         @if($withIcon)
         <div class="is-full">
             <label>SVG-іконка</label><br>
-            {{-- прев'ю щойно вибраного файлу, інакше — вже збереженої іконки --}}
             @if($icon)
                 <div class="photo-thumb">
                     <img src="{{ $icon->temporaryUrl() }}" alt="">

@@ -23,7 +23,6 @@ class PostIndex extends Component
     {
         $post = Post::findOrFail($id);
         $post->is_published = ! $post->is_published;
-        // При першій публікації фіксуємо дату, якщо її ще немає.
         if ($post->is_published && ! $post->published_at) {
             $post->published_at = now();
         }

@@ -1,6 +1,5 @@
 <?php
 
-// app/Livewire/Admin/Brands/BrandIndex.php
 namespace App\Livewire\Admin\Brands;
 
 use App\Livewire\Concerns\WithAdminToast;
@@ -22,24 +21,21 @@ class BrandIndex extends Component
     public bool $showModal = false;
     public ?int $editingId = null;
 
-    // поля форми
     public string $name = '';
     public string $country = '';
     public bool $is_active = true;
-    public $logo = null;            // новий файл логотипа (завантаження)
-    public ?string $currentLogo = null; // вже збережений шлях (для прев'ю)
+    public $logo = null;
+    public ?string $currentLogo = null;
 
     protected function rules(): array
     {
         return [
             'name'    => 'required|string|max:255',
             'country' => 'nullable|string|max:255',
-            // Дозволяємо і растр, і векторний SVG (логотипи брендів часто у SVG).
             'logo'    => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp,svg', 'max:5120'],
         ];
     }
 
-    // скидаємо пагінацію при пошуку
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -75,7 +71,6 @@ class BrandIndex extends Component
         $brand->country   = $this->country ?: null;
         $brand->is_active = $this->is_active;
 
-        // новий логотип → кладемо у storage/app/public/brands, шлях у БД
         if ($this->logo) {
             if ($brand->logo) {
                 Storage::disk('public')->delete($brand->logo);

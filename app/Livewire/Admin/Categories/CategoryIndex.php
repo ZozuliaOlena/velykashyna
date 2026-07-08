@@ -48,9 +48,6 @@ class CategoryIndex extends Component
         $this->showModal = true;
     }
 
-    /**
-     * Авто-генерація SEO з назви категорії. Заповнює лише порожні поля.
-     */
     public function generateSeo(): void
     {
         if (blank($this->name)) {
@@ -85,7 +82,6 @@ class CategoryIndex extends Component
     {
         $data = $this->validate();
 
-        // рівень визначаємо від батька (корінь = 1), максимум 4
         $level = 1;
         if ($this->parent_id) {
             $parent = Category::findOrFail($this->parent_id);
@@ -97,7 +93,6 @@ class CategoryIndex extends Component
             }
         }
 
-        // не можна зробити категорію нащадком самої себе
         if ($this->editingId && in_array($this->parent_id, $this->descendantIds($this->editingId), true)) {
             $this->addError('parent_id', 'Категорія не може бути власним нащадком');
             return;
@@ -126,10 +121,6 @@ class CategoryIndex extends Component
         $cat->update(['is_active' => ! $cat->is_active]);
     }
 
-    /**
-     * Перевпорядкувати сусідні категорії (drag-and-drop).
-     * $orderedIds — id прямих дітей одного батька в новому порядку.
-     */
     public function reorder(array $orderedIds): void
     {
         foreach (array_values($orderedIds) as $index => $id) {
@@ -150,7 +141,6 @@ class CategoryIndex extends Component
         session()->flash('success', 'Видалено');
     }
 
-    /** Усі нащадки категорії (id), щоб не утворити цикл. */
     private function descendantIds(int $id): array
     {
         $ids = [$id];
@@ -163,8 +153,6 @@ class CategoryIndex extends Component
 
     public function render()
     {
-        // Пошук — плаский список (дерево має сенс лише цілком);
-        // без пошуку — згортуване вкладене дерево з drag-and-drop.
         $searching = $this->search !== '';
 
         if ($searching) {
@@ -177,7 +165,6 @@ class CategoryIndex extends Component
             $tree = Category::nestedTree(fn ($q) => $q->withCount(['children', 'products']));
         }
 
-        // для випадаючого списку батьків (рівень < 4, щоб дитина не вийшла за 4)
         $parents = Category::treeOrdered(fn ($q) => $q->where('level', '<', 4));
 
         return view('admin.categories.category-index', compact('tree', 'parents', 'searching'))

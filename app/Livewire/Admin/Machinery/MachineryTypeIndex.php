@@ -20,8 +20,8 @@ class MachineryTypeIndex extends Component
     public ?int $editingId = null;
     public string $name = '';
 
-    public $icon = null;                 // завантажуваний SVG-файл
-    public ?string $currentIcon = null;  // вже збережений шлях
+    public $icon = null;
+    public ?string $currentIcon = null;
 
     public function updatingSearch(): void
     {
@@ -108,7 +108,7 @@ class MachineryTypeIndex extends Component
             'addLabel'   => '+ Додати тип',
             'countKey'   => 'models_count',
             'countLabel' => 'Моделей',
-            'withIcon'   => true, // увімкнути колонку/завантаження SVG-іконки
+            'withIcon'   => true,
         ])->layout('admin.layouts.admin');
     }
 }

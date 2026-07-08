@@ -27,7 +27,6 @@ class ImportExport extends Component
     public array $photoReport = [];
     public array $catalogImageReport = [];
 
-    // Назва магазину для фіда Merchant (зберігається в settings).
     public string $merchantStoreName = '';
 
     public function mount(): void
@@ -71,11 +70,6 @@ class ImportExport extends Component
         $this->reset('photoArchive');
     }
 
-    /**
-     * Масова загрузка основних (спільних) фото за іменем файлу.
-     * Імʼя файлу = значення колонки «Основне фото» в імпорті.
-     * Один файл прив'язується до всіх товарів, що на нього посилаються.
-     */
     public function uploadCatalogImages(): void
     {
         $this->validate([
@@ -97,7 +91,6 @@ class ImportExport extends Component
                 $created++;
             }
 
-            // замінюємо зображення (одне на запис)
             $ci->clearMediaCollection('image');
             $ci->addMedia($file->getRealPath())
                 ->usingFileName(Str::random(24) . '.' . strtolower($file->getClientOriginalExtension()))

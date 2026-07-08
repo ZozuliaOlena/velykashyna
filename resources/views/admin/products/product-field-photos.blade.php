@@ -1,6 +1,4 @@
 <div>
-    {{-- wire:ignore.self — щоб блок не згортався при додаванні фото (Livewire --}}
-    {{-- не чіпає атрибут open самого <details>, але оновлює вміст усередині). --}}
     <details class="collapse-block" wire:ignore.self>
         <summary>
             Фото «в роботі» (застосування)
@@ -33,7 +31,6 @@
             </div>
         @endif
 
-        {{-- Додати нове фото --}}
         <div class="field-photo-add">
             <div class="is-full">
                 <label>Фото *</label>
@@ -48,8 +45,6 @@
                 </div>
                 <div style="flex:1 1 200px">
                     <label>Модель техніки</label>
-                    {{-- wire:key зі значенням типу: коли тип змінюється, Livewire
-                         перестворює список, і моделі підтягуються вже відфільтровані. --}}
                     <x-admin.select model="machinery_model_id" :live="false"
                         wire:key="fp-model-{{ $machinery_type_id ?? 0 }}"
                         placeholder="— Модель (напр. CASE 310) —" :options="$modelOptions" />

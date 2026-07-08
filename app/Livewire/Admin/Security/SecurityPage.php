@@ -12,22 +12,16 @@ use Laravel\Fortify\Actions\EnableTwoFactorAuthentication;
 use Laravel\Fortify\Actions\GenerateNewRecoveryCodes;
 use Livewire\Component;
 
-/**
- * Сторінка «Безпека»: керування двофакторною автентифікацією (2FA)
- * для поточного адміна. Опційно (самообслуговування): кожен вмикає сам.
- * Вмикання/вимикання захищене повторним введенням пароля.
- */
 class SecurityPage extends Component
 {
     use WithAdminToast;
 
-    public string $password = '';      // підтвердження пароля для критичних дій
-    public string $code = '';          // 6-значний код із застосунку (для підтвердження)
+    public string $password = '';
+    public string $code = '';
 
-    public bool $showingQr = false;            // показуємо QR під час налаштування
-    public bool $showingRecoveryCodes = false; // показуємо коди відновлення
+    public bool $showingQr = false;
+    public bool $showingRecoveryCodes = false;
 
-    /** Поточний користувач із актуальним станом 2FA. */
     private function user()
     {
         return Auth::user()->fresh();
@@ -40,7 +34,6 @@ class SecurityPage extends Component
         }
     }
 
-    /** Крок 1: підтвердити пароль і згенерувати секрет + QR. */
     public function enable(EnableTwoFactorAuthentication $enable): void
     {
         $this->assertPassword();
@@ -52,7 +45,6 @@ class SecurityPage extends Component
         $this->showingRecoveryCodes = false;
     }
 
-    /** Крок 2: підтвердити код із застосунку — 2FA стає активною. */
     public function confirmTwoFactor(ConfirmTwoFactorAuthentication $confirm): void
     {
         $this->validate(['code' => ['required', 'string']]);
@@ -65,11 +57,10 @@ class SecurityPage extends Component
 
         $this->reset('code');
         $this->showingQr = false;
-        $this->showingRecoveryCodes = true;     // показуємо коди відновлення один раз
+        $this->showingRecoveryCodes = true;
         session()->flash('success', 'Двофакторну автентифікацію увімкнено.');
     }
 
-    /** Перегенерувати коди відновлення. */
     public function regenerateRecoveryCodes(GenerateNewRecoveryCodes $generate): void
     {
         $generate(Auth::user());
@@ -82,7 +73,6 @@ class SecurityPage extends Component
         $this->showingRecoveryCodes = true;
     }
 
-    /** Вимкнути 2FA (з підтвердженням пароля). */
     public function disable(DisableTwoFactorAuthentication $disable): void
     {
         $this->assertPassword();

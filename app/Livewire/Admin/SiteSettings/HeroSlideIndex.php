@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-/**
- * «Налаштування сайту» → hero-слайдер головної сторінки.
- * Керування слайдами: заголовок, опис, фон (фото / відео / YouTube), порядок.
- */
 class HeroSlideIndex extends Component
 {
     use WithFileUploads;
@@ -26,7 +22,6 @@ class HeroSlideIndex extends Component
     public bool $showModal = false;
     public ?int $editingId = null;
 
-    // Поля форми.
     public ?string $title = null;
     public ?string $subtitle = null;
     public string $bg_type = 'image';
@@ -34,8 +29,8 @@ class HeroSlideIndex extends Component
     public int $sort_order = 0;
     public bool $is_active = true;
 
-    public $bg = null;                 // новий файл фону (фото/відео)
-    public ?string $currentBg = null;  // збережений шлях (для прев'ю)
+    public $bg = null;
+    public ?string $currentBg = null;
 
     protected function rules(): array
     {
@@ -92,7 +87,6 @@ class HeroSlideIndex extends Component
         $slide->sort_order  = $this->sort_order;
         $slide->is_active   = $this->is_active;
 
-        // Завантаження нового фото/відео фону.
         if ($this->bg_type !== 'youtube' && $this->bg) {
             if ($slide->bg_path) {
                 Storage::disk('public')->delete($slide->bg_path);
@@ -124,7 +118,6 @@ class HeroSlideIndex extends Component
         $slide->update(['is_active' => ! $slide->is_active]);
     }
 
-    /** Змінити порядок: посунути слайд вгору/вниз (обмін sort_order з сусідом). */
     public function move(int $id, string $dir): void
     {
         $slide = HeroSlide::findOrFail($id);

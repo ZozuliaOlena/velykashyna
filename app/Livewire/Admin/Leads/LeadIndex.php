@@ -21,24 +21,21 @@ class LeadIndex extends Component
         'canceled'   => 'Скасована',
     ];
 
-    // Заявки з цими статусами вважаються завершеними й живуть у вкладці «Архів».
     public const ARCHIVED_STATUSES = ['done', 'canceled'];
 
-    // Джерело заявки — щоб відрізняти кошик від консультації.
     public const SOURCES = [
         'cart'         => 'Кошик',
         'consultation' => 'Консультація',
         'manual'       => 'Вручну',
     ];
 
-    // Мають збігатися з варіантами у формі оформлення на клієнтській частині.
     public const DELIVERY_METHODS = ['Нова Пошта', 'САТ', "Кур'єр", 'Самовивіз зі складу'];
     public const PAYMENT_METHODS = ['Накладений платіж (при отриманні)', 'Оплата за реквізитами (IBAN)'];
 
     public string $search = '';
     public string $filterStatus = '';
     public string $filterSource = '';
-    public string $tab = 'active'; // active | archive
+    public string $tab = 'active';
 
     public bool $showModal = false;
     public ?int $editingId = null;
@@ -52,11 +49,8 @@ class LeadIndex extends Component
     public string $status = 'new';
     public ?string $manager_comment = null;
 
-    // Позиції заявки, які редагуються в модалці.
-    // Кожен рядок: ['product_id', 'name', 'sku', 'qty', 'price'].
     public array $items = [];
 
-    // Пошук товару для додавання у заявку.
     public string $productSearch = '';
 
     public function updating($name): void
@@ -66,7 +60,6 @@ class LeadIndex extends Component
         }
     }
 
-    /** Перемикання між активними та архівними заявками. */
     public function setTab(string $tab): void
     {
         if (! in_array($tab, ['active', 'archive'], true)) {
@@ -131,7 +124,6 @@ class LeadIndex extends Component
         $this->showModal = true;
     }
 
-    /** Додати товар у заявку (або збільшити кількість, якщо вже є). */
     public function addProduct(int $productId): void
     {
         foreach ($this->items as $idx => $item) {
@@ -184,11 +176,10 @@ class LeadIndex extends Component
             $lead = Lead::findOrFail($this->editingId);
             $lead->update($leadData);
         } else {
-            $leadData['source'] = 'manual'; // створено вручну в адмінці
+            $leadData['source'] = 'manual';
             $lead = Lead::create($leadData);
         }
 
-        // Синхронізуємо позиції: найпростіше — перезаписати повністю.
         $lead->items()->delete();
         foreach ($this->items as $item) {
             $lead->items()->create([
@@ -210,7 +201,6 @@ class LeadIndex extends Component
 
     public function render()
     {
-        // Архів = завершені статуси; активна вкладка — решта.
         $archived = self::ARCHIVED_STATUSES;
         $scopeTab = fn ($q) => $this->tab === 'archive'
             ? $q->whereIn('status', $archived)
@@ -227,11 +217,9 @@ class LeadIndex extends Component
             ->orderByDesc('id')
             ->paginate(25);
 
-        // Лічильники для вкладок.
         $activeCount = Lead::whereNotIn('status', $archived)->count();
         $archiveCount = Lead::whereIn('status', $archived)->count();
 
-        // У фільтрі статусів показуємо лише ті, що доречні для поточної вкладки.
         $tabStatuses = collect(self::STATUSES)
             ->filter(fn ($label, $key) => in_array($key, $archived, true) === ($this->tab === 'archive'))
             ->all();
@@ -240,7 +228,6 @@ class LeadIndex extends Component
             ? Lead::find($this->editingId)
             : null;
 
-        // Підказки товарів для додавання (виключаємо вже додані).
         $productResults = collect();
         if (trim($this->productSearch) !== '') {
             $addedIds = collect($this->items)->pluck('product_id')->all();

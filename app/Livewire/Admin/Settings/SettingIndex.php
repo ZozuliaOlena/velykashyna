@@ -16,20 +16,18 @@ class SettingIndex extends Component
 
     public string $search = '';
     public bool $showModal = false;
-    public ?string $editingKey = null;   // null = створення
+    public ?string $editingKey = null;
 
     public string $key = '';
     public ?string $value = null;
 
-    // ── Google Аналітика та реклама ──────────────────────────────
-    public ?string $gaId = null;         // GA4 Measurement ID (G-XXXX)
-    public ?string $gtmId = null;        // Google Tag Manager (GTM-XXXX)
-    public ?string $adsId = null;        // Google Ads (AW-XXXX)
-    public ?string $trackingHead = null; // будь-який код у <head> (можна вставити цілий скрипт)
+    public ?string $gaId = null;
+    public ?string $gtmId = null;
+    public ?string $adsId = null;
+    public ?string $trackingHead = null;
 
-    // ── Telegram-сповіщення про заявки ───────────────────────────
     public ?string $tgBotToken = null;
-    public ?string $tgChatIds = null;    // ID отримувачів (через кому)
+    public ?string $tgChatIds = null;
 
     public function mount(): void
     {
@@ -41,7 +39,6 @@ class SettingIndex extends Component
         $this->tgChatIds    = Setting::get('telegram_chat_ids');
     }
 
-    /** Зберегти налаштування Telegram-сповіщень. */
     public function saveTelegram(): void
     {
         Setting::set('telegram_bot_token', trim((string) $this->tgBotToken) ?: null);
@@ -50,10 +47,8 @@ class SettingIndex extends Component
         session()->flash('success', 'Налаштування Telegram збережено');
     }
 
-    /** Надіслати тестове повідомлення заданим отримувачам. */
     public function sendTelegramTest(): void
     {
-        // Спершу зберігаємо, щоб тест ішов за поточними даними форми.
         $this->saveTelegram();
 
         $sent = app(TelegramNotifier::class)->sendTest();
@@ -65,7 +60,6 @@ class SettingIndex extends Component
         }
     }
 
-    /** Зберегти налаштування аналітики/реклами (порожнє поле — очищає ключ). */
     public function saveAnalytics(): void
     {
         Setting::set('ga_measurement_id', trim((string) $this->gaId) ?: null);
@@ -111,7 +105,6 @@ class SettingIndex extends Component
     {
         $data = $this->validate();
 
-        // ключ — первинний ключ, тому при редагуванні він незмінний
         Setting::updateOrCreate(
             ['key' => $this->editingKey ?? $data['key']],
             ['value' => $data['value']]
@@ -124,8 +117,6 @@ class SettingIndex extends Component
 
     public function delete(string $key): void
     {
-        // find()->delete() (а не масовий where-delete) — щоб спрацював подієвий
-        // хук моделі й скинув кеш налаштувань у пам'яті запиту.
         Setting::find($key)?->delete();
         session()->flash('success', 'Видалено');
     }

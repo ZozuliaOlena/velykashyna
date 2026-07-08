@@ -93,7 +93,6 @@
             <input wire:model="sort_order" type="number" min="0" style="width:100%">
         </div>
 
-        {{-- Фон: YouTube --}}
         @if($bg_type === 'youtube')
             <div class="is-full">
                 <label>Посилання на YouTube</label>
@@ -103,7 +102,6 @@
                 <small style="color:#666">Відео відтворюється у фоні без звуку, зациклено.</small>
             </div>
         @else
-            {{-- Фон: фото або завантажене відео --}}
             <div class="is-full">
                 <label>{{ $bg_type === 'video' ? 'Відео-файл (mp4/webm)' : 'Фото' }}</label><br>
 

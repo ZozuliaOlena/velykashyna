@@ -50,7 +50,6 @@
 
     {{ $brands->links('pagination.admin') }}
 
-    {{-- Модальне вікно --}}
     @if($showModal)
     <x-admin.modal :title="$editingId ? 'Редагувати бренд' : 'Новий бренд'">
         <div>
@@ -67,7 +66,6 @@
         <div class="is-full">
             <label>Логотип</label><br>
 
-            {{-- прев'ю нового файлу або вже збереженого --}}
             @if($logo)
                 <div class="photo-thumb">
                     <img src="{{ $logo->temporaryUrl() }}" alt="">

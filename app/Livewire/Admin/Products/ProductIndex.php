@@ -21,7 +21,6 @@ class ProductIndex extends Component
     use WithFileUploads;
     use WithAdminToast;
 
-    // фільтри (зберігаються в URL — зручно ділитись/повертатись)
     #[Url(as: 'q')]
     public string $search = '';
     #[Url]
@@ -35,22 +34,19 @@ class ProductIndex extends Component
     #[Url]
     public string $stock = '';
 
-    // масовий вибір
-    /** @var array<int> */
     public array $selected = [];
     public bool $selectPage = false;
 
-    // поля масових дій
     public string $bulkStock = '';
     public string $bulkPriceMode = '';
     public ?string $bulkPrice = null;
-    public string $bulkCurrency = '';        // '' = не змінювати | UAH | USD | EUR
+    public string $bulkCurrency = '';
     public ?string $bulkPricePercent = null;
-    public string $bulkRateCurrency = '';    // валюта, для якої масово ставимо курс
-    public ?string $bulkRateValue = null;    // значення курсу (грн за 1 од. валюти)
-    public string $bulkDiscountType = '';    // '' | 'percent' | 'amount'
+    public string $bulkRateCurrency = '';
+    public ?string $bulkRateValue = null;
+    public string $bulkDiscountType = '';
     public ?string $bulkDiscountValue = null;
-    public $bulkCatalogPhoto = null; // каталожне фото для масового призначення
+    public $bulkCatalogPhoto = null;
 
     protected function queryString(): array
     {
@@ -59,7 +55,6 @@ class ProductIndex extends Component
 
     public function updating($name): void
     {
-        // будь-яка зміна фільтра/пошуку скидає пагінацію та вибір
         if (in_array($name, ['search', 'type', 'size', 'brand', 'category', 'stock'])) {
             $this->resetPage();
             $this->reset('selected', 'selectPage');
@@ -72,7 +67,6 @@ class ProductIndex extends Component
         $this->resetPage();
     }
 
-    // вибрати/зняти всі рядки на поточній сторінці
     public function updatedSelectPage(bool $value): void
     {
         $this->selected = $value
@@ -110,7 +104,6 @@ class ProductIndex extends Component
         session()->flash('success', 'Товар видалено');
     }
 
-    // ── масові дії ───────────────────────────────────────────────
     public function bulkSetActive(bool $active): void
     {
         if (empty($this->selected)) {
@@ -183,7 +176,6 @@ class ProductIndex extends Component
             $data['price_mode'] = $this->bulkPriceMode;
 
             if ($this->bulkPriceMode === 'inquiry') {
-                // "Уточнюйте" — ціна не зберігається
                 $data['price'] = null;
             } else {
                 if (! is_numeric($this->bulkPrice) || (float) $this->bulkPrice < 0) {
@@ -204,13 +196,8 @@ class ProductIndex extends Component
         session()->flash('success', 'Ціни оновлено');
     }
 
-    /**
-     * Масово виставити курс валюти на ВСІ товари у цій валюті (напр. усім
-     * товарам у EUR — курс 45). Значення пишеться в exchange_rate.
-     */
     public function bulkSetExchangeRate(): void
     {
-        // Курс має сенс лише для валют (USD/EUR) відносно гривні.
         if (! in_array($this->bulkRateCurrency, ['USD', 'EUR'], true)) {
             session()->flash('error', 'Оберіть валюту (USD або EUR), для якої встановити курс');
             return;
@@ -227,10 +214,6 @@ class ProductIndex extends Component
         session()->flash('success', "Курс для {$this->bulkRateCurrency} застосовано (товарів: {$count})");
     }
 
-    /**
-     * Масова авто-генерація SEO для вибраних товарів: заповнює лише порожні
-     * seo_title / seo_description / seo_h1 з даних товару (наявні не чіпає).
-     */
     public function bulkGenerateSeo(): void
     {
         if (empty($this->selected)) {
@@ -258,7 +241,6 @@ class ProductIndex extends Component
         session()->flash('success', "SEO згенеровано для товарів: {$filled}");
     }
 
-    /** Масово підняти ціну на відсоток (наприклад, +10%). */
     public function bulkRaisePrice(): void
     {
         if (empty($this->selected)) {
@@ -276,7 +258,6 @@ class ProductIndex extends Component
             return;
         }
 
-        // лише товари з реальною ціною; "Уточнюйте" (inquiry) пропускаємо
         $factorSql = number_format($factor, 6, '.', '');
         $affected  = Product::whereIn('id', $this->selected)
             ->whereNotNull('price')
@@ -288,7 +269,6 @@ class ProductIndex extends Component
         session()->flash('success', "Ціни змінено на {$percent}% (оновлено товарів: {$affected})");
     }
 
-    /** Масово встановити знижку: у відсотках (%) або на суму (грн). */
     public function bulkSetDiscount(): void
     {
         if (empty($this->selected)) {
@@ -319,7 +299,6 @@ class ProductIndex extends Component
         session()->flash('success', "Знижку встановлено (оновлено товарів: {$count})");
     }
 
-    /** Масово прибрати знижку у вибраних товарів. */
     public function bulkClearDiscount(): void
     {
         if (empty($this->selected)) {
@@ -336,7 +315,6 @@ class ProductIndex extends Component
         session()->flash('success', "Знижку прибрано (оновлено товарів: {$count})");
     }
 
-    /** Масово призначити одне каталожне (стокове) фото вибраним товарам. */
     public function bulkSetCatalogPhoto(): void
     {
         if (empty($this->selected)) {
@@ -375,7 +353,6 @@ class ProductIndex extends Component
         $this->reset('selected', 'selectPage');
     }
 
-    // спільний білдер для рендера та "вибрати всі"
     private function productsQuery()
     {
         return Product::query()
@@ -407,7 +384,6 @@ class ProductIndex extends Component
             'categories'   => Category::treeOrdered(),
             'sizes'        => Product::whereNotNull('size_raw')->where('size_raw', '!=', '')
                 ->distinct()->orderBy('size_raw')->pluck('size_raw'),
-            // Скільки товарів у кожній валюті — для панелі масового курсу.
             'currencyCounts' => Product::query()
                 ->selectRaw('currency, COUNT(*) as c')
                 ->groupBy('currency')

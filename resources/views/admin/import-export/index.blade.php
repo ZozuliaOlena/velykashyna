@@ -2,7 +2,6 @@
     <h1>Імпорт / Експорт</h1>
 
 
-    {{-- ── Google Merchant фід ─────────────────────────────── --}}
     <fieldset style="margin-top:1rem">
         <legend><strong>Google Merchant (фід)</strong></legend>
         <p style="color:#666">
@@ -42,7 +41,6 @@
         </div>
     </fieldset>
 
-    {{-- ── Експорт ─────────────────────────────────────────── --}}
     <fieldset style="margin-top:1rem">
         <legend><strong>Експорт</strong></legend>
         <p style="color:#666">Повне вивантаження всіх товарів з характеристиками, категоріями та сумісністю (3 листи Excel).</p>
@@ -52,7 +50,6 @@
         </div>
     </fieldset>
 
-    {{-- ── Імпорт товарів ──────────────────────────────────── --}}
     <fieldset style="margin-top:1rem">
         <legend><strong>Імпорт каталогу</strong></legend>
         <p style="color:#666">
@@ -91,7 +88,6 @@
         @endif
     </fieldset>
 
-    {{-- ── Фото архівом ────────────────────────────────────── --}}
     <fieldset style="margin-top:1rem">
         <legend><strong>Фото архівом (ZIP)</strong></legend>
         <p style="color:#666">
@@ -127,7 +123,6 @@
         @endif
     </fieldset>
 
-    {{-- ── Основні фото за іменем (одне на кілька товарів) ── --}}
     <fieldset style="margin-top:1rem">
         <legend><strong>Основні фото (за іменем файлу)</strong></legend>
         <p style="color:#666">
@@ -142,7 +137,6 @@
         <div wire:loading wire:target="catalogImages" style="margin-top:6px; color:#666; font-size:13px">Завантаження файлів…</div>
         @error('catalogImages.*') <span style="color:red">{{ $message }}</span> @enderror
 
-        {{-- Прев'ю вибраних файлів перед завантаженням --}}
         @if($catalogImages)
             <div class="photo-grid" style="margin-top:.6rem">
                 @foreach($catalogImages as $ci)

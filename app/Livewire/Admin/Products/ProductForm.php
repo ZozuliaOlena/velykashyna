@@ -23,33 +23,29 @@ class ProductForm extends Component
 
     public ?int $productId = null;
 
-    // ── основне ──────────────────────────────────────────────
     public string $sku = '';
     public ?int $product_type_id = null;
     public string $name = '';
     public ?int $brand_id = null;
     public ?string $model = null;
 
-    // ── типорозмір ───────────────────────────────────────────
     public ?string $size_raw = null;
     public ?string $size_width = null;
     public ?string $size_profile = null;
     public ?string $rim_diameter = null;
-    public ?string $rd_type = null;          // R / D
-    public ?string $tube_type = null;        // TT / TL
-    public ?string $ply_rating = null;       // PR
-    public ?string $load_speed_index = null; // LI/SS
+    public ?string $rd_type = null;
+    public ?string $tube_type = null;
+    public ?string $ply_rating = null;
+    public ?string $load_speed_index = null;
     public ?string $specification = null;
-    // Опис за фіксованим шаблоном (заголовки розділів незмінні).
-    public ?string $descrIntro = null;          // Опис
-    public ?string $descrAdvantages = null;     // Ключові переваги (по рядку)
-    public ?string $descrVsCompetitors = null;  // Переваги над конкурентами (по рядку)
-    public ?string $descrFeatures = null;       // Особливості експлуатації
-    public ?string $descrWhyBuy = null;         // Чому варто придбати
+    public ?string $descrIntro = null;
+    public ?string $descrAdvantages = null;
+    public ?string $descrVsCompetitors = null;
+    public ?string $descrFeatures = null;
+    public ?string $descrWhyBuy = null;
 
-    public ?string $expert_note = null;      // «Думка експерта Велика Шина»
+    public ?string $expert_note = null;
 
-    // ── наявність та ціна ────────────────────────────────────
     public string $stock_status = 'inquiry';
     public string $price_mode = 'inquiry';
     public ?string $price = null;
@@ -61,9 +57,8 @@ class ProductForm extends Component
     public bool $merchant_enabled = false;
     public bool $is_promo = false;
     public bool $free_shipping = false;
-    public string $condition = 'new'; // new / used / refurbished (Google Merchant)
+    public string $condition = 'new';
 
-    // ── SEO ──────────────────────────────────────────────────
     public ?string $seo_title = null;
     public ?string $seo_description = null;
     public ?string $seo_h1 = null;
@@ -71,23 +66,15 @@ class ProductForm extends Component
 
     public bool $is_active = true;
 
-    // ── категорії (мультивибір) ──────────────────────────────
-    /** @var array<int> */
     public array $categoryIds = [];
 
-    // ── супутні товари ───────────────────────────────────────
-    /** @var array<int> */
     public array $relatedIds = [];
 
-    // ── гнучкі характеристики (EAV), ключ = attribute_id ─────
-    /** @var array<int, mixed> */
     public array $attrValues = [];
 
-    // ── фото ─────────────────────────────────────────────────
-    public $mainPhoto = null;        // одне основне
-    public array $galleryPhotos = []; // кілька додаткових
+    public $mainPhoto = null;
+    public array $galleryPhotos = [];
 
-    /** Максимум фото у галереї (збережені + нові разом). */
     public const GALLERY_MAX = 8;
 
     public function mount(?int $id = null): void
@@ -115,7 +102,6 @@ class ProductForm extends Component
         $this->specification    = $product->specification;
         $this->expert_note      = $product->expert_note;
 
-        // Розділи опису з JSON; якщо їх ще немає — старий plain-текст у «Опис».
         $blocks = $product->description_blocks ?? [];
         $this->descrIntro         = $blocks['intro'] ?? (empty($blocks) ? trim(strip_tags((string) $product->description)) : null) ?: null;
         $this->descrAdvantages    = isset($blocks['advantages']) ? implode("\n", $blocks['advantages']) : null;
@@ -151,7 +137,6 @@ class ProductForm extends Component
         }
     }
 
-    /** У гривні курс не потрібен — очищаємо, щоб не лишалося зайвого значення. */
     public function updatedCurrency(): void
     {
         if ($this->currency === 'UAH') {
@@ -159,14 +144,8 @@ class ProductForm extends Component
         }
     }
 
-    /**
-     * Авто-генерація SEO з поточних даних форми. Заповнює лише порожні поля,
-     * щоб не затирати те, що менеджер написав вручну (щоб перегенерувати —
-     * очистіть поле й натисніть знову).
-     */
     public function generateSeo(): void
     {
-        // Тимчасовий товар із поточних значень форми (без збереження в БД).
         $draft = new Product([
             'name'             => $this->name,
             'model'            => $this->model,
@@ -188,7 +167,6 @@ class ProductForm extends Component
         session()->flash('success', 'SEO-поля згенеровано (порожні заповнено)');
     }
 
-    /** Характеристики, доступні для обраного типу товару (власні + спільні). */
     private function attributesForType(): Collection
     {
         if (! $this->product_type_id) {
@@ -233,7 +211,6 @@ class ProductForm extends Component
 
             'stock_status'   => ['required', 'in:in_stock,on_order,inquiry'],
             'price_mode'     => ['required', 'in:fixed,from,inquiry'],
-            // ціна обов'язкова лише коли режим не "уточнюйте"
             'price'          => ['nullable', 'required_unless:price_mode,inquiry', 'numeric', 'min:0'],
             'currency'       => ['required', 'string', 'size:3'],
             'exchange_rate'  => ['nullable', 'numeric', 'min:0'],
@@ -264,12 +241,10 @@ class ProductForm extends Component
     {
         $data = $this->validate();
 
-        // у режимі "Уточнюйте ціну" ціна не зберігається
         if ($this->price_mode === 'inquiry') {
             $data['price'] = null;
         }
 
-        // валідація числових характеристик до збереження
         $attributes = $this->attributesForType();
         foreach ($attributes as $attr) {
             if ($attr->data_type === 'number') {
@@ -296,21 +271,18 @@ class ProductForm extends Component
 
         $product->fill($scalar);
 
-        // Опис: структуровані розділи (JSON) + зібраний HTML для виводу.
         [$product->description_blocks, $product->description] = $this->buildDescription();
 
         $product->merchant_enabled = $this->merchant_enabled;
         $product->is_promo = $this->is_promo;
         $product->free_shipping = $this->free_shipping;
         $product->is_active = $this->is_active;
-        // ручний slug; порожній → з назви. Завжди унікалізуємо самі.
         $product->slug = $this->buildUniqueSlug($this->slug ?: $this->name, $this->productId);
         $product->save();
 
         $product->categories()->sync($this->categoryIds);
         $product->relatedProducts()->sync($this->relatedIds);
 
-        // гнучкі характеристики (EAV)
         foreach ($attributes as $attr) {
             $raw = $this->attrValues[$attr->id] ?? null;
             $payload = ['value_text' => null, 'value_number' => null, 'option_id' => null];
@@ -338,7 +310,7 @@ class ProductForm extends Component
                         $empty = true;
                     }
                     break;
-                default: // text
+                default:
                     if ($raw === null || $raw === '') {
                         $empty = true;
                     } else {
@@ -357,7 +329,6 @@ class ProductForm extends Component
             }
         }
 
-        // фото
         if ($this->mainPhoto) {
             $product->addMedia($this->mainPhoto->getRealPath())
                 ->usingFileName($this->uploadName($this->mainPhoto))
@@ -374,7 +345,6 @@ class ProductForm extends Component
 
         session()->flash('success', 'Товар збережено');
 
-        // повертаємось до таблиці товарів
         return $this->redirectRoute('admin.products.index', navigate: true);
     }
 
@@ -388,10 +358,6 @@ class ProductForm extends Component
         session()->flash('success', 'Фото видалено');
     }
 
-    /**
-     * Зміна порядку збережених фото галереї (drag-and-drop).
-     * Приймає id у новому порядку; чужі/невалідні ігноруємо.
-     */
     public function reorderGallery(array $ids): void
     {
         if (! $this->productId) {
@@ -414,10 +380,6 @@ class ProductForm extends Component
         return Str::random(24) . '.' . $file->getClientOriginalExtension();
     }
 
-    /**
-     * Збирає опис із розділів шаблону: повертає [структура(JSON), готовий HTML].
-     * Заголовки розділів фіксовані; вміст екранується.
-     */
     private function buildDescription(): array
     {
         $toLines = fn ($t) => array_values(array_filter(
@@ -466,7 +428,6 @@ class ProductForm extends Component
         return [$blocks, $html];
     }
 
-    /** Унікальний slug (укр. транслітерація), з суфіксом -2, -3… при колізії. */
     private function buildUniqueSlug(string $source, ?int $ignoreId): string
     {
         $base = Str::slug(Translit::uk($source)) ?: 'tovar';
@@ -501,8 +462,6 @@ class ProductForm extends Component
             'galleryMedia' => $product ? $product->getMedia('gallery') : collect(),
             'galleryMax'   => self::GALLERY_MAX,
             'catalogImageUrl' => $product?->catalogImage?->imageUrl('thumb'),
-            // ВАЖЛИВО: не називати змінну 'attributes' — це зарезервоване імʼя
-            // Livewire ($attributes = ComponentAttributeBag), воно перекриває дані.
             'typeAttributes' => $this->attributesForType(),
         ])->layout('admin.layouts.admin');
     }

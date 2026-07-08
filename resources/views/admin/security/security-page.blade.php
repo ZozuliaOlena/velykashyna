@@ -10,7 +10,6 @@
         </p>
 
         @if(! $confirmed && ! $showingQr)
-            {{-- Стан: вимкнено --}}
             <p>Статус: <strong style="color:#b71c1c">вимкнено</strong></p>
             <div class="is-full" style="max-width:320px">
                 <label>Підтвердіть пароль, щоб увімкнути</label>
@@ -22,7 +21,6 @@
             </div>
 
         @elseif($showingQr)
-            {{-- Налаштування: показ QR і підтвердження кодом --}}
             <p>1. Відскануйте QR-код у застосунку автентифікації:</p>
             <div style="background:#fff; display:inline-block; padding:10px; border:1px solid #e0e0e0; border-radius:10px">
                 {!! $qrSvg !!}
@@ -42,7 +40,6 @@
             </div>
 
         @else
-            {{-- Стан: увімкнено --}}
             <p>Статус: <strong style="color:#2e7d32">увімкнено</strong></p>
 
             @if($recovery)

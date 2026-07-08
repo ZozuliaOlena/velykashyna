@@ -20,7 +20,6 @@
         </a>
     </div>
 
-    {{-- ── Швидкі дії ──────────────────────────────────────── --}}
     <div class="dash-actions">
         <a class="dash-action" href="{{ route('admin.products.create') }}">
             <x-icon name="plus"/> <span>Додати товар</span>
@@ -36,7 +35,6 @@
         </a>
     </div>
 
-    {{-- ── Останні заявки ──────────────────────────────────── --}}
     <div class="dash-panel">
         <div class="dash-panel__head">
             <h2>Останні заявки</h2>

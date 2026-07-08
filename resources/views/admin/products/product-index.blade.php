@@ -7,7 +7,6 @@
     </div>
 
 
-    {{-- Фільтри --}}
     <div class="admin-filters">
         <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, розмір (710/70R38)...">
 
@@ -37,8 +36,6 @@
         <button wire:click="resetFilters">Скинути</button>
     </div>
 
-    {{-- Масовий курс валюти: ставимо exchange_rate одразу ВСІМ товарам у
-         вибраній валюті (не залежить від виділення в таблиці). --}}
     <div class="rate-bar">
         <strong>Курс валют (масово):</strong>
         <span class="bulk-group">
@@ -54,12 +51,10 @@
         <small style="color:#666">Напр.: усім товарам у EUR — курс 45. Курс збережеться у полі «Курс» кожного такого товару.</small>
     </div>
 
-    {{-- Панель масових дій --}}
     @if(count($selected))
         <div class="bulk-bar">
             <strong>Вибрано: {{ count($selected) }}</strong>
 
-            {{-- Наявність --}}
             <span class="bulk-group">
                 <select wire:model="bulkStock">
                     <option value="">Наявність…</option>
@@ -70,7 +65,6 @@
                 <button wire:click="bulkSetStock">Застосувати</button>
             </span>
 
-            {{-- Ціна / режим ціни / валюта --}}
             <span class="bulk-group">
                 <select wire:model.live="bulkPriceMode">
                     <option value="">Режим ціни…</option>
@@ -90,7 +84,6 @@
                 <button wire:click="bulkSetPrice">Застосувати</button>
             </span>
 
-            {{-- Підняти ціну на відсоток --}}
             <span class="bulk-group">
                 <input wire:model="bulkPricePercent" type="number" step="0.1"
                     placeholder="%" style="width:80px" title="Напр. 10 = +10%, -5 = знижка">
@@ -98,7 +91,6 @@
                     data-confirm="Ви дійсно хочете змінити ціну вибраних товарів на вказаний відсоток?">Змінити ціну на %</button>
             </span>
 
-            {{-- Знижка (масово): у відсотках або на суму --}}
             <span class="bulk-group">
                 <select wire:model.live="bulkDiscountType">
                     <option value="">Знижка…</option>
@@ -115,14 +107,12 @@
                     data-confirm="Прибрати знижку з вибраних товарів?">Прибрати знижку</button>
             </span>
 
-            {{-- Основне фото (одне на кілька товарів) --}}
             <span class="bulk-group">
                 <label class="file-pick" title="Основне фото для вибраних товарів (одне на кілька)">
                     <input type="file" wire:model="bulkCatalogPhoto" accept="image/*">
                     <span>📷 Основне фото…</span>
                 </label>
                 @if($bulkCatalogPhoto)
-                    {{-- прев'ю вибраного основного фото --}}
                     <img src="{{ $bulkCatalogPhoto->temporaryUrl() }}" alt=""
                         style="height:34px; width:34px; object-fit:contain; border:1px solid #ddd; border-radius:6px; background:#fff">
                     <button wire:click="bulkSetCatalogPhoto">Застосувати</button>
@@ -131,31 +121,26 @@
                 @error('bulkCatalogPhoto') <span style="color:red">{{ $message }}</span> @enderror
             </span>
 
-            {{-- Merchant --}}
             <span class="bulk-group">
                 <button wire:click="bulkSetMerchant(true)">Merchant ON</button>
                 <button wire:click="bulkSetMerchant(false)">Merchant OFF</button>
             </span>
 
-            {{-- Активність --}}
             <span class="bulk-group">
                 <button wire:click="bulkSetActive(true)">Активувати</button>
                 <button wire:click="bulkSetActive(false)">Деактивувати</button>
             </span>
 
-            {{-- SEO --}}
             <span class="bulk-group">
                 <button wire:click="bulkGenerateSeo"
                     data-confirm="Згенерувати SEO для вибраних товарів? (заповняться лише порожні поля)">Згенерувати SEO</button>
             </span>
 
-            {{-- Акція --}}
             <span class="bulk-group">
                 <button wire:click="bulkSetPromo(true)">Акція ON</button>
                 <button wire:click="bulkSetPromo(false)">Акція OFF</button>
             </span>
 
-            {{-- Безкоштовна доставка --}}
             <span class="bulk-group">
                 <button wire:click="bulkSetFreeShipping(true)">Доставка ON</button>
                 <button wire:click="bulkSetFreeShipping(false)">Доставка OFF</button>

@@ -127,7 +127,6 @@
         <div class="is-full">
             <h3>Позиції заявки</h3>
 
-            {{-- Пошук товару для додавання --}}
             <div class="lead-product-search">
                 <input wire:model.live.debounce.300ms="productSearch" type="text"
                        placeholder="Додати товар: назва або артикул...">

@@ -10,10 +10,6 @@ use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-/**
- * Керування фото товару «в роботі»: встановлені/інспектовані шини на техніці
- * з підписом. Вбудовується в картку товару (потрібен існуючий productId).
- */
 class ProductFieldPhotos extends Component
 {
     use WithFileUploads;
@@ -31,10 +27,6 @@ class ProductFieldPhotos extends Component
         $this->productId = $productId;
     }
 
-    /**
-     * При зміні типу техніки скидаємо раніше обрану модель — інакше в списку
-     * лишилась би модель іншого типу, а фільтр показував би вже інші моделі.
-     */
     public function updatedMachineryTypeId(): void
     {
         $this->machinery_model_id = null;
@@ -54,7 +46,6 @@ class ProductFieldPhotos extends Component
     {
         $this->validate();
 
-        // Бренд і тип беремо з обраної моделі (тип можна перевизначити вручну).
         $model = $this->machinery_model_id ? MachineryModel::find($this->machinery_model_id) : null;
 
         $fieldPhoto = ProductFieldPhoto::create([
@@ -88,8 +79,6 @@ class ProductFieldPhotos extends Component
 
         $types = MachineryType::orderBy('name')->get(['id', 'name']);
 
-        // Моделі фільтруємо за обраним типом техніки. Якщо тип не обрано —
-        // показуємо всі моделі.
         $models = MachineryModel::with('brand')
             ->when($this->machinery_type_id, fn ($q) => $q->where('machinery_type_id', $this->machinery_type_id))
             ->orderBy('name')

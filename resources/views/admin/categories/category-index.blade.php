@@ -10,7 +10,6 @@
     </div>
 
     @if($searching)
-        {{-- Пошук: плаский список знайдених категорій (без дерева) --}}
         <div class="table-scroll">
         <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:1rem">
             <thead>
@@ -39,7 +38,6 @@
         </table>
         </div>
     @else
-        {{-- Дерево: згортувані вузли + drag-and-drop сортування (тягнути за ⠿) --}}
         <p class="cat-hint">Тягніть за <span>⠿</span>, щоб змінити порядок у межах одного батька. Клік по ▶ — згорнути/розгорнути.</p>
         @if($tree->isEmpty())
             <p style="text-align:center; color:#888; padding:1rem">Категорій ще немає</p>

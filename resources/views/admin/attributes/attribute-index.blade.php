@@ -87,7 +87,6 @@
             <label style="margin:0"><input wire:model="is_filterable" type="checkbox"> Використовувати у фільтрах</label>
         </div>
 
-        {{-- Варіанти для типу select --}}
         @if($data_type === 'select')
             <fieldset class="is-full">
                 <legend>Варіанти значень</legend>

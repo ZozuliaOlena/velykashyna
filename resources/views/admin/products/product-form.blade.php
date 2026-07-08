@@ -6,7 +6,6 @@
 
     <form wire:submit="save" style="max-width:760px" data-dirty-guard>
 
-        {{-- ── Основне ─────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Основне</strong></legend>
 
@@ -42,7 +41,6 @@
             </div>
         </fieldset>
 
-        {{-- ── Типорозмір ──────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Типорозмір та характеристики</strong></legend>
 
@@ -102,7 +100,6 @@
             </div>
         </fieldset>
 
-        {{-- ── Гнучкі характеристики (за типом товару) ─────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Характеристики</strong></legend>
 
@@ -141,7 +138,6 @@
             @endif
         </fieldset>
 
-        {{-- ── Опис товару (фіксований шаблон) ─────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Опис товару</strong></legend>
             <p style="color:#666; margin:0 0 .75rem">
@@ -185,7 +181,6 @@
             </div>
         </fieldset>
 
-        {{-- ── Думка експерта / особливості ────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Думка експерта «Велика Шина» / особливості</strong></legend>
             <div class="is-full">
@@ -195,7 +190,6 @@
             </div>
         </fieldset>
 
-        {{-- ── Наявність та ціна ───────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Наявність та ціна</strong></legend>
 
@@ -235,7 +229,6 @@
                         </select>
                         @error('currency') <span style="color:red">{{ $message }}</span> @enderror
                     </div>
-                    {{-- Курс потрібен лише для валют (USD/EUR) → у гривні. --}}
                     @if($currency !== 'UAH')
                     <div>
                         <label>Курс до грн (опц.)</label><br>
@@ -284,7 +277,6 @@
             </div>
         </fieldset>
 
-        {{-- ── Категорії ───────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Категорії (мультивибір)</strong></legend>
             <select wire:model="categoryIds" multiple size="8" style="width:100%">
@@ -296,7 +288,6 @@
             @error('categoryIds') <span style="color:red">{{ $message }}</span> @enderror
         </fieldset>
 
-        {{-- ── Супутні товари ──────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Супутні товари</strong></legend>
             <select wire:model="relatedIds" multiple size="8" style="width:100%">
@@ -308,7 +299,6 @@
             @error('relatedIds') <span style="color:red">{{ $message }}</span> @enderror
         </fieldset>
 
-        {{-- ── SEO ─────────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>SEO</strong></legend>
             <div style="margin-bottom:.6rem">
@@ -334,7 +324,6 @@
             </div>
         </fieldset>
 
-        {{-- ── Фото ────────────────────────────────────────── --}}
         <fieldset style="margin-top:1rem">
             <legend><strong>Фото</strong></legend>
 
@@ -342,8 +331,6 @@
                 <p style="color:#666">Фото завантажаться разом зі збереженням товару.</p>
             @endunless
 
-            {{-- Основне фото. Може бути призначене масово (одне на кілька
-                 товарів) на сторінці «Товари», або власне — завантажене тут. --}}
             <div style="margin-bottom:1rem">
                 <label>Основне фото</label><br>
                 @if($mainMedia)
@@ -353,7 +340,6 @@
                             data-confirm="Ви дійсно хочете видалити основне фото?">×</button>
                     </div>
                 @elseif($catalogImageUrl)
-                    {{-- Спільне фото, призначене масово. Завантаження задасть власне. --}}
                     <div class="photo-thumb"><img src="{{ $catalogImageUrl }}" alt=""></div>
                     <small style="color:#666; display:block; margin-bottom:.4rem">Спільне фото (призначене масово). Завантажте, щоб задати власне для цього товару.</small>
                 @endif
@@ -361,14 +347,12 @@
                 @error('mainPhoto') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
-            {{-- Додаткові фото (галерея, як на OLX: превʼю, видалення, зміна порядку) --}}
             <div>
                 <label>Додаткові фото</label><br>
                 <small style="color:#666; display:block; margin-bottom:.5rem">
                     Можна додати до {{ $galleryMax }} фото. Перетягуйте за ⠿, щоб змінити порядок.
                 </small>
 
-                {{-- Уже збережені фото — drag-and-drop порядок --}}
                 @if($galleryMedia->count())
                     <div class="photo-grid" data-reorder-gallery wire:key="gallery-saved">
                         @foreach($galleryMedia as $m)
@@ -382,7 +366,6 @@
                     </div>
                 @endif
 
-                {{-- Нові фото — клієнтський аплоадер зі стисненням і превʼю --}}
                 <div class="gallery-uploader" wire:ignore
                      data-model="galleryPhotos"
                      data-max="{{ $galleryMax }}"
@@ -414,8 +397,6 @@
         </div>
     </form>
 
-    {{-- PDF-картка товару (для пересилання клієнту) — згортний блок, --}}
-    {{-- щоб не відсувати кнопку «Зберегти» вгору й не губити її. --}}
     @if($productId)
         <details class="collapse-block" wire:ignore.self>
             <summary>PDF-картка (для Viber / Telegram)</summary>
@@ -447,7 +428,6 @@
         </details>
     @endif
 
-    {{-- Фото «в роботі» — окремий блок, доступний після збереження товару --}}
     @if($productId)
         @livewire('admin.products.product-field-photos', ['productId' => $productId], key('field-photos-'.$productId))
     @else

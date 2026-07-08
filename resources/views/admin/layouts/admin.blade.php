@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Адмін панель — Велика Шина</title>
-    {{-- Без resources/js/app.js: Alpine надає сам Livewire (@livewireScripts).
-         admin.js не стартує Alpine — лише drag-and-drop (SortableJS). --}}
     @vite(['resources/css/app.css', 'resources/css/admin.scss', 'resources/js/admin.js'])
     @livewireStyles
 </head>
@@ -14,7 +12,6 @@
 @php
     $nav = fn (...$p) => request()->routeIs(...$p) ? 'is-active' : '';
     $on = fn (...$p) => request()->routeIs(...$p);
-    // Кількість нових (необроблених) заявок — для бейджа в меню
     $newLeads = \App\Models\Lead::where('status', 'new')->count();
     $icons = [
         'home'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
@@ -41,12 +38,10 @@
         </div>
 
         @php
-            // Яка група розгорнута за замовчуванням — за поточним маршрутом.
             $openGroup = $on('admin.categories.*','admin.attributes.*','admin.brands.*','admin.product-types.*') ? 'catalog'
                 : ($on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-series.*','admin.machinery-models.*','admin.machinery-positions.*','admin.field-photos.*') ? 'tech'
                 : ($on('admin.users.*','admin.settings.*','admin.security.*') ? 'system' : ''));
         @endphp
-        {{-- openGroup = акордеон: одночасно відкрита лише одна група --}}
         <nav class="admin-nav" x-data="{ openGroup: '{{ $openGroup }}' }">
             <a href="{{ route('admin.dashboard') }}" class="admin-nav__item {{ $nav('admin.dashboard') }}" wire:navigate>
                 {!! $icons['home'] !!}<span>Головна</span>
@@ -67,7 +62,6 @@
                 {!! $icons['swap'] !!}<span>Імпорт / Експорт</span>
             </a>
 
-            {{-- Каталог --}}
             <div class="admin-nav__group">
                 <button type="button" class="admin-nav__head {{ $on('admin.categories.*','admin.attributes.*','admin.brands.*','admin.product-types.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'catalog' ? '' : 'catalog' } else { sidebar = true; openGroup = 'catalog' }">
                     {!! $icons['grid'] !!}<span>Каталог</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'catalog' }">▶</span>
@@ -80,7 +74,6 @@
                 </div>
             </div>
 
-            {{-- Техніка --}}
             <div class="admin-nav__group">
                 <button type="button" class="admin-nav__head {{ $on('admin.machinery-types.*','admin.machinery-brands.*','admin.machinery-series.*','admin.machinery-models.*','admin.machinery-positions.*','admin.field-photos.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'tech' ? '' : 'tech' } else { sidebar = true; openGroup = 'tech' }">
                     {!! $icons['truck'] !!}<span>Техніка</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'tech' }">▶</span>
@@ -95,7 +88,6 @@
                 </div>
             </div>
 
-            {{-- Система --}}
             <div class="admin-nav__group">
                 <button type="button" class="admin-nav__head {{ $on('admin.users.*','admin.settings.*','admin.site-settings.*','admin.site-contacts.*','admin.security.*') ? 'is-active' : '' }}" x-on:click="if (sidebar) { openGroup = openGroup === 'system' ? '' : 'system' } else { sidebar = true; openGroup = 'system' }">
                     {!! $icons['gear'] !!}<span>Система</span><span class="admin-nav__chev" :class="{ 'is-open': openGroup === 'system' }">▶</span>
@@ -138,10 +130,8 @@
     </div>
 </div>
 
-{{-- Глобальна модалка підтвердження дій (видалення, вихід, збереження тощо) --}}
 <x-admin.confirm-modal />
 
-{{-- Глобальні сповіщення (тости) --}}
 <div class="admin-toasts"
      x-data="{ items: [] }"
      x-on:notify.window="

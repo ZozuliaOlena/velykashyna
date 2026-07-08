@@ -1,4 +1,3 @@
-{{-- Рекурсивний вузол дерева категорій (згортуваний + drag-and-drop) --}}
 <li class="cat-node" wire:key="cat-{{ $cat->id }}" data-id="{{ $cat->id }}" x-data="{ open: true }">
     <div class="cat-row {{ $cat->is_active ? '' : 'is-inactive' }}">
         <span class="cat-handle" title="Перетягнути для сортування">⠿</span>

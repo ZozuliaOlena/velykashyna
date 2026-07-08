@@ -34,7 +34,6 @@ class UserIndex extends Component
             'name'  => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->editingId)],
             'role'  => ['required', 'in:admin,manager'],
-            // пароль обов'язковий лише при створенні
             'password' => [$this->editingId ? 'nullable' : 'required', 'string', 'min:8'],
         ];
     }
