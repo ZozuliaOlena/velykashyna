@@ -31,13 +31,16 @@ class Category extends Model
     public function defaultSeo(): array
     {
         $name  = trim((string) $this->name);
-        $title = trim($name . ' — купити в Україні | Велика Шина');
-        $desc  = 'Купити ' . $name . ' за вигідною ціною. Великий вибір, доставка '
-            . 'по всій Україні, консультація та підбір. «Велика Шина».';
+        $title = trim($name . ' - купити в Україні | ВЕЛИКА ШИНА');
+
+        $intro = 'Купити ' . $name . ' за вигідною ціною. Великий вибір.';
+        $brandBlock = ' Професійний підбір, чесна консультація, доставка по Україні.'
+            . ' ВЕЛИКА ШИНА - офіційний сайт компанії. Працюємо з 2009 року.';
+        $intro = mb_substr(trim(preg_replace('/\s+/', ' ', $intro)), 0, max(0, 320 - mb_strlen($brandBlock)));
 
         return [
             'title'       => mb_substr($title, 0, 255),
-            'description' => mb_substr(trim(preg_replace('/\s+/', ' ', $desc)), 0, 300),
+            'description' => trim($intro . $brandBlock),
             'h1'          => $name,
         ];
     }

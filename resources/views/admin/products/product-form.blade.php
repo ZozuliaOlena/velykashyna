@@ -303,6 +303,72 @@
         </fieldset>
 
         <fieldset style="margin-top:1rem">
+            <legend><strong>Сумісність з технікою</strong></legend>
+            <small style="color:#666; display:block; margin-bottom:.6rem">
+                Для якої техніки підходить товар. «Тип техніки» — обов'язковий (саме він
+                показується як застосування на картці та в SEO). Решта — за бажанням.
+            </small>
+
+            @forelse($compat as $i => $row)
+                <div wire:key="compat-{{ $i }}"
+                    style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:.6rem; padding-bottom:.6rem; border-bottom:1px dashed #eee">
+                    <div>
+                        <label style="font-size:12px; color:#666">Тип техніки *</label><br>
+                        <select wire:model.live="compat.{{ $i }}.machinery_type_id" style="width:150px">
+                            <option value="">— оберіть —</option>
+                            @foreach($machineryTypes as $mt)
+                                <option value="{{ $mt->id }}">{{ $mt->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:12px; color:#666">Виробник</label><br>
+                        {{-- Лише бренди, у яких реально є техніка обраного типу. --}}
+                        @php($typeBrandIds = ($row['machinery_type_id'] ?? null)
+                            ? $machineryModels->where('machinery_type_id', $row['machinery_type_id'])->pluck('machinery_brand_id')->unique()
+                            : null)
+                        @php($rowBrands = $typeBrandIds !== null
+                            ? $machineryBrands->whereIn('id', $typeBrandIds)
+                            : $machineryBrands)
+                        <select wire:model.live="compat.{{ $i }}.machinery_brand_id" style="width:150px">
+                            <option value="">— будь-який —</option>
+                            @foreach($rowBrands as $mb)
+                                <option value="{{ $mb->id }}">{{ $mb->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:12px; color:#666">Модель</label><br>
+                        @php($rowModels = $machineryModels
+                            ->when($row['machinery_brand_id'] ?? null, fn ($m) => $m->where('machinery_brand_id', $row['machinery_brand_id']))
+                            ->when($row['machinery_type_id'] ?? null, fn ($m) => $m->where('machinery_type_id', $row['machinery_type_id'])))
+                        <select wire:model="compat.{{ $i }}.machinery_model_id" style="width:160px">
+                            <option value="">— будь-яка —</option>
+                            @foreach($rowModels as $mm)
+                                <option value="{{ $mm->id }}">{{ $mm->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:12px; color:#666">Позиція</label><br>
+                        <select wire:model="compat.{{ $i }}.position_id" style="width:130px">
+                            <option value="">— будь-яка —</option>
+                            @foreach($machineryPositions as $mp)
+                                <option value="{{ $mp->id }}">{{ $mp->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="button" wire:click="removeCompat({{ $i }})"
+                        style="padding:.35rem .7rem" title="Прибрати рядок">✕</button>
+                </div>
+            @empty
+                <p style="color:#999; margin:.25rem 0 .6rem">Сумісність не задано.</p>
+            @endforelse
+
+            <button type="button" wire:click="addCompat">+ Додати техніку</button>
+        </fieldset>
+
+        <fieldset style="margin-top:1rem">
             <legend><strong>Супутні товари</strong></legend>
             <select wire:model="relatedIds" multiple size="8" style="width:100%">
                 @foreach($allProducts as $p)

@@ -5,8 +5,13 @@ namespace App\Livewire\Admin\Products;
 use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\MachineryBrand;
+use App\Models\MachineryModel;
+use App\Models\MachineryPosition;
+use App\Models\MachineryType;
 use App\Models\Product;
 use App\Models\ProductAttributeValue;
+use App\Models\ProductMachineryCompatibility;
 use App\Models\ProductType;
 use App\Livewire\Concerns\WithAdminToast;
 use App\Support\Translit;
@@ -68,6 +73,9 @@ class ProductForm extends Component
 
     public array $categoryIds = [];
 
+    /** Сумісність з технікою: рядки [тип, виробник, модель, позиція]. */
+    public array $compat = [];
+
     public array $relatedIds = [];
 
     public array $attrValues = [];
@@ -127,6 +135,13 @@ class ProductForm extends Component
         $this->categoryIds      = $product->categories->pluck('id')->toArray();
         $this->relatedIds       = $product->relatedProducts->pluck('id')->toArray();
 
+        $this->compat = $product->machineryCompatibility->map(fn ($c) => [
+            'machinery_type_id'  => $c->machinery_type_id,
+            'machinery_brand_id' => $c->machinery_brand_id,
+            'machinery_model_id' => $c->machinery_model_id,
+            'position_id'        => $c->position_id,
+        ])->values()->toArray();
+
         foreach ($product->attributeValues as $v) {
             $this->attrValues[$v->attribute_id] = match ($v->attribute?->data_type) {
                 'select'  => $v->option_id,
@@ -153,6 +168,39 @@ class ProductForm extends Component
         }
     }
 
+    public function addCompat(): void
+    {
+        $this->compat[] = [
+            'machinery_type_id'  => null,
+            'machinery_brand_id' => null,
+            'machinery_model_id' => null,
+            'position_id'        => null,
+        ];
+    }
+
+    public function removeCompat(int $i): void
+    {
+        unset($this->compat[$i]);
+        $this->compat = array_values($this->compat);
+    }
+
+    /** Каскад у рядку сумісності: зміна типу скидає виробника й модель,
+     *  зміна виробника — модель (щоб не лишалися неможливі комбінації). */
+    public function updatedCompat($value, $key): void
+    {
+        $i = (int) explode('.', $key)[0];
+        if (! isset($this->compat[$i])) {
+            return;
+        }
+
+        if (str_ends_with($key, '.machinery_type_id')) {
+            $this->compat[$i]['machinery_brand_id'] = null;
+            $this->compat[$i]['machinery_model_id'] = null;
+        } elseif (str_ends_with($key, '.machinery_brand_id')) {
+            $this->compat[$i]['machinery_model_id'] = null;
+        }
+    }
+
     public function generateSeo(): void
     {
         $draft = new Product([
@@ -166,6 +214,17 @@ class ProductForm extends Component
         ]);
         $draft->setRelation('brand', $this->brand_id ? Brand::find($this->brand_id) : null);
         $draft->setRelation('productType', $this->product_type_id ? ProductType::find($this->product_type_id) : null);
+
+        // Сумісність беремо з ПОТОЧНОГО стану форми (щоб контекст «для обприскувачів»
+        // працював одразу, ще до збереження товару).
+        $compatModels = collect($this->compat)
+            ->filter(fn ($r) => ! empty($r['machinery_type_id']))
+            ->map(function ($r) {
+                $c = new ProductMachineryCompatibility(['machinery_type_id' => $r['machinery_type_id']]);
+                $c->setRelation('machineryType', MachineryType::find($r['machinery_type_id']));
+                return $c;
+            })->values();
+        $draft->setRelation('machineryCompatibility', $compatModels);
 
         $seo = $draft->defaultSeo();
 
@@ -304,6 +363,22 @@ class ProductForm extends Component
 
             $product->categories()->sync($this->categoryIds);
             $product->relatedProducts()->sync($this->relatedIds);
+
+            // Сумісність з технікою: повністю перезаписуємо за станом форми
+            // (лишаємо тільки рядки з обраним типом техніки).
+            $product->machineryCompatibility()->delete();
+            foreach ($this->compat as $row) {
+                if (empty($row['machinery_type_id'])) {
+                    continue;
+                }
+                ProductMachineryCompatibility::create([
+                    'product_id'         => $product->id,
+                    'machinery_type_id'  => $row['machinery_type_id'],
+                    'machinery_brand_id' => $row['machinery_brand_id'] ?: null,
+                    'machinery_model_id' => $row['machinery_model_id'] ?: null,
+                    'position_id'        => $row['position_id'] ?: null,
+                ]);
+            }
 
         foreach ($attributes as $attr) {
             $raw = $this->attrValues[$attr->id] ?? null;
@@ -522,6 +597,10 @@ class ProductForm extends Component
             'galleryMax'   => self::GALLERY_MAX,
             'catalogImageUrl' => $product?->catalogImage?->imageUrl('thumb'),
             'typeAttributes' => $this->attributesForType(),
+            'machineryTypes'     => MachineryType::orderBy('name')->get(['id', 'name']),
+            'machineryBrands'    => MachineryBrand::orderBy('name')->get(['id', 'name']),
+            'machineryModels'    => MachineryModel::orderBy('name')->get(['id', 'name', 'machinery_brand_id', 'machinery_type_id']),
+            'machineryPositions' => MachineryPosition::orderBy('name')->get(['id', 'name']),
         ])->layout('admin.layouts.admin');
     }
 }

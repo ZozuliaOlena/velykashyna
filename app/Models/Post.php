@@ -108,7 +108,7 @@ class Post extends Model implements HasMedia
      */
     public function defaultSeo(): array
     {
-        $title = trim($this->title . ' — Блог | Велика Шина');
+        $title = trim($this->title . ' - Блог | ВЕЛИКА ШИНА');
         $desc  = trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->teaser(32))));
 
         return [

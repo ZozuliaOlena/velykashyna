@@ -423,21 +423,56 @@ class Product extends Model implements HasMedia
     {
         $full = $this->fullName() ?: $this->name;
 
-        $title = trim($full . ' — купити в Україні | Велика Шина');
+        // Коротке тире (-), бренд великими літерами без лапок — це офіційна назва.
+        $title = trim($full . ' - купити в Україні | ВЕЛИКА ШИНА');
 
         $descParts = array_filter([
             'Купити ' . $full,
             $this->constructionLabel() ?: null,
             $this->load_speed_index ? 'індекс ' . $this->load_speed_index : null,
         ]);
-        $desc = trim(implode(', ', $descParts))
-            . '. Вигідна ціна, доставка по всій Україні, консультація та підбір. «Велика Шина».';
+        $intro = trim(implode(', ', $descParts)) . '.';
+
+        // Контекст техніки: «Ідеально підходить для обприскувачів.»
+        if ($tech = $this->machineryContext()) {
+            $intro .= ' ' . $tech;
+        }
+        $intro = trim(preg_replace('/\s+/', ' ', $intro));
+
+        // Єдиний брендовий блок наприкінці кожного опису.
+        $brandBlock = ' Професійний підбір, чесна консультація, доставка по Україні.'
+            . ' ВЕЛИКА ШИНА - офіційний сайт компанії. Працюємо з 2009 року.';
+
+        // Лишаємо місце під брендовий блок, щоб він завжди був цілим.
+        $intro = mb_substr($intro, 0, max(0, 320 - mb_strlen($brandBlock)));
 
         return [
             'title'       => mb_substr($title, 0, 255),
-            'description' => mb_substr(trim(preg_replace('/\s+/', ' ', $desc)), 0, 300),
+            'description' => trim($intro . $brandBlock),
             'h1'          => $full,
         ];
+    }
+
+    /**
+     * Фраза «для якої техніки» на основі сумісності (машинного типу).
+     * Родовий відмінок для типових типів; для решти — нейтральне формулювання.
+     */
+    private function machineryContext(): ?string
+    {
+        $type = $this->machineryCompatibility->first()?->machineryType?->name;
+        if (! $type) {
+            return null;
+        }
+
+        $genitivePlural = [
+            'Трактор' => 'тракторів', 'Комбайн' => 'комбайнів', 'Обприскувач' => 'обприскувачів',
+            'Навантажувач' => 'навантажувачів', 'Причіп' => 'причепів', 'Грейдер' => 'грейдерів',
+            'Вантажівка' => 'вантажівок', 'Спецтехніка' => 'спецтехніки', 'Екскаватор' => 'екскаваторів',
+        ];
+
+        return isset($genitivePlural[$type])
+            ? "Ідеально підходить для {$genitivePlural[$type]}."
+            : "Підходить для техніки: «{$type}».";
     }
 
     /** Промо-бейджі для картки (узгоджено з partials/product-card). */
