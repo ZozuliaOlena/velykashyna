@@ -42,6 +42,40 @@
     </fieldset>
 
     <fieldset style="margin-top:1rem">
+        <legend><strong>Карта сайту та robots.txt</strong></legend>
+        <p style="color:#666">
+            Готові посилання для пошукових систем (Google Search Center тощо). Формуються автоматично —
+            просто скопіюйте або відкрийте, щоб переглянути.
+        </p>
+
+        <div class="is-full" style="margin-bottom:.75rem" x-data="{ copied: false }">
+            <label>Карта сайту (sitemap.xml)</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+                <input type="text" readonly value="{{ $sitemapUrl }}" style="flex:1; min-width:280px"
+                    x-ref="sitemapUrl" onclick="this.select()">
+                <button type="button" class="btn-primary"
+                    x-on:click="navigator.clipboard.writeText($refs.sitemapUrl.value); copied = true; setTimeout(() => copied = false, 1500)">
+                    <span x-show="!copied">Копіювати</span><span x-show="copied" x-cloak>Скопійовано ✓</span>
+                </button>
+                <a href="{{ $sitemapUrl }}" target="_blank" rel="noopener">Відкрити ↗</a>
+            </div>
+        </div>
+
+        <div class="is-full" x-data="{ copied: false }">
+            <label>robots.txt</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+                <input type="text" readonly value="{{ $robotsUrl }}" style="flex:1; min-width:280px"
+                    x-ref="robotsUrl" onclick="this.select()">
+                <button type="button" class="btn-primary"
+                    x-on:click="navigator.clipboard.writeText($refs.robotsUrl.value); copied = true; setTimeout(() => copied = false, 1500)">
+                    <span x-show="!copied">Копіювати</span><span x-show="copied" x-cloak>Скопійовано ✓</span>
+                </button>
+                <a href="{{ $robotsUrl }}" target="_blank" rel="noopener">Відкрити ↗</a>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset style="margin-top:1rem">
         <legend><strong>Експорт</strong></legend>
         <p style="color:#666">Повне вивантаження всіх товарів з характеристиками, категоріями та сумісністю (3 листи Excel).</p>
         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
@@ -160,6 +194,64 @@
                     <li>Створено нових записів: {{ $catalogImageReport['created'] ?? 0 }}</li>
                     <li>Привʼязано до товарів: {{ $catalogImageReport['linked'] ?? 0 }}</li>
                 </ul>
+            </div>
+        @endif
+    </fieldset>
+
+    <fieldset style="margin-top:1rem">
+        <legend><strong>Резервне копіювання</strong></legend>
+        <p style="color:#666">
+            Повна копія сайту одним файлом: база даних (товари, категорії, заявки, налаштування)
+            та, за бажанням, завантажені фото. Зберігайте копію в надійному місці —
+            з неї можна повністю відновити сайт.
+        </p>
+
+        <label style="display:inline-flex; align-items:center; gap:6px; margin-bottom:.6rem">
+            <input type="checkbox" wire:model="backupMedia"> Включити фото (архів буде більшим)
+        </label>
+
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+            <button wire:click="backup" class="btn-primary" wire:loading.attr="disabled" wire:target="backup">
+                Завантажити резервну копію
+            </button>
+            <span class="spinner-line" wire:loading wire:target="backup"><span class="spinner"></span> Готуємо копію…</span>
+        </div>
+
+        <hr style="margin:1.25rem 0; border:none; border-top:1px solid #eee">
+
+        <p style="margin:0 0 .5rem"><strong>Відновлення з копії</strong></p>
+        <p style="color:#d32f2f; font-size:13px; margin:0 0 .6rem">
+            Увага: відновлення повністю замінить поточні дані сайту даними з копії.
+            Спершу зробіть свіжу резервну копію.
+        </p>
+
+        <input type="file" wire:model="restoreFile" accept=".zip">
+        <div wire:loading wire:target="restoreFile" style="margin-top:6px; color:#666; font-size:13px">Завантаження файлу…</div>
+        @error('restoreFile') <span style="color:red">{{ $message }}</span> @enderror
+
+        <div style="margin-top:.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+            <button wire:click="restore" wire:loading.attr="disabled" wire:target="restore"
+                data-confirm="Ви дійсно хочете відновити сайт із копії? Поточні дані буде замінено.">
+                Відновити
+            </button>
+            <span class="spinner-line" wire:loading wire:target="restore"><span class="spinner"></span> Відновлюємо…</span>
+        </div>
+
+        @if($restoreReport)
+            <div style="margin-top:1rem; background:#f8f9fa; padding:12px; border-radius:8px">
+                <strong>Результат відновлення:</strong>
+                <ul>
+                    <li>База даних: {{ ($restoreReport['db'] ?? false) ? 'відновлено' : 'без змін' }}</li>
+                    <li>Фото: {{ ($restoreReport['media'] ?? false) ? 'відновлено' : 'не було в копії' }}</li>
+                </ul>
+                @if(!empty($restoreReport['errors']))
+                    <strong style="color:#d32f2f">Помилки:</strong>
+                    <ul>
+                        @foreach($restoreReport['errors'] as $err)
+                            <li style="color:#d32f2f">{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         @endif
     </fieldset>

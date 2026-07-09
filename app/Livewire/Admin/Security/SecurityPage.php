@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Security;
 
 use App\Livewire\Concerns\WithAdminToast;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -85,6 +86,20 @@ class SecurityPage extends Component
         session()->flash('success', 'Двофакторну автентифікацію вимкнено.');
     }
 
+    /** Увімкнути/вимкнути вхід за одноразовим кодом з пошти (для всіх адмінів). */
+    public function toggleEmailCode(): void
+    {
+        $enabled = ! (bool) Setting::get('email_login_code_enabled');
+        Setting::set('email_login_code_enabled', $enabled ? '1' : '');
+
+        // Щоб адмін, який щойно увімкнув, не був одразу «вибитий» на ввід коду.
+        session()->put('email_otp.verified', true);
+
+        session()->flash('success', $enabled
+            ? 'Вхід за кодом з пошти увімкнено.'
+            : 'Вхід за кодом з пошти вимкнено.');
+    }
+
     public function render()
     {
         $user = $this->user();
@@ -98,6 +113,7 @@ class SecurityPage extends Component
             'qrSvg'     => ($enabled && $this->showingQr) ? $user->twoFactorQrCodeSvg() : null,
             'setupKey'  => ($enabled && $this->showingQr) ? decrypt($user->two_factor_secret) : null,
             'recovery'  => ($enabled && $this->showingRecoveryCodes) ? $user->recoveryCodes() : [],
+            'emailCodeEnabled' => (bool) Setting::get('email_login_code_enabled'),
         ])->layout('admin.layouts.admin');
     }
 }

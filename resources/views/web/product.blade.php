@@ -44,6 +44,12 @@
 @section('title', $product->seo_title ?: $fullName . ' — ВЕЛИКА ШИНА')
 @section('meta_description', $product->seo_description ?: 'Купити ' . $fullName . ' у компанії ВЕЛИКА ШИНА. Підбір, консультація та доставка по Україні.')
 
+{{-- Соц-прев'ю: фото товару замість дефолтної картинки. --}}
+@section('og_type', 'product')
+@if(!empty($images))
+@section('og_image', url($images[0]))
+@endif
+
 {{-- Структуровані дані Product (узгоджені з Merchant-фідом) --}}
 @push('head')
 @php($ld = array_filter([
@@ -67,6 +73,19 @@
 ])
 @endif
 <script type="application/ld+json">{!! json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+
+{{-- Хлібні крихти для Google (BreadcrumbList). --}}
+@php($crumbItems = collect([
+    ['name' => 'Головна', 'item' => route('home')],
+    ['name' => 'Каталог', 'item' => route('catalog')],
+])->concat(collect($crumbs)->map(fn ($c) => ['name' => $c['name'], 'item' => url($c['url'])]))
+    ->push(['name' => trim($typePrefix . $title), 'item' => route('product', $product->slug)])
+    ->values())
+@php($breadcrumbLd = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList',
+    'itemListElement' => $crumbItems->map(fn ($c, $i) => [
+        '@type' => 'ListItem', 'position' => $i + 1, 'name' => $c['name'], 'item' => $c['item'],
+    ])->all()])
+<script type="application/ld+json">{!! json_encode($breadcrumbLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @section('content')

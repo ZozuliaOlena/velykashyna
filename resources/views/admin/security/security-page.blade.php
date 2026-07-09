@@ -78,4 +78,32 @@
             </div>
         @endif
     </fieldset>
+
+    <fieldset style="margin-top:1rem">
+        <legend><strong>Вхід за кодом з пошти</strong></legend>
+        <p style="color:#666">
+            Додатковий крок під час входу: після пароля на пошту адміністратора
+            надсилається одноразовий код, який потрібно ввести. Діє для всіх адмінів.
+        </p>
+
+        <p style="margin:.25rem 0 .75rem">
+            Статус:
+            <strong style="color:{{ $emailCodeEnabled ? '#1b7a2a' : '#b71c1c' }}">
+                {{ $emailCodeEnabled ? 'Увімкнено' : 'Вимкнено' }}
+            </strong>
+        </p>
+
+        @if($emailCodeEnabled)
+            <button wire:click="toggleEmailCode"
+                data-confirm="Вимкнути вхід за кодом з пошти?">Вимкнути</button>
+        @else
+            <button wire:click="toggleEmailCode" class="btn-primary"
+                data-confirm="Увімкнути вхід за кодом з пошти для всіх адмінів?">Увімкнути</button>
+        @endif
+
+        <p style="color:#888; font-size:13px; margin-top:.75rem">
+            Потрібне налаштоване надсилання пошти (SMTP). Переконайтеся, що email
+            адміністратора вказано правильно.
+        </p>
+    </fieldset>
 </div>

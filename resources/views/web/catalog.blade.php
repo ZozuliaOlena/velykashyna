@@ -1,7 +1,46 @@
 {{-- resources/views/web/catalog.blade.php — каталог із БД (фільтри, сортування, пагінація) --}}
 @extends('layouts.app')
 
-@section('title', 'Каталог — ВЕЛИКА ШИНА')
+{{-- SEO: якщо обрано категорію — сторінка стає лендингом категорії
+     (заголовок/опис/H1 із її SEO-полів). Комбінації фільтрів (бренд, розмір,
+     сортування, сторінка тощо) не індексуються, а canonical веде на «чисту»
+     сторінку категорії/каталогу — щоб уникнути дублів. --}}
+@php($seoCat = ($selected['category'] ?? '') !== ''
+    ? \App\Models\Category::where('slug', $selected['category'])->orWhere('name', $selected['category'])->first()
+    : null)
+@php($isFiltered =
+    collect(['brand', 'size', 'constr', 'machinery', 'mbrand', 'mmodel', 'type'])
+        ->contains(fn ($k) => ! empty(array_filter((array) ($selected[$k] ?? []))))
+    || ($selected['diameter'] ?? '') !== ''
+    || ($selected['q'] ?? '') !== ''
+    || (($selected['sort'] ?? 'popular') !== 'popular' && ($selected['sort'] ?? '') !== '')
+    || (int) request()->query('page', 1) > 1)
+
+@section('title', $seoCat
+    ? ($seoCat->seo_title ?: $seoCat->name . ' — купити за найкращою ціною | ВЕЛИКА ШИНА')
+    : 'Каталог шин, дисків та камер для техніки — ВЕЛИКА ШИНА')
+@section('meta_description', $seoCat
+    ? ($seoCat->seo_description ?: 'Купити ' . mb_strtolower($seoCat->name) . ' у ВЕЛИКА ШИНА: великий вибір, чесні ціни, підбір і доставка по Україні.')
+    : 'Каталог шин, дисків і камер для сільгосп-, спец- та вантажної техніки. Підбір за розміром, брендом і технікою. Доставка по Україні.')
+@section('canonical', $seoCat ? route('catalog', ['category' => $seoCat->slug]) : route('catalog'))
+@if($isFiltered)
+    @section('robots', 'noindex, follow')
+@endif
+
+@push('head')
+    @php($catCrumbs = collect([
+        ['name' => 'Головна', 'item' => route('home')],
+        ['name' => 'Каталог', 'item' => route('catalog')],
+    ]))
+    @if($seoCat)
+        @php($catCrumbs->push(['name' => $seoCat->name, 'item' => route('catalog', ['category' => $seoCat->slug])]))
+    @endif
+    @php($catBreadcrumbLd = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList',
+        'itemListElement' => $catCrumbs->values()->map(fn ($c, $i) => [
+            '@type' => 'ListItem', 'position' => $i + 1, 'name' => $c['name'], 'item' => $c['item'],
+        ])->all()])
+    <script type="application/ld+json">{!! json_encode($catBreadcrumbLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+@endpush
 
 @php($chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>')
 
@@ -12,11 +51,17 @@
         <nav class="breadcrumbs">
             <a href="{{ route('home') }}">Головна</a>
             <span class="sep">/</span>
-            <span class="current">Каталог</span>
+            @if($seoCat)
+                <a href="{{ route('catalog') }}">Каталог</a>
+                <span class="sep">/</span>
+                <span class="current">{{ $seoCat->name }}</span>
+            @else
+                <span class="current">Каталог</span>
+            @endif
         </nav>
 
         <div class="catalog-top">
-            <h1 class="catalog-title">Каталог</h1>
+            <h1 class="catalog-title">{{ $seoCat ? ($seoCat->seo_h1 ?: $seoCat->name) : 'Каталог' }}</h1>
             <span class="catalog-count">Знайдено: <b>{{ $total }}</b></span>
         </div>
 

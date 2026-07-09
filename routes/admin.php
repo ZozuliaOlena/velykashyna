@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\EmailOtpController;
 use App\Http\Controllers\Admin\PostImageController;
 use App\Http\Controllers\Admin\ProductPdfController;
 use App\Livewire\Admin\Dashboard;
@@ -26,8 +27,21 @@ use App\Livewire\Admin\SiteSettings\HeroSlideIndex;
 use App\Livewire\Admin\SiteSettings\SiteContacts;
 use App\Livewire\Admin\Users\UserIndex;
 
+// Крок «код з пошти» — доступний авторизованому адміну БЕЗ otp-гейту,
+// інакше вийшов би нескінченний редирект на самого себе.
 Route::prefix('admin')
     ->middleware(['auth', 'verified', 'admin'])
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/verify-code', [EmailOtpController::class, 'show'])->name('verify-code');
+        Route::post('/verify-code', [EmailOtpController::class, 'verify'])
+            ->middleware('throttle:6,1')->name('verify-code.verify');
+        Route::post('/verify-code/resend', [EmailOtpController::class, 'resend'])
+            ->middleware('throttle:3,1')->name('verify-code.resend');
+    });
+
+Route::prefix('admin')
+    ->middleware(['auth', 'verified', 'admin', 'email.otp'])
     ->name('admin.')
     ->group(function () {
         Route::get('/', Dashboard::class)->name('dashboard');

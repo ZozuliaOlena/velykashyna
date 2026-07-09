@@ -43,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
         // актуальні значення без жодних змін у самих в'юхах.
         $this->applySiteContacts();
 
+        // Пошта (SMTP), задана в адмінці, перекриває config/mail (і .env).
+        \App\Support\MailSettings::apply();
+
         // Дані меню каталогу (типи / техніка / категорії) для шапки й
         // мобільного меню; $headerLinks — топ-3 техніки для чипів.
         View::composer(['partials.header', 'partials.mobile-menu', 'partials.footer'], function ($view) {

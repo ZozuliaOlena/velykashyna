@@ -144,6 +144,15 @@ class ProductForm extends Component
         }
     }
 
+    public function updatedDiscountType($value): void
+    {
+        // Прибрали тип знижки → одразу очищаємо і числове поле,
+        // щоб не лишалася «висяча» цифра без типу.
+        if ($value === '' || $value === null) {
+            $this->discount_value = null;
+        }
+    }
+
     public function generateSeo(): void
     {
         $draft = new Product([
@@ -245,6 +254,17 @@ class ProductForm extends Component
             $data['price'] = null;
         }
 
+        // Знижка: порожній тип неприпустимий для enum-колонки (MySQL кидає
+        // «Data truncated»). Без валідного типу або додатного значення —
+        // повністю обнуляємо знижку (це ж і дозволяє її прибрати без помилки).
+        $hasDiscount = in_array($data['discount_type'] ?? null, ['percent', 'amount'], true)
+            && ($data['discount_value'] ?? null) !== null
+            && (float) $data['discount_value'] > 0;
+        if (! $hasDiscount) {
+            $data['discount_type'] = null;
+            $data['discount_value'] = null;
+        }
+
         $attributes = $this->attributesForType();
         foreach ($attributes as $attr) {
             if ($attr->data_type === 'number') {
@@ -278,10 +298,12 @@ class ProductForm extends Component
         $product->shipping_badge = $this->shipping_badge ?: null;
         $product->is_active = $this->is_active;
         $product->slug = $this->buildUniqueSlug($this->slug ?: $this->name, $this->productId);
-        $product->save();
 
-        $product->categories()->sync($this->categoryIds);
-        $product->relatedProducts()->sync($this->relatedIds);
+        try {
+            $product->save();
+
+            $product->categories()->sync($this->categoryIds);
+            $product->relatedProducts()->sync($this->relatedIds);
 
         foreach ($attributes as $attr) {
             $raw = $this->attrValues[$attr->id] ?? null;
@@ -341,7 +363,12 @@ class ProductForm extends Component
                 ->toMediaCollection('gallery');
         }
 
-        $this->reset('mainPhoto', 'galleryPhotos');
+            $this->reset('mainPhoto', 'galleryPhotos');
+        } catch (\Throwable $e) {
+            report($e);
+            session()->flash('error', 'Не вдалося зберегти товар. Перевірте дані та спробуйте ще раз.');
+            return;
+        }
 
         session()->flash('success', 'Товар збережено');
 

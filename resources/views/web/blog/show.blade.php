@@ -10,6 +10,28 @@
     @endif
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{{ $post->seo_title ?: $post->title }}" />
+
+    @php
+        $articleLd = array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => $post->seo_title ?: $post->title,
+            'description' => $post->seo_description ?: $post->teaser(32),
+            'image' => url($post->imageUrl('large') ?: '/images/og-default.png'),
+            'datePublished' => $post->published_at?->toIso8601String(),
+            'dateModified' => $post->updated_at?->toIso8601String(),
+            'author' => ['@type' => 'Organization', 'name' => 'ВЕЛИКА ШИНА'],
+            'publisher' => ['@type' => 'Organization', 'name' => 'ВЕЛИКА ШИНА', 'logo' => ['@type' => 'ImageObject', 'url' => url('/images/logo.png')]],
+            'mainEntityOfPage' => route('blog.show', $post->slug),
+        ]);
+        $breadcrumbLd = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Головна', 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Блог', 'item' => route('blog.index')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $post->title, 'item' => route('blog.show', $post->slug)],
+        ]];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($articleLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+    <script type="application/ld+json">{!! json_encode($breadcrumbLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @section('content')

@@ -7,10 +7,13 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Lead;
 use App\Models\Product;
+use App\Livewire\Concerns\WithAdminToast;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
+    use WithAdminToast;
+
     public function render()
     {
         return view('admin.dashboard', [

@@ -237,19 +237,25 @@
                     @endif
                 </div>
 
-                <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+                <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:flex-start">
                     <div>
                         <label>Знижка</label><br>
-                        <input wire:model="discount_value" type="text" style="width:100px">
-                    </div>
-                    <div>
-                        <label>Тип знижки</label><br>
-                        <select wire:model="discount_type" style="width:120px">
-                            <option value="">—</option>
-                            <option value="percent">Відсоток</option>
-                            <option value="amount">Сума</option>
+                        <select wire:model.live="discount_type" style="width:140px">
+                            <option value="">Без знижки</option>
+                            <option value="percent">Відсоток (%)</option>
+                            <option value="amount">Сума (грн)</option>
                         </select>
                     </div>
+                    {{-- Поле розміру показуємо лише коли обрано тип — тож при
+                         «Без знижки» не лишається «зависла» цифра. --}}
+                    @if($discount_type)
+                        <div wire:key="discount-value-field">
+                            <label>Розмір знижки</label><br>
+                            <input wire:model="discount_value" type="text" style="width:110px"
+                                placeholder="{{ $discount_type === 'percent' ? 'напр. 10' : 'напр. 500' }}">
+                            @error('discount_value') <span style="color:red">{{ $message }}</span> @enderror
+                        </div>
+                    @endif
                 </div>
             @else
                 <p style="color:#666">Ціна не показується — клієнт надсилає заявку менеджеру.</p>

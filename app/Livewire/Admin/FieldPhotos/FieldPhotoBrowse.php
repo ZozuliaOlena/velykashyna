@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\FieldPhotos;
 use App\Models\MachineryModel;
 use App\Models\MachineryType;
 use App\Models\ProductFieldPhoto;
+use App\Livewire\Concerns\WithAdminToast;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,6 +13,7 @@ use Livewire\WithPagination;
 class FieldPhotoBrowse extends Component
 {
     use WithPagination;
+    use WithAdminToast;
 
     #[Url]
     public ?int $filterType = null;

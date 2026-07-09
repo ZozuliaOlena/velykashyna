@@ -42,6 +42,156 @@
     </fieldset>
 
     <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
+        <legend style="padding:0 8px"><strong>Пошта (SMTP)</strong></legend>
+        <p style="color:#666; margin:0 0 1rem">
+            Дані вашої поштової скриньки, з якої сайт надсилатиме листи (код для входу, тестові листи).
+            Візьміть їх із листа хостингу: <em>SMTP server, Login, Password</em>.
+        </p>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px">
+            <div>
+                <label>SMTP-сервер (host)</label>
+                <input wire:model="mailHost" type="text" style="width:100%" placeholder="s47.hostia.name">
+                @error('mailHost') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label>Порт</label>
+                <input wire:model="mailPort" type="text" style="width:100%" placeholder="465">
+                <small style="color:#888">Зазвичай 465 (SSL) або 587 (TLS).</small>
+                @error('mailPort') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label>Шифрування</label>
+                <select wire:model="mailEncryption" style="width:100%">
+                    <option value="ssl">SSL (порт 465)</option>
+                    <option value="tls">TLS (порт 587)</option>
+                    <option value="none">Без шифрування</option>
+                </select>
+                @error('mailEncryption') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label>Логін (email)</label>
+                <input wire:model="mailUsername" type="text" style="width:100%" placeholder="info@lavika.in.ua">
+                @error('mailUsername') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label>Пароль</label>
+                <input wire:model="mailPassword" type="password" style="width:100%"
+                    placeholder="{{ $mailPasswordSet ? '•••••••• (збережено — залиште порожнім, щоб не міняти)' : 'пароль скриньки' }}"
+                    autocomplete="new-password">
+                @error('mailPassword') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-top:12px">
+            <div>
+                <label>Ім'я відправника (від кого)</label>
+                <input wire:model="mailFromName" type="text" style="width:100%" placeholder="Велика Шина">
+                @error('mailFromName') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label>Email відправника</label>
+                <input wire:model="mailFromAddress" type="text" style="width:100%" placeholder="info@lavika.in.ua">
+                <small style="color:#888">Зазвичай = логін скриньки.</small>
+                @error('mailFromAddress') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+        </div>
+
+        <div style="margin-top:1rem; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+            <button wire:click="saveMail" data-confirm="Зберегти налаштування пошти?">Зберегти пошту</button>
+            <button wire:click="sendMailTest" wire:loading.attr="disabled" wire:target="sendMailTest">Надіслати тестовий лист</button>
+            <span class="spinner-line" wire:loading wire:target="sendMailTest"><span class="spinner"></span> Надсилаємо…</span>
+        </div>
+    </fieldset>
+
+    <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
+        <legend style="padding:0 8px"><strong>Прев'ю при поширенні (соцмережі, месенджери) та фавіконка</strong></legend>
+        <p style="color:#666; margin:0 0 1rem">
+            Те, що бачать люди, коли діляться посиланням на сайт: заголовок, опис і картинка.
+            На сторінках товарів автоматично підставляється фото товару, тут — значення за замовчуванням для решти сторінок.
+        </p>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px">
+            <div>
+                <label>Заголовок за замовчуванням</label>
+                <input wire:model="shareTitle" type="text" style="width:100%"
+                    placeholder="ВЕЛИКА ШИНА — шини для агро, спец та вантажної техніки">
+                @error('shareTitle') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label>Опис за замовчуванням</label>
+                <textarea wire:model="shareDescription" rows="3" style="width:100%"
+                    placeholder="Короткий опис сайту (до 500 символів)"></textarea>
+                @error('shareDescription') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin-top:1rem">
+            <div>
+                <label>Картинка прев'ю (рекомендовано 1200×630)</label><br>
+                <div class="photo-thumb" style="width:200px; height:105px">
+                    <img src="{{ $shareImageUpload ? $shareImageUpload->temporaryUrl() : ($shareImage ?: '/images/og-default.png') }}"
+                        alt="" data-zoom-src="{{ $shareImageUpload ? '' : ($shareImage ?: '/images/og-default.png') }}">
+                </div>
+                <div style="margin-top:.4rem; display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+                    <label class="upload-btn">
+                        <input type="file" wire:model="shareImageUpload" accept="image/*" hidden>
+                        <span>Вибрати картинку</span>
+                    </label>
+                    @if($shareImage)
+                        <button type="button" wire:click="deleteShareImage"
+                            data-confirm="Скинути картинку прев'ю на стандартну?">Скинути</button>
+                    @endif
+                </div>
+                <div wire:loading wire:target="shareImageUpload" style="color:#666; font-size:13px; margin-top:4px">Завантаження…</div>
+                @error('shareImageUpload') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label>Фавіконка (PNG / SVG / ICO)</label><br>
+                <div class="photo-thumb" style="width:64px; height:64px">
+                    <img src="{{ $faviconUpload ? $faviconUpload->temporaryUrl() : ($favicon ?: '/favicon.ico') }}" alt="">
+                </div>
+                <div style="margin-top:.4rem; display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+                    <label class="upload-btn">
+                        <input type="file" wire:model="faviconUpload" accept=".png,.svg,.ico,image/png,image/svg+xml" hidden>
+                        <span>Вибрати фавіконку</span>
+                    </label>
+                    @if($favicon)
+                        <button type="button" wire:click="deleteFavicon"
+                            data-confirm="Скинути фавіконку на стандартну?">Скинути</button>
+                    @endif
+                </div>
+                <div wire:loading wire:target="faviconUpload" style="color:#666; font-size:13px; margin-top:4px">Завантаження…</div>
+                @error('faviconUpload') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+        </div>
+
+        <hr style="margin:1.25rem 0; border:none; border-top:1px solid #eee">
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px">
+            <div>
+                <label>Код підтвердження Google Search Console</label>
+                <input wire:model="googleSiteVerification" type="text" style="width:100%"
+                    placeholder="напр. AbCdEf123... (лише значення content)">
+                <small style="color:#888">З Google Search Console → «HTML-тег»: скопіюйте значення <code>content</code>.</small>
+                @error('googleSiteVerification') <span style="color:red">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label style="display:flex; align-items:center; gap:8px; margin-top:1.6rem">
+                    <input type="checkbox" wire:model="siteNoindex">
+                    Сховати сайт від пошуковиків (noindex)
+                </label>
+                <small style="color:#888">Вмикайте лише на час розробки. На робочому сайті має бути <strong>вимкнено</strong>.</small>
+            </div>
+        </div>
+
+        <div style="margin-top:1rem">
+            <button wire:click="saveSharing" data-confirm="Зберегти налаштування прев'ю та SEO?">Зберегти прев'ю та SEO</button>
+        </div>
+    </fieldset>
+
+    <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
         <legend style="padding:0 8px"><strong>Telegram-сповіщення про заявки</strong></legend>
         <p style="color:#666; margin:0 0 1rem">
             Бот надсилатиме повідомлення про кожну нову заявку з сайту — і з кошика, і консультації.
