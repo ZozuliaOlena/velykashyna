@@ -53,16 +53,16 @@
                 <span class="lbl">рік заснування</span>
             </div>
             <div class="about-hs">
-                <span class="num">{{ $years }}+</span>
-                <span class="lbl">років досвіду</span>
-            </div>
-            <div class="about-hs">
-                <span class="num">500+</span>
-                <span class="lbl">задоволених клієнтів</span>
+                <span class="num">{{ $stats['positions'] }}</span>
+                <span class="lbl">товарних позицій</span>
             </div>
             <div class="about-hs">
                 <span class="num">100%</span>
                 <span class="lbl">оригінальна продукція</span>
+            </div>
+            <div class="about-hs">
+                <span class="num">24/7</span>
+                <span class="lbl">ми на зв'язку</span>
             </div>
         </div>
     </div>

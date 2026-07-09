@@ -105,10 +105,23 @@
 
         <div class="product-top">
             {{-- ГАЛЕРЕЯ --}}
-            <div class="product-gallery" x-data="{ active: 0, images: @js($images) }">
-                <div class="product-gallery__main">
+            <div class="product-gallery" x-data="{ active: 0, images: @js($images), zoom: false, ox: '50%', oy: '50%', box: false, tsx: 0,
+                touch: matchMedia('(hover: none)').matches,
+                swipe(e) { const dx = e.changedTouches[0].clientX - this.tsx; if (Math.abs(dx) > 40 && this.images.length > 1) { this.active = (this.active + (dx < 0 ? 1 : -1) + this.images.length) % this.images.length; } } }">
+                {{-- ПК: наведення = лупа (зум по фото), без модалки. Тач: тап = повний
+                     екран зі свайпом між фото. --}}
+                <div class="product-gallery__main {{ count($images) ? 'is-zoomable' : '' }}"
+                    :class="{ 'is-zoom': zoom, 'is-touch': touch }"
+                    @mousemove="if (images.length && !touch) { const r = $el.getBoundingClientRect(); ox = (($event.clientX - r.left) / r.width * 100) + '%'; oy = (($event.clientY - r.top) / r.height * 100) + '%'; }"
+                    @mouseenter="if (images.length && !touch) zoom = true" @mouseleave="zoom = false"
+                    @click="if (images.length && touch) box = true">
                     @if (count($images))
-                    <img :src="images[active]" alt="{{ $fullName }}" />
+                    <img :src="images[active]" :style="zoom ? `transform: scale(2.3); transform-origin: ${ox} ${oy}` : ''" alt="{{ $fullName }}" />
+                    <span class="product-gallery__zoom" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
+                        </svg>
+                    </span>
                     @else
                     <span class="product-gallery__ph mask-ico"
                         style="-webkit-mask-image:url('/images/svg/tehnics/wheel.svg');mask-image:url('/images/svg/tehnics/wheel.svg')"></span>
@@ -133,6 +146,37 @@
                         <img src="{{ $img }}" alt="" loading="lazy" />
                     </button>
                     @endforeach
+                </div>
+                @endif
+
+                {{-- Повноекранний перегляд: біле вікно із шапкою (назва + чіткий
+                     хрестик) — щоб на мобільному кнопку закриття було добре видно. --}}
+                @if (count($images))
+                <div class="product-lightbox" x-show="box" x-cloak x-transition.opacity
+                    @click="box = false" @keydown.escape.window="box = false">
+                    <div class="product-lightbox__sheet" @click.stop>
+                        <div class="product-lightbox__bar">
+                            <span class="product-lightbox__title">{{ $fullName }}</span>
+                            <button type="button" class="product-lightbox__close" @click="box = false" aria-label="Закрити">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="product-lightbox__body"
+                            @touchstart.passive="tsx = $event.changedTouches[0].clientX"
+                            @touchend.passive="swipe($event)">
+                            <img :src="images[active]" alt="{{ $fullName }}" draggable="false" />
+                        </div>
+                        @if (count($images) > 1)
+                        <div class="product-lightbox__dots">
+                            @foreach ($images as $i => $img)
+                            <button type="button" class="product-lightbox__dot" :class="{ active: active === {{ $i }} }"
+                                @click="active = {{ $i }}" aria-label="Фото {{ $i + 1 }}"></button>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
                 </div>
                 @endif
             </div>
