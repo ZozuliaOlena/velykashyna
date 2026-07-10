@@ -63,7 +63,7 @@ class MachineryTypeIndex extends Component
             if ($type->icon) {
                 Storage::disk('public')->delete($type->icon);
             }
-            $type->icon = $this->icon->store('machinery-types', 'public');
+            $type->icon = \App\Support\ImageOptimizer::toWebp($this->icon, 'machinery-types');
         }
 
         $type->save();

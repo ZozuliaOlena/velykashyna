@@ -20,8 +20,9 @@ function downscaleImage(file, maxDim = 1600, quality = 0.82) {
         img.onload = () => {
             URL.revokeObjectURL(objectUrl);
 
-            // Маленькі файли не чіпаємо.
-            if (img.width <= maxDim && img.height <= maxDim && file.size < 1.5 * 1024 * 1024) {
+            // Уже WebP і невеликий — конвертувати нема сенсу.
+            const small = img.width <= maxDim && img.height <= maxDim && file.size < 1.5 * 1024 * 1024;
+            if (small && file.type === 'image/webp') {
                 resolve(file);
                 return;
             }
@@ -34,15 +35,10 @@ function downscaleImage(file, maxDim = 1600, quality = 0.82) {
             canvas.width = w;
             canvas.height = h;
             const ctx = canvas.getContext('2d');
-
-            const type = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-            if (type === 'image/jpeg') {
-                ctx.fillStyle = '#fff'; // біле тло замість прозорості при png→jpeg
-                ctx.fillRect(0, 0, w, h);
-            }
             ctx.drawImage(img, 0, 0, w, h);
 
-            canvas.toBlob((blob) => resolve(blob || file), type, quality);
+            // Виводимо у сучасний WebP (кращий за jpeg/png, зберігає прозорість).
+            canvas.toBlob((blob) => resolve(blob || file), 'image/webp', quality);
         };
         img.onerror = () => {
             URL.revokeObjectURL(objectUrl);

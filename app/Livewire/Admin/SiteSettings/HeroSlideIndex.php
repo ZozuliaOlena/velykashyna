@@ -91,7 +91,7 @@ class HeroSlideIndex extends Component
             if ($slide->bg_path) {
                 Storage::disk('public')->delete($slide->bg_path);
             }
-            $slide->bg_path = $this->bg->store('hero-slides', 'public');
+            $slide->bg_path = \App\Support\ImageOptimizer::toWebp($this->bg, 'hero-slides');
         }
 
         $slide->save();
