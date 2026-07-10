@@ -83,9 +83,7 @@
                 <span>{{ $shipping }}</span>
             </span>
             @endif
-            @if (!empty($p['discount']))
-            <span class="promo cat-prod__disc">{{ $p['discount'] }}</span>
-            @endif
+            {{-- Ієрархія «від масивного до дрібного»: доставка → промо → відсоток. --}}
             @foreach ($restPromos as $promo)
             @php($pc = $promoConfig[$promo] ?? ['s' => 'sale', 'i' => ''])
             <span class="promo promo--{{ $pc['s'] }}" title="{{ $promo }}">
@@ -93,6 +91,9 @@
                 <span>{{ $promo }}</span>
             </span>
             @endforeach
+            @if (!empty($p['discount']))
+            <span class="promo cat-prod__disc">{{ $p['discount'] }}</span>
+            @endif
         </div>
         @endif
 

@@ -23,6 +23,9 @@
 @php($promos = collect($product->cardPromos())->reject(fn ($x) => $x === 'Знижка')->values()->all())
 @php($discountBadge = $product->discount_type === 'percent' ? $product->discountLabel() : null)
 @php($promoStyles = ['Акція' => 'sale', 'Знижка' => 'discount', 'Запитуй знижку' => 'ask', 'Уточніть вашу ціну' => 'ask', 'Безкоштовна доставка' => 'ship', 'Можлива безкоштовна доставка' => 'ship'])
+{{-- Бейдж доставки — завжди зверху, як і в картці каталогу; далі відсоток, далі решта. --}}
+@php($shippingBadge = collect($promos)->first(fn ($x) => in_array($x, \App\Models\Product::SHIPPING_BADGES, true)))
+@php($restPromos = array_values(array_filter($promos, fn ($x) => ! in_array($x, \App\Models\Product::SHIPPING_BADGES, true))))
 @php($brandLogos = ['Michelin' => 'michelin.svg', 'Continental' => 'continental.svg'])
 @php($brandLogo = $product->brand?->logoUrl() ?? (isset($brandLogos[$product->brand?->name]) ? '/images/svg/brands/' . $brandLogos[$product->brand->name] : null))
 @php($inStock = $product->stock_status === 'in_stock')
@@ -108,14 +111,18 @@
                         style="-webkit-mask-image:url('/images/svg/tehnics/wheel.svg');mask-image:url('/images/svg/tehnics/wheel.svg')"></span>
                     @endif
 
-                    @if ($discountBadge || !empty($promos))
+                    @if ($shippingBadge || $discountBadge || !empty($restPromos))
                     <div class="product-gallery__promos">
+                        {{-- Ієрархія «від масивного до дрібного»: доставка → промо → відсоток. --}}
+                        @if ($shippingBadge)
+                        <span class="promo promo--ship">{{ $shippingBadge }}</span>
+                        @endif
+                        @foreach ($restPromos as $promo)
+                        <span class="promo promo--{{ $promoStyles[$promo] ?? 'sale' }}">{{ $promo }}</span>
+                        @endforeach
                         @if ($discountBadge)
                         <span class="promo promo--disc">{{ $discountBadge }}</span>
                         @endif
-                        @foreach ($promos as $promo)
-                        <span class="promo promo--{{ $promoStyles[$promo] ?? 'sale' }}">{{ $promo }}</span>
-                        @endforeach
                     </div>
                     @endif
                 </div>

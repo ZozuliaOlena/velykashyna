@@ -3375,17 +3375,55 @@ button {
         }
     }
 
-    // Промо-плашки (Акція / Знижка / Запитуй знижку / Безкоштовна доставка)
+    // Промо-плашки (Акція / Знижка / Запитуй знижку / Безкоштовна доставка).
+    // На картці — компактні пігулки в один рядок: дрібніший шрифт, тісніші
+    // відступи; текст НЕ переносимо (no-wrap), щоб довгий підпис доставки
+    // не перетворювався на дворядковий «блок», що захаращує фото.
     &__promos {
         position: absolute;
-        top: 12px;
-        left: 12px;
+        top: 10px;
+        left: 10px;
         z-index: 3;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 6px;
-        max-width: 78%;
+        gap: 5px;
+        // Лишаємо місце під кнопку «в обране» справа зверху.
+        max-width: calc(100% - 52px);
+
+        // Середній рівень ієрархії — промо (Акція / Запитуй знижку).
+        .promo {
+            font-size: 9.5px;
+            padding: 3px 8px;
+            gap: 4px;
+            border-radius: 4px;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+
+            svg {
+                width: 11px;
+                height: 11px;
+            }
+        }
+
+        // Найбільша плашка — доставка (зверху).
+        .promo--ship {
+            font-size: 10px;
+            padding: 4px 9px;
+
+            svg {
+                width: 12px;
+                height: 12px;
+            }
+        }
+
+        // Відсоток знижки — внизу ієрархії, але цифра лишається читабельною.
+        // «Легкість» дає короткий вміст пігулки, а не дрібний шрифт.
+        .cat-prod__disc.promo {
+            font-size: 10px;
+            padding: 3px 8px;
+        }
     }
 
     &__body {
@@ -4140,23 +4178,25 @@ button {
         flex-direction: row;
     }
 
-    // Фото в режимі списку — фіксований бокс (ширина × висота), фото
-    // вписується (object-fit: contain). Так усі рядки й зображення однакові.
+    // Фото в режимі списку — фіксована ширина, а висота тягнеться на весь
+    // рядок (align-self: stretch), щоб під фото не лишалася біла смуга, коли
+    // права колонка вища. min-height тримає нижню межу для коротких рядків.
     .cat-prod__media {
         flex: 0 0 168px;
-        height: 160px;
+        align-self: stretch;
+        min-height: 160px;
         border-bottom: none;
         border-right: 1px solid $line;
         padding: 16px;
 
         @media (max-width: $bp-md) {
             flex-basis: 130px;
-            height: 150px;
+            min-height: 150px;
         }
 
         @media (max-width: $bp-sm) {
             flex-basis: 100px;
-            height: 130px;
+            min-height: 130px;
             padding: 10px;
         }
     }
@@ -6171,6 +6211,19 @@ button {
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
+
+        // Ієрархія «від масивного до дрібного»: доставка → промо → відсоток.
+        // Доставка — найбільша; відсоток лишається читабельним (10px), а «легшим»
+        // за інші його робить короткий вміст, а не дрібний шрифт.
+        .promo--ship {
+            font-size: 11px;
+            padding: 5px 11px;
+
+            svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
     }
 
     &__thumbs {
