@@ -22,7 +22,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Після виходу з акаунту — назад на сторінку входу.
+        // Після виходу з акаунту - назад на сторінку входу.
         $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
             public function toResponse($request)
             {

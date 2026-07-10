@@ -1,7 +1,7 @@
 {{-- resources/views/web/pages/returns.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Повернення та обмін — ВЕЛИКА ШИНА')
+@section('title', 'Повернення та обмін - ВЕЛИКА ШИНА')
 @section('meta_description', 'Умови та терміни повернення й обміну товарів у компанії ВЕЛИКА ШИНА: повернення протягом 14 днів для товарів належної якості.')
 
 @php($c = config('site.contacts'))

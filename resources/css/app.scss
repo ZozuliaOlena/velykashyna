@@ -518,10 +518,26 @@ button {
         padding: 12px 0;
     }
 
+    .hm-logo {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+    }
+
     .hm-logo img {
         height: 30px;
         width: auto;
         display: block;
+    }
+
+    // Слоган під лого (як у десктоп-версії, лише дрібніший).
+    .hm-tagline {
+        font-family: $font-head;
+        font-weight: 500;
+        font-size: 9.5px;
+        line-height: 1.1;
+        color: $muted;
     }
 
     .hm-side {
@@ -1403,11 +1419,11 @@ button {
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 28px;
 
     @media (max-width: $bp-lg) {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 24px;
     }
 
@@ -3101,9 +3117,10 @@ button {
             color: $red;
         }
 
+        // Активний стан — сірий, а не чорний (за побажанням замовника).
         &.is-active {
-            background: $ink;
-            border-color: $ink;
+            background: $muted;
+            border-color: $muted;
             color: #fff;
         }
 
@@ -3154,8 +3171,9 @@ button {
                 height: 18px;
             }
 
+            // Активний вид (список/сітка) — сірий, а не чорний.
             &.active {
-                background: $ink;
+                background: $muted;
                 color: #fff;
             }
         }
@@ -3982,8 +4000,9 @@ button {
     letter-spacing: -1px;
     font-size: clamp(56px, 14vw, 96px);
     text-shadow: 0 2px 22px rgba(0, 0, 0, 0.5);
-    // Обмежуємо ширину (в ch — масштабується зі шрифтом), щоб на ПК
-    // двослівний заголовок переносився на два рядки, а не тягнувся в один.
+    // Заголовок переноситься на два рядки (і на великих, і на малих екранах),
+    // обидва рядки вирівняні по одній лівій лінії. Ширина в ch масштабується
+    // зі шрифтом, тож двослівний заголовок переноситься стабільно.
     max-width: 10ch;
     overflow-wrap: break-word;
 
@@ -4396,8 +4415,10 @@ button {
     // svh (small viewport height) стабільний і не стрибає під мобільні панелі.
     min-height: 100vh;
     min-height: 100svh;
-    // верхній відступ враховує прозору шапку, що накладається зверху
-    padding: 170px 0 60px;
+    // верхній відступ враховує прозору шапку, що накладається зверху.
+    // Трохи більший верхній відступ опускає контент нижче на великих екранах;
+    // на невеликих пристроях діє окремий (менший) відступ нижче.
+    padding: 205px 0 48px;
     color: #fff;
     overflow: hidden;
 
@@ -4468,6 +4489,17 @@ button {
         flex-wrap: wrap;
         gap: 14px;
         margin-top: 28px;
+
+        // Моб.: кнопки однакової ширини, кожна на всю ширину рядка — щоб
+        // довгий номер телефону не вилазив за межі кнопки.
+        @media (max-width: $bp-sm) {
+            gap: 10px;
+
+            .btn {
+                flex: 1 1 100%;
+                justify-content: center;
+            }
+        }
     }
 
     &__stats {
@@ -4812,10 +4844,11 @@ button {
         white-space: nowrap;
     }
 
-    // Мобільний — кожен пункт на всю ширину, стовпчиком.
+    // Мобільний — кожен пункт на всю ширину, стовпчиком, вміст по центру.
     @media (max-width: $bp-sm) {
         li {
             flex: 1 1 100%;
+            justify-content: center;
         }
     }
 }
@@ -4976,6 +5009,11 @@ button {
         font-size: 14.5px;
         line-height: 1.6;
         color: $muted;
+    }
+
+    // Моб.: контент по центру (як верхній заголовок секції).
+    @media (max-width: $bp-md) {
+        text-align: center;
     }
 }
 
@@ -5272,6 +5310,11 @@ button {
         color: $muted;
     }
 
+    // Моб.: контент по центру (як верхній заголовок секції).
+    @media (max-width: $bp-md) {
+        text-align: center;
+    }
+
     // Сполучна лінія між кроками (десктоп): рівно в зазорі, на рівні центру іконки.
     &:not(:last-child)::after {
         content: "";
@@ -5292,12 +5335,15 @@ button {
 .approach-flow {
     display: flex;
     align-items: center;
-    justify-content: center;
+    // Розтягуємо на всю ширину секції (в рівень блоків вище), а не тиснемо
+    // по центру — кроки рівномірно розходяться від краю до краю.
+    justify-content: space-between;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 6px 4px;
 
     @media (max-width: $bp-sm) {
         flex-direction: column;
+        justify-content: center;
     }
 }
 
@@ -5507,13 +5553,13 @@ button {
         }
     }
 
-    // Світла (майже біла) заливка — фото проступає легкою текстурою,
-    // текст темний, щоб читався на світлому.
+    // Світла заливка — фото з вивіскою проступає, але текст (темний) читається.
+    // Знизу трохи щільніше, щоб текст/кнопки були контрастними.
     &__shade {
         position: absolute;
         inset: 0;
         z-index: 1;
-        background: linear-gradient(180deg, rgba(248, 249, 251, 0.85), rgba(242, 244, 247, 0.9));
+        background: linear-gradient(180deg, rgba(248, 249, 251, 0.72), rgba(244, 246, 249, 0.86));
     }
 
     &__inner {
@@ -5556,7 +5602,14 @@ button {
     &__text {
         font-size: 16px;
         line-height: 1.7;
-        color: $muted;
+        color: #2b2f36;
+        margin-bottom: 16px;
+    }
+
+    // Друга фраза — акцентна, темнішим напівжирним.
+    &__text--accent {
+        color: $ink;
+        font-weight: 700;
         margin-bottom: 28px;
     }
 

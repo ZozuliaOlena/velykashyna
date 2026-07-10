@@ -1,10 +1,10 @@
-{{-- resources/views/web/catalog.blade.php — каталог із БД (фільтри, сортування, пагінація) --}}
+{{-- resources/views/web/catalog.blade.php - каталог із БД (фільтри, сортування, пагінація) --}}
 @extends('layouts.app')
 
-{{-- SEO: якщо обрано категорію — сторінка стає лендингом категорії
+{{-- SEO: якщо обрано категорію - сторінка стає лендингом категорії
      (заголовок/опис/H1 із її SEO-полів). Комбінації фільтрів (бренд, розмір,
      сортування, сторінка тощо) не індексуються, а canonical веде на «чисту»
-     сторінку категорії/каталогу — щоб уникнути дублів. --}}
+     сторінку категорії/каталогу - щоб уникнути дублів. --}}
 @php($seoCat = ($selected['category'] ?? '') !== ''
     ? \App\Models\Category::where('slug', $selected['category'])->orWhere('name', $selected['category'])->first()
     : null)
@@ -17,8 +17,8 @@
     || (int) request()->query('page', 1) > 1)
 
 @section('title', $seoCat
-    ? ($seoCat->seo_title ?: $seoCat->name . ' — купити за найкращою ціною | ВЕЛИКА ШИНА')
-    : 'Каталог шин, дисків та камер для техніки — ВЕЛИКА ШИНА')
+    ? ($seoCat->seo_title ?: $seoCat->name . ' - купити за найкращою ціною | ВЕЛИКА ШИНА')
+    : 'Каталог шин, дисків та камер для техніки - ВЕЛИКА ШИНА')
 @section('meta_description', $seoCat
     ? ($seoCat->seo_description ?: 'Купити ' . mb_strtolower($seoCat->name) . ' у ВЕЛИКА ШИНА: великий вибір, чесні ціни, підбір і доставка по Україні.')
     : 'Каталог шин, дисків і камер для сільгосп-, спец- та вантажної техніки. Підбір за розміром, брендом і технікою. Доставка по Україні.')
@@ -48,13 +48,26 @@
 <section class="catalog" x-data="catalogUi()"
     x-effect="document.body.style.overflow = filtersOpen ? 'hidden' : ''">
     <div class="container">
+        {{-- Шлях відображає вибір: Головна / Каталог / [Категорія] / [Техніка].
+             Напр. обрали трактор -> Головна / Каталог / Трактори. --}}
+        @php($machCrumbs = collect($selected['machinery'] ?? [])->filter()->values())
         <nav class="breadcrumbs">
             <a href="{{ route('home') }}">Головна</a>
             <span class="sep">/</span>
-            @if($seoCat)
+            @if($seoCat || $machCrumbs->isNotEmpty())
                 <a href="{{ route('catalog') }}">Каталог</a>
-                <span class="sep">/</span>
-                <span class="current">{{ $seoCat->name }}</span>
+                @if($seoCat)
+                    <span class="sep">/</span>
+                    @if($machCrumbs->isNotEmpty())
+                        <a href="{{ route('catalog') }}?category={{ $seoCat->slug }}">{{ $seoCat->name }}</a>
+                    @else
+                        <span class="current">{{ $seoCat->name }}</span>
+                    @endif
+                @endif
+                @if($machCrumbs->isNotEmpty())
+                    <span class="sep">/</span>
+                    <span class="current">{{ $machCrumbs->join(', ') }}</span>
+                @endif
             @else
                 <span class="current">Каталог</span>
             @endif
@@ -454,7 +467,7 @@
                 <div class="toolbar-side"></div>
 
                 <div class="toolbar-center">
-                    {{-- Перемикач фільтрів (десктоп) — поряд із видом, по центру --}}
+                    {{-- Перемикач фільтрів (десктоп) - поряд із видом, по центру --}}
                     <button type="button" class="toolbar-ftoggle" :class="{ 'is-active': !filtersCollapsed }"
                         @click="filtersCollapsed = !filtersCollapsed">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -578,7 +591,7 @@
 
             {{-- Єдиний CTA-блок (замість дубля з банером футера). Заголовок
                  залежить від вибраної техніки: «Трактор» → «Шукаєте шину на
-                 трактор?»; без вибору — «Не знайшли потрібну шину?». --}}
+                 трактор?»; без вибору - «Не знайшли потрібну шину?». --}}
             @php($cc = config('site.contacts'))
             @php($ctaMach = collect($selected['machinery'] ?? [])->filter()->map(fn ($m) => mb_strtolower($m))->values())
             @php($ctaHeading = $ctaMach->isNotEmpty()
@@ -588,7 +601,7 @@
                 <div class="fc-text">
                     <div class="fc-line"></div>
                     <h3>{{ $ctaHeading }}</h3>
-                    <p>Наші спеціалісти <b>підберуть</b> оптимальний варіант за розміром і технікою. Телефонуйте — консультація безкоштовна.</p>
+                    <p>Правильний підбір шин починається з розуміння вашої техніки та умов роботи. Ми допоможемо знайти правильне рішення.</p>
                     <div class="fc-actions">
                         <a href="tel:{{ $cc['phone_href'] }}" class="btn btn--primary">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -600,7 +613,7 @@
                     </div>
                 </div>
                 <div class="fc-media">
-                    <img src="/images/details/kara.png" alt="ВЕЛИКА ШИНА" loading="lazy" />
+                    <img src="/images/details/back_wheels.jpg" alt="ВЕЛИКА ШИНА - підбір шин під техніку" loading="lazy" />
                 </div>
             </div>
         </div>

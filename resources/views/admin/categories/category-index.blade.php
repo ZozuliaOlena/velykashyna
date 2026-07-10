@@ -20,7 +20,7 @@
                 <tr wire:key="catf-{{ $cat->id }}">
                     <td data-label="Назва">{{ $cat->name }}</td>
                     <td data-label="Рівень">{{ $cat->level }}</td>
-                    <td data-label="Батько">{{ $cat->parent?->name ?? '—' }}</td>
+                    <td data-label="Батько">{{ $cat->parent?->name ?? '-' }}</td>
                     <td data-label="Підкат.">{{ $cat->children_count }}</td>
                     <td data-label="Товарів">{{ $cat->products_count }}</td>
                     <td data-label="Активна">
@@ -38,7 +38,7 @@
         </table>
         </div>
     @else
-        <p class="cat-hint">Тягніть за <span>⠿</span>, щоб змінити порядок у межах одного батька. Клік по ▶ — згорнути/розгорнути.</p>
+        <p class="cat-hint">Тягніть за <span>⠿</span>, щоб змінити порядок у межах одного батька. Клік по ▶ - згорнути/розгорнути.</p>
         @if($tree->isEmpty())
             <p style="text-align:center; color:#888; padding:1rem">Категорій ще немає</p>
         @else
@@ -54,7 +54,7 @@
     <x-admin.modal :title="$editingId ? 'Редагувати категорію' : 'Нова категорія'" :wide="true">
         <div>
             <label>Батьківська категорія</label>
-            <x-admin.select model="parent_id" placeholder="— Коренева (рівень 1) —" :live="false"
+            <x-admin.select model="parent_id" placeholder="- Коренева (рівень 1) -" :live="false"
                 :options="$parents->reject(fn ($p) => $p->id === $editingId)->map(fn ($p) => [
                     'value' => $p->id,
                     'label' => $p->tree_prefix . $p->name,

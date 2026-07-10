@@ -5,7 +5,7 @@
 @php($stats = config('site.stats'))
 @php($foundedDate = config('site.founded_date'))
 
-{{-- Категорії: з БД ($dbCategories), інакше — демо-заглушка. --}}
+{{-- Категорії: з БД ($dbCategories), інакше - демо-заглушка. --}}
 @php($categoriesFallback = [
 ['name' => 'Тракторні', 'count' => 'Понад 8 000 позицій', 'img' => 'MICHELIN MEGAXBIB.jpg'],
 ['name' => 'Комбайні', 'count' => 'Понад 3 000 позицій', 'img' => 'Michelin XMCL.jpg'],
@@ -18,7 +18,7 @@
 
 @section('content')
 {{-- ===================== HERO-СЛАЙДЕР ======================= --}}
-{{-- Слайди керуються в адмінці («Налаштування сайту»). Якщо їх ще немає —
+{{-- Слайди керуються в адмінці («Налаштування сайту»). Якщо їх ще немає -
      показуємо стандартні (як було), щоб шапка не була порожньою. --}}
 @php($slides = (! empty($heroSlides)) ? $heroSlides : [
     ['title' => 'ВЕЛИКА ДОВІРА', 'subtitle' => $years . ' років досвіду', 'type' => 'video', 'src' => '/images/details/slide1.mp4', 'poster' => '/images/details/slide1.png'],
@@ -120,7 +120,7 @@
 <section class="section machinery" x-data="dragScroll()">
     <div class="container">
         <div class="section-head" data-aos="fade-up">
-            <h2 class="section-title">Для вашої техніки</h2>
+            <h2 class="section-title">Шини на усю техніку</h2>
         </div>
         <div class="mach-wrap">
             <button type="button" class="mach-arrow mach-arrow--prev" aria-label="Прокрутити назад"
@@ -133,7 +133,7 @@
                 @pointerdown="dragStart($event)" @pointermove="dragMove($event)"
                 @pointerup="dragEnd()" @pointerleave="dragEnd()" @pointercancel="dragEnd()"
                 @click.capture="dragClick($event)">
-            {{-- Техніка: з БД ($dbMachinery), інакше — демо-заглушка. --}}
+            {{-- Техніка: з БД ($dbMachinery), інакше - демо-заглушка. --}}
             @php($machineryFallback = [
             ['name' => 'Трактори', 'icon' => '/images/svg/tehnics/tractor.svg', 'url' => route('catalog')],
             ['name' => 'Комбайни', 'icon' => '/images/svg/tehnics/combine.svg', 'url' => route('catalog')],
@@ -165,7 +165,7 @@
 @include('partials.experience-counter')
 
 {{-- ================== КАТАЛОГ ШИН (товари) =================== --}}
-{{-- Товари: з БД ($dbProducts), інакше — демо-заглушка. --}}
+{{-- Товари: з БД ($dbProducts), інакше - демо-заглушка. --}}
 @php($productsFallback = [
 ['brand' => 'Michelin', 'model' => 'XMCL', 'size' => '460/70 R24', 'constr' => 'Радіальна (TL)', 'li' => '159A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 47800, 'promos' => ['Акція', 'Безкоштовна доставка']],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '620/75 R30', 'constr' => 'Радіальна (TL)', 'li' => '170D', 'app' => 'Комбайни', 'stock' => false, 'img' => 'MICHELIN MEGAXBIB.jpg', 'price_mode' => 'inquiry'],
@@ -201,18 +201,6 @@
     <div class="container">
         <div class="features-grid">
             <div class="feature" data-aos="fade-up">
-                <div class="f-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 18h6" />
-                        <path d="M10 22h4" />
-                        <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z" />
-                    </svg>
-                </div>
-                <div class="f-title">Великий досвід</div>
-                <div class="f-text">Працюємо з {{ config('site.founded_year') }} року. Знаємо шини та техніку не з
-                    каталогу, а з практики.</div>
-            </div>
-            <div class="feature" data-aos="fade-up" data-aos-delay="80">
                 <div class="f-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7" />
@@ -266,10 +254,10 @@
     <div class="container">
         <div class="section-head" data-aos="fade-up" style="flex-direction:column;align-items:flex-start;gap:8px">
             <h2 class="section-title">Чому <span>ВЕЛИКА ШИНА</span>?</h2>
-            <p style="color:#6b7280"><b style="color:#e31e24">ВЕЛИКА</b> — не тільки про розмір шини.</p>
+            <p style="color:#6b7280"><b style="color:#e31e24">ВЕЛИКА</b> - не тільки про розмір шини.</p>
         </div>
         @php($why = [
-        ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/star.svg\');mask-image:url(\'/images/svg/others/star.svg\')"></span>'],
+        ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>'],
         ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/user-shield.svg\');mask-image:url(\'/images/svg/others/user-shield.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Порядність', 'd' => 'Чесно радимо те, що дійсно підходить і працює.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -302,7 +290,7 @@
             <div class="cta-bg"><img src="/images/back.png" alt="" /></div>
             <div class="cta-content">
                 <h3>Не впевнені, які шини потрібні?</h3>
-                <p>Наші спеціалісти допоможуть підібрати оптимальний варіант для вашої техніки.</p>
+                <p>Правильний підбір шин починається з розуміння вашої техніки та умов роботи. Ми допоможемо знайти правильне рішення.</p>
             </div>
             <div class="cta-actions">
                 <a href="{{ route('contacts') }}" class="btn btn--primary">Отримати консультацію</a>

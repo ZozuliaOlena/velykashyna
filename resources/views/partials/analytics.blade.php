@@ -11,7 +11,7 @@
 @endif
 
 @if($gaId || $adsId)
-{{-- Google tag (gtag.js) — GA4 та/або Google Ads --}}
+{{-- Google tag (gtag.js) - GA4 та/або Google Ads --}}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId ?: $adsId }}"></script>
 <script>
     window.dataLayer = window.dataLayer || [];

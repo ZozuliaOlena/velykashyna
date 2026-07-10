@@ -40,7 +40,7 @@ class HomeController extends Controller
     /**
      * Фасетний фільтр: за поточним вибором (будь-яка комбінація полів)
      * повертає доступні опції для КОЖНОГО поля. Опції поля рахуються з
-     * урахуванням усіх ІНШИХ полів, тож фільтр працює в будь-який бік —
+     * урахуванням усіх ІНШИХ полів, тож фільтр працює в будь-який бік -
      * можна почати з бренду, з розміру або з типу техніки.
      */
     public function filterOptions(Request $request)
@@ -58,12 +58,12 @@ class HomeController extends Controller
     {
         $options = $this->facetOptions(['machinery' => null, 'diameter' => null, 'brand' => null, 'size' => null]);
 
-        // Якщо товарів ще немає — підставляємо демо-списки, щоб бар не був порожнім.
+        // Якщо товарів ще немає - підставляємо демо-списки, щоб бар не був порожнім.
         if (empty($options['machinery']) && empty($options['brands']) && empty($options['sizes'])) {
             $mk = fn (array $v) => collect($v)->map(fn ($n) => ['value' => $n, 'label' => $n])->all();
             $options = [
                 'machinery' => $mk(['Трактори', 'Комбайни', 'Обприскувачі', 'Навантажувачі', 'Вантажівки']),
-                'diameters' => $mk(['R32', 'R38', 'R42']),
+                'diameters' => $mk(['32', '38', '42']),
                 'brands' => $mk(['BKT', 'Michelin', 'Mitas', 'Continental']),
                 'sizes' => $mk(['710/70R38', '800/65R32', '520/85R42']),
             ];
@@ -126,9 +126,11 @@ class HomeController extends Controller
         $q = Product::query()->where('is_active', true)->whereNotNull('rim_diameter');
         $this->applyFilters($q, $sel, 'diameter');
 
-        // «R32», «R38»… — як у каталозі; значення = мітці (каталог парсить цифри).
+        // Лише цифра посадкового діаметра, без «R» (R - це радіальна конструкція
+        // шини, у діаметрі літера технічно зайва). Значення = мітці; каталог
+        // усе одно парсить цифри при фільтрації.
         return $q->distinct()->orderBy('rim_diameter')->pluck('rim_diameter')
-            ->map(fn ($d) => 'R' . (int) $d)
+            ->map(fn ($d) => (string) (int) $d)
             ->unique()->values()
             ->map(fn ($label) => ['value' => $label, 'label' => $label])
             ->all();

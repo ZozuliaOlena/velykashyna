@@ -244,7 +244,7 @@ class ProductIndex extends Component
         $percent = (float) $this->bulkPricePercent;
         $factor  = 1 + $percent / 100;
         if ($factor < 0) {
-            session()->flash('error', 'Відсоток некоректний — ціна стала б від’ємною');
+            session()->flash('error', 'Відсоток некоректний - ціна стала б від’ємною');
             return;
         }
 

@@ -2,8 +2,8 @@
     <h1>Фото «в роботі» (за технікою)</h1>
 
     <div class="admin-filters">
-        <x-admin.select model="filterType" placeholder="— Тип техніки —" :options="$typeOptions" />
-        <x-admin.select model="filterModel" placeholder="— Модель техніки —" :options="$modelOptions" />
+        <x-admin.select model="filterType" placeholder="- Тип техніки -" :options="$typeOptions" />
+        <x-admin.select model="filterModel" placeholder="- Модель техніки -" :options="$modelOptions" />
         <button wire:click="resetFilters">Скинути</button>
     </div>
 
@@ -27,7 +27,7 @@
                         @if($fp->product)
                             <a href="{{ route('admin.products.edit', $fp->product_id) }}" wire:navigate
                                style="font-size:12px; color:#d32f2f; text-decoration:none">
-                                {{ $fp->product->sku ? $fp->product->sku . ' — ' : '' }}{{ \Illuminate\Support\Str::limit($fp->product->name, 40) }}
+                                {{ $fp->product->sku ? $fp->product->sku . ' - ' : '' }}{{ \Illuminate\Support\Str::limit($fp->product->name, 40) }}
                             </a>
                         @endif
                     </div>

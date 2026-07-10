@@ -1,4 +1,4 @@
-{{-- resources/views/partials/rating.blade.php — оцінка клієнтів (зірки) --}}
+{{-- resources/views/partials/rating.blade.php - оцінка клієнтів (зірки) --}}
 @php($r = config('site.rating'))
 <div class="rating">
     <div class="rating-stars" aria-label="{{ $r['score'] }} з {{ $r['max'] }}">

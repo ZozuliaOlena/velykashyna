@@ -185,7 +185,7 @@ class ProductForm extends Component
     }
 
     /** Каскад у рядку сумісності: зміна типу скидає виробника й модель,
-     *  зміна виробника — модель (щоб не лишалися неможливі комбінації). */
+     *  зміна виробника - модель (щоб не лишалися неможливі комбінації). */
     public function updatedCompat($value, $key): void
     {
         $i = (int) explode('.', $key)[0];
@@ -314,7 +314,7 @@ class ProductForm extends Component
         }
 
         // Знижка: порожній тип неприпустимий для enum-колонки (MySQL кидає
-        // «Data truncated»). Без валідного типу або додатного значення —
+        // «Data truncated»). Без валідного типу або додатного значення -
         // повністю обнуляємо знижку (це ж і дозволяє її прибрати без помилки).
         $hasDiscount = in_array($data['discount_type'] ?? null, ['percent', 'amount'], true)
             && ($data['discount_value'] ?? null) !== null

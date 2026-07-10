@@ -88,7 +88,7 @@ class CategoryIndex extends Component
             $level = $parent->level + 1;
 
             if ($level > 4) {
-                $this->addError('parent_id', 'Максимальна глибина — 4 рівні');
+                $this->addError('parent_id', 'Максимальна глибина - 4 рівні');
                 return;
             }
         }

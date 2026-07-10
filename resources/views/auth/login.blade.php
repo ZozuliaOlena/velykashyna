@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вхід в адмін-панель — Велика Шина</title>
+    <title>Вхід в адмін-панель - ВЕЛИКА ШИНА</title>
     <link rel="icon" href="{{ \App\Models\Setting::get('favicon') ?: '/favicon.ico' }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ \App\Models\Setting::get('favicon') ?: '/images/apple-touch-icon.png' }}">
     <style>
@@ -155,7 +155,7 @@
 <body>
     <main class="login-card">
         <div class="login-brand">
-            <img src="/images/logo.png" alt="Велика Шина">
+            <img src="/images/logo.png" alt="ВЕЛИКА ШИНА">
         </div>
 
         <h1>Вхід в адмін-панель</h1>

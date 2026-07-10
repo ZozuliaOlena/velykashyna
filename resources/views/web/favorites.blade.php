@@ -1,7 +1,7 @@
-{{-- resources/views/web/favorites.blade.php — обране (стан у localStorage) --}}
+{{-- resources/views/web/favorites.blade.php - обране (стан у localStorage) --}}
 @extends('layouts.app')
 
-@section('title', 'Обране — ВЕЛИКА ШИНА')
+@section('title', 'Обране - ВЕЛИКА ШИНА')
 
 @section('content')
 <section class="section fav-page">
@@ -25,7 +25,7 @@
                 <a href="{{ route('catalog') }}" class="btn btn--primary">Перейти до каталогу</a>
             </div>
 
-            {{-- Список обраного — реальні каталожні картки (тягнуться з сервера) --}}
+            {{-- Список обраного - реальні каталожні картки (тягнуться з сервера) --}}
             <div class="product-grid" x-ref="grid" x-show="$store.fav.items.length > 0" x-cloak></div>
 
             {{-- Підтвердження видалення --}}

@@ -1,6 +1,6 @@
 {{-- Глобальні структуровані дані (JSON-LD) для Google:
      локальний бізнес (магазин автотоварів) + сайт із пошуком.
-     Дані беруться з config('site') — їх перекриває адмінка «Контакти сайту». --}}
+     Дані беруться з config('site') - їх перекриває адмінка «Контакти сайту». --}}
 @php
     $site = config('site');
     $home = url('/');
@@ -21,7 +21,7 @@
         if (! preg_match('/(\d{1,2}:\d{2}).*?(\d{1,2}:\d{2})/u', $hours, $m)) {
             continue;
         }
-        $days = array_map('trim', preg_split('/[–\-—]/u', (string) ($row['days'] ?? '')));
+        $days = array_map('trim', preg_split('/[-\--]/u', (string) ($row['days'] ?? '')));
         $list = [];
         if (count($days) === 2) {
             $start = array_search($days[0], $dayOrder, true);

@@ -7,7 +7,7 @@
         <div class="collapse-block__body">
         <p style="color:#666">
             Реальні фото встановлених/інспектованих шин на техніці. Прив'яжіть до моделі
-            (напр. CASE 310) і додайте підпис — потім їх можна переглянути за технікою.
+            (напр. CASE 310) і додайте підпис - потім їх можна переглянути за технікою.
         </p>
 
         @if($photos->count())
@@ -41,13 +41,13 @@
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:.5rem">
                 <div style="flex:1 1 200px">
                     <label>Тип техніки</label>
-                    <x-admin.select model="machinery_type_id" :live="true" placeholder="— Тип техніки —" :options="$typeOptions" />
+                    <x-admin.select model="machinery_type_id" :live="true" placeholder="- Тип техніки -" :options="$typeOptions" />
                 </div>
                 <div style="flex:1 1 200px">
                     <label>Модель техніки</label>
                     <x-admin.select model="machinery_model_id" :live="false"
                         wire:key="fp-model-{{ $machinery_type_id ?? 0 }}"
-                        placeholder="— Модель (напр. CASE 310) —" :options="$modelOptions" />
+                        placeholder="- Модель (напр. CASE 310) -" :options="$modelOptions" />
                 </div>
             </div>
 

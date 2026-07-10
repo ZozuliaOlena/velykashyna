@@ -1,7 +1,7 @@
 {{-- resources/views/web/blog/show.blade.php --}}
 @extends('layouts.app')
 
-@section('title', ($post->seo_title ?: $post->title) . ' — Блог | ВЕЛИКА ШИНА')
+@section('title', ($post->seo_title ?: $post->title) . ' - Блог | ВЕЛИКА ШИНА')
 @section('meta_description', $post->seo_description ?: $post->teaser(32))
 
 @push('head')
@@ -66,7 +66,7 @@
         @endif
 
         <div class="blog-post__body">
-            {{-- content — HTML із rich-text редактора адмінки (довірений вміст) --}}
+            {{-- content - HTML із rich-text редактора адмінки (довірений вміст) --}}
             {!! $post->content !!}
         </div>
 

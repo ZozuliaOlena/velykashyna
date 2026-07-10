@@ -1,8 +1,8 @@
 {{-- resources/views/web/contacts.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Контакти — ВЕЛИКА ШИНА')
-@section('meta_description', 'Контакти компанії ВЕЛИКА ШИНА: телефон, email, адреса в Києві та месенджери. Ми на зв\'язку 24/7 — підберемо шини для вашої техніки.')
+@section('title', 'Контакти - ВЕЛИКА ШИНА')
+@section('meta_description', 'Контакти компанії ВЕЛИКА ШИНА: телефон, email, адреса в Києві та месенджери. Ми на зв\'язку 24/7 - підберемо шини для вашої техніки.')
 
 @php($c = config('site.contacts'))
 @php($socials = config('site.socials'))
@@ -30,7 +30,7 @@
         <div class="contacts-head" data-aos="fade-up">
             <span class="about-kicker">Ми на зв'язку</span>
             <h1 class="contacts-title">Контакти</h1>
-            <p class="about-sub">Зателефонуйте, напишіть у месенджер або залиште заявку — підберемо шини
+            <p class="about-sub">Зателефонуйте, напишіть у месенджер або залиште заявку - підберемо шини
                 для вашої техніки та проконсультуємо щодо наявності й доставки.</p>
         </div>
 
@@ -49,7 +49,7 @@
                         @if (!empty($c['phone2']))
                         <a href="tel:{{ $c['phone2_href'] }}" class="contact-card__value contact-card__value--link">{{ $c['phone2'] }}</a>
                         @endif
-                        <span class="contact-card__note">Телефонуйте будь-коли — ми на зв'язку 24/7</span>
+                        <span class="contact-card__note">Телефонуйте будь-коли - ми на зв'язку 24/7</span>
                     </div>
                 </div>
 
@@ -96,7 +96,7 @@
                     </div>
                 </div>
 
-                {{-- Месенджери та соцмережі — однотипні монохромні іконки без фону --}}
+                {{-- Месенджери та соцмережі - однотипні монохромні іконки без фону --}}
                 <div class="contact-channels">
                     <span class="contact-channels__label">Ми на зв'язку в месенджерах і соцмережах</span>
                     <div class="contact-channels__row">
@@ -158,7 +158,7 @@
                 x-data="consultationForm('{{ route('api.consultations.store') }}')">
                 <div class="cform" x-show="!sent">
                     <h2 class="cform__title">Залишити заявку</h2>
-                    <p class="cform__sub">Заповніть форму — менеджер передзвонить і допоможе з підбором.</p>
+                    <p class="cform__sub">Заповніть форму - менеджер передзвонить і допоможе з підбором.</p>
 
                     <form @submit.prevent="submit()">
                         <div class="cform__row">

@@ -7,7 +7,7 @@
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по назві...">
-        <x-admin.select model="filterBrand" placeholder="— Виробник —"
+        <x-admin.select model="filterBrand" placeholder="- Виробник -"
             :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
     </div>
 
@@ -20,7 +20,7 @@
             @forelse($items as $item)
             <tr wire:key="mseries-{{ $item->id }}">
                 <td data-label="Серія">{{ $item->name }}</td>
-                <td data-label="Виробник">{{ $item->brand?->name ?? '—' }}</td>
+                <td data-label="Виробник">{{ $item->brand?->name ?? '-' }}</td>
                 <td data-label="Моделей">{{ $item->models_count }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
@@ -40,7 +40,7 @@
     <x-admin.modal :title="$editingId ? 'Редагувати серію' : 'Нова серія'">
         <div>
             <label>Виробник техніки *</label>
-            <x-admin.select model="machinery_brand_id" placeholder="— Оберіть —" :live="false"
+            <x-admin.select model="machinery_brand_id" placeholder="- Оберіть -" :live="false"
                 :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
             @error('machinery_brand_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>

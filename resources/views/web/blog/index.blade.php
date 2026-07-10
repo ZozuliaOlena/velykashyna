@@ -100,7 +100,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/>
             </svg>
-            <p>Статей поки немає — незабаром тут з'являться корисні матеріали.</p>
+            <p>Статей поки немає - незабаром тут з'являться корисні матеріали.</p>
             <a href="{{ route('catalog') }}" class="btn btn--primary">Перейти в каталог</a>
         </div>
         @endif

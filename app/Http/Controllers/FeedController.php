@@ -11,7 +11,7 @@ class FeedController extends Controller
     /**
      * Фід для Google Merchant Center (RSS 2.0 + namespace g:).
      * Лише товари: активні, merchant_enabled, з фіксованою ціною,
-     * брендом і зображенням — щоб пройти модерацію без помилок.
+     * брендом і зображенням - щоб пройти модерацію без помилок.
      */
     public function merchant()
     {
@@ -21,7 +21,7 @@ class FeedController extends Controller
 
         $items = $products->map(fn (Product $p) => $this->item($p))->filter()->values();
 
-        $store = Setting::get('merchant_store_name') ?: 'Велика Шина';
+        $store = Setting::get('merchant_store_name') ?: 'ВЕЛИКА ШИНА';
 
         return response()
             ->view('feeds.merchant', ['items' => $items, 'store' => $store])
@@ -69,8 +69,8 @@ class FeedController extends Controller
     }
 
     /**
-     * Ціна для фіда. Якщо товар у валюті (USD/EUR) і задано курс — перераховуємо
-     * в гривні (Google Merchant краще приймає локальну валюту). Інакше — лишаємо
+     * Ціна для фіда. Якщо товар у валюті (USD/EUR) і задано курс - перераховуємо
+     * в гривні (Google Merchant краще приймає локальну валюту). Інакше - лишаємо
      * ціну у валюті товара. Курс береться з поля exchange_rate (масово виставляється
      * в адмінці для всіх товарів обраної валюти).
      */

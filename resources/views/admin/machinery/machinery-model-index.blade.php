@@ -7,9 +7,9 @@
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по назві...">
-        <x-admin.select model="filterBrand" placeholder="— Виробник —"
+        <x-admin.select model="filterBrand" placeholder="- Виробник -"
             :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
-        <x-admin.select model="filterType" placeholder="— Тип техніки —"
+        <x-admin.select model="filterType" placeholder="- Тип техніки -"
             :options="$types->map(fn ($t) => ['value' => $t->id, 'label' => $t->name])->all()" />
     </div>
 
@@ -22,9 +22,9 @@
             @forelse($items as $item)
             <tr wire:key="mmodel-{{ $item->id }}">
                 <td data-label="Модель">{{ $item->name }}</td>
-                <td data-label="Виробник">{{ $item->brand?->name ?? '—' }}</td>
-                <td data-label="Серія">{{ $item->series?->name ?? '—' }}</td>
-                <td data-label="Тип техніки">{{ $item->type?->name ?? '—' }}</td>
+                <td data-label="Виробник">{{ $item->brand?->name ?? '-' }}</td>
+                <td data-label="Серія">{{ $item->series?->name ?? '-' }}</td>
+                <td data-label="Тип техніки">{{ $item->type?->name ?? '-' }}</td>
                 <td class="cell-actions">
                     <a class="icon-btn" href="{{ route('admin.field-photos.index', ['filterModel' => $item->id]) }}" wire:navigate title="Фото в роботі" aria-label="Фото в роботі"><x-icon name="eye"/></a>
                     <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
@@ -44,19 +44,19 @@
     <x-admin.modal :title="$editingId ? 'Редагувати модель' : 'Нова модель'">
         <div>
             <label>Виробник техніки *</label>
-            <x-admin.select model="machinery_brand_id" placeholder="— Оберіть —" :live="false"
+            <x-admin.select model="machinery_brand_id" placeholder="- Оберіть -" :live="false"
                 :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
             @error('machinery_brand_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>
         <div>
             <label>Серія (необов'язково)</label>
-            <x-admin.select model="machinery_series_id" placeholder="— Без серії —" :live="false"
-                :options="$series->map(fn ($s) => ['value' => $s->id, 'label' => ($s->brand?->name ? $s->brand->name.' — ' : '').$s->name])->all()" />
+            <x-admin.select model="machinery_series_id" placeholder="- Без серії -" :live="false"
+                :options="$series->map(fn ($s) => ['value' => $s->id, 'label' => ($s->brand?->name ? $s->brand->name.' - ' : '').$s->name])->all()" />
             @error('machinery_series_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>
         <div>
             <label>Тип техніки *</label>
-            <x-admin.select model="machinery_type_id" placeholder="— Оберіть —" :live="false"
+            <x-admin.select model="machinery_type_id" placeholder="- Оберіть -" :live="false"
                 :options="$types->map(fn ($t) => ['value' => $t->id, 'label' => $t->name])->all()" />
             @error('machinery_type_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>

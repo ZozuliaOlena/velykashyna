@@ -83,6 +83,7 @@
         <div class="header-mobile">
             <a href="{{ route('home') }}" class="hm-logo" aria-label="ВЕЛИКА ШИНА">
                 <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" />
+                <span class="hm-tagline">з {{ config('site.founded_year') }} РОКУ</span>
             </a>
 
             <div class="hm-side">

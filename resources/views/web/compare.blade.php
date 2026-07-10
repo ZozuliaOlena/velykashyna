@@ -1,7 +1,7 @@
-{{-- resources/views/web/compare.blade.php — порівняння шин --}}
+{{-- resources/views/web/compare.blade.php - порівняння шин --}}
 @extends('layouts.app')
 
-@section('title', ($heading ?? 'Порівняння') . ' — ВЕЛИКА ШИНА')
+@section('title', ($heading ?? 'Порівняння') . ' - ВЕЛИКА ШИНА')
 
 @section('content')
 <section class="section compare"
@@ -89,7 +89,7 @@
                             </a>
                             <div class="compare-col__brand"><b>{{ $c['brand'] }}</b> {{ $c['model'] }}</div>
                             {{-- Ціна + компактна кнопка кошика (як у каталозі).
-                                 «Переглянути» прибрано — картка кликабельна через фото/назву. --}}
+                                 «Переглянути» прибрано - картка кликабельна через фото/назву. --}}
                             <div class="compare-col__buyline" x-data="{ item: @js($c) }">
                                 <div class="compare-col__price">
                                     @if (($c['price_mode'] ?? '') === 'fixed' || ($c['price_mode'] ?? '') === 'from')
@@ -117,7 +117,7 @@
                         @if (!$row['differs']) x-show="!onlyDiff" x-cloak @endif>
                         <th class="compare-table__label">{{ $row['label'] }}</th>
                         @foreach ($row['values'] as $val)
-                        <td>{{ $val ?? '—' }}</td>
+                        <td>{{ $val ?? '-' }}</td>
                         @endforeach
                     </tr>
                     @endforeach

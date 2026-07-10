@@ -51,7 +51,7 @@
             <input wire:model="google_category" type="text" style="width:100%"
                 placeholder="Vehicles & Parts > Vehicle Parts & Accessories > Motor Vehicle Parts > Motor Vehicle Tires">
             @error('google_category') <span style="color:red">{{ $message }}</span> @enderror
-            <small style="color:#666">Залиште порожнім — застосується розумний дефолт за кодом типу (шини / диски / інше).</small>
+            <small style="color:#666">Залиште порожнім - застосується розумний дефолт за кодом типу (шини / диски / інше).</small>
         </div>
 
         <x-slot:footer>

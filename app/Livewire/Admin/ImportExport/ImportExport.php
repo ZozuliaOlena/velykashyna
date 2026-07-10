@@ -36,7 +36,7 @@ class ImportExport extends Component
 
     public function mount(): void
     {
-        $this->merchantStoreName = Setting::get('merchant_store_name') ?: 'Велика Шина';
+        $this->merchantStoreName = Setting::get('merchant_store_name') ?: 'ВЕЛИКА ШИНА';
     }
 
     public function saveMerchantSettings(): void
@@ -89,7 +89,7 @@ class ImportExport extends Component
         if (empty($this->restoreReport['errors'])) {
             session()->flash('success', 'Відновлення з копії завершено');
         } else {
-            session()->flash('error', 'Відновлення завершилось із помилками — перевірте звіт');
+            session()->flash('error', 'Відновлення завершилось із помилками - перевірте звіт');
         }
     }
 

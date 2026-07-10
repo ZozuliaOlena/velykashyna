@@ -9,10 +9,10 @@ use ZipArchive;
 
 /**
  * Резервне копіювання та відновлення сайту без зовнішніх утиліт (mysqldump тощо).
- * Копія — це zip з:
- *   database.sql — повний дамп БД (DROP + CREATE + INSERT кожної таблиці),
- *   media/…      — завантажені фото (storage/app/public), якщо увімкнено,
- *   backup.json  — метадані копії.
+ * Копія - це zip з:
+ *   database.sql - повний дамп БД (DROP + CREATE + INSERT кожної таблиці),
+ *   media/…      - завантажені фото (storage/app/public), якщо увімкнено,
+ *   backup.json  - метадані копії.
  */
 class BackupService
 {

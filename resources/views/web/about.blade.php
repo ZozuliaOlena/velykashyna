@@ -239,7 +239,7 @@
             <div>
                 <span class="about-kicker">Офіційні поставки</span>
                 <h2 class="section-title">Працюємо з провідними <span>світовими брендами</span></h2>
-                <p class="about-sub">Працюємо напряму зі світовими виробниками шин. Лише оригінальна продукція - жодних сумнівних аналогів.</p>
+                <p class="about-sub">Допомагаємо знайти правильну шину серед продукції провідних світових брендів.</p>
             </div>
         </div>
 
@@ -321,7 +321,7 @@
 {{-- ================= ОФІЦІЙНИЙ САЙТ / ДОВІРА ================= --}}
 <section class="about-trust">
     <div class="about-trust__bg">
-        <img src="/images/about/portfolio11.jpg" alt="ВЕЛИКА ШИНА" loading="lazy" />
+        <img src="/images/details/back_wheels.jpg" alt="Вивіска ВЕЛИКА ШИНА на складі" loading="lazy" />
     </div>
     <div class="about-trust__shade"></div>
     <div class="container about-trust__inner" data-aos="fade-up">
@@ -333,9 +333,12 @@
         </div>
         <h2 class="about-trust__title">Це офіційний сайт компанії ВЕЛИКА&nbsp;ШИНА</h2>
         <p class="about-trust__text">
-            Остерігайтеся підробок. Перед вами офіційний ресурс компанії ВЕЛИКА ШИНА,
-            що працює на ринку з {{ $foundedYear }} року. Тут ви завжди отримаєте оригінальну
-            продукцію, чесну консультацію та реальну підтримку - ті самі, що й роками раніше.
+            Остерігайтеся шахраїв! Перед вами офіційний ресурс компанії ВЕЛИКА&nbsp;ШИНА,
+            яка працює на ринку з {{ $foundedYear }} року. Тут ви завжди отримаєте оригінальну
+            продукцію, чесну консультацію, реальну підтримку та правильну шину для вашої техніки.
+        </p>
+        <p class="about-trust__text about-trust__text--accent">
+            Та сама ВЕЛИКА&nbsp;ШИНА, яку усі добре знають з {{ $foundedYear }} року.
         </p>
         <div class="about-trust__actions">
             <a href="{{ route('catalog') }}" class="btn btn--primary">Обрати шину</a>
@@ -394,6 +397,7 @@
 {{-- ==================== НАШ ПІДХІД =========================== --}}
 @php($approach = [
 ['t' => 'Техніка', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/tehnics/tractor.svg\');mask-image:url(\'/images/svg/tehnics/tractor.svg\')"></span>'],
+['t' => 'Умови роботи', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>'],
 ['t' => 'Завдання', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14l2 2 4-4"/></svg>'],
 ['t' => 'Підбір', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>'],
 ['t' => 'Результат', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'],
@@ -466,7 +470,7 @@
             <div class="cta-bg"><img src="/images/back.png" alt="" /></div>
             <div class="cta-content">
                 <h3>Не впевнені, які шини потрібні?</h3>
-                <p>Наші спеціалісти допоможуть підібрати оптимальний варіант для вашої техніки - швидко й безкоштовно.</p>
+                <p>Правильний підбір шин починається з розуміння вашої техніки та умов роботи. Ми допоможемо знайти правильне рішення.</p>
             </div>
             <div class="cta-actions">
                 <a href="{{ route('catalog') }}" class="btn btn--primary">Підібрати шини</a>
