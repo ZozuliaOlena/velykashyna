@@ -1,4 +1,4 @@
-// Адмін-скрипти. ВАЖЛИВО: не імпортуємо й не стартуємо Alpine —
+// Адмін-скрипти. ВАЖЛИВО: не імпортуємо й не стартуємо Alpine -
 // його надає Livewire. Тут drag-and-drop (SortableJS) і редактор статей (Trix).
 import Sortable from 'sortablejs';
 import 'trix';
@@ -8,7 +8,7 @@ import 'trix/dist/trix.css';
 // в ліміт PHP upload_max_filesize і не ганяти зайві мегабайти.
 function downscaleImage(file, maxDim = 1600, quality = 0.82) {
     return new Promise((resolve) => {
-        // Растрові формати масштабуємо; svg/gif/інше — як є.
+        // Растрові формати масштабуємо; svg/gif/інше - як є.
         if (! /^image\/(jpeg|png|webp)$/.test(file.type)) {
             resolve(file);
             return;
@@ -52,7 +52,7 @@ function downscaleImage(file, maxDim = 1600, quality = 0.82) {
     });
 }
 
-// Доступно глобально — використовується компонентом <x-admin.image-upload>
+// Доступно глобально - використовується компонентом <x-admin.image-upload>
 // для стиснення фото перед завантаженням у Livewire.
 window.adminCompressImage = downscaleImage;
 
@@ -84,7 +84,7 @@ document.addEventListener('trix-attachment-add', (event) => {
             // Дістаємо зрозуміле повідомлення про помилку.
             let msg = 'Не вдалося завантажити зображення.';
             if (r.status === 413) msg = 'Зображення завелике для сервера.';
-            else if (r.status === 419) msg = 'Сесія застаріла — оновіть сторінку.';
+            else if (r.status === 419) msg = 'Сесія застаріла - оновіть сторінку.';
             else {
                 try {
                     const data = await r.json();
@@ -94,7 +94,7 @@ document.addEventListener('trix-attachment-add', (event) => {
             }
             return Promise.reject(msg);
         })
-        // Лише url, без href — інакше Trix обгортає зображення у посилання
+        // Лише url, без href - інакше Trix обгортає зображення у посилання
         // на файл (на сайті клік відкривав би картинку окремою сторінкою).
         .then((d) => attachment.setAttributes({ url: d.url }))
         .catch((err) => {
@@ -117,7 +117,7 @@ function initSortables() {
             handle: '.cat-handle',
             draggable: '.cat-node',
             animation: 150,
-            // сортуємо лише в межах одного батька (різні групи — без переносу)
+            // сортуємо лише в межах одного батька (різні групи - без переносу)
             group: 'cat-' + (ul.dataset.parent || 'root'),
             onEnd: () => {
                 const wireEl = ul.closest('[wire\\:id]');
@@ -132,7 +132,7 @@ function initSortables() {
 // ── Галерея фото товару (OLX-стиль): превʼю, видалення, ліміт, порядок ──────
 // Клієнтський аплоадер: стискаємо фото у браузері, тримаємо їх у локальному
 // масиві (джерело правди для порядку) і синхронізуємо у Livewire через
-// uploadMultiple. Контейнер має wire:ignore — DOM повністю наш.
+// uploadMultiple. Контейнер має wire:ignore - DOM повністю наш.
 function initGalleryUploaders() {
     document.querySelectorAll('.gallery-uploader').forEach((root) => {
         if (root._galInit) return;
@@ -265,7 +265,7 @@ function initGalleryUploaders() {
     });
 }
 
-// Зміна порядку вже збережених фото галереї — як у списку категорій.
+// Зміна порядку вже збережених фото галереї - як у списку категорій.
 function initGallerySaved() {
     document.querySelectorAll('[data-reorder-gallery]').forEach((grid) => {
         if (grid._galSavedInit) return;
@@ -303,7 +303,7 @@ function scheduleInit() {
 // ── Підтвердження дій через гарну модалку замість нативного confirm() ──────
 // Перехоплюємо клік по елементах з [data-confirm] у фазі захоплення (раніше
 // за обробники Livewire), показуємо модалку, і лише після «Так» повторно
-// «клікаємо» елемент — тоді спрацьовує його wire:click / submit.
+// «клікаємо» елемент - тоді спрацьовує його wire:click / submit.
 function initConfirm() {
     if (window.__adminConfirmInit) return;
     window.__adminConfirmInit = true;
@@ -314,7 +314,7 @@ function initConfirm() {
             const el = e.target.closest('[data-confirm]');
             if (!el) return;
 
-            // Повторний (уже підтверджений) клік — пропускаємо далі.
+            // Повторний (уже підтверджений) клік - пропускаємо далі.
             if (el.__confirmed) {
                 el.__confirmed = false;
                 return;
@@ -342,7 +342,7 @@ function initConfirm() {
 // ── Захист від втрати незбережених змін ───────────────────────────────────
 // Форма з [data-dirty-guard] стежить за правками. Якщо є незбережені зміни,
 // попереджаємо при: закритті/оновленні вкладки (нативно) та переході геть
-// (Скасувати / ← До списку / меню — будь-яке wire:navigate) — гарною модалкою.
+// (Скасувати / ← До списку / меню - будь-яке wire:navigate) - гарною модалкою.
 function initDirtyGuard() {
     if (window.__dirtyGuardInit) return;
     window.__dirtyGuardInit = true;
@@ -373,7 +373,7 @@ function initDirtyGuard() {
     });
 
     // Перехід усередині застосунку (wire:navigate: Скасувати, ← До списку,
-    // меню). Офіційний відмінюваний хук Livewire — гарантовано спиняє перехід,
+    // меню). Офіційний відмінюваний хук Livewire - гарантовано спиняє перехід,
     // поки користувач не підтвердить у модалці. Нікуди не виходимо без «Так».
     document.addEventListener('livewire:navigate', (e) => {
         if (!dirty) return;
@@ -394,13 +394,13 @@ function initDirtyGuard() {
         );
     });
 
-    // Нова сторінка завантажилась — скидаємо стан.
+    // Нова сторінка завантажилась - скидаємо стан.
     document.addEventListener('livewire:navigated', () => setDirty(false));
 }
 
 // ── Перегляд зображень (лайтбокс) ─────────────────────────────────────────
 // Один делегований обробник на весь документ: клік по контентному зображенню
-// відкриває його збільшену версію на весь екран. Джерело великого зображення —
+// відкриває його збільшену версію на весь екран. Джерело великого зображення -
 // data-zoom-src (якщо задано), інакше поточний src самого прев'ю.
 // Опрацьовуємо у фазі захоплення, щоб випередити wire:click і посилання
 // (напр. фото «в роботі», огорнуте <a href="…large">).
@@ -443,11 +443,11 @@ function initImageZoom() {
             e.stopPropagation();
             open(src);
         },
-        true // capture — раніше за обробники Livewire / переходи посилань
+        true // capture - раніше за обробники Livewire / переходи посилань
     );
 
     overlay.addEventListener('click', (e) => {
-        // Клік по тлу або хрестику закриває; по самому зображенні — ні.
+        // Клік по тлу або хрестику закриває; по самому зображенні - ні.
         if (e.target !== zoomImg) close();
     });
     window.addEventListener('keydown', (e) => {

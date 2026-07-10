@@ -7,7 +7,7 @@
 @php($c = config('site.contacts'))
 @php($socials = config('site.socials'))
 @php($mapQuery = $c['map_query'] ?? $c['address'])
-@php($mapEmbed = $c['map_embed'] ?? null)
+@php($mapEmbed = \App\Support\MapEmbed::src($c['map_embed'] ?? null))
 
 @section('content')
 <section class="section contacts-page">

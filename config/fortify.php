@@ -166,7 +166,7 @@ return [
             'confirm' => true,
             'confirmPassword' => true,
         ]),
-        // Features::registration(), — закоментовано, реєстрація не потрібна
+        // Features::registration(), - закоментовано, реєстрація не потрібна
         Features::resetPasswords(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),

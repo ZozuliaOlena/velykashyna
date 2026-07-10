@@ -60,7 +60,7 @@ return [
             'strict' => true,
             'engine' => null,
             // Шлях до mysqldump для spatie/laravel-backup (dump БД).
-            // Локально (MAMP): DB_DUMP_PATH="C:\MAMP\bin\mysql\bin\". Прод — свій шлях.
+            // Локально (MAMP): DB_DUMP_PATH="C:\MAMP\bin\mysql\bin\". Прод - свій шлях.
             'dump' => [
                 'dump_binary_path' => env('DB_DUMP_PATH', ''),
             ],

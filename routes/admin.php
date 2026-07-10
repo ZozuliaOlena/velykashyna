@@ -25,6 +25,7 @@ use App\Livewire\Admin\Security\SecurityPage;
 use App\Livewire\Admin\Settings\SettingIndex;
 use App\Livewire\Admin\SiteSettings\HeroSlideIndex;
 use App\Livewire\Admin\SiteSettings\SiteContacts;
+use App\Livewire\Admin\SiteSettings\SiteContent;
 use App\Livewire\Admin\Users\UserIndex;
 
 // Крок «код з пошти» — доступний авторизованому адміну БЕЗ otp-гейту,
@@ -77,6 +78,7 @@ Route::prefix('admin')
         Route::get('/settings', SettingIndex::class)->name('settings.index');
         Route::get('/site-settings', HeroSlideIndex::class)->name('site-settings.index');
         Route::get('/site-contacts', SiteContacts::class)->name('site-contacts.index');
+        Route::get('/site-content', SiteContent::class)->name('site-content.index');
         Route::get('/security', SecurityPage::class)->name('security.index');
         Route::get('/import-export', ImportExport::class)->name('import-export.index');
     });

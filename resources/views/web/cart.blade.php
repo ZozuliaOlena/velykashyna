@@ -107,11 +107,11 @@
                         <label class="cart-field">
                             <span>Спосіб доставки</span>
                             <div class="select">
-                                <select x-model="form.delivery">
-                                    <option>Нова Пошта</option>
-                                    <option>САТ</option>
-                                    <option>Кур'єр</option>
-                                    <option>Самовивіз зі складу</option>
+                                @php($deliveryMethods = \App\Livewire\Admin\SiteSettings\SiteContent::readJson('delivery_methods', \App\Livewire\Admin\SiteSettings\SiteContent::DEFAULT_DELIVERY))
+                                <select x-model="form.delivery" x-init="form.delivery = @js($deliveryMethods[0] ?? 'Нова Пошта')">
+                                    @foreach($deliveryMethods as $d)
+                                        <option>{{ $d }}</option>
+                                    @endforeach
                                 </select>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="6 9 12 15 18 9" />
@@ -137,9 +137,11 @@
                         <label class="cart-field">
                             <span>Спосіб оплати</span>
                             <div class="select">
-                                <select x-model="form.payment">
-                                    <option>Накладений платіж (при отриманні)</option>
-                                    <option>Оплата за реквізитами (IBAN)</option>
+                                @php($paymentMethods = \App\Livewire\Admin\SiteSettings\SiteContent::readJson('payment_methods', \App\Livewire\Admin\SiteSettings\SiteContent::DEFAULT_PAYMENT))
+                                <select x-model="form.payment" x-init="form.payment = @js($paymentMethods[0] ?? 'Накладений платіж (при отриманні)')">
+                                    @foreach($paymentMethods as $p)
+                                        <option>{{ $p }}</option>
+                                    @endforeach
                                 </select>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="6 9 12 15 18 9" />

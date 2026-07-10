@@ -73,7 +73,7 @@ class DemoCatalogSeeder extends Seeder
 
                 $discountValue = null;
                 $discountType = null;
-                if ($idx % 4 === 0) {                 // частина — зі знижкою
+                if ($idx % 4 === 0) {                 // частина - зі знижкою
                     $discountType = 'percent';
                     $discountValue = [5, 10, 15, 20][intdiv($idx, 4) % 4];
                 } elseif ($idx % 5 === 0) {
@@ -112,7 +112,7 @@ class DemoCatalogSeeder extends Seeder
                         'promo_badge' => $idx % 3 === 0 ? 'Акція' : null,
                         'shipping_badge' => $idx % 4 === 1 ? 'Безкоштовна доставка' : null,
                         'merchant_enabled' => $idx % 2 === 0,
-                        'seo_title' => "Купити {$name} — Велика Шина",
+                        'seo_title' => "Купити {$name} - Велика Шина",
                         'seo_description' => "{$name}. Доставка по Україні, гарантія, найкраща ціна на сільгоспшини.",
                         'seo_h1' => $name,
                         'is_active' => $idx % 11 !== 10,   // один-два неактивних для прикладу
@@ -130,7 +130,7 @@ class DemoCatalogSeeder extends Seeder
                     $cats[$catKey] ?? null,
                 ]));
 
-                // Фото — лише якщо ще немає (щоб повторний seed не плодив дублі).
+                // Фото - лише якщо ще немає (щоб повторний seed не плодив дублі).
                 if (! $product->getFirstMedia('main')) {
                     $photo = $this->makePhoto($brand->name, $s['raw'], $this->brandColor($idx));
                     $product->addMedia($photo)->toMediaCollection('main');
@@ -167,7 +167,7 @@ class DemoCatalogSeeder extends Seeder
                 ]
             );
 
-            // Логотип — генеруємо, якщо ще немає файлу.
+            // Логотип - генеруємо, якщо ще немає файлу.
             if (! $brand->logo || ! Storage::disk('public')->exists($brand->logo)) {
                 $path = "brands/demo-{$brand->id}.jpg";
                 Storage::disk('public')->put($path, $this->logoBytes($row['name'], $this->brandColor($i)));

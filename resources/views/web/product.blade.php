@@ -119,9 +119,9 @@
                     @mouseenter="if (images.length && !touch) zoom = true" @mouseleave="zoom = false"
                     @click="if (images.length && touch) box = true">
                     @if (count($images))
-                    {{-- Статичний src першого фото — щоб до ініціалізації Alpine
+                    {{-- Статичний src першого фото - щоб до ініціалізації Alpine
                          не блимала іконка «битої картинки»; далі :src синхронізує.
-                         fetchpriority=high — головне фото (LCP) вантажиться першим. --}}
+                         fetchpriority=high - головне фото (LCP) вантажиться першим. --}}
                     <img src="{{ $images[0] }}" :src="images[active]" fetchpriority="high" decoding="async" :style="zoom ? `transform: scale(2.3); transform-origin: ${ox} ${oy}` : ''" alt="{{ $fullName }}" />
                     <span class="product-gallery__zoom" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

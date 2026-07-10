@@ -5,11 +5,11 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Індекси для пришвидшення адмінки — без зміни функціоналу.
- *   leads.status  — лічильник «нових» заявок у шапці (кожне завантаження)
+ * Індекси для пришвидшення адмінки - без зміни функціоналу.
+ *   leads.status  - лічильник «нових» заявок у шапці (кожне завантаження)
  *                   + фільтр за статусом.
- *   leads.source  — фільтр «Тип» (Кошик / Консультація / Вручну).
- *   products.size_raw — точний фільтр за типорозміром і distinct-список.
+ *   leads.source  - фільтр «Тип» (Кошик / Консультація / Вручну).
+ *   products.size_raw - точний фільтр за типорозміром і distinct-список.
  */
 return new class extends Migration
 {

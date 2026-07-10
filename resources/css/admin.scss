@@ -14,7 +14,7 @@ $border-color: #e0e0e0;
 $bg-app: #f4f5f7;
 $radius: 8px;
 
-// Кастомна стрілка для <select> (інлайн SVG, колір — $text-light)
+// Кастомна стрілка для <select> (інлайн SVG, колір - $text-light)
 $select-arrow: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23555555'%20stroke-width='2.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E");
 
 body.admin-body {
@@ -31,7 +31,7 @@ body.admin-body {
 
     // ── Каркас: бічне меню + контент ─────────────────────────────────────
     // Висота = рівно вікно, сторінка сама не прокручується. Прокручується
-    // лише контентна зона (.admin-main) — завдяки цьому шапка таблиці
+    // лише контентна зона (.admin-main) - завдяки цьому шапка таблиці
     // надійно «липне» до верху зони під хедером (див. thead th).
     .admin-shell {
         display: flex;
@@ -332,7 +332,7 @@ body.admin-body {
 
         .admin-content { margin-left: 72px; }
 
-        // На десктопі бургер у хедері не потрібен — перемикач у рейлі
+        // На десктопі бургер у хедері не потрібен - перемикач у рейлі
         .admin-burger { display: none; }
     }
 
@@ -457,7 +457,7 @@ body.admin-body {
             background-size: 12px;
             text-overflow: ellipsis;
 
-            // Стрілку треба повторно задати в hover/focus — бо базове правило
+            // Стрілку треба повторно задати в hover/focus - бо базове правило
             // інпутів перезаписує `background` шорткатом (скидало б картинку).
             &:hover,
             &:focus {
@@ -563,7 +563,7 @@ body.admin-body {
                 left: 0;
                 right: auto;
                 // Розширюється під найдовший пункт, але не вужче за контрол
-                // і не за межі екрана — текст завжди видно повністю.
+                // і не за межі екрана - текст завжди видно повністю.
                 min-width: 100%;
                 width: max-content;
                 max-width: min(420px, 92vw);
@@ -579,7 +579,7 @@ body.admin-body {
                 box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
             }
 
-            // Поле пошуку в списку — липне зверху, поки опції прокручуються.
+            // Поле пошуку в списку - липне зверху, поки опції прокручуються.
             &__search {
                 position: sticky;
                 top: 0;
@@ -650,7 +650,7 @@ body.admin-body {
                 margin-right: 2px;
             }
 
-            // Усі контроли — рівномірні й здатні звужуватись (min-width:0),
+            // Усі контроли - рівномірні й здатні звужуватись (min-width:0),
             // тому ніколи не вилазять і акуратно переносяться.
             input,
             select {
@@ -664,7 +664,7 @@ body.admin-body {
                 &:focus { background-color: #fff; }
             }
 
-            // Пошук — трохи ширший за селекти
+            // Пошук - трохи ширший за селекти
             input[type="text"],
             input:not([type]) {
                 flex: 2 1 240px;
@@ -685,7 +685,7 @@ body.admin-body {
 
             > div { margin-bottom: 10px; }
 
-            // Опис під заголовком блоку — відступ до кнопки/поля нижче.
+            // Опис під заголовком блоку - відступ до кнопки/поля нижче.
             > p {
                 margin: 4px 0 14px;
                 line-height: 1.5;
@@ -699,7 +699,7 @@ body.admin-body {
             padding: 0 6px;
         }
 
-        // ── Згортний блок (<details>) — як fieldset, але клік-розкриття ───
+        // ── Згортний блок (<details>) - як fieldset, але клік-розкриття ───
         .collapse-block {
             margin-top: 1rem;
             border: 1px solid $border-color;
@@ -838,7 +838,7 @@ body.admin-body {
                 background: $primary-red;
                 color: #fff;
                 border: none;
-                font-size: 0; // ховаємо текстовий «×» — хрестик малюємо самі (точно по центру)
+                font-size: 0; // ховаємо текстовий «×» - хрестик малюємо самі (точно по центру)
                 cursor: pointer;
 
                 &::before,
@@ -916,7 +916,7 @@ body.admin-body {
         }
 
         // ── Таблиці ──────────────────────────────────────────────────────
-        // ВАЖЛИВО: жодного overflow на самій table — інакше вона стає
+        // ВАЖЛИВО: жодного overflow на самій table - інакше вона стає
         // clip-контейнером і «position: sticky» шапки чіпляється до неї
         // (яка не прокручується), і шапка зникає під час гортання.
         table {
@@ -1025,7 +1025,7 @@ body.admin-body {
             }
         }
 
-        // Видалення (кнопка з підтвердженням) — червоний акцент
+        // Видалення (кнопка з підтвердженням) - червоний акцент
         button.icon-btn[wire\:confirm] {
             color: $primary-red;
             border-color: rgba(211, 47, 47, 0.4);
@@ -1037,7 +1037,7 @@ body.admin-body {
             }
         }
 
-        // Кілька іконок у комірці дій — рівний відступ, завжди в один рядок
+        // Кілька іконок у комірці дій - рівний відступ, завжди в один рядок
         td .icon-btn + .icon-btn { margin-left: 6px; }
         td.cell-actions { white-space: nowrap; }
 
@@ -1111,7 +1111,7 @@ body.admin-body {
         .cat-name {
             font-weight: 600;
 
-            // гілка (має дітей) — заголовок; лист — світліший
+            // гілка (має дітей) - заголовок; лист - світліший
             &.is-branch { font-weight: 800; }
             &.is-leaf { font-weight: 500; color: $text-light; }
         }
@@ -1133,7 +1133,7 @@ body.admin-body {
 
         .cat-spacer { flex: 1; }
 
-        // SortableJS — вигляд під час перетягування
+        // SortableJS - вигляд під час перетягування
         .sortable-ghost { opacity: 0.35; }
         .sortable-drag .cat-row { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18); }
 
@@ -1171,7 +1171,7 @@ body.admin-body {
             white-space: nowrap;
         }
 
-        // Компактний бейдж-мітка (акція/доставка) — легкий, без зайвого місця.
+        // Компактний бейдж-мітка (акція/доставка) - легкий, без зайвого місця.
         .badge-tag {
             display: inline-block;
             max-width: 100%;
@@ -1251,7 +1251,7 @@ body.admin-body {
             &:last-of-type { border-right: none; }
         }
 
-        // Панель масового курсу валют — окремий, «спокійний» акцент (синій),
+        // Панель масового курсу валют - окремий, «спокійний» акцент (синій),
         // щоб відрізнявся від червоної панелі масових дій над виділенням.
         .rate-bar {
             display: flex;
@@ -1327,7 +1327,7 @@ body.admin-body {
                 background: $primary-red;
                 color: #fff;
                 border: none;
-                font-size: 0; // ховаємо текстовий «×» — хрестик малюємо самі (точно по центру)
+                font-size: 0; // ховаємо текстовий «×» - хрестик малюємо самі (точно по центру)
                 cursor: pointer;
 
                 &::before,
@@ -1596,7 +1596,7 @@ body.admin-body {
         }
     }
 
-    // дашборд (плитки) — без подвійної картки
+    // дашборд (плитки) - без подвійної картки
     .admin-main > div:has(> .admin-stats) {
         background: none;
         border: none;
@@ -1604,7 +1604,7 @@ body.admin-body {
         box-shadow: none;
     }
 
-    // таблиці всередині картки — легші (без власної тіні)
+    // таблиці всередині картки - легші (без власної тіні)
     .admin-main table {
         box-shadow: none;
     }
@@ -1687,7 +1687,7 @@ body.admin-body {
         input { width: 100%; }
     }
 
-    // Результати — у потоці (виїжджають вниз під полем), із власним скролом,
+    // Результати - у потоці (виїжджають вниз під полем), із власним скролом,
     // тому ніколи не вилазять за межі модалки.
     .lead-product-results {
         margin-top: 6px;
@@ -1750,7 +1750,7 @@ body.admin-body {
 
             @media (max-width: 576px) { padding: 18px 16px; }
 
-            // Довгі форми — ширше, тіло розбивається на дві колонки.
+            // Довгі форми - ширше, тіло розбивається на дві колонки.
             &--wide { width: min(820px, 100%); }
         }
 
@@ -1820,7 +1820,7 @@ body.admin-body {
         }
 
         // Кнопки модалки стоять поза .admin-main, тому загальні стилі кнопок
-        // до них не доходять — оформлюємо явно тут.
+        // до них не доходять - оформлюємо явно тут.
         &__actions {
             display: flex;
             gap: 12px;
@@ -1844,7 +1844,7 @@ body.admin-body {
                 &:active { transform: translateY(1px); }
             }
 
-            // Підтвердження — акцентна червона кнопка.
+            // Підтвердження - акцентна червона кнопка.
             .btn-primary {
                 background: $primary-red;
                 border-color: $primary-red;
@@ -1881,7 +1881,7 @@ body.admin-body {
         font-weight: 700;
         white-space: nowrap;
 
-        &--new        { background: #fdecea; color: $primary-red; }   // нова — увага
+        &--new        { background: #fdecea; color: $primary-red; }   // нова - увага
         &--processing { background: #e7f0ff; color: #1d4ed8; }        // в обробці
         &--confirmed  { background: #e8f5e9; color: #2e7d32; }        // підтверджена
         &--done       { background: #e0f2f1; color: #00695c; }        // виконана
@@ -1948,7 +1948,7 @@ body.admin-body {
         }
     }
 
-    // Рядок нової заявки — легка підсвітка + червоний акцент зліва
+    // Рядок нової заявки - легка підсвітка + червоний акцент зліва
     .admin-main tbody tr.is-new-lead {
         background: #fff7f7;
         box-shadow: inset 3px 0 0 $primary-red;
@@ -1978,7 +1978,7 @@ body.admin-body {
     @keyframes admin-spin { to { transform: rotate(360deg); } }
 
     // ══════════════════════════════════════════════════════════════════════
-    // Мобільний адаптив — зручно й «user friendly» на телефоні
+    // Мобільний адаптив - зручно й «user friendly» на телефоні
     // ══════════════════════════════════════════════════════════════════════
     @media (max-width: 768px) {
         .admin-main {
@@ -2012,7 +2012,7 @@ body.admin-body {
         }
 
         thead {
-            // ховаємо шапку — підписи беремо з data-label
+            // ховаємо шапку - підписи беремо з data-label
             position: absolute;
             width: 1px;
             height: 1px;
@@ -2059,19 +2059,19 @@ body.admin-body {
                 color: $text-light;
             }
 
-            // Комірки-дії та порожній стан — на всю ширину, без підпису
+            // Комірки-дії та порожній стан - на всю ширину, без підпису
             &[data-label=""]::before,
             &.cell-actions::before { content: none; }
         }
 
-        // Комірка з кнопками дій — кнопки в ряд праворуч
+        // Комірка з кнопками дій - кнопки в ряд праворуч
         tbody td.cell-actions {
             justify-content: flex-end;
             flex-wrap: nowrap;
             gap: 8px;
         }
 
-        // Порожній стан ("Нічого не знайдено") — по центру, на всю ширину
+        // Порожній стан ("Нічого не знайдено") - по центру, на всю ширину
         tbody td[colspan] {
             justify-content: center;
             text-align: center;
@@ -2115,7 +2115,7 @@ body.admin-body {
             }
         }
 
-        // Фільтри: кожен контрол на всю ширину, «Скинути» — теж.
+        // Фільтри: кожен контрол на всю ширину, «Скинути» - теж.
         .admin-filters {
             padding: 12px;
 
@@ -2149,7 +2149,7 @@ body.admin-body {
         }
         td button + button { margin-left: 6px; }
 
-        // Тости — на всю ширину знизу, щоб читалися й не вилазили.
+        // Тости - на всю ширину знизу, щоб читалися й не вилазили.
         .admin-toasts {
             left: 12px;
             right: 12px;
@@ -2172,7 +2172,7 @@ body.admin-body {
 
 // ── Перегляд зображень (лайтбокс) ─────────────────────────────────────────
 // Клік по будь-якому контентному зображенню в адмінці відкриває його
-// збільшену версію на весь екран. Логіка — у resources/js/admin.js.
+// збільшену версію на весь екран. Логіка - у resources/js/admin.js.
 img[data-zoom],
 .photo-thumb img,
 .field-photo img,

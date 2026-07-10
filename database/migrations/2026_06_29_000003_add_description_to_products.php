@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            // Загальний опис товару — окремо від «Думки експерта».
+            // Загальний опис товару - окремо від «Думки експерта».
             $table->text('description')->nullable()->after('specification');
         });
     }

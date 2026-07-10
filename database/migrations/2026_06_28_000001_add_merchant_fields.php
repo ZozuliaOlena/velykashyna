@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('condition', 20)->default('new')->after('merchant_enabled');
         });
 
-        // Google-категорія товарної таксономії — на рівні типу товару.
+        // Google-категорія товарної таксономії - на рівні типу товару.
         Schema::table('product_types', function (Blueprint $table) {
             $table->string('google_category')->nullable()->after('name');
         });

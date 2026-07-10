@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Замість двох булевих прапорців — два текстові бейджі з вибором значення:
+        // Замість двох булевих прапорців - два текстові бейджі з вибором значення:
         //   promo_badge:    Акція / Запитуй знижку / Уточніть вашу ціну
         //   shipping_badge: Безкоштовна доставка / Можлива безкоштовна доставка
         Schema::table('products', function (Blueprint $table) {

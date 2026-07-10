@@ -348,14 +348,7 @@
 </section>
 
 {{-- ===================== ГАЛЕРЕЯ РОБІТ ======================= --}}
-@php($gallery = [
-['img' => 'portfolio3.jpg', 'cap' => 'Склад великогабаритних шин'],
-['img' => 'portfolio7.jpg', 'cap' => 'Відвантаження клієнту'],
-['img' => 'portfolio4.jpg', 'cap' => 'Асортимент у наявності'],
-['img' => 'portfolio9.jpg', 'cap' => 'Робота з технікою'],
-['img' => 'portfolio6.jpg', 'cap' => 'Готово до відправлення'],
-['img' => 'portfolio8.jpg', 'cap' => 'Щоденна робота складу'],
-])
+@php($gallery = \App\Livewire\Admin\SiteSettings\SiteContent::readJson('work_gallery', \App\Livewire\Admin\SiteSettings\SiteContent::DEFAULT_GALLERY))
 <section class="section" x-data="{ open: false, src: '' }">
     <div class="container">
         <div class="section-head about-center" data-aos="fade-up">
@@ -367,10 +360,10 @@
         <div class="about-gallery">
             @foreach ($gallery as $i => $g)
             <button type="button" class="about-gallery__item" data-aos="zoom-in" data-aos-delay="{{ $i % 3 * 70 }}"
-                @click="src = '/images/about/{{ $g['img'] }}'; open = true">
+                @click="src = @js($g['img']); open = true">
                 {{-- alt лишаємо описовим - саме воно несе SEO/доступність;
                      видимі підписи-бейджі прибрано (візуально чистіше). --}}
-                <img src="/images/about/{{ $g['img'] }}" alt="{{ $g['cap'] }}" loading="lazy" />
+                <img src="{{ $g['img'] }}" alt="{{ $g['cap'] ?? '' }}" loading="lazy" />
                 <span class="about-gallery__zoom">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
@@ -430,12 +423,7 @@
 </section>
 
 {{-- ==================== ЧАСТІ ЗАПИТАННЯ ====================== --}}
-@php($faqs = [
-['q' => 'Чи доставляєте шини, камери та диски?', 'a' => 'Так - відправляємо по всій Україні (Нова Пошта, транспортні компанії, адресна доставка). Ходові розміри тримаємо в наявності, решту оперативно привозимо.'],
-['q' => 'Чи є гарантія на продукцію?', 'a' => 'Так. Ми офіційний постачальник і продаємо лише оригінальну продукцію з гарантією від виробника - жодних сумнівних аналогів.'],
-['q' => 'Чи працюєте з ПДВ?', 'a' => 'Так, працюємо як з ПДВ, так і без. Для юридичних осіб оформлюємо всі необхідні документи.'],
-['q' => 'Чи можна отримати консультацію телефоном або в месенджерах?', 'a' => 'Звісно. Телефонуйте або пишіть у Viber / Telegram / WhatsApp - підкажемо розмір і підберемо шину під вашу техніку.'],
-])
+@php($faqs = \App\Livewire\Admin\SiteSettings\SiteContent::readJson('faq_items', \App\Livewire\Admin\SiteSettings\SiteContent::DEFAULT_FAQS))
 <section class="section faq-sec">
     <div class="container">
         <div class="section-head about-center" data-aos="fade-up">

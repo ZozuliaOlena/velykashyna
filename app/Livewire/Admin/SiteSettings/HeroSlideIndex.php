@@ -36,7 +36,7 @@ class HeroSlideIndex extends Component
     {
         return [
             'title'       => ['nullable', 'string', 'max:255'],
-            'subtitle'    => ['nullable', 'string', 'max:500'],
+            'subtitle'    => ['nullable', 'string', 'max:255'],
             'bg_type'     => ['required', 'in:image,video,youtube'],
             'youtube_url' => ['nullable', 'string', 'max:255', 'required_if:bg_type,youtube'],
             'sort_order'  => ['integer', 'min:0'],

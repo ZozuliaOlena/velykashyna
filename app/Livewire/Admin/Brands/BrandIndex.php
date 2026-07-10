@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Support\Translit;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -30,8 +31,8 @@ class BrandIndex extends Component
     protected function rules(): array
     {
         return [
-            'name'    => 'required|string|max:255',
-            'country' => 'nullable|string|max:255',
+            'name'    => ['required', 'string', 'max:255', Rule::unique('brands', 'name')->ignore($this->editingId)],
+            'country' => ['nullable', 'string', 'max:255'],
             'logo'    => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp,svg', 'max:5120'],
         ];
     }
