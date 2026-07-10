@@ -83,7 +83,7 @@ class CompareController extends Controller
             'Бренд' => fn (Product $p) => $p->brand?->name,
             'Модель / протектор' => fn (Product $p) => $p->model,
             'Розмір' => fn (Product $p) => $p->size_raw,
-            'Камерність' => fn (Product $p) => $p->constructionLabel() ?: null,
+            'TL/TT' => fn (Product $p) => $p->constructionLabel() ?: null,
             'Індекс навантаж./швидк.' => fn (Product $p) => $p->load_speed_index,
             'Норма шарів (PR)' => fn (Product $p) => $p->ply_rating,
             'Посадковий діаметр' => fn (Product $p) => $p->rim_diameter ? 'R' . (int) $p->rim_diameter : null,

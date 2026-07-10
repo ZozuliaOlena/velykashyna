@@ -1637,6 +1637,10 @@ button {
         color: $ink;
         margin-bottom: 10px;
         line-height: 1.2;
+        // Довге слово («ВІДПОВІДАЛЬНІСТЬ») переноситься, а не обрізається краєм
+        // картки (у .why-card стоїть overflow: hidden).
+        overflow-wrap: break-word;
+        hyphens: auto;
 
         span {
             color: $red;
@@ -2006,10 +2010,57 @@ button {
         color: #fff;
     }
 
-    .fb-made {
+    // Внутрішній ряд: © / Політика / powered by.
+    .fb-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        width: 100%;
+
+        // ПК: лишаємо місце справа під плаваючу кнопку дзвінка (68px + відступ),
+        // щоб вона не перекривала «powered by».
+        @media (min-width: 993px) {
+            padding-right: 108px;
+        }
+
+        // Моб.: усе по центру, «powered by» — окремим рядком знизу.
+        @media (max-width: $bp-sm) {
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+        }
+    }
+
+    // Підпис розробника — дрібно й ненав'язливо.
+    .fb-powered {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
+        font-size: 12px;
+        letter-spacing: 0.2px;
+        opacity: 0.85;
+        transition: opacity 0.2s ease;
+
+        img {
+            height: 14px;
+            width: auto;
+            display: block;
+            // Робимо лого білим на темному футері (будь-який колір SVG → білий).
+            filter: brightness(0) invert(1);
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: $bp-sm) {
+            flex-basis: 100%;
+            justify-content: center;
+            order: 3;
+            margin-top: 2px;
+        }
     }
 
     @media (max-width: $bp-md) {

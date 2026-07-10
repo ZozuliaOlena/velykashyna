@@ -259,7 +259,7 @@
         @php($why = [
         ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>'],
         ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/user-shield.svg\');mask-image:url(\'/images/svg/others/user-shield.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Турбота', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Порядність', 'd' => 'Чесно радимо те, що дійсно підходить і працює.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="8" r="6" />
             <path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5" />

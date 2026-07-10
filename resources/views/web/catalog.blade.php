@@ -377,7 +377,7 @@
                 {{-- Тип шини --}}
                 <div class="cf-group" x-data="{ open: true }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
-                        Камерність
+                        TL/TT
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="6 9 12 15 18 9" />
                         </svg>
