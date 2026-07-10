@@ -76,7 +76,7 @@ class BrandIndex extends Component
             if ($brand->logo) {
                 Storage::disk('public')->delete($brand->logo);
             }
-            $brand->logo = $this->logo->store('brands', 'public');
+            $brand->logo = \App\Support\ImageOptimizer::toWebp($this->logo, 'brands');
         }
 
         $brand->save();

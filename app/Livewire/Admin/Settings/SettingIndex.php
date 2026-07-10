@@ -145,7 +145,7 @@ class SettingIndex extends Component
         Setting::set('site_noindex', $this->siteNoindex ? '1' : null);
 
         if ($this->shareImageUpload) {
-            $path = $this->shareImageUpload->store('site', 'public');
+            $path = \App\Support\ImageOptimizer::toWebp($this->shareImageUpload, 'site');
             $this->shareImage = '/storage/' . $path;
             Setting::set('share_image', $this->shareImage);
             $this->reset('shareImageUpload');

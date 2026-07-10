@@ -112,7 +112,7 @@ class SiteContent extends Component
             return;
         }
 
-        $path = $this->galleryUpload->store('site-gallery', 'public');
+        $path = \App\Support\ImageOptimizer::toWebp($this->galleryUpload, 'site-gallery');
         $this->gallery[] = ['img' => '/storage/' . $path, 'cap' => ''];
         $this->reset('galleryUpload');
     }
