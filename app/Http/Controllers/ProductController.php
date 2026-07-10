@@ -41,7 +41,7 @@ class ProductController extends Controller
      */
     private function breadcrumbs(Product $product): array
     {
-        // Найбільш конкретна (глибша) категорія товару.
+        
         $category = $product->categories
             ->sortByDesc(fn ($c) => $c->level ?? 0)
             ->first();
@@ -55,7 +55,7 @@ class ProductController extends Controller
                 'name' => $node->name,
                 'url' => route('catalog', ['category' => $node->slug]),
             ];
-            $node = $node->parent; // піднімаємось до кореня
+            $node = $node->parent; 
         }
 
         return array_reverse($chain);
@@ -97,8 +97,7 @@ class ProductController extends Controller
             }
         };
 
-        // Артикул не дублюємо в характеристиках - він показаний окремим рядком
-        // під заголовком товару.
+        
         $push('Бренд', $product->brand?->name);
         $push('Модель / протектор', $product->model);
         $push('Розмір', $product->size_raw);
@@ -160,7 +159,6 @@ class ProductController extends Controller
 
         $links = [];
 
-        // 1) Усі розміри цієї моделі (пошук за назвою моделі, звужений брендом).
         if ($model) {
             $links[] = [
                 'label' => 'Всі розміри моделі',
@@ -169,7 +167,6 @@ class ProductController extends Controller
             ];
         }
 
-        // 2) Усі шини в цьому розмірі.
         if ($size) {
             $links[] = [
                 'label' => 'Усі шини в цьому розмірі',
@@ -178,7 +175,6 @@ class ProductController extends Controller
             ];
         }
 
-        // 3) Усі шини цього розміру та бренду.
         if ($size && $brand) {
             $links[] = [
                 'label' => 'Усі шини',
@@ -187,7 +183,6 @@ class ProductController extends Controller
             ];
         }
 
-        // 4) Усі шини на сумісну техніку (по кожному типу техніки).
         $machineryTypes = $product->machineryCompatibility
             ->map(fn ($c) => $c->machineryType?->name)
             ->filter()->unique()->values();
@@ -221,12 +216,10 @@ class ProductController extends Controller
 
         $items = collect();
 
-        // 1) той самий типорозмір
         if ($product->size_raw) {
             $items = $base()->where('size_raw', $product->size_raw)->take($limit)->get();
         }
 
-        // 2) той самий посадковий діаметр
         if ($items->count() < $limit && $product->rim_diameter) {
             $more = $base()->whereNotIn('id', $items->pluck('id'))
                 ->where('rim_diameter', $product->rim_diameter)
@@ -234,7 +227,6 @@ class ProductController extends Controller
             $items = $items->concat($more);
         }
 
-        // 3) будь-які супутні товари
         if ($items->count() < $limit) {
             $more = $base()->whereNotIn('id', $items->pluck('id'))
                 ->latest()->take($limit - $items->count())->get();

@@ -1,4 +1,3 @@
-{{-- resources/views/web/contacts.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Контакти - ВЕЛИКА ШИНА')
@@ -11,7 +10,6 @@
 
 @section('content')
 <section class="section contacts-page">
-    {{-- Декор: колеса обертаються залежно від прокрутки --}}
     <div class="contacts-deco" aria-hidden="true" x-data="{ r: 0 }"
         @scroll.window.passive="r = window.scrollY * 0.18">
         <img src="/images/svg/tehnics/wheel.svg" class="contacts-deco__wheel contacts-deco__wheel--1"
@@ -35,7 +33,6 @@
         </div>
 
         <div class="contacts-grid">
-            {{-- ЛІВА КОЛОНКА: контактні дані --}}
             <div class="contacts-info" data-aos="fade-up">
                 <div class="contact-card">
                     <span class="contact-card__icon">
@@ -96,7 +93,6 @@
                     </div>
                 </div>
 
-                {{-- Месенджери та соцмережі - однотипні монохромні іконки без фону --}}
                 <div class="contact-channels">
                     <span class="contact-channels__label">Ми на зв'язку в месенджерах і соцмережах</span>
                     <div class="contact-channels__row">
@@ -153,7 +149,6 @@
                 </div>
             </div>
 
-            {{-- ПРАВА КОЛОНКА: форма заявки --}}
             <div class="contacts-form" data-aos="fade-up" data-aos-delay="80"
                 x-data="consultationForm('{{ route('api.consultations.store') }}')">
                 <div class="cform" x-show="!sent">
@@ -200,7 +195,6 @@
         </div>
     </div>
 
-    {{-- КАРТА --}}
     <div class="container">
         @if($mapEmbed)
         <div class="contacts-map" data-aos="fade-up">

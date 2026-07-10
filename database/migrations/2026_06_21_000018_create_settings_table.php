@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->string('key')->primary(); // gtm_container_id, merchant_feed_url...
+            $table->string('key')->primary(); 
             $table->text('value')->nullable();
             $table->timestamps();
         });

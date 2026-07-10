@@ -27,7 +27,6 @@ class ProductPdfController extends Controller
             'machineryCompatibility.machineryBrand', 'machineryCompatibility.machineryModel',
         ]);
 
-        // Сумісна техніка (з зв'язків): «Бренд Модель», без дублів.
         $machinery = $product->machineryCompatibility
             ->map(fn ($c) => trim(($c->machineryBrand?->name ? $c->machineryBrand->name.' ' : '').($c->machineryModel?->name ?? '')))
             ->filter()
@@ -44,7 +43,7 @@ class ProductPdfController extends Controller
             'photo'     => $this->mainPhotoData($product),
             'fieldPhotos' => $variant === 'full'
                 ? $product->fieldPhotos->take(6)->map(fn ($fp) => [
-                    // квадратна мініатюра (crop) - у PDF не розтягується
+                    
                     'img'     => $this->dataUri($this->mediaPath($fp->getFirstMedia('photo'), 'thumb')),
                     'label'   => $fp->machineryLabel(),
                     'caption' => $fp->caption,

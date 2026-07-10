@@ -35,22 +35,20 @@ class SettingIndex extends Component
     public ?string $tgBotToken = null;
     public ?string $tgChatIds = null;
 
-    // Пошта (SMTP)
     public ?string $mailHost = null;
     public ?string $mailPort = null;
     public ?string $mailUsername = null;
-    public ?string $mailPassword = null;   // порожнє = не міняти збережений
+    public ?string $mailPassword = null;   
     public ?string $mailEncryption = 'ssl';
     public ?string $mailFromAddress = null;
     public ?string $mailFromName = null;
     public bool $mailPasswordSet = false;
 
-    // SEO / прев'ю при поширенні
     public ?string $shareTitle = null;
     public ?string $shareDescription = null;
-    public ?string $shareImage = null;   // збережений шлях
-    public ?string $favicon = null;      // збережений шлях
-    public $shareImageUpload = null;     // тимчасове завантаження
+    public ?string $shareImage = null;   
+    public ?string $favicon = null;      
+    public $shareImageUpload = null;     
     public $faviconUpload = null;
 
     public ?string $googleSiteVerification = null;
@@ -100,7 +98,6 @@ class SettingIndex extends Component
         Setting::set('mail_from_address', trim((string) $this->mailFromAddress) ?: null);
         Setting::set('mail_from_name', trim((string) $this->mailFromName) ?: null);
 
-        // Пароль оновлюємо лише якщо введено новий (зберігаємо зашифрованим).
         if (filled($this->mailPassword)) {
             Setting::set('mail_password', Crypt::encryptString($this->mailPassword));
         }

@@ -1,7 +1,6 @@
 <div>
     <h1>Безпека</h1>
 
-
     <fieldset style="margin-top:1rem; max-width:560px">
         <legend><strong>Двофакторна автентифікація (2FA)</strong></legend>
         <p style="color:#666">

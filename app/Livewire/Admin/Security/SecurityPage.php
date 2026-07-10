@@ -92,7 +92,6 @@ class SecurityPage extends Component
         $enabled = ! (bool) Setting::get('email_login_code_enabled');
         Setting::set('email_login_code_enabled', $enabled ? '1' : '');
 
-        // Щоб адмін, який щойно увімкнув, не був одразу «вибитий» на ввід коду.
         session()->put('email_otp.verified', true);
 
         session()->flash('success', $enabled

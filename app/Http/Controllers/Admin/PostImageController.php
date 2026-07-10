@@ -25,7 +25,6 @@ class PostImageController extends Controller
         $name = Str::random(24) . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('blog', $name, 'public');
 
-        // Корене-відносний URL (/storage/...), щоб працювало незалежно від хоста.
         return response()->json([
             'url' => MediaUrl::rel(Storage::disk('public')->url($path)),
         ]);

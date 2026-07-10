@@ -1,4 +1,3 @@
-{{-- resources/views/web/cart.blade.php - кошик (стан у localStorage) --}}
 @extends('layouts.app')
 
 @section('title', 'Кошик - ВЕЛИКА ШИНА')
@@ -14,7 +13,6 @@
 
         <h1 class="page-title">Кошик</h1>
 
-        {{-- Успіх --}}
         <div class="cart-done" x-ref="done" x-show="sent" x-cloak x-transition>
             <span class="cart-done__ico">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -28,7 +26,6 @@
             <a href="{{ route('catalog') }}" class="btn btn--primary">Повернутись до каталогу</a>
         </div>
 
-        {{-- Порожній кошик --}}
         <div class="cart-empty" x-show="!sent && $store.cart.items.length === 0" x-cloak>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
@@ -38,9 +35,7 @@
             <a href="{{ route('catalog') }}" class="btn btn--primary">Перейти до каталогу</a>
         </div>
 
-        {{-- Вміст кошика --}}
         <div class="cart" x-show="!sent && $store.cart.items.length > 0" x-cloak>
-            {{-- 1. Товари --}}
             <section class="cart-section">
                 <h2 class="cart-section__title">Товари в кошику
                     <span class="cart-section__count" x-text="$store.cart.count"></span>
@@ -88,7 +83,6 @@
                 </a>
             </section>
 
-            {{-- 2. Оформлення замовлення --}}
             <form @submit.prevent="submit()" class="cart-checkout">
                 <div class="cart-form-card">
                     <h2 class="cart-card__title">Оформлення замовлення</h2>
@@ -189,7 +183,6 @@
         </div>
     </div>
 
-    {{-- Підтвердження видалення --}}
     <div class="modal" x-show="confirm.open" x-cloak x-transition.opacity.duration.200ms
         @keydown.escape.window="cancelRemove()">
         <div class="modal__backdrop" @click="cancelRemove()"></div>

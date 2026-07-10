@@ -1,4 +1,3 @@
-{{-- resources/views/web/pages/warranty.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Гарантія - ВЕЛИКА ШИНА')

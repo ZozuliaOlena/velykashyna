@@ -49,7 +49,7 @@ class CatalogController extends Controller
             'productTypes' => ProductType::orderBy('id')->get(['code', 'name']),
             'selected' => $this->selected($request),
             'activeFilters' => $this->activeFilters($request),
-            // Власний CTA-блок у каталозі - стандартний банер футера вимикаємо.
+            
             'showFooterCta' => false,
         ]);
     }
@@ -66,7 +66,6 @@ class CatalogController extends Controller
         $mBrandNames = MachineryBrand::pluck('name', 'id');
         $mModelNames = MachineryModel::pluck('name', 'id');
 
-        // Багатозначні поля: знімаємо одне значення зі списку.
         $multi = [
             'type' => fn ($v) => $typeNames[$v] ?? $v,
             'machinery' => fn ($v) => $v,
@@ -154,8 +153,7 @@ class CatalogController extends Controller
             $query->whereHas('machineryCompatibility', fn ($x) => $x->whereIn('machinery_type_id', $typeIds));
         }
 
-        // Каскад «за технікою»: марка → модель (мультивибір). Частковий вибір =
-        // ширша видача (обрав лише марку → усі шини на техніку цієї марки).
+        
         if ($on('mbrand') && ($mbrand = array_filter((array) $request->query('mbrand', [])))) {
             $query->whereHas('machineryCompatibility', fn ($x) => $x->whereIn('machinery_brand_id', $mbrand));
         }
@@ -165,15 +163,14 @@ class CatalogController extends Controller
         }
 
         if ($on('category') && ($category = $request->query('category'))) {
-            // Приймаємо і slug (з фільтра/чипів), і назву. Товари прив'язані до
-            // листових категорій, тож для батьківської («Агрошина») включаємо
-            // всі її підкатегорії, інакше нічого б не знаходилось.
+
+            
             $root = Category::where('slug', $category)->orWhere('name', $category)->first();
             if ($root) {
                 $ids = $this->categoryWithDescendantIds($root->id);
                 $query->whereHas('categories', fn ($x) => $x->whereIn('categories.id', $ids));
             } else {
-                $query->whereRaw('1 = 0'); // невідома категорія → порожній результат
+                $query->whereRaw('1 = 0'); 
             }
         }
 
@@ -233,7 +230,7 @@ class CatalogController extends Controller
     /** Доступні діаметри з урахуванням решти фільтрів (фасет). */
     private function diameterFacet(Request $request): array
     {
-        // Лише цифра діаметра, без «R» (R - це радіальна конструкція шини).
+        
         return $this->facetBase($request, 'diameter')
             ->whereNotNull('rim_diameter')->distinct()->orderBy('rim_diameter')
             ->pluck('rim_diameter')
@@ -289,7 +286,7 @@ class CatalogController extends Controller
             'cheap' => $query->orderByRaw('price IS NULL, price ASC'),
             'expensive' => $query->orderByRaw('price IS NULL, price DESC'),
             'new' => $query->latest(),
-            default => $query->orderByRaw('promo_badge is not null desc')->orderByDesc('id'), // популярні
+            default => $query->orderByRaw('promo_badge is not null desc')->orderByDesc('id'), 
         };
     }
 

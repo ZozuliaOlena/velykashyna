@@ -1,4 +1,3 @@
-{{-- resources/views/web/compare.blade.php - порівняння шин --}}
 @extends('layouts.app')
 
 @section('title', ($heading ?? 'Порівняння') . ' - ВЕЛИКА ШИНА')
@@ -55,8 +54,6 @@
         </div>
         @else
         @php($cur = config('site.contacts'))
-        {{-- Підказка для мобільних: показуємо, лише коли таблиця не влазить,
-             і ховаємо, щойно користувач її гортає. --}}
         <div class="compare-hint" x-show="overflows && !swiped" x-cloak x-transition aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="7 8 3 12 7 16" />
@@ -88,8 +85,6 @@
                                 {{ trim(($c['type'] ?? '') . ' ' . ($c['size'] ?? '')) }}
                             </a>
                             <div class="compare-col__brand"><b>{{ $c['brand'] }}</b> {{ $c['model'] }}</div>
-                            {{-- Ціна + компактна кнопка кошика (як у каталозі).
-                                 «Переглянути» прибрано - картка кликабельна через фото/назву. --}}
                             <div class="compare-col__buyline" x-data="{ item: @js($c) }">
                                 <div class="compare-col__price">
                                     @if (($c['price_mode'] ?? '') === 'fixed' || ($c['price_mode'] ?? '') === 'from')

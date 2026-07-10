@@ -35,7 +35,7 @@ class MailSettings
             try {
                 $password = Crypt::decryptString($password);
             } catch (\Throwable) {
-                // Якщо значення випадково не зашифроване - використовуємо як є.
+                
             }
         }
 

@@ -29,7 +29,7 @@ class CatalogImport implements WithMultipleSheets, SkipsUnknownSheets
 
     public function onUnknownSheet($sheetName): void
     {
-        // листи з невідомими назвами просто ігноруємо
+        
     }
 
     public function addError(string $message): void

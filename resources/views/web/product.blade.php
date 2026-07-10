@@ -1,29 +1,20 @@
-{{-- resources/views/web/product.blade.php - детальна картка товару --}}
 @extends('layouts.app')
 
 @php($title = $product->size_raw ?: $product->name)
 @php($subtitle = trim(($product->brand?->name ? $product->brand->name . ' ' : '') . $product->model))
-{{-- Тип товару (Шина / Диск / Камера…) - додаємо перед розміром у заголовку.
-     Лише коли заголовок - це типорозмір (інакше назва вже може містити тип). --}}
 @php($typeName = $product->productType?->name)
 @php($typeCode = $product->productType?->code)
 @php($typePrefix = ($typeName && $product->size_raw) ? $typeName . ' ' : '')
 @php($fullName = trim($typePrefix . $title . ($subtitle ? ' ' . $subtitle : '')))
-{{-- Повне найменування (для заголовка): тип винесено окремим акцентом,
-     решта - рядком. --}}
 @php($fullDesignation = $product->fullName())
 @php($fullRest = ($typeName && str_starts_with($fullDesignation, $typeName)) ? trim(mb_substr($fullDesignation, mb_strlen($typeName))) : $fullDesignation)
-{{-- Ціни на сайті - завжди у гривнях (валютні перераховуються за курсом exchange_rate;
-     якщо курс не заданий - показуємо «уточнюйте», а не некоректну суму). --}}
 @php($priceMode = $product->priceModeForSite())
 @php($price = $product->priceUah())
 @php($oldPrice = $product->oldPriceUah())
 @php($cur = 'грн')
-{{-- «Знижка» прибираємо - на фото показуємо бейдж відсотка («-20%»). --}}
 @php($promos = collect($product->cardPromos())->reject(fn ($x) => $x === 'Знижка')->values()->all())
 @php($discountBadge = $product->discount_type === 'percent' ? $product->discountLabel() : null)
 @php($promoStyles = ['Акція' => 'sale', 'Знижка' => 'discount', 'Запитуй знижку' => 'ask', 'Уточніть вашу ціну' => 'ask', 'Безкоштовна доставка' => 'ship', 'Можлива безкоштовна доставка' => 'ship'])
-{{-- Бейдж доставки - завжди зверху, як і в картці каталогу; далі відсоток, далі решта. --}}
 @php($shippingBadge = collect($promos)->first(fn ($x) => in_array($x, \App\Models\Product::SHIPPING_BADGES, true)))
 @php($restPromos = array_values(array_filter($promos, fn ($x) => ! in_array($x, \App\Models\Product::SHIPPING_BADGES, true))))
 @php($brandLogos = ['Michelin' => 'michelin.svg', 'Continental' => 'continental.svg'])
@@ -47,13 +38,11 @@
 @section('title', $product->seo_title ?: $fullName . ' - ВЕЛИКА ШИНА')
 @section('meta_description', $product->seo_description ?: 'Купити ' . $fullName . ' у компанії ВЕЛИКА ШИНА. Підбір, консультація та доставка по Україні.')
 
-{{-- Соц-прев'ю: фото товару замість дефолтної картинки. --}}
 @section('og_type', 'product')
 @if(!empty($images))
 @section('og_image', url($images[0]))
 @endif
 
-{{-- Структуровані дані Product (узгоджені з Merchant-фідом) --}}
 @push('head')
 @php($ld = array_filter([
 '@context' => 'https://schema.org',
@@ -77,7 +66,6 @@
 @endif
 <script type="application/ld+json">{!! json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 
-{{-- Хлібні крихти для Google (BreadcrumbList). --}}
 @php($crumbItems = collect([
     ['name' => 'Головна', 'item' => route('home')],
     ['name' => 'Каталог', 'item' => route('catalog')],
@@ -107,21 +95,15 @@
         </nav>
 
         <div class="product-top">
-            {{-- ГАЛЕРЕЯ --}}
             <div class="product-gallery" x-data="{ active: 0, images: @js($images), zoom: false, ox: '50%', oy: '50%', box: false, tsx: 0,
                 touch: matchMedia('(hover: none)').matches,
                 swipe(e) { const dx = e.changedTouches[0].clientX - this.tsx; if (Math.abs(dx) > 40 && this.images.length > 1) { this.active = (this.active + (dx < 0 ? 1 : -1) + this.images.length) % this.images.length; } } }">
-                {{-- ПК: наведення = лупа (зум по фото), без модалки. Тач: тап = повний
-                     екран зі свайпом між фото. --}}
                 <div class="product-gallery__main {{ count($images) ? 'is-zoomable' : '' }}"
                     :class="{ 'is-zoom': zoom, 'is-touch': touch }"
                     @mousemove="if (images.length && !touch) { const r = $el.getBoundingClientRect(); ox = (($event.clientX - r.left) / r.width * 100) + '%'; oy = (($event.clientY - r.top) / r.height * 100) + '%'; }"
                     @mouseenter="if (images.length && !touch) zoom = true" @mouseleave="zoom = false"
                     @click="if (images.length && touch) box = true">
                     @if (count($images))
-                    {{-- Статичний src першого фото - щоб до ініціалізації Alpine
-                         не блимала іконка «битої картинки»; далі :src синхронізує.
-                         fetchpriority=high - головне фото (LCP) вантажиться першим. --}}
                     <img src="{{ $images[0] }}" :src="images[active]" fetchpriority="high" decoding="async" :style="zoom ? `transform: scale(2.3); transform-origin: ${ox} ${oy}` : ''" alt="{{ $fullName }}" />
                     <span class="product-gallery__zoom" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -135,7 +117,6 @@
 
                     @if ($shippingBadge || $discountBadge || !empty($restPromos))
                     <div class="product-gallery__promos">
-                        {{-- Ієрархія «від масивного до дрібного»: доставка → промо → відсоток. --}}
                         @if ($shippingBadge)
                         <span class="promo promo--ship">{{ $shippingBadge }}</span>
                         @endif
@@ -159,8 +140,6 @@
                 </div>
                 @endif
 
-                {{-- Повноекранний перегляд: біле вікно із шапкою (назва + чіткий
-                     хрестик) - щоб на мобільному кнопку закриття було добре видно. --}}
                 @if (count($images))
                 <div class="product-lightbox" x-show="box" x-cloak x-transition.opacity
                     @click="box = false" @keydown.escape.window="box = false">
@@ -191,7 +170,6 @@
                 @endif
             </div>
 
-            {{-- ОСНОВНА ІНФОРМАЦІЯ --}}
             <div class="product-main">
                 <div class="product-main__head">
                     <div>
@@ -206,7 +184,6 @@
                     <span class="product-sku">Артикул: <b>{{ $product->sku }}</b></span>
                 </div>
 
-                {{-- Характеристики під назвою: показуємо перші 5, решту - за кнопкою --}}
                 @if (count($specs))
                 <div class="product-highlights-wrap" x-data="{ open: false }">
                     <ul class="product-highlights">
@@ -225,7 +202,6 @@
                 </div>
                 @endif
 
-                {{-- БЛОК КУПІВЛІ --}}
                 <div class="product-buy" x-data="{ qty: 1, item: @js($buyItem), added: false }">
                     <div class="product-buy__head">
                     <div class="product-price product-price--{{ $priceMode }} {{ $oldPrice ? 'product-price--sale' : '' }}">
@@ -314,9 +290,6 @@
             </div>
         </div>
 
-        {{-- Характеристики перенесені праворуч під заголовок (product-highlights). --}}
-
-        {{-- ОПИС ТОВАРУ --}}
         @php($db = $product->description_blocks ?? [])
         @if (!empty($db) || filled($product->description))
         <div class="product-section product-desc" x-data="{ open: false, long: true }"
@@ -324,8 +297,6 @@
             <h2 class="product-section__title">Опис</h2>
             <div class="product-prose" x-ref="prose" :class="{ 'is-clamp': long && !open }">
                 @if (!empty($db))
-                    {{-- Рендеримо зі структурних блоків: чистимо рядки від
-                         зайвих маркерів «•/-», галочки малюємо самі. --}}
                     @php($clean = fn ($s) => trim(preg_replace('/^[\s•\--·*]+/u', '', (string) $s)))
                     @php($paras = fn ($t) => collect(preg_split('/\r\n|\r|\n/', (string) $t))->map(fn ($l) => trim($l))->filter())
 
@@ -361,7 +332,6 @@
                         @foreach ($paras($db['why_buy']) as $p)<p>{{ $p }}</p>@endforeach
                     @endif
                 @else
-                    {{-- Старий простий опис без блоків - текст із переносами. --}}
                     {!! nl2br(e($product->description)) !!}
                 @endif
             </div>
@@ -374,7 +344,6 @@
         </div>
         @endif
 
-        {{-- 3. ДУМКА ЕКСПЕРТА «ВЕЛИКА ШИНА» --}}
         @if (filled($product->expert_note))
         <div class="product-section">
             <div class="expert-note">
@@ -393,7 +362,6 @@
         </div>
         @endif
 
-        {{-- 4. СУМІСНІСТЬ ІЗ ТЕХНІКОЮ --}}
         @if (count($compat))
         <div class="product-section">
             <h2 class="product-section__title">Техніка</h2>
@@ -410,7 +378,6 @@
         </div>
         @endif
 
-        {{-- 5. ФОТО «В РОБОТІ» --}}
         @if ($product->fieldPhotos->isNotEmpty())
         <div class="product-section" x-data="{ open: false, src: '', cap: '' }">
             <h2 class="product-section__title">Шини в роботі</h2>
@@ -441,7 +408,6 @@
                 @endforeach
             </div>
 
-            {{-- Лайтбокс --}}
             <div class="about-lightbox" x-show="open" x-cloak x-transition.opacity @click="open = false"
                 @keydown.escape.window="open = false">
                 <button type="button" class="about-lightbox__close" aria-label="Закрити">
@@ -459,7 +425,6 @@
         @endif
     </div>
 
-    {{-- АЛЬТЕРНАТИВНІ ШИНИ - швидкі переходи у каталог із фільтрами --}}
     @if (count($alternatives))
     <div class="section" style="padding-bottom:0">
         <div class="container">
@@ -481,7 +446,6 @@
     </div>
     @endif
 
-    {{-- СУПУТНІ ТОВАРИ (камери, вентилі, флапи) --}}
     @if (count($accessories))
     <div class="section" style="padding-bottom:0">
         <div class="container">

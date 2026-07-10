@@ -30,7 +30,7 @@ class FavoritesController extends Controller
                     'machineryCompatibility.machineryType',
                 ])
                 ->get()
-                // зберігаємо порядок додавання
+                
                 ->sortBy(fn (Product $p) => $ids->search($p->id))
                 ->map->toCard()
                 ->values()

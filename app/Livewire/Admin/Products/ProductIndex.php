@@ -115,8 +115,7 @@ class ProductIndex extends Component
         if (empty($this->selected)) {
             return;
         }
-        // Швидка масова дія для типового значення; решту («Запитуй знижку»,
-        // «Уточніть вашу ціну») задають поштучно у формі товару.
+
         Product::whereIn('id', $this->selected)->update(['promo_badge' => $on ? 'Акція' : null]);
         $this->afterBulk();
     }

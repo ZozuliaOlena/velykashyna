@@ -28,8 +28,6 @@ use App\Livewire\Admin\SiteSettings\SiteContacts;
 use App\Livewire\Admin\SiteSettings\SiteContent;
 use App\Livewire\Admin\Users\UserIndex;
 
-// Крок «код з пошти» — доступний авторизованому адміну БЕЗ otp-гейту,
-// інакше вийшов би нескінченний редирект на самого себе.
 Route::prefix('admin')
     ->middleware(['auth', 'verified', 'admin'])
     ->name('admin.')
@@ -47,7 +45,6 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', Dashboard::class)->name('dashboard');
 
-        // Каталог
         Route::get('/products', ProductIndex::class)->name('products.index');
         Route::get('/products/create', ProductForm::class)->name('products.create');
         Route::get('/products/{id}/edit', ProductForm::class)->name('products.edit');
@@ -58,7 +55,6 @@ Route::prefix('admin')
         Route::get('/brands', BrandIndex::class)->name('brands.index');
         Route::get('/product-types', ProductTypeIndex::class)->name('product-types.index');
 
-        // Сумісність з технікою
         Route::get('/machinery-types', MachineryTypeIndex::class)->name('machinery-types.index');
         Route::get('/machinery-brands', MachineryBrandIndex::class)->name('machinery-brands.index');
         Route::get('/machinery-series', MachinerySeriesIndex::class)->name('machinery-series.index');
@@ -66,13 +62,11 @@ Route::prefix('admin')
         Route::get('/machinery-positions', MachineryPositionIndex::class)->name('machinery-positions.index');
         Route::get('/field-photos', FieldPhotoBrowse::class)->name('field-photos.index');
 
-        // Блог
         Route::get('/posts', PostIndex::class)->name('posts.index');
         Route::get('/posts/create', PostForm::class)->name('posts.create');
         Route::get('/posts/{id}/edit', PostForm::class)->name('posts.edit');
         Route::post('/posts/upload-image', [PostImageController::class, 'store'])->name('posts.upload-image');
 
-        // Заявки, користувачі, налаштування
         Route::get('/leads', LeadIndex::class)->name('leads.index');
         Route::get('/users', UserIndex::class)->name('users.index');
         Route::get('/settings', SettingIndex::class)->name('settings.index');

@@ -1,7 +1,5 @@
-{{-- resources/views/partials/footer.blade.php --}}
 @php($c = config('site.contacts'))
 
-{{-- CTA-картка над футером (приховується там, де є власний банер) --}}
 @if ($showFooterCta ?? true)
     <div class="container" style="margin-bottom:56px" data-aos="fade-up">
         <div class="footer-cta">
@@ -29,7 +27,6 @@
 
 <footer class="footer">
     <div class="container">
-        {{-- ДЕСКТОП --}}
         <div class="footer-grid">
             <div class="footer-brand">
                 <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" class="f-logo" />
@@ -113,7 +110,6 @@
             </div>
         </div>
 
-        {{-- МОБІЛЬНИЙ --}}
         <div class="footer-mobile">
             <div class="fm-card">
                 <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" class="f-logo" />

@@ -1,5 +1,3 @@
-{{-- resources/views/partials/socials.blade.php - рядок іконок соцмереж.
-     Показуються лише ті, для яких задано посилання (керується в адмінці). --}}
 @php($s = config('site.socials'))
 <div class="footer-socials">
     @if(!empty($s['facebook']))

@@ -12,10 +12,10 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->string('subtitle')->nullable();
-            // Фон слайда: завантажене фото / відео або відео з YouTube.
-            $table->string('bg_type')->default('image'); // image | video | youtube
-            $table->string('bg_path')->nullable();        // шлях у public-диску (фото/відео)
-            $table->string('youtube_url')->nullable();    // посилання на YouTube
+            
+            $table->string('bg_type')->default('image'); 
+            $table->string('bg_path')->nullable();        
+            $table->string('youtube_url')->nullable();    
             $table->unsignedInteger('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

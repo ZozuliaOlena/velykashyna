@@ -1,5 +1,3 @@
-{{-- resources/views/partials/experience-counter.blade.php
-     Живий лічильник досвіду: роки / дні / години від дати заснування. --}}
 @php($years = now()->year - config('site.founded_year'))
 <section class="exp-counter">
     <div class="container">

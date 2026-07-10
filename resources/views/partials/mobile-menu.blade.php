@@ -1,4 +1,3 @@
-{{-- resources/views/partials/mobile-menu.blade.php --}}
 @php($c = config('site.contacts'))
 @php($chev = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>')
 
@@ -38,7 +37,6 @@
         @include('partials.search-results')
     </div>
 
-    {{-- Швидкий доступ: Обране (перенесено сюди з шапки) + Порівняння --}}
     <div class="mm-quick">
         <a href="{{ route('favorites') }}" @click="$store.ui.closeMenu()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

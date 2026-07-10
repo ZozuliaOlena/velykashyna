@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/app.blade.php --}}
 <!doctype html>
 <html lang="uk">
 
@@ -6,9 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    {{-- Значення за замовчуванням для заголовка/опису/картинки - налаштовуються
-         в адмінці (Налаштування → Прев'ю при поширенні). Сторінки можуть
-         перевизначати через @section('title' / 'meta_description' / 'og_*'). --}}
     @php
         $metaTitleDefault = \App\Models\Setting::get('share_title')
             ?: 'ВЕЛИКА ШИНА - шини для агро, спец та вантажної техніки';
@@ -27,8 +23,6 @@
 
     <link rel="canonical" href="@yield('canonical', $canonicalDefault)" />
 
-    {{-- Індексація: глобальне «сховати сайт від пошуковиків» (для розробки),
-         інакше - те, що задала сторінка (напр. noindex для фільтрів каталогу). --}}
     @if($siteNoindex)
         <meta name="robots" content="noindex, nofollow" />
     @elseif(View::hasSection('robots'))
@@ -39,15 +33,11 @@
         <meta name="google-site-verification" content="{{ $gsv }}" />
     @endif
 
-    {{-- Фавіконки --}}
     <link rel="icon" href="{{ \App\Models\Setting::get('favicon') ?: '/favicon.ico' }}" sizes="any" />
     <link rel="icon" type="image/png" href="{{ $faviconPngUrl }}" />
     <link rel="apple-touch-icon" href="{{ $faviconPngUrl }}" />
     <meta name="theme-color" content="#d32f2f" />
 
-    {{-- Соц-прев'ю (Open Graph / Twitter) - текст, опис і картинка при поширенні
-         посилання в месенджерах і соцмережах. Сторінки можуть перевизначати
-         og_title / og_description / og_image / og_type. --}}
     <meta property="og:site_name" content="ВЕЛИКА ШИНА" />
     <meta property="og:locale" content="uk_UA" />
     <meta property="og:type" content="@yield('og_type', 'website')" />
@@ -70,7 +60,6 @@
 
     @include('partials.analytics')
 
-    {{-- Структуровані дані для Google: організація (локальний бізнес) + сайт із пошуком. --}}
     @include('partials.structured-data')
 
     @stack('head')
@@ -92,8 +81,6 @@
 
     @include('partials.footer')
 
-    {{-- Плаваюча кнопка зв'язку - веде на сторінку «Контакти» (усі способи
-         зв'язку, форма, карта), а не одразу набирає номер. --}}
     <a href="{{ route('contacts') }}" class="fab" aria-label="Зв'язатися з нами"
         x-data="{ show: false }" :class="{ 'is-visible': show }"
         @scroll.window.throttle.100ms="show = window.scrollY > (document.documentElement.scrollHeight - window.innerHeight) * 0.1">
@@ -104,7 +91,6 @@
         <span class="fab-label">Зв'язатися</span>
     </a>
 
-    {{-- Тост «додано в кошик» --}}
     <div class="cart-toast" x-data="cartToast('{{ route('cart') }}')" @cart-added.window="show($event.detail)"
         x-show="open" x-cloak x-transition.opacity.duration.250ms>
         <div class="cart-toast__head">
@@ -131,7 +117,6 @@
         </div>
     </div>
 
-    {{-- Тост «Додано до порівняння» (у стилі тосту кошика) --}}
     <div class="cart-toast compare-toast" x-data="compareToast()"
         @compare-added.window="showItem($event.detail)" @compare-full.window="showLimit()"
         x-show="open" x-cloak x-transition.opacity.duration.250ms>

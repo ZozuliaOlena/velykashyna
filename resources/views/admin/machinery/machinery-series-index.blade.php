@@ -4,7 +4,6 @@
         <button wire:click="openCreate">+ Додати серію</button>
     </div>
 
-
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук по назві...">
         <x-admin.select model="filterBrand" placeholder="- Виробник -"

@@ -5,7 +5,6 @@
         </span>
 
         <div class="adm-pg__list">
-            {{-- Попередня --}}
             @if ($paginator->onFirstPage())
                 <span class="adm-pg__btn is-disabled" aria-hidden="true">‹</span>
             @else
@@ -13,7 +12,6 @@
                         wire:click="previousPage('{{ $paginator->getPageName() }}')" aria-label="Попередня">‹</button>
             @endif
 
-            {{-- Номери сторінок --}}
             @foreach ($elements as $element)
                 @if (is_string($element))
                     <span class="adm-pg__dots">{{ $element }}</span>
@@ -31,7 +29,6 @@
                 @endif
             @endforeach
 
-            {{-- Наступна --}}
             @if ($paginator->hasMorePages())
                 <button type="button" class="adm-pg__btn" rel="next"
                         wire:click="nextPage('{{ $paginator->getPageName() }}')" aria-label="Наступна">›</button>

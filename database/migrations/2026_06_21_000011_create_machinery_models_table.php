@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('machinery_brand_id')->constrained()->cascadeOnDelete();
             $table->foreignId('machinery_type_id')->constrained()->cascadeOnDelete();
-            $table->string('name'); // 8400, MX230, Steiger...
+            $table->string('name'); 
             $table->timestamps();
         });
     }

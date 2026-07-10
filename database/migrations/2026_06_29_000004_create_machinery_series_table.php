@@ -8,8 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Серія техніки - проміжний рівень між виробником і моделлю
-        // (напр. John Deere → серія «8R» → модель «8400R»).
+
         Schema::create('machinery_series', function (Blueprint $table) {
             $table->id();
             $table->foreignId('machinery_brand_id')->constrained('machinery_brands')->cascadeOnDelete();

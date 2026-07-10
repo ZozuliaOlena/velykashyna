@@ -29,7 +29,7 @@ class CompareController extends Controller
                     'attributeValues.attribute', 'attributeValues.option',
                 ])
                 ->get()
-                // зберігаємо порядок, у якому користувач додавав товари
+                
                 ->sortBy(fn (Product $p) => $ids->search($p->id))
                 ->values();
 
@@ -48,7 +48,7 @@ class CompareController extends Controller
      */
     private function heading($products): string
     {
-        // Родовий відмінок множини за кодом типу товару.
+        
         $plural = [
             'tire' => 'шин',
             'tube' => 'камер',
@@ -77,7 +77,6 @@ class CompareController extends Controller
             return [];
         }
 
-        // Стандартні поля (заголовок → функція отримання значення).
         $standard = [
             'Тип' => fn (Product $p) => $p->productType?->name,
             'Бренд' => fn (Product $p) => $p->brand?->name,
@@ -96,8 +95,7 @@ class CompareController extends Controller
             $rows[] = $this->buildRow($label, $products->map($getter)->all());
         }
 
-        // Практичні параметри з динамічних атрибутів (Steel Belted, IF/VF,
-        // CHO/CFO, тип каркаса тощо) - об'єднання всіх атрибутів товарів.
+        
         $attrOrder = [];
         $perProduct = [];
         foreach ($products as $idx => $product) {

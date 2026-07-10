@@ -4,7 +4,6 @@
         <button wire:click="openCreate">+ Додати параметр</button>
     </div>
 
-
     <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
         <legend style="padding:0 8px"><strong>Google Аналітика та реклама</strong></legend>
         <p style="color:#666; margin:0 0 1rem">

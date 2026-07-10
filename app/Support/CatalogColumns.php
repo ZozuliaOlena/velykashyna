@@ -27,7 +27,6 @@ class CatalogColumns
         'amount'  => 'Сума',
     ];
 
-    // Стан товару для Google Merchant.
     public const CONDITION = [
         'new'         => 'Новий',
         'used'        => 'Вживаний',

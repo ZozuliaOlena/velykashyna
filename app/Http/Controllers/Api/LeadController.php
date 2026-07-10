@@ -18,8 +18,7 @@ use Illuminate\Validation\ValidationException;
  */
 class LeadController extends Controller
 {
-    // Телефон обов'язковий і має містити щонайменше 10 цифр (реальний номер),
-    // щоб не оформлювали заявку з порожнім чи «+38».
+
     private const PHONE_RULES = ['required', 'string', 'max:255', 'regex:/(?:\D*\d){10,}/'];
 
     private const PHONE_MESSAGES = [
@@ -43,16 +42,13 @@ class LeadController extends Controller
             'items.*.qty'        => ['required', 'integer', 'min:1', 'max:1000'],
         ], self::PHONE_MESSAGES);
 
-        // Доставку/оплату зберігаємо окремими полями (нижче), у коментар -
-        // лише власне повідомлення клієнта.
+        
         $customerComment = $data['comment'] ?? null;
 
-        // Зведення дублікатів: один товар = один рядок із сумарною кількістю.
         $quantities = collect($data['items'])
             ->groupBy('product_id')
             ->map(fn ($rows) => $rows->sum('qty'));
 
-        // Беремо лише активні товари; неактивні/неіснуючі - помилка валідації.
         $products = Product::where('is_active', true)
             ->whereIn('id', $quantities->keys())
             ->get()
@@ -84,7 +80,7 @@ class LeadController extends Controller
                 $lead->items()->create([
                     'product_id'       => $product->id,
                     'qty'              => $qty,
-                    // Ціна, яку бачив клієнт - у гривнях (валютні перераховані за курсом).
+                    
                     'price_at_request' => $product->priceUah(),
                 ]);
             }
@@ -92,7 +88,6 @@ class LeadController extends Controller
             return $lead;
         });
 
-        // Сповіщення в Telegram (не блокує відповідь - помилки лише в лог).
         app(TelegramNotifier::class)->notifyNewLead($lead);
 
         return response()->json([
@@ -113,8 +108,7 @@ class LeadController extends Controller
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
             'phone'         => self::PHONE_RULES,
-            // Повідомлення клієнта (напр. «Що вас цікавить?»). Приймаємо і
-            // 'comment', і 'message' - щоб форму було зручно підключити.
+
             'comment'       => ['nullable', 'string', 'max:2000'],
             'message'       => ['nullable', 'string', 'max:2000'],
         ], self::PHONE_MESSAGES);

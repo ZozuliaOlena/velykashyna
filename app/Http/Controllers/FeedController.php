@@ -32,7 +32,7 @@ class FeedController extends Controller
     {
         $image = $this->image($p);
         if (! $image) {
-            return null; // Merchant вимагає зображення товару
+            return null; 
         }
 
         $title = trim(($p->size_raw ?: $p->name) . ' '
@@ -59,8 +59,7 @@ class FeedController extends Controller
                 ? $this->feedPrice((float) $p->effectivePrice(), $p)
                 : null,
             'brand' => $p->brand?->name,
-            // Немає GTIN/MPN виробника → чесно повідомляємо Google, що
-            // ідентифікатора немає (для шин це допустимо). Не вигадуємо mpn.
+
             'identifier_exists' => 'no',
             'product_type' => $p->categories->pluck('name')->implode(' > ') ?: null,
             'google_product_category' => $p->productType?->googleCategory()

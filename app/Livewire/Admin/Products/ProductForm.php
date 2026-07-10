@@ -161,8 +161,7 @@ class ProductForm extends Component
 
     public function updatedDiscountType($value): void
     {
-        // Прибрали тип знижки → одразу очищаємо і числове поле,
-        // щоб не лишалася «висяча» цифра без типу.
+
         if ($value === '' || $value === null) {
             $this->discount_value = null;
         }
@@ -215,8 +214,7 @@ class ProductForm extends Component
         $draft->setRelation('brand', $this->brand_id ? Brand::find($this->brand_id) : null);
         $draft->setRelation('productType', $this->product_type_id ? ProductType::find($this->product_type_id) : null);
 
-        // Сумісність беремо з ПОТОЧНОГО стану форми (щоб контекст «для обприскувачів»
-        // працював одразу, ще до збереження товару).
+        
         $compatModels = collect($this->compat)
             ->filter(fn ($r) => ! empty($r['machinery_type_id']))
             ->map(function ($r) {
@@ -313,9 +311,8 @@ class ProductForm extends Component
             $data['price'] = null;
         }
 
-        // Знижка: порожній тип неприпустимий для enum-колонки (MySQL кидає
-        // «Data truncated»). Без валідного типу або додатного значення -
-        // повністю обнуляємо знижку (це ж і дозволяє її прибрати без помилки).
+        
+        
         $hasDiscount = in_array($data['discount_type'] ?? null, ['percent', 'amount'], true)
             && ($data['discount_value'] ?? null) !== null
             && (float) $data['discount_value'] > 0;
@@ -364,8 +361,7 @@ class ProductForm extends Component
             $product->categories()->sync($this->categoryIds);
             $product->relatedProducts()->sync($this->relatedIds);
 
-            // Сумісність з технікою: повністю перезаписуємо за станом форми
-            // (лишаємо тільки рядки з обраним типом техніки).
+            
             $product->machineryCompatibility()->delete();
             foreach ($this->compat as $row) {
                 if (empty($row['machinery_type_id'])) {

@@ -1,5 +1,3 @@
-{{-- resources/views/partials/search-results.blade.php
-     Дропдаун живого пошуку. Працює в межах x-data="liveSearch(...)". --}}
 <div class="search-drop" x-show="open" x-cloak x-transition.opacity.duration.150ms>
     <div class="search-drop__loading" x-show="loading">Шукаємо…</div>
 

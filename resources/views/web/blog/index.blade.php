@@ -1,4 +1,3 @@
-{{-- resources/views/web/blog/index.blade.php --}}
 @extends('layouts.app')
 
 @section('body_class', 'page-blog')

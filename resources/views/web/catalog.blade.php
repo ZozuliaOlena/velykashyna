@@ -1,10 +1,5 @@
-{{-- resources/views/web/catalog.blade.php - каталог із БД (фільтри, сортування, пагінація) --}}
 @extends('layouts.app')
 
-{{-- SEO: якщо обрано категорію - сторінка стає лендингом категорії
-     (заголовок/опис/H1 із її SEO-полів). Комбінації фільтрів (бренд, розмір,
-     сортування, сторінка тощо) не індексуються, а canonical веде на «чисту»
-     сторінку категорії/каталогу - щоб уникнути дублів. --}}
 @php($seoCat = ($selected['category'] ?? '') !== ''
     ? \App\Models\Category::where('slug', $selected['category'])->orWhere('name', $selected['category'])->first()
     : null)
@@ -48,8 +43,6 @@
 <section class="catalog" x-data="catalogUi()"
     x-effect="document.body.style.overflow = filtersOpen ? 'hidden' : ''">
     <div class="container">
-        {{-- Шлях відображає вибір: Головна / Каталог / [Категорія] / [Техніка].
-             Напр. обрали трактор -> Головна / Каталог / Трактори. --}}
         @php($machCrumbs = collect($selected['machinery'] ?? [])->filter()->values())
         <nav class="breadcrumbs">
             <a href="{{ route('home') }}">Головна</a>
@@ -78,7 +71,6 @@
             <span class="catalog-count">Знайдено: <b>{{ $total }}</b></span>
         </div>
 
-        {{-- Швидкий вибір + пошук за назвою --}}
         <div class="catalog-quick">
             @php($searchIco = '<svg class="ssel__search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>')
             @php($diameterOpts = collect($diameters)->map(fn ($d) => ['value' => request()->fullUrlWithQuery(['diameter' => $d, 'page' => null]), 'label' => (string) $d])->values())
@@ -86,7 +78,6 @@
             @php($brandOpts = collect($brands)->map(fn ($b) => ['value' => request()->fullUrlWithQuery(['brand' => $b, 'page' => null]), 'label' => (string) $b, 'active' => in_array($b, $selected['brand'], true)])->values())
 
             <div class="catalog-quick__selects">
-                {{-- Діаметр --}}
                 <div class="ssel" x-data="searchSelect({ placeholder: 'Діаметр', options: @js($diameterOpts) })"
                     @click.outside="close()" @keydown.escape.window="close()">
                     <button type="button" class="ssel__btn {{ $selected['diameter'] ? 'is-set' : '' }}" @click="toggle()">
@@ -106,7 +97,6 @@
                     </div>
                 </div>
 
-                {{-- Розмір --}}
                 <div class="ssel" x-data="searchSelect({ placeholder: 'Розмір', options: @js($sizeOpts) })"
                     @click.outside="close()" @keydown.escape.window="close()">
                     <button type="button" class="ssel__btn {{ count($selected['size']) ? 'is-set' : '' }}" @click="toggle()">
@@ -126,7 +116,6 @@
                     </div>
                 </div>
 
-                {{-- Виробник --}}
                 <div class="ssel" x-data="searchSelect({ placeholder: 'Виробник', options: @js($brandOpts) })"
                     @click.outside="close()" @keydown.escape.window="close()">
                     <button type="button" class="ssel__btn {{ count($selected['brand']) ? 'is-set' : '' }}" @click="toggle()">
@@ -166,7 +155,6 @@
             </form>
         </div>
 
-        {{-- Вкладки за технікою (зі стрілками, якщо не влазять) --}}
         <div class="catalog-tabs-wrap" x-data="tabsScroller()">
             <button type="button" class="tabs-arrow tabs-arrow--prev" x-show="canLeft" x-cloak x-transition.opacity
                 @click="scroll(-1)" aria-label="Прокрутити назад">
@@ -196,17 +184,14 @@
     </div>
 
     <div class="container catalog-layout" :class="{ 'is-collapsed': filtersCollapsed }">
-        {{-- Затемнення під фільтр-шторку (моб.) --}}
         <div class="catalog-backdrop" x-show="filtersOpen" x-cloak x-transition.opacity
             @click="filtersOpen = false"></div>
 
-        {{-- ФІЛЬТРИ --}}
         <aside class="catalog-filters" :class="{ 'is-open': filtersOpen }"
             @keydown.escape.window="filtersOpen = false">
             <div class="cf-head">
                 <span class="cf-title">Фільтри</span>
                 <a href="{{ route('catalog') }}" class="cf-reset">Скинути все</a>
-                {{-- Згорнути фільтри (десктоп) --}}
                 <button type="button" class="cf-collapse" @click="filtersCollapsed = true" aria-label="Згорнути фільтри"
                     title="Згорнути фільтри">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -226,13 +211,11 @@
                 x-data="catalogFilter('{{ route('catalog.count') }}', {{ $total }})"
                 @change="onChange($event)" @scroll.window="pill.show = false">
 
-                {{-- Спливаюча кнопка (ПК): з'являється біля зміненого фільтра --}}
                 <button type="submit" class="cf-pill" x-show="pill.show" x-cloak
                     :style="`top:${pill.y}px; left:${pill.x}px`">
                     Показати <span x-text="loading ? '…' : count">{{ $total }}</span> товарів
                 </button>
 
-                {{-- Зберігаємо пошук/сортування/діаметр при застосуванні фільтрів --}}
                 <input type="hidden" name="q" value="{{ $selected['q'] }}" />
                 <input type="hidden" name="sort" value="{{ $selected['sort'] }}" />
                 @if ($selected['diameter'])
@@ -242,9 +225,7 @@
                 <input type="hidden" name="category" value="{{ $selected['category'] }}" />
                 @endif
 
-                {{-- Прокручувана частина (групи фільтрів) --}}
                 <div class="cf-scroll">
-                {{-- Наявність --}}
                 <div class="cf-avail">
                     <label class="switch">
                         <input type="checkbox" name="in_stock" value="1" @checked($selected['in_stock']) />
@@ -254,7 +235,6 @@
                     <p class="cf-hint">Показувати тільки товари в наявності</p>
                 </div>
 
-                {{-- Тип товару --}}
                 @if (count($productTypes))
                 <div class="cf-group" x-data="{ open: true }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
@@ -275,7 +255,6 @@
                 </div>
                 @endif
 
-                {{-- Тип техніки --}}
                 @if (count($machineryNames))
                 <div class="cf-group" x-data="{ open: true, term: '' }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
@@ -308,7 +287,6 @@
                 </div>
                 @endif
 
-                {{-- Марка техніки (каскад: обери марку → звузяться моделі нижче) --}}
                 @if (count($machineryBrands))
                 <div class="cf-group" x-data="{ open: {{ $selected['mbrand'] ? 'true' : 'false' }}, term: '' }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
@@ -341,7 +319,6 @@
                 </div>
                 @endif
 
-                {{-- Модель техніки (звужується обраною маркою) --}}
                 @if (count($machineryModels))
                 <div class="cf-group" x-data="{ open: {{ $selected['mmodel'] ? 'true' : 'false' }}, term: '' }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
@@ -374,7 +351,6 @@
                 </div>
                 @endif
 
-                {{-- Тип шини --}}
                 <div class="cf-group" x-data="{ open: true }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
                         TL/TT
@@ -390,7 +366,6 @@
                     </div>
                 </div>
 
-                {{-- Бренд --}}
                 @if (count($brands))
                 <div class="cf-group" x-data="{ open: true, term: '' }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
@@ -421,7 +396,6 @@
                 </div>
                 @endif
 
-                {{-- Розмір --}}
                 @if (count($sizes))
                 <div class="cf-group" x-data="{ open: true, term: '' }">
                     <button type="button" class="cf-group__head" :class="{ open }" @click="open = !open">
@@ -451,9 +425,7 @@
                     </div>
                 </div>
                 @endif
-                </div>{{-- /.cf-scroll --}}
-
-                <div class="cf-foot">
+                </div><div class="cf-foot">
                     <button type="submit" class="btn btn--primary btn--block cf-apply">
                         Застосувати <span class="cf-apply__count" x-text="loading ? '…' : count">{{ $total }}</span>
                     </button>
@@ -461,13 +433,11 @@
             </form>
         </aside>
 
-        {{-- КОНТЕНТ --}}
         <div class="catalog-content">
             <div class="catalog-toolbar">
                 <div class="toolbar-side"></div>
 
                 <div class="toolbar-center">
-                    {{-- Перемикач фільтрів (десктоп) - поряд із видом, по центру --}}
                     <button type="button" class="toolbar-ftoggle" :class="{ 'is-active': !filtersCollapsed }"
                         @click="filtersCollapsed = !filtersCollapsed">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -519,7 +489,6 @@
                 </label>
             </div>
 
-            {{-- Активні фільтри --}}
             @if (!empty($activeFilters))
             <div class="active-filters">
                 @foreach ($activeFilters as $chip)
@@ -546,7 +515,6 @@
                 @endforelse
             </div>
 
-            {{-- Пагінація --}}
             @if ($products->hasPages())
             <nav class="pagination" aria-label="Сторінки">
                 @if ($products->onFirstPage())
@@ -589,9 +557,6 @@
             </nav>
             @endif
 
-            {{-- Єдиний CTA-блок (замість дубля з банером футера). Заголовок
-                 залежить від вибраної техніки: «Трактор» → «Шукаєте шину на
-                 трактор?»; без вибору - «Не знайшли потрібну шину?». --}}
             @php($cc = config('site.contacts'))
             @php($ctaMach = collect($selected['machinery'] ?? [])->filter()->map(fn ($m) => mb_strtolower($m))->values())
             @php($ctaHeading = $ctaMach->isNotEmpty()
@@ -619,7 +584,6 @@
         </div>
     </div>
 
-    {{-- Плаваюча кнопка фільтрів (лише мобільний) --}}
     <button type="button" class="catalog-fab-filters" @click="filtersOpen = true"
         x-show="!filtersOpen" x-cloak aria-label="Фільтри">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
