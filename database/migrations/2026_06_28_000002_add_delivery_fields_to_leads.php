@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('leads', function (Blueprint $table) {
             $table->string('city')->nullable()->after('contact_method');
             $table->string('delivery_method')->nullable()->after('city');
-            $table->string('delivery_address')->nullable()->after('delivery_method'); // № відділення або адреса
+            $table->string('delivery_address')->nullable()->after('delivery_method'); 
             $table->string('payment_method')->nullable()->after('delivery_address');
         });
     }

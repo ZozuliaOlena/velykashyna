@@ -9,15 +9,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Замість двох булевих прапорців - два текстові бейджі з вибором значення:
-        //   promo_badge:    Акція / Запитуй знижку / Уточніть вашу ціну
-        //   shipping_badge: Безкоштовна доставка / Можлива безкоштовна доставка
+
+        
         Schema::table('products', function (Blueprint $table) {
             $table->string('promo_badge')->nullable()->after('discount_type');
             $table->string('shipping_badge')->nullable()->after('promo_badge');
         });
 
-        // Переносимо наявні дані: is_promo → «Акція», free_shipping → «Безкоштовна доставка».
         DB::table('products')->where('is_promo', true)->update(['promo_badge' => 'Акція']);
         DB::table('products')->where('free_shipping', true)->update(['shipping_badge' => 'Безкоштовна доставка']);
 

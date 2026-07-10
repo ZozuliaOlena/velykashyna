@@ -6,7 +6,6 @@
         </a>
     </div>
 
-
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук за заголовком...">
     </div>

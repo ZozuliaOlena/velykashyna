@@ -4,7 +4,6 @@
         <button wire:click="openCreate">+ Додати тип</button>
     </div>
 
-
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
     </div>

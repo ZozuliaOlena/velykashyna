@@ -1,6 +1,5 @@
 <?php
 
-// app/Models/AttributeOption.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

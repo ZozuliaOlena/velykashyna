@@ -42,7 +42,6 @@ class CategoriesImportSheet implements ToCollection
                 continue;
             }
 
-            // SEO/slug для листової категорії
             $seo = array_filter([
                 'slug'            => $this->val($row, 'URL'),
                 'seo_title'       => $this->val($row, 'SEO Title'),

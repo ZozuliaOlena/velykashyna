@@ -12,10 +12,10 @@ return new class extends Migration
             $table->id();
             $table->string('customer_name');
             $table->string('phone');
-            $table->string('contact_method')->nullable(); // phone/viber/telegram/form
-            $table->string('status')->default('new');     // new/processing/confirmed/canceled
+            $table->string('contact_method')->nullable(); 
+            $table->string('status')->default('new');     
             $table->text('manager_comment')->nullable();
-            $table->string('source')->nullable();          // cart / quick_form / call
+            $table->string('source')->nullable();          
             $table->timestamps();
         });
     }

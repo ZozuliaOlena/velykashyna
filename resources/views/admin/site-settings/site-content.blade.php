@@ -7,7 +7,6 @@
         а також способи доставки та оплати у кошику.
     </p>
 
-    {{-- ── Галерея «в роботі» ─────────────────────────────────────────── --}}
     <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
         <legend style="padding:0 8px"><strong>ВЕЛИКА ШИНА в роботі (галерея)</strong></legend>
         <p style="color:#666; margin:0 0 1rem">
@@ -50,7 +49,6 @@
         </div>
     </fieldset>
 
-    {{-- ── FAQ ────────────────────────────────────────────────────────── --}}
     <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
         <legend style="padding:0 8px"><strong>Часті запитання (FAQ)</strong></legend>
 
@@ -75,7 +73,6 @@
         </div>
     </fieldset>
 
-    {{-- ── Доставка / оплата ──────────────────────────────────────────── --}}
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem">
         <fieldset style="padding:16px; border:1px solid #e3e6ec; border-radius:10px">
             <legend style="padding:0 8px"><strong>Способи доставки</strong></legend>

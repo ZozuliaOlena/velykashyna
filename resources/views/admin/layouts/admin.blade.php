@@ -6,7 +6,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Адмін панель - ВЕЛИКА ШИНА</title>
 
-    {{-- Фавіконка - та сама, що й на сайті (налаштовується в Налаштування). --}}
     <link rel="icon" href="{{ \App\Models\Setting::get('favicon') ?: '/favicon.ico' }}" sizes="any">
     <link rel="icon" type="image/png" href="{{ \App\Models\Setting::get('favicon') ?: '/images/apple-touch-icon.png' }}">
     <link rel="apple-touch-icon" href="{{ \App\Models\Setting::get('favicon') ?: '/images/apple-touch-icon.png' }}">

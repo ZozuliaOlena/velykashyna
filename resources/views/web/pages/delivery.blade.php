@@ -1,4 +1,3 @@
-{{-- resources/views/web/pages/delivery.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Доставка й оплата - ВЕЛИКА ШИНА')

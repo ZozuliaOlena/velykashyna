@@ -45,7 +45,6 @@ class HeroSlide extends Model
             return $m[1];
         }
 
-        // Якщо вставили просто ID (11 символів).
         if (preg_match('~^[\w-]{11}$~', trim($this->youtube_url))) {
             return trim($this->youtube_url);
         }

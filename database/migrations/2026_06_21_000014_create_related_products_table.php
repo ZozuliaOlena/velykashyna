@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('related_products', function (Blueprint $table) {
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('related_product_id')->constrained('products')->cascadeOnDelete();
-            $table->string('type')->nullable(); // accessory / analog
+            $table->string('type')->nullable(); 
 
             $table->primary(['product_id', 'related_product_id']);
         });

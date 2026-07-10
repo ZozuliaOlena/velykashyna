@@ -1,4 +1,3 @@
-{{-- resources/views/web/pages/privacy.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Політика конфіденційності - ВЕЛИКА ШИНА')

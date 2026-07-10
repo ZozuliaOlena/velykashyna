@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            // «Думка експерта Велика Шина»: особливості, нюанси застосування.
+            
             $table->text('expert_note')->nullable()->after('specification');
         });
     }

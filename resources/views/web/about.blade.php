@@ -1,4 +1,3 @@
-{{-- resources/views/web/about.blade.php --}}
 @extends('layouts.app')
 
 @section('body_class', 'page-about')
@@ -14,7 +13,6 @@
 
 @section('content')
 
-{{-- ======================== HERO ============================= --}}
 <section class="about-hero">
     <div class="about-hero__bg">
         <img src="/images/about/portfolio5.jpg" alt="ВЕЛИКА ШИНА - великогабаритні шини" />
@@ -68,7 +66,6 @@
     </div>
 </section>
 
-{{-- ===================== ХТО МИ ============================== --}}
 <section class="section about-intro">
     <div class="container about-intro__grid">
         <div class="about-intro__media" data-aos="fade-right">
@@ -124,7 +121,6 @@
     </div>
 </section>
 
-{{-- ================== РЕБРЕНДИНГ (слайдер до/після) ========= --}}
 @php($rebrandPoints = [
 ['t' => 'Новий вигляд', 'svg' => '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>'],
 ['t' => 'Новий сайт', 'svg' => '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'],
@@ -141,22 +137,18 @@
             </div>
         </div>
 
-        {{-- Інтерактивний слайдер «до / після» --}}
         <div class="ba" x-data="logoReveal()" x-ref="frame" data-aos="fade-up"
             @pointerdown="down($event)" @pointermove="moveTo($event)"
             @pointerup="up()" @pointerleave="up()" @pointercancel="up()">
 
-            {{-- Нове лого - базовий шар --}}
             <div class="ba__pane ba__pane--new">
                 <img src="/images/logo.png" alt="Нове лого ВЕЛИКА ШИНА" draggable="false" loading="lazy" />
             </div>
 
-            {{-- Старе лого - верхній шар, обрізається повзунком --}}
             <div class="ba__pane ba__pane--old" :style="`clip-path: inset(0 ${100 - pos}% 0 0)`">
                 <img src="/images/old-logo.png" alt="Старе лого ВЕЛИКА ШИНА" draggable="false" loading="lazy" />
             </div>
 
-            {{-- Роздільник + ручка --}}
             <div class="ba__divider" :style="`left: ${pos}%`">
                 <span class="ba__handle">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -166,7 +158,6 @@
             </div>
         </div>
 
-        {{-- Що змінилось / що лишилось --}}
         <ul class="rebrand__points" data-aos="fade-up">
             @foreach ($rebrandPoints as $p)
             <li>
@@ -180,10 +171,8 @@
     </div>
 </section>
 
-{{-- ================== ЛІЧИЛЬНИК ДОСВІДУ ====================== --}}
 @include('partials.experience-counter')
 
-{{-- =============== ЧОМУ ОБИРАЮТЬ ВЕЛИКУ ШИНУ ================= --}}
 @php($values = [
 ['t' => $years . ' років досвіду', 'd' => 'Працюємо в агро, індустрії та з вантажною технікою. Нам довіряють з ' . $foundedYear . ' року.', 'svg' => '
 <circle cx="12" cy="8" r="6" />
@@ -223,7 +212,6 @@
     </div>
 </section>
 
-{{-- =============== БРЕНДИ, ЯКІ МИ ПОСТАЧАЄМО ================= --}}
 @php($brandLogos = [
 ['name' => 'Michelin', 'img' => 'michelin.png'],
 ['name' => 'BKT', 'img' => 'BKTlogo.jpg'],
@@ -243,9 +231,6 @@
             </div>
         </div>
 
-        {{-- Логотипи брендів: тягнемо з БД (активні бренди з лого), статичний
-             список - резерв, якщо в БД ще нічого не завантажено. Стрічка
-             автопрокручується - гарно виглядає і на 7, і на 40 брендів. --}}
         @php($logos = ($brands ?? collect())
             ->map(fn ($b) => ['name' => $b->name, 'src' => $b->logoUrl()])
             ->filter(fn ($x) => ! empty($x['src']))
@@ -257,9 +242,6 @@
 
         <div class="brand-marquee" data-aos="fade-up" style="--marquee-dur: {{ $marqueeDur }}s">
             <div class="brand-marquee__track">
-                {{-- Клік по лого → каталог, відфільтрований за цим брендом.
-                     Два однакові набори поспіль - для безшовного циклу прокрутки;
-                     клони (другий набір) ховаємо від фокусу/скрінрідерів. --}}
                 @foreach ($logos as $b)
                 <a href="{{ route('catalog') }}?brand={{ urlencode($b['name']) }}"
                     class="about-logo brand-marquee__item" title="Усі товари {{ $b['name'] }}">
@@ -288,7 +270,6 @@
     </div>
 </section>
 
-{{-- ==================== ЯК МИ ПРАЦЮЄМО ======================= --}}
 @php($steps = [
 ['t' => 'Заявка або дзвінок', 'd' => 'Ви називаєте типорозмір (напр. 800/65R32) або просто свою техніку.', 'svg' => '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'],
 ['t' => 'Підбір', 'd' => 'Наші спеціалісти підбирають оптимальний варіант під ваші умови та бюджет.', 'svg' => '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'],
@@ -318,7 +299,6 @@
     </div>
 </section>
 
-{{-- ================= ОФІЦІЙНИЙ САЙТ / ДОВІРА ================= --}}
 <section class="about-trust">
     <div class="about-trust__bg">
         <img src="/images/details/back_wheels.jpg" alt="Вивіска ВЕЛИКА ШИНА на складі" loading="lazy" />
@@ -347,7 +327,6 @@
     </div>
 </section>
 
-{{-- ===================== ГАЛЕРЕЯ РОБІТ ======================= --}}
 @php($gallery = \App\Livewire\Admin\SiteSettings\SiteContent::readJson('work_gallery', \App\Livewire\Admin\SiteSettings\SiteContent::DEFAULT_GALLERY))
 <section class="section" x-data="{ open: false, src: '' }">
     <div class="container">
@@ -361,8 +340,6 @@
             @foreach ($gallery as $i => $g)
             <button type="button" class="about-gallery__item" data-aos="zoom-in" data-aos-delay="{{ $i % 3 * 70 }}"
                 @click="src = @js($g['img']); open = true">
-                {{-- alt лишаємо описовим - саме воно несе SEO/доступність;
-                     видимі підписи-бейджі прибрано (візуально чистіше). --}}
                 <img src="{{ $g['img'] }}" alt="{{ $g['cap'] ?? '' }}" loading="lazy" />
                 <span class="about-gallery__zoom">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -374,7 +351,6 @@
         </div>
     </div>
 
-    {{-- Лайтбокс --}}
     <div class="about-lightbox" x-show="open" x-cloak x-transition.opacity @click="open = false"
         @keydown.escape.window="open = false">
         <button type="button" class="about-lightbox__close" aria-label="Закрити">
@@ -387,7 +363,6 @@
     </div>
 </section>
 
-{{-- ==================== НАШ ПІДХІД =========================== --}}
 @php($approach = [
 ['t' => 'Техніка', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/tehnics/tractor.svg\');mask-image:url(\'/images/svg/tehnics/tractor.svg\')"></span>'],
 ['t' => 'Умови роботи', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>'],
@@ -422,7 +397,6 @@
     </div>
 </section>
 
-{{-- ==================== ЧАСТІ ЗАПИТАННЯ ====================== --}}
 @php($faqs = \App\Livewire\Admin\SiteSettings\SiteContent::readJson('faq_items', \App\Livewire\Admin\SiteSettings\SiteContent::DEFAULT_FAQS))
 <section class="section faq-sec">
     <div class="container">
@@ -451,7 +425,6 @@
     </div>
 </section>
 
-{{-- ========================= CTA ============================= --}}
 <section class="section" style="padding-top:0">
     <div class="container">
         <div class="cta-band" data-aos="fade-up">

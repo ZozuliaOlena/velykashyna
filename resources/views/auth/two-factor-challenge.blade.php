@@ -1,4 +1,3 @@
-{{-- resources/views/auth/two-factor-challenge.blade.php --}}
 <!DOCTYPE html>
 <html lang="uk">
 <head>

@@ -8,8 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Фото товару «в роботі»: встановлені/інспектовані шини на конкретній
-        // техніці, з підписом (роки в роботі, мотогодини тощо).
+
         Schema::create('product_field_photos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
@@ -18,7 +17,7 @@ return new class extends Migration
             $table->foreignId('machinery_brand_id')->nullable()->constrained('machinery_brands')->nullOnDelete();
             $table->foreignId('machinery_model_id')->nullable()->constrained('machinery_models')->nullOnDelete();
 
-            $table->string('caption')->nullable();   // напр. "CASE 310, 2 роки, 3000 мотогодин"
+            $table->string('caption')->nullable();   
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 

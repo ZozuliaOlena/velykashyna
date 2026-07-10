@@ -1,7 +1,5 @@
-{{-- resources/views/partials/footer.blade.php --}}
 @php($c = config('site.contacts'))
 
-{{-- CTA-картка над футером (приховується там, де є власний банер) --}}
 @if ($showFooterCta ?? true)
     <div class="container" style="margin-bottom:56px" data-aos="fade-up">
         <div class="footer-cta">
@@ -29,7 +27,6 @@
 
 <footer class="footer">
     <div class="container">
-        {{-- ДЕСКТОП --}}
         <div class="footer-grid">
             <div class="footer-brand">
                 <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" class="f-logo" />
@@ -113,7 +110,6 @@
             </div>
         </div>
 
-        {{-- МОБІЛЬНИЙ --}}
         <div class="footer-mobile">
             <div class="fm-card">
                 <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" class="f-logo" />
@@ -201,11 +197,13 @@
     </div>
 
     <div class="footer-bottom">
-        <div class="container"
-            style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;width:100%">
+        <div class="container fb-inner">
             <span>© {{ config('site.founded_year') }}-{{ now()->year }} ВЕЛИКА ШИНА</span>
             <a href="{{ route('pages.privacy') }}">Політика конфіденційності</a>
-            <span class="fb-made">Створено з <span style="color:#e31e24">♥</span> в Україні 🇺🇦</span>
+            <a href="https://ksibe.dev" class="fb-powered" target="_blank" rel="noopener" aria-label="powered by ksibe.dev">
+                <span>powered by</span>
+                <img src="https://ksibe.dev/img/logo_for_site.svg" alt="ksibe.dev" loading="lazy" />
+            </a>
         </div>
     </div>
 </footer>

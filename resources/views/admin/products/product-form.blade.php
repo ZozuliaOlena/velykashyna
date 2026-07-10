@@ -246,8 +246,6 @@
                             <option value="amount">Сума (грн)</option>
                         </select>
                     </div>
-                    {{-- Поле розміру показуємо лише коли обрано тип - тож при
-                         «Без знижки» не лишається «зависла» цифра. --}}
                     @if($discount_type)
                         <div wire:key="discount-value-field">
                             <label>Розмір знижки</label><br>
@@ -323,7 +321,6 @@
                     </div>
                     <div>
                         <label style="font-size:12px; color:#666">Виробник</label><br>
-                        {{-- Лише бренди, у яких реально є техніка обраного типу. --}}
                         @php($typeBrandIds = ($row['machinery_type_id'] ?? null)
                             ? $machineryModels->where('machinery_type_id', $row['machinery_type_id'])->pluck('machinery_brand_id')->unique()
                             : null)

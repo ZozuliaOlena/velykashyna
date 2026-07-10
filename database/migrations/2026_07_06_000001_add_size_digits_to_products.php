@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('size_digits', 40)->nullable()->after('size_raw')->index();
         });
 
-        // Бекфіл: витягуємо лише цифри з наявних розмірів.
         DB::table('products')->select('id', 'size_raw')->orderBy('id')
             ->chunkById(500, function ($rows) {
                 foreach ($rows as $r) {

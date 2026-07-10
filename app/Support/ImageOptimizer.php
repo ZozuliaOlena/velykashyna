@@ -36,7 +36,7 @@ class ImageOptimizer
             File::ensureDirectoryExists($absDir);
 
             Image::load($file->getRealPath())
-                ->fit(Fit::Max, $maxDim, $maxDim)   // не збільшуємо маленькі, великі — вписуємо
+                ->fit(Fit::Max, $maxDim, $maxDim)   
                 ->format('webp')
                 ->quality($quality)
                 ->save($absDir . '/' . $name);
@@ -44,7 +44,7 @@ class ImageOptimizer
             return $dir . '/' . $name;
         } catch (\Throwable $e) {
             report($e);
-            // Фолбек: якщо конвертація не вдалась — зберігаємо оригінал, щоб не зламати завантаження.
+            
             return $file->store($dir, 'public');
         }
     }

@@ -6,7 +6,6 @@
         </a>
     </div>
 
-
     <div class="admin-filters">
         <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, розмір (710/70R38)...">
 

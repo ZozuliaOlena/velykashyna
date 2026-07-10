@@ -79,7 +79,7 @@ class ImportExport extends Component
     public function restore(): void
     {
         $this->validate([
-            // до ~1 ГБ; фактичний ліміт залежить від upload_max_filesize сервера.
+            
             'restoreFile' => ['required', 'file', 'mimes:zip', 'max:1048576'],
         ]);
 

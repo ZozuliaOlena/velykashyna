@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('parent_id')->nullable()
                 ->constrained('categories')->nullOnDelete();
-            $table->unsignedTinyInteger('level')->default(1); // 1-4
+            $table->unsignedTinyInteger('level')->default(1); 
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('seo_title')->nullable();

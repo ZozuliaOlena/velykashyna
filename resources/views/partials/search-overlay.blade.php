@@ -1,4 +1,3 @@
-{{-- resources/views/partials/search-overlay.blade.php --}}
 <div class="search-overlay" x-data x-cloak x-show="$store.ui.search" x-transition.opacity
     @keydown.escape.window="$store.ui.closeSearch()" @click.self="$store.ui.closeSearch()">
     <div class="search-box" x-data="liveSearch('{{ route('search.suggest') }}', '{{ route('catalog') }}')">

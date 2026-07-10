@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
  */
 class EmailOtpController extends Controller
 {
-    private const TTL_SECONDS = 600; // 10 хвилин
+    private const TTL_SECONDS = 600; 
 
     public function show(Request $request)
     {

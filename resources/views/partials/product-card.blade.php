@@ -1,9 +1,3 @@
-{{-- resources/views/partials/product-card.blade.php
-     Картка товару (єдиний дизайн для каталогу та головної).
-     $p: size, brand, model, constr, li, app, stock, price_mode, price, promos[].
-     Зображення: img_url (готовий URL з БД) АБО img (ім'я файлу в /images/wheels).
-     Іконки/лого: app_icon_url, brand_logo_url - необов'язкові (перекривають дефолт).
-     Необов'язково: $showCountry. --}}
 @php($brandLogos = ['Michelin' => 'michelin.svg', 'Continental' => 'continental.svg'])
 @php($brandCountries = [
 'Michelin' => ['name' => 'Франція', 'code' => 'fr'],
@@ -28,12 +22,10 @@
 @php($cur = $p['cur'] ?? 'грн')
 @php($showCountry = $showCountry ?? true)
 
-{{-- Уніфіковані джерела (БД-URL має пріоритет над дефолтними шляхами) --}}
 @php($imgSrc = $p['img_url'] ?? (!empty($p['img']) ? '/images/wheels/' . $p['img'] : null))
 @php($appIconSrc = $p['app_icon_url'] ?? '/images/svg/tehnics/' . $appIcon)
 @php($brandLogoSrc = $p['brand_logo_url'] ?? (isset($brandLogos[$p['brand'] ?? '']) ? '/images/svg/brands/' . $brandLogos[$p['brand']] : null))
 @php($hasApp = !empty($p['app']) || !empty($p['app_icon_url']))
-{{-- Промо: стиль + іконка --}}
 @php($promoConfig = [
 'Акція' => ['s' => 'sale', 'i' => '<path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>'],
 'Знижка' => ['s' => 'discount', 'i' => '<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>'],
@@ -42,14 +34,10 @@
 'Можлива безкоштовна доставка' => ['s' => 'ship', 'i' => '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'],
 'Уточніть вашу ціну' => ['s' => 'ask', 'i' => '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],
 ])
-{{-- Мітки доставки (перша з них показується зверху зі своєю іконкою). --}}
 @php($shippingLabels = ['Безкоштовна доставка', 'Можлива безкоштовна доставка'])
-{{-- Безкоштовна доставка завжди першою (зверху), далі - решта.
-     «Знижка» прибираємо - замість неї показуємо бейдж відсотка («-10%»). --}}
 @php($promoOrder = ['Безкоштовна доставка' => 0, 'Можлива безкоштовна доставка' => 0, 'Акція' => 1, 'Знижка' => 2, 'Запитуй знижку' => 3, 'Уточніть вашу ціну' => 4])
 @php($promos = collect($p['promos'] ?? [])->reject(fn ($x) => $x === 'Знижка')->sortBy(fn ($x) => $promoOrder[$x] ?? 99)->values()->all())
 
-{{-- Компактний об'єкт товару для кошика/обраного --}}
 @php($cardItem = [
 'id' => $p['id'] ?? null,
 'slug' => $p['slug'] ?? null,
@@ -66,12 +54,9 @@
 ])
 
 <div class="cat-prod" x-data="{ item: @js($cardItem) }">
-    {{-- Клік по будь-якій частині картки → сторінка товару (інтерактивні
-         кнопки лежать вище за z-index і працюють як зазвичай). --}}
     <a href="{{ $p['url'] ?? '#' }}" class="cat-prod__stretch"
         aria-label="{{ trim(($p['type'] ?? '') . ' ' . ($p['size'] ?? '') . ' ' . ($p['brand'] ?? '')) }}" tabindex="-1"></a>
     <div class="cat-prod__media">
-        {{-- Доставка завжди першою (зверху), далі бейдж знижки (-%), далі решта. --}}
         @php($shipping = collect($promos)->first(fn ($x) => in_array($x, $shippingLabels, true)))
         @php($restPromos = array_values(array_filter($promos, fn ($x) => ! in_array($x, $shippingLabels, true))))
         @if ($shipping || !empty($p['discount']) || !empty($restPromos))
@@ -83,7 +68,6 @@
                 <span>{{ $shipping }}</span>
             </span>
             @endif
-            {{-- Ієрархія «від масивного до дрібного»: доставка → промо → відсоток. --}}
             @foreach ($restPromos as $promo)
             @php($pc = $promoConfig[$promo] ?? ['s' => 'sale', 'i' => ''])
             <span class="promo promo--{{ $pc['s'] }}" title="{{ $promo }}">
@@ -97,8 +81,6 @@
         </div>
         @endif
 
-        {{-- На сторінці «Обране» ($favConfirm) - не знімаємо одразу, а просимо
-             підтвердження через модалку (подія fav-remove). --}}
         @php($favClick = ($favConfirm ?? false) ? "\$dispatch('fav-remove', item)" : "\$store.fav.toggle(item)")
         <button type="button" class="cat-prod__fav" :class="{ active: $store.fav.has(item.id) }"
             @click="{{ $favClick }}" aria-label="В обране">
@@ -129,7 +111,6 @@
             {{ $p['brand'] }}
             @endif
         </span>
-
 
         <a href="{{ $p['url'] ?? '#' }}" class="cat-prod__photolink" aria-label="{{ $p['brand'] }} {{ $p['model'] }}">
             @if ($imgSrc)
@@ -174,9 +155,6 @@
                 @if ($hasApp)<li class="cat-prod__app">{{ $p['app'] }}</li>@endif
             </ul>
 
-            {{-- Характеристики у вигляді колонок (прайс-таблиця) - видно лише
-                 у режимі списку. Набір колонок фіксований, щоб значення в усіх
-                 рядках вишиковувались стовпчик під стовпчиком. --}}
             <div class="cat-prod__listspecs">
                 <div class="lf"><span class="lf-label">Артикул</span><span class="lf-val">{{ $p['sku'] ?: '-' }}</span></div>
                 <div class="lf"><span class="lf-label">Розмір</span><span class="lf-val">{{ $p['size'] ?: '-' }}</span></div>
@@ -189,7 +167,6 @@
 
         @php($oldPrice = $p['old_price'] ?? null)
         <div class="cat-prod__buy">
-            {{-- Промо-бейджі (видно у режимі списку) - біля ціни; доставка перша. --}}
             <div class="cat-prod__meta">
                 @if (!empty($promos))
                 @foreach ($promos as $promo)

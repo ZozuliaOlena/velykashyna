@@ -1,4 +1,3 @@
-{{-- resources/views/web/in-work.blade.php - фото шин «в роботі» на техніці --}}
 @extends('layouts.app')
 
 @section('title', 'Шини в роботі - ' . $label . ' | ВЕЛИКА ШИНА')
@@ -53,7 +52,6 @@
             @endforeach
         </div>
 
-        {{-- Лайтбокс --}}
         <div class="about-lightbox" x-show="open" x-cloak x-transition.opacity @click="open = false"
             @keydown.escape.window="open = false">
             <button type="button" class="about-lightbox__close" aria-label="Закрити">

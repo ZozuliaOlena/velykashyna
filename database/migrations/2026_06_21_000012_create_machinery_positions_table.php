@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('machinery_positions', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Передня вісь, Задня вісь...
+            $table->string('name'); 
             $table->timestamps();
         });
     }

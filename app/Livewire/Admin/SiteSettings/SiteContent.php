@@ -66,7 +66,6 @@ class SiteContent extends Component
         return is_array($decoded) && $decoded !== [] ? $decoded : $default;
     }
 
-    // ── FAQ ────────────────────────────────────────────────────────────
     public function addFaq(): void
     {
         $this->faqs[] = ['q' => '', 'a' => ''];
@@ -78,7 +77,6 @@ class SiteContent extends Component
         $this->faqs = array_values($this->faqs);
     }
 
-    // ── Доставка / оплата ──────────────────────────────────────────────
     public function addDelivery(): void
     {
         $this->delivery[] = '';
@@ -101,7 +99,6 @@ class SiteContent extends Component
         $this->payment = array_values($this->payment);
     }
 
-    // ── Галерея «в роботі» ─────────────────────────────────────────────
     public function updatedGalleryUpload(): void
     {
         $this->validate(['galleryUpload' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:6144']]);
@@ -131,7 +128,6 @@ class SiteContent extends Component
         }
     }
 
-    // ── Збереження (окремо для кожного блоку) ──────────────────────────
     public function saveGallery(): void
     {
         $gallery = array_values(array_filter($this->gallery, fn ($g) => ! empty($g['img'])));

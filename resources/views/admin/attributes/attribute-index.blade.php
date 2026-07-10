@@ -4,7 +4,6 @@
         <button wire:click="openCreate">+ Додати характеристику</button>
     </div>
 
-
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: назва, код...">
         <x-admin.select model="filterType" placeholder="- Усі типи товарів -"

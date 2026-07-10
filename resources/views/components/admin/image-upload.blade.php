@@ -1,14 +1,5 @@
 @props(['model', 'accept' => 'image/*', 'label' => 'Вибрати фото'])
 
-{{--
-    Завантаження одного фото зі стисненням у браузері перед відправкою на сервер
-    (обходить ліміт PHP upload_max_filesize, зручно для фото з телефона).
-    Показує превʼю вибраного фото та власну кнопку (без «файл не вибрано»).
-
-    Використання (всередині Livewire-компонента):
-        <x-admin.image-upload model="photo" />
-    де `photo` - публічна властивість WithFileUploads.
---}}
 <div wire:ignore x-data="{
         busy: false, pct: 0, preview: null,
         init() {

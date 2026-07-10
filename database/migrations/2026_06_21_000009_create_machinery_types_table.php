@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('machinery_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Трактор, Комбайн, Сівалка...
+            $table->string('name'); 
             $table->timestamps();
         });
     }

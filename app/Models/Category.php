@@ -88,8 +88,7 @@ class Category extends Model
         }
 
         $ordered = collect();
-        // Псевдографіка дерева (├─ └─ │) для випадних списків.
-        // Неразривні пробіли (\u{00A0}), щоб браузер не схлопував відступ в <option>.
+
         $nb = "\u{00A0}";
         $walk = function ($parentId, $ancestorPrefix) use (&$walk, &$byParent, $ordered, $nb) {
             $siblings = $byParent[$parentId] ?? [];
@@ -98,11 +97,10 @@ class Category extends Model
             foreach ($siblings as $i => $node) {
                 $isLast = $i === $last;
 
-                // «Гілка» - категорія, що має дітей (виділяється як заголовок).
                 $node->is_branch = ! empty($byParent[$node->id]);
 
                 if ($node->parent_id === null) {
-                    $node->tree_prefix = '';      // корінь - без префікса (буде жирним)
+                    $node->tree_prefix = '';      
                     $childPrefix = '';
                 } else {
                     $node->tree_prefix = $ancestorPrefix . ($isLast ? '└─' . $nb : '├─' . $nb);

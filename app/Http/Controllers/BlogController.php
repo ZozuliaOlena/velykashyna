@@ -20,7 +20,7 @@ class BlogController extends Controller
     /** Детальна сторінка статті за ЧПУ-slug. */
     public function show(Post $post)
     {
-        // Чернетки/майбутні публікації - лише прихований, не публічний доступ.
+        
         abort_unless($post->is_published
             && (! $post->published_at || $post->published_at->isPast()), 404);
 

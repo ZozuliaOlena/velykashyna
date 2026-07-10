@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('machinery_types', function (Blueprint $table) {
-            // Шлях до SVG-іконки типу техніки (storage/app/public/...).
+            
             $table->string('icon')->nullable()->after('name');
         });
     }

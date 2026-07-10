@@ -1,6 +1,5 @@
 <?php
 
-// app/Models/MachineryType.php
 namespace App\Models;
 
 use App\Support\MediaUrl;

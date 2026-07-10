@@ -1,4 +1,3 @@
-{{-- resources/views/web/pages/returns.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Повернення та обмін - ВЕЛИКА ШИНА')

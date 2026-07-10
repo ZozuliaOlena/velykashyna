@@ -1,9 +1,4 @@
-// =====================================================================
-//  ВЕЛИКА ШИНА - дизайн-система фронтенду (головна сторінка + лейаут)
-//  Десктоп-first, адаптив через max-width медіазапити.
-// =====================================================================
 
-// --- Кольори ---------------------------------------------------------
 $red: #e31e24;
 $red-dark: #c4161b;
 $red-soft: #fdecec;
@@ -23,26 +18,20 @@ $line-dark: rgba(255, 255, 255, 0.1);
 
 $ok: #1f9d55;
 
-// --- Типографіка -----------------------------------------------------
 $font-head: "Montserrat", sans-serif;
 $font-body: "Arimo", sans-serif;
 
-// --- Брейкпоінти -----------------------------------------------------
 $bp-xl: 1200px;
 $bp-lg: 992px;
 $bp-md: 768px;
 $bp-sm: 576px;
 
-// --- Радіуси / тіні --------------------------------------------------
 $radius: 12px;
 $radius-sm: 8px;
 $radius-lg: 18px;
 $shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
 $shadow-md: 0 12px 30px rgba(0, 0, 0, 0.08);
 
-// =====================================================================
-//  БАЗА
-// =====================================================================
 *,
 *::before,
 *::after {
@@ -61,9 +50,6 @@ body {
     background: $bg;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    // Прибираємо випадковий горизонтальний скрол на мобільних.
-    // `clip` (на відміну від `hidden`) не створює скрол-контейнер
-    // і не ламає position: sticky / прокрутку сторінки.
     overflow-x: clip;
 }
 
@@ -100,11 +86,6 @@ button {
     display: none !important;
 }
 
-// Іконка з SVG-файлу, перефарбована у поточний колір (uniform color).
-// mask-image задається інлайн (резолвиться відносно сторінки, а не
-// стилю з Vite-сервера, тож працює і в dev, і в build).
-// Використання:
-//   <span class="mask-ico" style="-webkit-mask-image:url('/images/svg/...');mask-image:url('/images/svg/...')"></span>
 .mask-ico {
     display: inline-block;
     background-color: currentColor;
@@ -116,7 +97,6 @@ button {
     mask-size: contain;
 }
 
-// --- Кнопки ----------------------------------------------------------
 .btn {
     display: inline-flex;
     align-items: center;
@@ -185,7 +165,6 @@ button {
     }
 }
 
-// --- Заголовок секції ------------------------------------------------
 .section {
     padding: 70px 0;
 
@@ -240,16 +219,12 @@ button {
         height: 16px;
     }
 
-    // Червоний лише при наведенні.
     &:hover {
         gap: 10px;
         color: $red;
     }
 }
 
-// =====================================================================
-//  ШАПКА
-// =====================================================================
 .site-header {
     position: sticky;
     top: 0;
@@ -258,7 +233,6 @@ button {
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
 }
 
-// --- Десктопна шапка (верхній ярус: лого + навігація + телефон) ------
 .header-top {
     display: flex;
     align-items: center;
@@ -290,7 +264,6 @@ button {
     }
 }
 
-// Видимий рядок пошуку в шапці (стандарт e-commerce)
 .header-search {
     position: relative;
     flex: 1;
@@ -338,7 +311,6 @@ button {
     }
 }
 
-// Нижній ярус: навігація + стрічка категорій
 .header-bar {
     display: flex;
     align-items: center;
@@ -471,7 +443,6 @@ button {
     }
 }
 
-// --- Стрічка категорій (праворуч у нижньому ярусі) -------------------
 .header-cats {
     display: flex;
     gap: 10px;
@@ -486,8 +457,6 @@ button {
         font-family: $font-head;
         font-weight: 600;
         font-size: 13px;
-        // Ті самі стилі, що й у пунктах меню (Блог/Про нас/Контакти):
-        // великі літери, той самий колір і жирність; іконка - без червоного.
         text-transform: uppercase;
         letter-spacing: 0.3px;
         color: $ink;
@@ -506,7 +475,6 @@ button {
     }
 }
 
-// --- Мобільна шапка --------------------------------------------------
 .header-mobile {
     display: none;
 
@@ -531,7 +499,6 @@ button {
         display: block;
     }
 
-    // Слоган під лого (як у десктоп-версії, лише дрібніший).
     .hm-tagline {
         font-family: $font-head;
         font-weight: 500;
@@ -578,9 +545,6 @@ button {
     }
 }
 
-// =====================================================================
-//  МОБІЛЬНЕ МЕНЮ (повноекранне)
-// =====================================================================
 .mobile-menu {
     position: fixed;
     inset: 0;
@@ -663,7 +627,6 @@ button {
         }
     }
 
-    // Пошук у меню
     .mm-search {
         display: flex;
         padding: 16px;
@@ -701,7 +664,6 @@ button {
         }
     }
 
-    // Заголовок групи
     .mm-label {
         padding: 22px 16px 6px;
         font-family: $font-head;
@@ -797,17 +759,12 @@ button {
     }
 }
 
-// =====================================================================
-//  HERO
-// =====================================================================
 .hero {
     position: relative;
     background: #fff;
     color: $ink;
     overflow: hidden;
 
-    // ПК: вертикально центруємо контент і задаємо висоту,
-    // щоб ліва частина не виглядала порожньою на широких екранах.
     @media (min-width: 769px) {
         display: flex;
         align-items: center;
@@ -820,7 +777,6 @@ button {
 }
 
 .hero-media {
-    // ПК: фото праворуч, ліва межа розчиняється в білому фоні.
     position: absolute;
     top: 0;
     right: 0;
@@ -841,7 +797,6 @@ button {
         width: 48%;
     }
 
-    // Мобільний: фото - банер угорі, розчиняється зверху та знизу.
     @media (max-width: $bp-md) {
         position: relative;
         top: auto;
@@ -912,7 +867,6 @@ button {
     }
 }
 
-// Лічильник досвіду роботи (біла картка)
 .hero-stats {
     display: inline-block;
     background: #fff;
@@ -1003,9 +957,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ПАНЕЛЬ ФІЛЬТРА (накладається на hero)
-// =====================================================================
 .filter-bar-wrap {
     position: relative;
     z-index: 3;
@@ -1071,7 +1022,6 @@ button {
                     border-color: $red;
                 }
 
-                // Заблокований рівень каскаду (доки не обрано попередній).
                 &:disabled {
                     opacity: 0.45;
                     cursor: not-allowed;
@@ -1096,9 +1046,6 @@ button {
     }
 }
 
-// =====================================================================
-//  КАТЕГОРІЇ (плитки каталогу)
-// =====================================================================
 .cat-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -1179,13 +1126,8 @@ button {
     }
 }
 
-// =====================================================================
-//  КАРТКИ ТОВАРІВ (популярні моделі / каталог)
-// =====================================================================
 .product-grid {
     display: grid;
-    // Повноширинні сітки шинних карток (головна / обране / супутні) - 4 колонки,
-    // єдине правило. Каталог (з фільтрами) і блог мають власні значення.
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
 
@@ -1197,8 +1139,6 @@ button {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    // Дуже вузькі екрани - одна колонка на всю ширину,
-    // щоб лого бренду та плашку наявності було чітко видно.
     @media (max-width: 480px) {
         grid-template-columns: 1fr;
         gap: 16px;
@@ -1410,9 +1350,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ПЕРЕВАГИ
-// =====================================================================
 .features {
     background: $bg-soft;
 }
@@ -1463,7 +1400,6 @@ button {
         line-height: 1.5;
     }
 
-    // Мобільний: кожна перевага - окрема картка з іконкою-бейджем.
     @media (max-width: $bp-md) {
         background: #fff;
         border: 1px solid $line;
@@ -1496,9 +1432,6 @@ button {
     }
 }
 
-// =====================================================================
-//  CTA БАНЕР (темний, фон - протектор)
-// =====================================================================
 .cta-band {
     position: relative;
     background: $ink-2;
@@ -1572,9 +1505,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ЧОМУ ВЕЛИКА ШИНА
-// =====================================================================
 .why-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1596,7 +1526,6 @@ button {
     text-align: center;
     transition: all 0.28s ease;
 
-    // Червоний акцент-смужка зверху (з'являється на hover)
     &::before {
         content: "";
         position: absolute;
@@ -1637,6 +1566,8 @@ button {
         color: $ink;
         margin-bottom: 10px;
         line-height: 1.2;
+        overflow-wrap: break-word;
+        hyphens: auto;
 
         span {
             color: $red;
@@ -1679,9 +1610,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ЯК МИ ПРАЦЮЄМО
-// =====================================================================
 .steps {
     background: $bg-soft;
 }
@@ -1748,16 +1676,12 @@ button {
     }
 }
 
-// =====================================================================
-//  ФУТЕР
-// =====================================================================
 .footer {
     background: $ink-2;
     color: $muted-2;
     padding-top: 56px;
 }
 
-// CTA-картка над футером
 .footer-cta {
     background: $bg-soft;
     border-radius: $radius-lg;
@@ -1865,7 +1789,6 @@ button {
     }
 }
 
-// Оцінка клієнтів (зірки)
 .rating {
     display: flex;
     align-items: center;
@@ -1910,7 +1833,6 @@ button {
     }
 
     .fc-strong {
-        // Кожен номер - окремим рядком (щоб два телефони не зливались).
         display: block;
         width: fit-content;
         font-family: $font-head;
@@ -2006,10 +1928,51 @@ button {
         color: #fff;
     }
 
-    .fb-made {
+    .fb-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        width: 100%;
+
+        @media (min-width: 993px) {
+            padding-right: 108px;
+        }
+
+        @media (max-width: $bp-sm) {
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+        }
+    }
+
+    .fb-powered {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
+        font-size: 12px;
+        letter-spacing: 0.2px;
+        opacity: 0.85;
+        transition: opacity 0.2s ease;
+
+        img {
+            height: 14px;
+            width: auto;
+            display: block;
+            filter: brightness(0) invert(1);
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: $bp-sm) {
+            flex-basis: 100%;
+            justify-content: center;
+            order: 3;
+            margin-top: 2px;
+        }
     }
 
     @media (max-width: $bp-md) {
@@ -2018,7 +1981,6 @@ button {
     }
 }
 
-// --- Мобільний футер (акордеон + картка) -----------------------------
 .footer-mobile {
     display: none;
 
@@ -2086,9 +2048,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ПЛАВАЮЧА КНОПКА ЗВ'ЯЗКУ (FAB)
-// =====================================================================
 .fab {
     position: fixed;
     right: 22px;
@@ -2136,8 +2095,6 @@ button {
         }
     }
 
-    // Мобільний: ховаємо, поки користувач не прогорнув ~10% сторінки
-    // (щоб не перекривати кнопку «Консультація» у hero).
     @media (max-width: $bp-md) {
         opacity: 0;
         visibility: hidden;
@@ -2168,9 +2125,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ОВЕРЛЕЙ ПОШУКУ
-// =====================================================================
 .search-overlay {
     position: fixed;
     inset: 0;
@@ -2265,11 +2219,7 @@ button {
     }
 }
 
-// =====================================================================
-//  КАРУСЕЛЬ ТЕХНІКИ ("Підберемо для вашої техніки")
-// =====================================================================
 .machinery {
-    // Карусель зі стрілками з боків (вирівняні по центру іконок)
     .mach-wrap {
         display: flex;
         align-items: flex-start;
@@ -2329,7 +2279,6 @@ button {
             border-radius: 4px;
         }
 
-        // Перетягування мишею: миттєвий рух, без snap і виділення.
         &.is-dragging {
             cursor: grabbing;
             scroll-snap-type: none;
@@ -2373,9 +2322,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ЛІЧИЛЬНИК ДОСВІДУ (роки / дні / години)
-// =====================================================================
 .exp-counter {
     background: $bg-soft;
     border-top: 1px solid $line;
@@ -2437,7 +2383,6 @@ button {
     }
 }
 
-// Соцмережі на світлому фоні (контактний блок мобільного меню)
 .mm-contacts .footer-socials a {
     background: #f1f2f4;
     color: $ink;
@@ -2448,9 +2393,6 @@ button {
     }
 }
 
-// =====================================================================
-//  КАТАЛОГ (сторінка зі списком товарів)
-// =====================================================================
 .breadcrumbs {
     display: flex;
     align-items: center;
@@ -2460,8 +2402,6 @@ button {
     color: $muted;
     padding-top: 18px;
 
-    // Кожна крихта - в один рядок; увесь шлях горизонтально гортається
-    // (актуально на мобільних), щоб слова не ламались переносами.
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -2530,7 +2470,6 @@ button {
     }
 }
 
-// Порожній результат каталогу
 .catalog-empty {
     grid-column: 1 / -1;
     text-align: center;
@@ -2599,7 +2538,6 @@ button {
         height: 0;
     }
 
-    // Перетягування мишею: миттєвий рух, без виділення.
     &.is-dragging {
         cursor: grabbing;
         scroll-behavior: auto;
@@ -2659,7 +2597,6 @@ button {
         gap: 0;
     }
 
-    // Згорнуті фільтри (десктоп): каталог на всю ширину
     @media (min-width: 993px) {
         &.is-collapsed {
             grid-template-columns: 1fr;
@@ -2675,7 +2612,6 @@ button {
     min-width: 0;
 }
 
-// --- Затемнення / шторка (видиме лише коли фільтр відкрито) ----------
 .catalog-backdrop {
     position: fixed;
     inset: 0;
@@ -2683,11 +2619,9 @@ button {
     background: rgba(15, 17, 20, 0.5);
 }
 
-// --- Фільтри ---------------------------------------------------------
 .catalog-filters {
     background: #fff;
 
-    // Десктоп: липкий блок із власною прокруткою (не тягне всю сторінку)
     @media (min-width: 993px) {
         position: sticky;
         top: calc(var(--header-h, 80px) + 16px);
@@ -2695,7 +2629,6 @@ button {
         overflow-y: auto;
         overscroll-behavior: contain;
         padding-right: 6px;
-        // піднімаємо контекст панелі, щоб спливаюча .cf-pill була над товарами
         z-index: 600;
         scrollbar-width: thin;
         scrollbar-color: $line transparent;
@@ -2749,7 +2682,6 @@ button {
             padding: 0 18px;
         }
 
-        // Зафіксований підвал «Застосувати» - не треба гортати донизу
         .cf-foot {
             flex-shrink: 0;
             padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
@@ -2802,7 +2734,6 @@ button {
         }
     }
 
-    // Кнопка згортання фільтрів (лише десктоп)
     .cf-collapse {
         display: none;
         margin-left: 14px;
@@ -2975,7 +2906,6 @@ button {
     }
 }
 
-// Прокручувані опції групи (бренди/розміри/техніка): показуємо ~6, решта - скрол
 .cf-options {
     max-height: 232px;
     overflow-y: auto;
@@ -2993,8 +2923,6 @@ button {
     }
 }
 
-// Підвал із кнопкою «Застосувати» - липне донизу панелі (моб.).
-// На ПК застосування - через спливаючу кнопку .cf-pill.
 .cf-foot {
     position: sticky;
     bottom: 0;
@@ -3007,7 +2935,6 @@ button {
     }
 }
 
-// Спливаюча кнопка результатів (ПК) - біля зміненого фільтра
 .cf-pill {
     display: none;
     position: fixed;
@@ -3028,7 +2955,6 @@ button {
     cursor: pointer;
     transition: background 0.2s;
 
-    // хвостик, спрямований до панелі фільтрів
     &::before {
         content: '';
         position: absolute;
@@ -3062,15 +2988,12 @@ button {
     font-weight: 800;
 }
 
-// --- Тулбар ----------------------------------------------------------
 .catalog-toolbar {
-    // Зліва - фільтр + вид, справа - сортування
     display: flex;
     align-items: center;
     gap: 16px;
     margin-bottom: 20px;
 
-    // Десктоп: тулбар закріплюється впритул під шапкою (без «дірки»)
     @media (min-width: 993px) {
         position: sticky;
         top: var(--header-h, 96px);
@@ -3084,14 +3007,12 @@ button {
         display: none;
     }
 
-    // Група зліва: кнопка фільтрів + перемикач вигляду
     .toolbar-center {
         display: flex;
         align-items: center;
         gap: 12px;
     }
 
-    // Кнопка-перемикач фільтрів (лише десктоп; на моб. - плаваюча FAB)
     .toolbar-ftoggle {
         display: none;
         align-items: center;
@@ -3117,7 +3038,6 @@ button {
             color: $red;
         }
 
-        // Активний стан - сірий, а не чорний (за побажанням замовника).
         &.is-active {
             background: $muted;
             border-color: $muted;
@@ -3129,8 +3049,6 @@ button {
         }
     }
 
-    // Інлайн-кнопку фільтрів прибрано - на моб./планшеті її замінює
-    // плаваюча кнопка .catalog-fab-filters.
     .toolbar-filters {
         display: none;
     }
@@ -3171,7 +3089,6 @@ button {
                 height: 18px;
             }
 
-            // Активний вид (список/сітка) - сірий, а не чорний.
             &.active {
                 background: $muted;
                 color: #fff;
@@ -3230,7 +3147,6 @@ button {
     }
 }
 
-// Плаваюча кнопка фільтрів (моб./планшет) - завжди доступна під час скролу
 .catalog-fab-filters {
     display: none;
 
@@ -3259,7 +3175,6 @@ button {
     }
 }
 
-// --- Картка товару в каталозі ----------------------------------------
 .cat-prod {
     position: relative;
     display: flex;
@@ -3298,7 +3213,6 @@ button {
             transition: transform 0.35s ease;
         }
 
-        // Заглушка, коли у товару немає фото
         .cat-prod__photo--ph {
             width: 96px;
             height: 96px;
@@ -3307,7 +3221,6 @@ button {
         }
     }
 
-    // Плашка наявності - кольоровий «пігулка» внизу зліва.
     &__stock {
         position: absolute;
         bottom: 14px;
@@ -3332,7 +3245,6 @@ button {
         }
     }
 
-    // Кнопка «в обране».
     &__fav {
         position: absolute;
         top: 10px;
@@ -3369,7 +3281,6 @@ button {
         }
     }
 
-    // Лого/назва бренду - прямо на підкладці зверху зліва (без рамки).
     &__brand {
         position: absolute;
         bottom: 12px;
@@ -3393,10 +3304,6 @@ button {
         }
     }
 
-    // Промо-плашки (Акція / Знижка / Запитуй знижку / Безкоштовна доставка).
-    // На картці - компактні пігулки в один рядок: дрібніший шрифт, тісніші
-    // відступи; текст НЕ переносимо (no-wrap), щоб довгий підпис доставки
-    // не перетворювався на дворядковий «блок», що захаращує фото.
     &__promos {
         position: absolute;
         top: 10px;
@@ -3406,10 +3313,8 @@ button {
         flex-direction: column;
         align-items: flex-start;
         gap: 5px;
-        // Лишаємо місце під кнопку «в обране» справа зверху.
         max-width: calc(100% - 52px);
 
-        // Середній рівень ієрархії - промо (Акція / Запитуй знижку).
         .promo {
             font-size: 9.5px;
             padding: 3px 8px;
@@ -3425,7 +3330,6 @@ button {
             }
         }
 
-        // Найбільша плашка - доставка (зверху).
         .promo--ship {
             font-size: 10px;
             padding: 4px 9px;
@@ -3436,8 +3340,6 @@ button {
             }
         }
 
-        // Відсоток знижки - внизу ієрархії, але цифра лишається читабельною.
-        // «Легкість» дає короткий вміст пігулки, а не дрібний шрифт.
         .cat-prod__disc.promo {
             font-size: 10px;
             padding: 3px 8px;
@@ -3456,8 +3358,6 @@ button {
         align-items: center;
         justify-content: space-between;
         gap: 8px;
-        // Однакова висота, як у бейджа техніки (54px) - щоб заголовки в усіх
-        // картках ряду були на одному рівні (незалежно від наявності бейджа).
         min-height: 54px;
     }
 
@@ -3468,9 +3368,6 @@ button {
         color: $ink;
     }
 
-    // Тип товару у заголовку перед розміром: «Шина 900/60R32».
-    // Читається як частина заголовка; для не-шин (диск/камера…) -
-    // легкий акцент кольором тексту (без червоного, щоб не перевантажувати).
     &__size-type {
         color: $ink;
         font-weight: 700;
@@ -3480,7 +3377,6 @@ button {
         }
     }
 
-    // Лого бренду в тілі - над назвою (показуємо лише у режимі списку)
     &__brand-inline {
         display: none;
         align-items: center;
@@ -3493,7 +3389,6 @@ button {
         }
     }
 
-    // Плашка країни походження бренду.
     &__country {
         display: inline-flex;
         align-items: center;
@@ -3542,13 +3437,11 @@ button {
         }
     }
 
-    // Застосування: лише текст (іконка винесена в кутовий бейдж).
     &__app {
         display: inline-flex;
         align-items: center;
     }
 
-    // Кутовий бейдж із іконкою техніки - у правому верхньому куті тіла.
     &__app-badge {
         display: inline-flex;
         align-items: center;
@@ -3577,7 +3470,6 @@ button {
         }
     }
 
-    // Гнучка ціна: фіксована / «від» / «уточнюйте».
     &__price {
         flex: 1 1 auto;
         min-width: 0;
@@ -3605,8 +3497,6 @@ button {
             color: $muted;
         }
 
-        // Поточна ціна (рядок із числом + валютою).
-        // nowrap - щоб число з пробілом-роздільником («24 300») не рвалось.
         .now {
             display: inline-flex;
             align-items: baseline;
@@ -3614,7 +3504,6 @@ button {
             white-space: nowrap;
         }
 
-        // Стара (закреслена) ціна над поточною - лише при знижці
         .old {
             display: inline-flex;
             align-items: baseline;
@@ -3630,7 +3519,6 @@ button {
             }
         }
 
-        // Режим знижки: стовпчик «стара зверху / нова червоним знизу»
         &--sale {
             flex-direction: column;
             align-items: flex-start;
@@ -3663,7 +3551,6 @@ button {
         flex-direction: column;
     }
 
-    // Наявність + промо текстом у тілі (видно лише у списку)
     &__meta {
         display: none;
         flex-wrap: wrap;
@@ -3705,7 +3592,6 @@ button {
         }
     }
 
-    // Низ картки: наявність зверху, далі ціна + кошик в один ряд (поруч).
     &__buy {
         margin-top: auto;
         display: flex;
@@ -3775,8 +3661,6 @@ button {
         }
     }
 
-    // Невидиме посилання поверх усієї картки - клік будь-де веде на товар.
-    // Інтерактивні елементи (обране, порівняння, кошик) лежать вище (z-index).
     &__stretch {
         position: absolute;
         inset: 0;
@@ -3784,7 +3668,6 @@ button {
     }
 }
 
-// Промо-плашка (компактна, з іконкою)
 .promo {
     display: inline-flex;
     align-items: center;
@@ -3823,7 +3706,6 @@ button {
     }
 }
 
-// --- Пагінація -------------------------------------------------------
 .pagination {
     display: flex;
     align-items: center;
@@ -3876,9 +3758,6 @@ button {
     }
 }
 
-// =====================================================================
-//  HERO-СЛАЙДЕР (повноекранний, відео/зображення)
-// =====================================================================
 .hero-slider {
     position: relative;
     height: 100vh;
@@ -3899,7 +3778,6 @@ button {
     }
 }
 
-// Стрічка слайдів - горизонтальний зсув (translateX керується з JS).
 .hs-bg {
     position: absolute;
     inset: 0;
@@ -3921,9 +3799,6 @@ button {
         display: block;
     }
 
-    // YouTube-фон: <iframe> не реагує на object-fit, тож робимо «cover»
-    // вручну (16:9 з перекриттям вьюпорта) і трохи збільшуємо, щоб службовий
-    // хром ютуба (тайтл зверху, контроли/субтитри знизу) пішов за межі кадру.
     iframe.hs-media {
         position: absolute;
         top: 50%;
@@ -3935,9 +3810,6 @@ button {
         pointer-events: none;
     }
 
-    // Обкладинка YouTube-слайда: ховає службовий хром плеєра на старті
-    // (тайтл, кнопки прев/пауза/наступний), поки відео не почалось, - потім
-    // плавно зникає, відкриваючи чисте відео.
     .hs-yt-cover {
         position: absolute;
         inset: 0;
@@ -4000,9 +3872,6 @@ button {
     letter-spacing: -1px;
     font-size: clamp(56px, 14vw, 96px);
     text-shadow: 0 2px 22px rgba(0, 0, 0, 0.5);
-    // Заголовок переноситься на два рядки (і на великих, і на малих екранах),
-    // обидва рядки вирівняні по одній лівій лінії. Ширина в ch масштабується
-    // зі шрифтом, тож двослівний заголовок переноситься стабільно.
     max-width: 10ch;
     overflow-wrap: break-word;
 
@@ -4071,12 +3940,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ШАПКА-ОВЕРЛЕЙ (скляна, поверх hero; твердне при скролі)
-// =====================================================================
-// Шапка над hero - завжди суцільно біла, така сама, як при скролі.
-// Лишаємо тільки фіксоване позиціонування (щоб hero-верстка не змінилась);
-// фон, тінь і колір тексту успадковуються від базового .site-header (білий).
 .site-header--overlay {
     position: fixed;
     top: 0;
@@ -4084,9 +3947,6 @@ button {
     right: 0;
 }
 
-// =====================================================================
-//  КАТАЛОГ: швидкий вибір, перемикач вигляду, 2 колонки, список
-// =====================================================================
 .catalog-quick {
     display: flex;
     gap: 12px;
@@ -4175,7 +4035,6 @@ button {
     }
 }
 
-// Каталог - три колонки (сітка)
 .catalog-grid {
     grid-template-columns: repeat(3, 1fr);
 
@@ -4188,7 +4047,6 @@ button {
     }
 }
 
-// Режим списку
 .catalog-grid.is-list {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -4197,9 +4055,6 @@ button {
         flex-direction: row;
     }
 
-    // Фото в режимі списку - фіксована ширина, а висота тягнеться на весь
-    // рядок (align-self: stretch), щоб під фото не лишалася біла смуга, коли
-    // права колонка вища. min-height тримає нижню межу для коротких рядків.
     .cat-prod__media {
         flex: 0 0 168px;
         align-self: stretch;
@@ -4225,14 +4080,10 @@ button {
         display: none;
     }
 
-    // У списку прибираємо бейджі з фото - показуємо їх окремим рядком
-    // над характеристиками (див. .cat-prod__meta нижче), щоб не перекривати фото.
     .cat-prod__promos {
         display: none;
     }
 
-    // У режимі списку звичайний компактний вигляд ховаємо -
-    // показуємо натомість колонки характеристик (як у прайс-таблиці).
     .cat-prod__head,
     .cat-prod__model,
     .cat-prod__specs,
@@ -4240,11 +4091,6 @@ button {
         display: none;
     }
 
-    // Характеристики в один ряд, коли є місце; якщо не вміщаються (напр.
-    // відкриті фільтри) - переносяться, щоб не виштовхувати ціну/кошик.
-    // Прайс-таблиця: фіксовані колонки, тож значення в усіх рядках
-    // вишиковуються стовпчик під стовпчиком (Артикул / Розмір / Бренд /
-    // Профіль / LI-SI-PR / TL-TT).
     .cat-prod__listspecs {
         display: grid;
         grid-template-columns: 0.9fr 0.9fr 1fr 1.3fr 0.9fr 0.6fr;
@@ -4270,7 +4116,6 @@ button {
         }
     }
 
-    // Тіло - у два стовпці: інфо + ціна/кнопки
     .cat-prod__body {
         flex-direction: row;
         align-items: center;
@@ -4288,8 +4133,6 @@ button {
         min-width: 0;
     }
 
-    // Бейджі промо - біля ціни (перший елемент правої колонки .cat-prod__buy).
-    // Доставка перша; якщо не влазять в один рядок - переносяться (доставка зверху).
     .cat-prod__meta {
         display: flex;
         justify-content: flex-end;
@@ -4300,7 +4143,6 @@ button {
         }
     }
 
-    // Права колонка: наявність + ціна + кошик акуратно вирівняні праворуч.
     .cat-prod__buy {
         flex: 0 0 190px;
         margin-top: 0;
@@ -4325,8 +4167,6 @@ button {
         }
     }
 
-    // Трохи менша ціна в списку - щоб «від 24 300 грн» вміщалась поруч із
-    // кошиком в один рядок (кошик не переноситься), і рядки лишались однакові.
     .cat-prod__price {
         margin-bottom: 0;
         flex: 0 1 auto;
@@ -4334,7 +4174,6 @@ button {
     }
 }
 
-// Колонки характеристик (прайс-таблиця) - лише у режимі списку
 .cat-prod__listspecs {
     display: none;
 }
@@ -4365,16 +4204,10 @@ button {
     }
 }
 
-// «Специфікація» - на всю ширину рядка, щоб значення не переносилось.
 .cat-prod__listspecs .lf--spec {
     grid-column: 1 / -1;
 }
 
-// =====================================================================
-//  СТОРІНКА «ПРО НАС»
-// =====================================================================
-
-// Спільні дрібні елементи сторінки
 .about-kicker {
     display: inline-block;
     margin-bottom: 10px;
@@ -4403,21 +4236,12 @@ button {
     }
 }
 
-// --- HERO ------------------------------------------------------------
 .about-hero {
     position: relative;
     display: flex;
-    // Контент по центру, а не приклеєний до низу - щоб на високих
-    // екранах не було великого порожнього простору зверху.
     align-items: center;
-    // Заповнюємо рівно висоту екрана: на великих моніторах немає білої
-    // смуги знизу, на невисоких - герой не «вилазить» за екран.
-    // svh (small viewport height) стабільний і не стрибає під мобільні панелі.
     min-height: 100vh;
     min-height: 100svh;
-    // верхній відступ враховує прозору шапку, що накладається зверху.
-    // Трохи більший верхній відступ опускає контент нижче на великих екранах;
-    // на невеликих пристроях діє окремий (менший) відступ нижче.
     padding: 205px 0 48px;
     color: #fff;
     overflow: hidden;
@@ -4463,7 +4287,6 @@ button {
         max-width: 760px;
         text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
 
-        // Увесь заголовок білий (без червоного акценту).
         span {
             color: #fff;
         }
@@ -4490,8 +4313,6 @@ button {
         gap: 14px;
         margin-top: 28px;
 
-        // Моб.: кнопки однакової ширини, кожна на всю ширину рядка - щоб
-        // довгий номер телефону не вилазив за межі кнопки.
         @media (max-width: $bp-sm) {
             gap: 10px;
 
@@ -4575,9 +4396,6 @@ button {
     }
 }
 
-// --- ХТО МИ ----------------------------------------------------------
-// Клипимо горизонтальний зсув AOS-анімацій (fade-left/right), щоб до
-// спрацювання анімації не з'являвся горизонтальний скрол сторінки.
 .about-intro {
     overflow-x: clip;
 }
@@ -4653,12 +4471,6 @@ button {
     margin-bottom: 14px;
 }
 
-// СТОРІНКА «ПРО НАС»: усі заголовки - один чорний колір і не жирні
-// (без червоних акцентів). Скоуп по body.page-about, тож інші сторінки
-// (та спільні партіали на них) лишаються як були.
-// СТОРІНКИ «ПРО НАС» і «БЛОГ»: заголовки - один чорний колір і не жирні,
-// дрібні eyebrow-надписи теж чорні (без червоних акцентів).
-// Червоний пілл на hero (.about-eyebrow) не чіпаємо.
 .page-about,
 .page-blog {
     .section-title {
@@ -4675,7 +4487,6 @@ button {
     }
 }
 
-// Лише «Про нас»: заголовок блоку довіри - теж не жирний.
 .page-about .about-trust__title {
     font-weight: 500;
 }
@@ -4697,7 +4508,6 @@ button {
             font-weight: 400;
         }
 
-        // Іконка-галочка закріплена зліва, текст тече як звичайне речення.
         svg {
             position: absolute;
             left: 0;
@@ -4712,7 +4522,6 @@ button {
     }
 }
 
-// --- РЕБРЕНДИНГ: інтерактивний слайдер «до / після» ----------------
 .ba {
     position: relative;
     height: 300px;
@@ -4748,7 +4557,6 @@ button {
     &__pane--new {
         background: radial-gradient(130% 150% at 100% 0%, $red-soft, #fff 60%);
 
-        // Трохи нижче - щоб нове лого ідеально збіглося зі старим при порівнянні.
         img {
             transform: translateY(8px);
         }
@@ -4786,7 +4594,6 @@ button {
         }
     }
 
-    // Роздільник + ручка (візуальні, події ловить рамка).
     &__divider {
         position: absolute;
         top: 0;
@@ -4819,7 +4626,6 @@ button {
     }
 }
 
-// Пункти «що змінилось / що лишилось».
 .rebrand__points {
     display: flex;
     flex-wrap: wrap;
@@ -4844,7 +4650,6 @@ button {
         white-space: nowrap;
     }
 
-    // Мобільний - кожен пункт на всю ширину, стовпчиком, вміст по центру.
     @media (max-width: $bp-sm) {
         li {
             flex: 1 1 100%;
@@ -4869,7 +4674,6 @@ button {
     }
 }
 
-// --- ЛІЧИЛЬНИК ДОСВІДУ ----------------------------------------------
 .about-counter {
     background: $ink-2;
     color: #fff;
@@ -4944,7 +4748,6 @@ button {
     }
 }
 
-// --- ПЕРЕВАГИ --------------------------------------------------------
 .about-values {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -4991,7 +4794,6 @@ button {
         }
     }
 
-    // Сучасна мікровзаємодія: іконка заливається на ховері.
     &:hover &__icon {
         background: $red;
         color: #fff;
@@ -5011,19 +4813,16 @@ button {
         color: $muted;
     }
 
-    // Моб.: контент по центру (як верхній заголовок секції).
     @media (max-width: $bp-md) {
         text-align: center;
     }
 }
 
-// --- БРЕНДИ (рухома стрічка) ----------------------------------------
 .about-brands-sec {
     background: #fff;
     overflow: hidden;
 }
 
-// Ряд логотипів брендів (кольорові, з company-logo).
 .about-logos {
     margin: 36px 0 30px;
     display: flex;
@@ -5050,12 +4849,9 @@ button {
     }
 }
 
-// Стрічка логотипів, що безшовно прокручується (marquee).
-// Тягнеться з БД - скільки б брендів не додали (7, 20, 40), виглядає рівно.
 .brand-marquee {
     margin: 34px 0 30px;
     overflow: hidden;
-    // М'яке згасання по краях, щоб лого «в'їжджали/виїжджали» плавно.
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 
@@ -5077,8 +4873,6 @@ button {
             margin: 0 22px;
         }
 
-        // За замовчуванням - сірий (знебарвлений) відтінок; на наведення
-        // логотип повертає свої оригінальні кольори.
         img {
             filter: grayscale(1);
             opacity: 0.62;
@@ -5098,12 +4892,10 @@ button {
     }
 
     to {
-        // Зсув на половину доріжки = рівно один набір (їх два) → безшовно.
         transform: translateX(-50%);
     }
 }
 
-// Без анімації для тих, хто вимкнув рух - рівна центрована сітка в один набір.
 @media (prefers-reduced-motion: reduce) {
     .brand-marquee {
         -webkit-mask-image: none;
@@ -5132,7 +4924,6 @@ button {
     flex-direction: column;
     gap: 18px;
     margin: 4px 0 36px;
-    // плавне згасання по краях
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 
@@ -5158,7 +4949,6 @@ button {
         }
     }
 
-    // пауза при наведенні
     &:hover &__track {
         animation-play-state: paused;
     }
@@ -5223,7 +5013,6 @@ button {
     }
 }
 
-// --- ЯК МИ ПРАЦЮЄМО --------------------------------------------------
 .about-steps {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -5254,7 +5043,6 @@ button {
         transform: translateY(-4px);
     }
 
-    // Номер - невеликий бейдж у куті.
     &__num {
         position: absolute;
         top: 18px;
@@ -5272,7 +5060,6 @@ button {
         font-size: 14px;
     }
 
-    // Іконка - головний акцент кроку.
     &__icon {
         display: inline-flex;
         align-items: center;
@@ -5310,12 +5097,10 @@ button {
         color: $muted;
     }
 
-    // Моб.: контент по центру (як верхній заголовок секції).
     @media (max-width: $bp-md) {
         text-align: center;
     }
 
-    // Сполучна лінія між кроками (десктоп): рівно в зазорі, на рівні центру іконки.
     &:not(:last-child)::after {
         content: "";
         position: absolute;
@@ -5331,12 +5116,9 @@ button {
     }
 }
 
-// --- НАШ ПІДХІД (Техніка → Завдання → Підбір → Результат) -----------
 .approach-flow {
     display: flex;
     align-items: center;
-    // Розтягуємо на всю ширину секції (в рівень блоків вище), а не тиснемо
-    // по центру - кроки рівномірно розходяться від краю до краю.
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 6px 4px;
@@ -5409,8 +5191,6 @@ button {
     color: $red;
 }
 
-// Мобільний: оживляємо потік - іконки послідовно «пульсують»,
-// стрілки (тут вони вертикальні) легко похитуються вниз.
 @media (max-width: $bp-sm) {
     .approach-step__icon {
         animation: approachPulse 2.6s ease-in-out infinite;
@@ -5466,7 +5246,6 @@ button {
     }
 }
 
-// --- ЧАСТІ ЗАПИТАННЯ (акордеон) ------------------------------------
 .faq {
     max-width: 820px;
     margin: 0 auto;
@@ -5534,7 +5313,6 @@ button {
     max-height: 320px;
 }
 
-// --- ОФІЦІЙНИЙ САЙТ / ДОВІРА ----------------------------------------
 .about-trust {
     position: relative;
     padding: 84px 0;
@@ -5553,8 +5331,6 @@ button {
         }
     }
 
-    // Світла заливка - фото з вивіскою проступає, але текст (темний) читається.
-    // Знизу трохи щільніше, щоб текст/кнопки були контрастними.
     &__shade {
         position: absolute;
         inset: 0;
@@ -5606,7 +5382,6 @@ button {
         margin-bottom: 16px;
     }
 
-    // Друга фраза - акцентна, темнішим напівжирним.
     &__text--accent {
         color: $ink;
         font-weight: 700;
@@ -5621,15 +5396,12 @@ button {
     }
 }
 
-// --- ГАЛЕРЕЯ ---------------------------------------------------------
-// Галерея «бенто»: велике головне фото + структурна асиметрія, з підписами.
 .about-gallery {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: 200px;
     gap: 14px;
 
-    // Асиметричний узор для 6 фото (велике перше 2×2, кілька широких).
     &__item:nth-child(1) {
         grid-column: span 2;
         grid-row: span 2;
@@ -5646,7 +5418,6 @@ button {
         grid-auto-rows: 170px;
         gap: 12px;
 
-        // На вужчому - рівна сітка 2 колонки.
         &__item:nth-child(1) {
             grid-column: auto;
             grid-row: auto;
@@ -5686,7 +5457,6 @@ button {
         }
     }
 
-    // Кнопка-лупа у куті, з'являється на ховері.
     &__zoom {
         position: absolute;
         top: 12px;
@@ -5716,7 +5486,6 @@ button {
     }
 }
 
-// --- ЛАЙТБОКС --------------------------------------------------------
 .about-lightbox {
     position: fixed;
     inset: 0;
@@ -5760,21 +5529,16 @@ button {
     }
 }
 
-// =====================================================================
-//  СТОРІНКА «КОНТАКТИ»
-// =====================================================================
 .contacts-page {
     position: relative;
     overflow: hidden;
 
-    // контент завжди над декором
     > .container {
         position: relative;
         z-index: 1;
     }
 }
 
-// Декоративні колеса на фоні (обертаються від прокрутки)
 .contacts-deco {
     position: absolute;
     inset: 0;
@@ -5847,7 +5611,6 @@ button {
     }
 }
 
-// --- Контактні картки -----------------------------------------------
 .contacts-info {
     display: flex;
     flex-direction: column;
@@ -5910,7 +5673,6 @@ button {
             line-height: 1.4;
         }
 
-        // Номери телефонів - окремі посилання (картка може містити два).
         &--link {
             align-self: flex-start;
             transition: color 0.2s ease;
@@ -5939,7 +5701,6 @@ button {
         }
     }
 
-    // Клікабельні картки (тел/email) трохи піднімаються
     &[href]:hover {
         border-color: transparent;
         box-shadow: $shadow-md;
@@ -5968,9 +5729,6 @@ button {
     }
 }
 
-// --- Месенджери та соцмережі -----------------------------------------
-// Однотипні монохромні іконки без фону (Telegram, Viber, WhatsApp,
-// Facebook, YouTube, Instagram) - єдиний стиль, акцент кольором на hover.
 .contact-channels {
     margin-top: 6px;
 
@@ -6009,7 +5767,6 @@ button {
     }
 }
 
-// --- Форма заявки ----------------------------------------------------
 .contacts-form {
     padding: 32px;
     background: #fff;
@@ -6100,7 +5857,6 @@ button {
         text-align: center;
     }
 
-    // Екран подяки після відправлення
     &__success {
         text-align: center;
         padding: 26px 10px;
@@ -6137,7 +5893,6 @@ button {
     }
 }
 
-// --- Карта -----------------------------------------------------------
 .contacts-map {
     margin-top: 28px;
     border: 1px solid $line;
@@ -6157,9 +5912,6 @@ button {
     }
 }
 
-// =====================================================================
-//  СТОРІНКА ТОВАРУ (детальна картка)
-// =====================================================================
 .product {
     padding: 8px 0 70px;
 
@@ -6168,7 +5920,6 @@ button {
     }
 }
 
-// Клік по фото/назві картки веде на сторінку товару
 .cat-prod__photolink {
     display: contents;
 }
@@ -6194,7 +5945,6 @@ button {
     }
 }
 
-// --- Галерея ---------------------------------------------------------
 .product-gallery {
     &__main {
         position: relative;
@@ -6216,13 +5966,11 @@ button {
             transition: transform 0.18s ease;
         }
 
-        // Можна збільшити: курсор-лупа, а на наведенні фото зумиться за курсором.
         &.is-zoomable {
             cursor: zoom-in;
         }
     }
 
-    // Значок-підказка «збільшити» у куті головного фото.
     &__zoom {
         position: absolute;
         bottom: 12px;
@@ -6245,7 +5993,6 @@ button {
         }
     }
 
-    // Під час зуму ховаємо підказку, щоб не заважала.
     &__main.is-zoom &__zoom {
         opacity: 0;
     }
@@ -6265,9 +6012,6 @@ button {
         align-items: flex-start;
         gap: 6px;
 
-        // Ієрархія «від масивного до дрібного»: доставка → промо → відсоток.
-        // Доставка - найбільша; відсоток лишається читабельним (10px), а «легшим»
-        // за інші його робить короткий вміст, а не дрібний шрифт.
         .promo--ship {
             font-size: 11px;
             padding: 5px 11px;
@@ -6309,8 +6053,6 @@ button {
     }
 }
 
-// Повноекранний перегляд фото товару: біле вікно із шапкою (назва + хрестик),
-// щоб кнопку закриття було чітко видно, особливо на мобільному.
 .product-lightbox {
     position: fixed;
     inset: 0;
@@ -6390,10 +6132,8 @@ button {
     }
 
     &__body {
-        // Десктоп: висота за фото (вікно центроване, не схлопується).
         flex: 0 1 auto;
         min-height: 0;
-        // Фото ніколи не «вилазить» за межі області (не перекриває шапку/крапки).
         overflow: hidden;
         display: flex;
         align-items: center;
@@ -6406,15 +6146,11 @@ button {
             width: auto;
             height: auto;
             max-width: 100%;
-            // Вписуємо у вікно за висотою напряму (десктоп: 90vh мінус шапка+крапки),
-            // щоб не залежати від «схлопування» flex-висоти - фото ніколи не вилазить.
             max-height: calc(90vh - 150px);
             object-fit: contain;
         }
     }
 
-    // Мобільний: вікно на весь екран, фото тягнеться й центрується у вільному
-    // просторі, за висотою екрана мінус шапка/крапки.
     @media (max-width: $bp-sm) {
         &__body {
             flex: 1 1 auto;
@@ -6452,14 +6188,12 @@ button {
     }
 }
 
-// --- Основна інформація ---------------------------------------------
 .product-main__head {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 16px;
 
-    // Заголовок може стискатись/переноситись, лого бренду - ні (не наїжджають).
     > div:first-child {
         min-width: 0;
     }
@@ -6481,7 +6215,6 @@ button {
         font-size: 24px;
     }
 
-    // Тип товару у заголовку (диск/камера…) завжди чорний - без червоного акценту.
     &__type.is-accent {
         color: $ink;
     }
@@ -6542,7 +6275,6 @@ button {
     margin: 18px 0 22px;
 }
 
-// Кнопка «розгорнути/згорнути» - спільна для характеристик і опису.
 .product-highlights__toggle,
 .product-desc__toggle {
     display: inline-flex;
@@ -6604,7 +6336,6 @@ button {
     }
 }
 
-// --- Блок купівлі ----------------------------------------------------
 .product-buy {
     padding: 22px;
     background: #fff;
@@ -6680,8 +6411,6 @@ button {
         height: 46px;
     }
 
-    // На вузьких екранах кнопка кошика тягнеться й забирає вільне місце,
-    // щоб рядок (лічильник + кошик + обране + порівняння) вмістився в екран.
     @media (max-width: $bp-sm) {
         gap: 10px;
 
@@ -6731,7 +6460,6 @@ button {
     }
 }
 
-// Ціна + наявність в один ряд (поруч).
 .product-buy__head {
     display: flex;
     align-items: center;
@@ -6773,7 +6501,6 @@ button {
     }
 }
 
-// Компактна кнопка-кошик (лише значок) - основна дія.
 .product-buy__cart {
     flex: 0 0 auto;
     height: 46px;
@@ -6802,12 +6529,10 @@ button {
     }
 }
 
-// Обране/порівняння - праворуч від кнопки купівлі.
 .product-buy__cart + .product-buy__icon {
     margin-left: auto;
 }
 
-// Іконкові кнопки «в обране» / «порівняння» - лише значок.
 .product-buy__icon {
     flex-shrink: 0;
     width: 46px;
@@ -6937,7 +6662,6 @@ button {
     }
 }
 
-// --- Секції характеристик / сумісності ------------------------------
 .product-section {
     margin-top: 40px;
 }
@@ -7018,9 +6742,6 @@ button {
     }
 }
 
-// =====================================================================
-//  КОШИК / ОБРАНЕ
-// =====================================================================
 .page-title {
     font-family: $font-head;
     font-weight: 800;
@@ -7094,7 +6815,6 @@ button {
     }
 }
 
-// Кошик: вертикально - товари зверху, оформлення знизу
 .cart {
     display: flex;
     flex-direction: column;
@@ -7275,9 +6995,6 @@ button {
         }
     }
 
-    // На мобільному flex-wrap розкидав елементи хаотично («товар з'їжджав
-    // у бік»). Фіксуємо чіткою сіткою: фото зліва, назва + видалити зверху,
-    // кількість + ціна знизу.
     @media (max-width: $bp-sm) {
         display: grid;
         grid-template-columns: 64px minmax(0, 1fr) auto;
@@ -7393,7 +7110,6 @@ button {
         min-height: 56px;
     }
 
-    // Поле з підписом
     .cart-field {
         display: block;
 
@@ -7450,14 +7166,10 @@ button {
     }
 }
 
-// Підсумок замовлення в кошику
 .cart-totals {
     margin-bottom: 18px;
 }
 
-// --- Обране ----------------------------------------------------------
-// Обгортка картки обраного: розтягуємо .cat-prod на всю висоту рядка,
-// щоб усі картки в ряду були однакової довжини (як у каталозі).
 .fav-item {
     display: flex;
 
@@ -7555,7 +7267,6 @@ button {
         letter-spacing: 0.3px;
     }
 
-    // Низ картки - ціна + компактна кнопка кошика в один ряд (як у каталозі).
     &__buyline {
         margin-top: auto;
         padding-top: 8px;
@@ -7576,7 +7287,6 @@ button {
             color: $muted;
         }
 
-        // «Уточнюйте» - в колір ціни (темний), не червоний.
         .muted {
             font-weight: 600;
             font-size: 14px;
@@ -7584,7 +7294,6 @@ button {
         }
     }
 
-    // Компактна кнопка кошика (як .cat-prod__cart).
     &__cart {
         flex-shrink: 0;
         width: 46px;
@@ -7610,7 +7319,6 @@ button {
     }
 }
 
-// --- Доповнення до сторінки товару -----------------------------------
 .product-buy__tocart {
     display: inline-block;
     margin-top: 10px;
@@ -7632,7 +7340,6 @@ button {
     gap: 10px;
     margin-top: 12px;
 
-    // «В обране» і «Порівняти» - рівної ширини в один ряд.
     .product-buy__fav,
     .product-buy__compare {
         flex: 1 1 0;
@@ -7640,7 +7347,6 @@ button {
         justify-content: center;
     }
 
-    // Телефон - окремим рядком на всю ширину.
     .product-buy__call {
         flex: 1 1 100%;
         margin-top: 0;
@@ -7684,16 +7390,12 @@ button {
     }
 }
 
-// Стан «у кошику» для кнопки-кошика в картці
 .cat-prod__cart.added {
     background: $red;
     border-color: $red;
     color: #fff;
 }
 
-// =====================================================================
-//  ТОСТ «ДОДАНО В КОШИК»
-// =====================================================================
 .cart-toast {
     position: fixed;
     z-index: 1200;
@@ -7808,9 +7510,6 @@ button {
     }
 }
 
-// =====================================================================
-//  МОДАЛКА ПІДТВЕРДЖЕННЯ (фронт)
-// =====================================================================
 .modal {
     position: fixed;
     inset: 0;
@@ -7861,9 +7560,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ІНФО-СТОРІНКИ (доставка, повернення, гарантія, політика)
-// =====================================================================
 .info-page {
     &__wrap {
         max-width: 820px;
@@ -7946,9 +7642,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ВИПАДАЮЧИЙ ПОШУК (підказки в навігації)
-// =====================================================================
 .search-field {
     position: relative;
 }
@@ -8034,9 +7727,6 @@ button {
     }
 }
 
-// =====================================================================
-//  АКТИВНІ ФІЛЬТРИ (чипи) у каталозі
-// =====================================================================
 .active-filters {
     display: flex;
     flex-wrap: wrap;
@@ -8081,9 +7771,6 @@ button {
     }
 }
 
-// =====================================================================
-//  ТИПИ ТОВАРУ (вкладки-пілюлі у каталозі)
-// =====================================================================
 .catalog-types {
     display: flex;
     flex-wrap: wrap;
@@ -8114,9 +7801,6 @@ button {
     }
 }
 
-// =====================================================================
-//  МЕГА-МЕНЮ «КАТАЛОГ» (десктоп, по наведенню)
-// =====================================================================
 .nav-mega {
     position: relative;
 
@@ -8218,7 +7902,6 @@ button {
     }
 }
 
-// Текст мега-меню завжди темний (перебиваємо білий колір overlay-шапки)
 .site-header .header-nav .mega__col a {
     color: $ink;
 }
@@ -8232,7 +7915,6 @@ button {
     color: $red;
 }
 
-/* ============================ БЛОГ ============================ */
 .container--narrow {
     max-width: 1000px;
 }
@@ -8397,7 +8079,6 @@ button {
     }
 }
 
-/* ------------------------ Стаття ----------------------------- */
 .blog-post {
     &__head {
         margin: 22px 0 26px;
@@ -8436,25 +8117,19 @@ button {
         line-height: 1.75;
         color: $text;
         text-align: justify;
-        // Довгі слова / URL із редактора не вилазять за межі колонки.
         overflow-wrap: break-word;
         word-break: break-word;
 
-        // На вузьких екранах justify лишає некрасиві дірки - вирівнюємо ліворуч.
         @media (max-width: $bp-sm) {
             font-size: 16px;
             text-align: left;
         }
 
-        // Trix зберігає абзаци як <div>, тож відступи - і для p, і для div.
         p,
         > div {
             margin: 0 0 16px;
         }
 
-        // Зображення, вставлені в текст (Trix attachment): показуємо як
-        // чисту картинку на всю ширину - без підпису з іменем файлу та
-        // без посилання на файл (старий контент ще містить <a href>).
         figure.attachment {
             margin: 14px 0 24px;
             text-align: center;
@@ -8522,12 +8197,10 @@ button {
             margin: 8px 0 24px;
         }
 
-        // Trix іноді зберігає ширину attachment інлайн - не даємо вилазити.
         figure.attachment {
             max-width: 100% !important;
         }
 
-        // Вбудовані відео / карти / об'єкти - адаптивні.
         iframe,
         video,
         embed,
@@ -8535,8 +8208,6 @@ button {
             max-width: 100%;
         }
 
-        // Широкі таблиці та код із редактора - горизонтальний скрол
-        // всередині блоку замість виходу за межі екрана.
         .table-wrap,
         pre {
             max-width: 100%;
@@ -8583,7 +8254,6 @@ button {
     }
 }
 
-/* ============ АЛЬТЕРНАТИВНІ ШИНИ (картка товару) ============= */
 .alt-links {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -8646,14 +8316,11 @@ button {
     }
 }
 
-/* ====== Єдиний CTA у каталозі (стиль footer-cta) ============= */
 .footer-cta--catalog {
     margin-top: 36px;
     margin-bottom: 0;
 }
 
-/* ======================= ПОРІВНЯННЯ ========================== */
-/* Кнопка «порівняти» на картці товару - під кнопкою обраного. */
 .cat-prod__compare {
     position: absolute;
     top: 52px;
@@ -8692,7 +8359,6 @@ button {
     }
 }
 
-/* Кнопка «порівняти» на сторінці товару (поряд з «В обране»). */
 .product-buy__compare {
     flex: 0 0 auto;
     display: inline-flex;
@@ -8722,8 +8388,6 @@ button {
     }
 }
 
-
-/* Сторінка порівняння. */
 .compare {
     &__head {
         display: flex;
@@ -8756,7 +8420,6 @@ button {
         margin-top: 26px;
         flex-wrap: wrap;
 
-        // На мобільному кнопки - в стовпчик і на всю ширину (однакові).
         @media (max-width: $bp-sm) {
             flex-direction: column;
 
@@ -8767,7 +8430,6 @@ button {
     }
 }
 
-// Підказка «гортайте таблицю» на сторінці порівняння (переважно мобільні).
 .compare-hint {
     display: flex;
     align-items: center;
@@ -8832,7 +8494,6 @@ button {
         border-bottom: none;
     }
 
-    // Перша колонка (назви характеристик) - липка при горизонт. прокрутці.
     &__corner,
     &__label {
         position: sticky;
@@ -8849,9 +8510,6 @@ button {
         background: #fff;
     }
 
-    // Зебра: смуги через рядок на всю ширину (враховуючи липку першу колонку).
-    // Шапка (картки товарів) - біла; далі чергуємо, починаючи з сірого.
-    // Це базовий варіант (без JS / до ініціалізації Alpine).
     tbody tr:nth-child(odd) > * {
         background: $bg-soft;
     }
@@ -8860,9 +8518,6 @@ button {
         background: #fff;
     }
 
-    // Коли активний фільтр «Лише відмінності», приховані рядки випадають, і
-    // nth-child «збивається». Тому смуги перераховує JS за видимими рядками
-    // (клас .is-alt), а тут лише вимикаємо базову зебру на користь JS-версії.
     &.is-js-zebra {
         tbody tr > * {
             background: #fff;
@@ -8959,7 +8614,6 @@ button {
         }
     }
 
-    // Ряд «ціна + компактна кнопка кошика» - по центру колонки.
     &__buyline {
         display: inline-flex;
         align-items: center;
@@ -8992,8 +8646,6 @@ button {
     }
 }
 
-
-/* Швидкі посилання (Обране / Порівняння) у мобільному меню. */
 .mm-quick {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -9038,19 +8690,16 @@ button {
     }
 }
 
-/* Неактивна кнопка (напр. «Перейти до порівняння» поки обрано <2 шин). */
 .btn.is-disabled {
     opacity: 0.5;
     pointer-events: none;
 }
 
-/* ===== Опис / Думка експерта / Фото «в роботі» (стор. товару) ===== */
 .product-prose {
     font-size: 15px;
     line-height: 1.7;
     color: $text;
 
-    // Згорнутий стан: показуємо частину, решту ховаємо з плавним затуханням.
     &.is-clamp {
         max-height: 260px;
         overflow: hidden;
@@ -9063,7 +8712,6 @@ button {
         text-align: justify;
     }
 
-    // Підзаголовки розділів структурного опису (Ключові переваги тощо).
     h2,
     h3 {
         font-family: $font-head;
@@ -9087,7 +8735,6 @@ button {
         }
     }
 
-    // Маркери-«галочки» для списків переваг - чітка SVG-іконка (рівна).
     ul {
         list-style: none;
         padding-left: 0;
@@ -9109,7 +8756,6 @@ button {
         }
     }
 
-    // Списки переваг - у дві колонки, щоб не було «стіни» з галочок.
     .prose-checks {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -9155,7 +8801,6 @@ button {
         gap: 12px;
     }
 
-    // Іконка-лампочка без кружечка - сіра/темно-сіра.
     &__badge {
         flex: none;
         color: $muted;
@@ -9230,7 +8875,6 @@ button {
         line-height: 1.4;
     }
 
-    // Техніка - клікабельна (усі застосування «в роботі»).
     &__mach {
         display: inline;
         font-family: $font-head;
@@ -9267,7 +8911,6 @@ button {
     }
 }
 
-/* Повне найменування товару (стор. товару). */
 .product-fullname {
     margin: 14px 0 0;
     padding: 11px 14px;
@@ -9290,7 +8933,6 @@ button {
     }
 }
 
-/* Бейдж відсотка знижки на картці («-10%»). */
 .cat-prod__disc.promo {
     background: $red;
     color: #fff;
@@ -9300,7 +8942,6 @@ button {
     padding: 4px 10px;
 }
 
-/* Знижка на сторінці товару: стара ціна + бейдж % + економія. */
 .product-price__oldrow {
     display: flex;
     align-items: center;
@@ -9328,7 +8969,6 @@ button {
     color: $ok;
 }
 
-/* Бейдж відсотка знижки на фото товару («-20%»). */
 .promo--disc {
     background: $red;
     color: #fff;
@@ -9336,12 +8976,9 @@ button {
     font-weight: 800;
 }
 
-/* ============ Сторінка «Шини в роботі» (in-work) ============= */
 .in-work__head {
     margin-bottom: 28px;
 
-    // Заголовок на всю ширину (не тиснемо у вузьку колонку).
-    // Спокійніше: менше жирності, назва техніки - темна (не червона).
     .section-title {
         margin: 6px 0 12px;
         font-weight: 700;
@@ -9351,12 +8988,10 @@ button {
         }
     }
 
-    // Кікер «Реальні приклади» - сірий, без червоного.
     .about-kicker {
         color: $muted;
     }
 
-    // Лише підзаголовок тримаємо вужчим - для зручного читання.
     .about-sub {
         max-width: 680px;
     }
@@ -9477,7 +9112,6 @@ button {
     }
 }
 
-/* ============ Select із пошуком (searchSelect) =============== */
 .ssel {
     position: relative;
     min-width: 0;
@@ -9519,7 +9153,6 @@ button {
         white-space: nowrap;
     }
 
-    // Плейсхолдер (нічого не обрано) - приглушено.
     &__btn:not(.is-set) &__val {
         color: $muted;
     }
@@ -9528,9 +9161,6 @@ button {
         border-color: $red;
     }
 
-    // ── Випадаюча панель ──────────────────────────────────────
-    // z-index вище за липкий сайдбар фільтрів (600), але нижче за шапку (1000),
-    // щоб дропдаун не ховався під боковою панеллю.
     &__panel {
         position: absolute;
         top: calc(100% + 6px);
@@ -9616,13 +9246,11 @@ button {
         font-size: 14px;
     }
 
-    // Затемнення - лише на мобільних (bottom-sheet).
     &__backdrop {
         display: none;
     }
 }
 
-// Тема тёмного фільтра на головній (hero).
 .filter-bar .ssel {
     &__btn {
         background: #fff;
@@ -9648,12 +9276,10 @@ button {
     }
 }
 
-// Каталог: селекти в ряд рівної ширини.
 .catalog-quick__selects .ssel {
     flex: 1;
 }
 
-// ── Мобільний: панель стає нижнім листом (bottom-sheet) ───────
 @media (max-width: $bp-sm) {
     .ssel__backdrop {
         display: block;
@@ -9673,7 +9299,6 @@ button {
         border-radius: $radius-lg $radius-lg 0 0;
         border: none;
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.28);
-        // Фіксована висота - панель не «стрибає» під час пошуку/фільтрації.
         height: 72vh;
         display: flex;
         flex-direction: column;

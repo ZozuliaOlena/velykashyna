@@ -4,7 +4,6 @@
         <button wire:click="openCreate">+ Додати заявку</button>
     </div>
 
-
     <div class="lead-tabs">
         <button type="button" @class(['lead-tab', 'is-active' => $tab === 'active'])
             wire:click="setTab('active')">

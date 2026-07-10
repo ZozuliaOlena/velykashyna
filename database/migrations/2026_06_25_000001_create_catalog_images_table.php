@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Каталожне (не "живе") фото - одне зображення може належати кільком товарам.
+        
         Schema::create('catalog_images', function (Blueprint $table) {
             $table->id();
-            $table->string('label')->nullable(); // підпис для зручного вибору
+            $table->string('label')->nullable(); 
             $table->timestamps();
         });
 

@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->string('excerpt')->nullable();   // короткий опис для списку
-            $table->longText('content')->nullable();  // основний текст статті
+            $table->string('excerpt')->nullable();   
+            $table->longText('content')->nullable();  
 
             $table->boolean('is_published')->default(false);
             $table->timestamp('published_at')->nullable();

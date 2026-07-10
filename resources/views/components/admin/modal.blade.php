@@ -1,22 +1,5 @@
 @props(['title' => null, 'wide' => false])
 
-{{--
-    Уніфікована модалка адмінки.
-    Закриття по кліку на тло:
-      • якщо у формі нічого не змінювали - закриваємо одразу;
-      • якщо є незбережені зміни - спершу запитуємо підтвердження
-        (через глобальну <x-admin.confirm-modal/>).
-    Усі модалки закриваються через властивість Livewire `showModal`.
-
-    Використання:
-        <x-admin.modal title="Заголовок" :wide="true">
-            ...поля форми (кожен <div> - клітинка сітки; .is-full - на всю ширину)...
-            <x-slot:footer>
-                <button wire:click="save">Зберегти</button>
-                <button wire:click="$set('showModal', false)">Скасувати</button>
-            </x-slot:footer>
-        </x-admin.modal>
---}}
 <div class="admin-modal"
      x-data="{
         snapshot: '',

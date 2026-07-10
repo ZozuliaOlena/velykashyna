@@ -58,7 +58,6 @@ class HomeController extends Controller
     {
         $options = $this->facetOptions(['machinery' => null, 'diameter' => null, 'brand' => null, 'size' => null]);
 
-        // Якщо товарів ще немає - підставляємо демо-списки, щоб бар не був порожнім.
         if (empty($options['machinery']) && empty($options['brands']) && empty($options['sizes'])) {
             $mk = fn (array $v) => collect($v)->map(fn ($n) => ['value' => $n, 'label' => $n])->all();
             $options = [
@@ -94,7 +93,7 @@ class HomeController extends Controller
             $q->whereHas('machineryCompatibility.machineryType', fn ($x) => $x->where('name', $sel['machinery']));
         }
         if ($except !== 'diameter' && ! empty($sel['diameter'])) {
-            // Значення виду «R32» → числовий посадковий діаметр.
+            
             $num = (float) preg_replace('/[^0-9.]/', '', (string) $sel['diameter']);
             if ($num > 0) {
                 $q->where('rim_diameter', $num);
@@ -126,9 +125,8 @@ class HomeController extends Controller
         $q = Product::query()->where('is_active', true)->whereNotNull('rim_diameter');
         $this->applyFilters($q, $sel, 'diameter');
 
-        // Лише цифра посадкового діаметра, без «R» (R - це радіальна конструкція
-        // шини, у діаметрі літера технічно зайва). Значення = мітці; каталог
-        // усе одно парсить цифри при фільтрації.
+        
+        
         return $q->distinct()->orderBy('rim_diameter')->pluck('rim_diameter')
             ->map(fn ($d) => (string) (int) $d)
             ->unique()->values()

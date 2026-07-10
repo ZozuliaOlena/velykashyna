@@ -65,7 +65,7 @@ class SiteContacts extends Component
         Setting::set('contact_email', trim((string) $this->email) ?: null);
         Setting::set('contact_address', trim((string) $this->address) ?: null);
         Setting::set('contact_map_query', trim((string) $this->mapQuery) ?: null);
-        // Приймаємо і повний код <iframe…>, і src - зберігаємо лише чистий URL (укр.).
+        
         Setting::set('contact_map_embed', \App\Support\MapEmbed::src($this->mapEmbed));
 
         foreach (self::SOCIALS as $key => $label) {

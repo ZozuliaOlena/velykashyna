@@ -9,9 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            // Структурований опис за фіксованим шаблоном (розділи: опис,
-            // переваги, переваги над конкурентами, особливості, чому придбати).
-            // З нього збирається готовий HTML у полі `description`.
+
+            
             $table->json('description_blocks')->nullable()->after('description');
         });
     }

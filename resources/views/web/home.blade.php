@@ -1,11 +1,9 @@
-{{-- resources/views/web/home.blade.php --}}
 @extends('layouts.app')
 
 @php($years = now()->year - config('site.founded_year'))
 @php($stats = config('site.stats'))
 @php($foundedDate = config('site.founded_date'))
 
-{{-- Категорії: з БД ($dbCategories), інакше - демо-заглушка. --}}
 @php($categoriesFallback = [
 ['name' => 'Тракторні', 'count' => 'Понад 8 000 позицій', 'img' => 'MICHELIN MEGAXBIB.jpg'],
 ['name' => 'Комбайні', 'count' => 'Понад 3 000 позицій', 'img' => 'Michelin XMCL.jpg'],
@@ -17,9 +15,6 @@
 @php($categories = !empty($dbCategories ?? []) ? $dbCategories : $categoriesFallback)
 
 @section('content')
-{{-- ===================== HERO-СЛАЙДЕР ======================= --}}
-{{-- Слайди керуються в адмінці («Налаштування сайту»). Якщо їх ще немає -
-     показуємо стандартні (як було), щоб шапка не була порожньою. --}}
 @php($slides = (! empty($heroSlides)) ? $heroSlides : [
     ['title' => 'ВЕЛИКА ДОВІРА', 'subtitle' => $years . ' років досвіду', 'type' => 'video', 'src' => '/images/details/slide1.mp4', 'poster' => '/images/details/slide1.png'],
     ['title' => 'ВЕЛИКИЙ СКЛАД', 'subtitle' => 'офіційні поставки з усього світу', 'type' => 'video', 'src' => '/images/details/slide2.mp4', 'poster' => '/images/details/kara.png'],
@@ -28,7 +23,6 @@
 <section class="hero-slider" x-data="heroSlider(@js(array_map(fn ($s) => ['title' => $s['title'] ?? '', 'subtitle' => $s['subtitle'] ?? ''], $slides)))"
     @mouseenter="stop()" @mouseleave="start()"
     @pointerdown="dragStart($event)" @pointermove="dragMove($event)" @pointerup="dragEnd($event)" @pointercancel="dragEnd($event)">
-    {{-- Стрічка з клонами для безшовного циклу: [клон останнього][реальні][клон першого] --}}
     @php($sv = array_values($slides))
     @php($loop = count($sv) > 1 ? array_merge([$sv[count($sv) - 1]], $sv, [$sv[0]]) : $sv)
     <div class="hs-bg" :style="trackStyle()" @if(count($sv) > 1) style="transform:translateX(-100%)" @endif>
@@ -38,7 +32,6 @@
                     <iframe class="hs-media" tabindex="-1" frameborder="0" allow="autoplay; encrypted-media"
                         style="pointer-events:none; border:0"
                         src="https://www.youtube.com/embed/{{ $s['src'] }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $s['src'] }}&playsinline=1&modestbranding=1&rel=0&showinfo=0&cc_load_policy=0&iv_load_policy=3&disablekb=1&fs=0"></iframe>
-                    {{-- Обкладинка (превью YouTube) ховає стартовий хром плеєра, поки відео не почалось; далі зникає. --}}
                     <span class="hs-yt-cover" style="background-image:url('https://i.ytimg.com/vi/{{ $s['src'] }}/maxresdefault.jpg')"></span>
                 @elseif(($s['type'] ?? 'image') === 'video' && ! empty($s['src']))
                     <video class="hs-media" muted loop playsinline preload="none" @if(! empty($s['poster'])) poster="{{ $s['poster'] }}" @endif>
@@ -72,7 +65,6 @@
     </div>
 </section>
 
-{{-- ========================= ФІЛЬТР ============================ --}}
 @php($chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <polyline points="6 9 12 15 18 9" />
 </svg>')
@@ -116,7 +108,6 @@
     </div>
 </div>
 
-{{-- ===================== ДЛЯ ВАШОЇ ТЕХНІКИ ===================== --}}
 <section class="section machinery" x-data="dragScroll()">
     <div class="container">
         <div class="section-head" data-aos="fade-up">
@@ -133,7 +124,6 @@
                 @pointerdown="dragStart($event)" @pointermove="dragMove($event)"
                 @pointerup="dragEnd()" @pointerleave="dragEnd()" @pointercancel="dragEnd()"
                 @click.capture="dragClick($event)">
-            {{-- Техніка: з БД ($dbMachinery), інакше - демо-заглушка. --}}
             @php($machineryFallback = [
             ['name' => 'Трактори', 'icon' => '/images/svg/tehnics/tractor.svg', 'url' => route('catalog')],
             ['name' => 'Комбайни', 'icon' => '/images/svg/tehnics/combine.svg', 'url' => route('catalog')],
@@ -161,11 +151,8 @@
     </div>
 </section>
 
-{{-- ================= ЛІЧИЛЬНИК ДОСВІДУ ======================== --}}
 @include('partials.experience-counter')
 
-{{-- ================== КАТАЛОГ ШИН (товари) =================== --}}
-{{-- Товари: з БД ($dbProducts), інакше - демо-заглушка. --}}
 @php($productsFallback = [
 ['brand' => 'Michelin', 'model' => 'XMCL', 'size' => '460/70 R24', 'constr' => 'Радіальна (TL)', 'li' => '159A8', 'app' => 'Навантажувачі', 'stock' => true, 'img' => 'Michelin XMCL.jpg', 'price_mode' => 'fixed', 'price' => 47800, 'promos' => ['Акція', 'Безкоштовна доставка']],
 ['brand' => 'Michelin', 'model' => 'MegaXBib', 'size' => '620/75 R30', 'constr' => 'Радіальна (TL)', 'li' => '170D', 'app' => 'Комбайни', 'stock' => false, 'img' => 'MICHELIN MEGAXBIB.jpg', 'price_mode' => 'inquiry'],
@@ -196,7 +183,6 @@
     </div>
 </section>
 
-{{-- ======================= ПЕРЕВАГИ =========================== --}}
 <section class="section features">
     <div class="container">
         <div class="features-grid">
@@ -249,7 +235,6 @@
     </div>
 </section>
 
-{{-- ==================== ЧОМУ ВЕЛИКА ШИНА ====================== --}}
 <section class="section">
     <div class="container">
         <div class="section-head" data-aos="fade-up" style="flex-direction:column;align-items:flex-start;gap:8px">
@@ -259,7 +244,7 @@
         @php($why = [
         ['p' => 'Великий', 't' => 'Досвід', 'd' => 'Працюємо з ' . config('site.founded_year') . ' року. Знаємо шини та техніку не з каталогу, а з практики.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>'],
         ['p' => 'Велика', 't' => 'Довіра', 'd' => 'Нам довіряють клієнти, які працюють з нами роками.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/user-shield.svg\');mask-image:url(\'/images/svg/others/user-shield.svg\')"></span>'],
-        ['p' => 'Велика', 't' => 'Відповідальність', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
+        ['p' => 'Велика', 't' => 'Турбота', 'd' => 'Підбираємо шини під задачу, а не просто продаємо товар.', 'ico' => '<span class="mask-ico" style="-webkit-mask-image:url(\'/images/svg/others/handshake.svg\');mask-image:url(\'/images/svg/others/handshake.svg\')"></span>'],
         ['p' => 'Велика', 't' => 'Порядність', 'd' => 'Чесно радимо те, що дійсно підходить і працює.', 'ico' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="8" r="6" />
             <path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5" />
@@ -283,7 +268,6 @@
     </div>
 </section>
 
-{{-- ======================== CTA БАНЕР ========================= --}}
 <section class="section">
     <div class="container">
         <div class="cta-band" data-aos="fade-up">

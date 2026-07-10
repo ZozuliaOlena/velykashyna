@@ -1,6 +1,5 @@
 <?php
 
-// app/Models/ProductMachineryCompatibility.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

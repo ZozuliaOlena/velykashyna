@@ -46,7 +46,6 @@ class ProductsImportSheet implements ToCollection
             return;
         }
 
-        // EAV-колонки: заголовки, що збігаються з назвою характеристики
         $attributes = Attribute::all();
         $attrByName = $attributes->keyBy(fn ($a) => mb_strtolower(trim($a->name)));
         $attrColumns = [];
@@ -73,7 +72,6 @@ class ProductsImportSheet implements ToCollection
                 $isNew = true;
                 $product = new Product(['sku' => $sku]);
 
-                // обов'язкові для створення
                 $name = $this->val($row, 'Найменування');
                 $typeCode = $this->val($row, 'Тип');
                 if ($name === null || $typeCode === null) {
@@ -162,9 +160,8 @@ class ProductsImportSheet implements ToCollection
             $product->slug = $this->uniqueSlug($v, $product->id);
         }
 
-        // Основне фото за іменем файлу: один файл - багато товарів.
-        // Приймаємо і нову назву колонки «Основне фото», і стару «Каталожне
-        // фото» - для сумісності зі старими файлами.
+        
+        
         $photoCol = $this->has('основне фото') ? 'основне фото'
             : ($this->has('каталожне фото') ? 'каталожне фото' : null);
         if ($photoCol) {
@@ -183,7 +180,7 @@ class ProductsImportSheet implements ToCollection
     private function applyCategories(Product $product, Collection $row): void
     {
         if (! $this->has('категорії')) {
-            return; // колонки немає - не чіпаємо прив'язки
+            return; 
         }
         $value = $this->val($row, 'Категорії');
         if ($value === null) {
@@ -202,7 +199,7 @@ class ProductsImportSheet implements ToCollection
     private function applyAttributes(Product $product, Collection $row, array $attrColumns): void
     {
         foreach ($attrColumns as $attr) {
-            // лише власні для типу або спільні
+            
             if ($attr->product_type_id !== null && $attr->product_type_id !== $product->product_type_id) {
                 continue;
             }

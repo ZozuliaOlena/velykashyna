@@ -17,17 +17,14 @@ class SitemapController extends Controller
     {
         $urls = collect();
 
-        // Головна + каталог + блог (список).
         $urls->push(['loc' => url('/'), 'changefreq' => 'daily', 'priority' => '1.0']);
         $urls->push(['loc' => route('catalog'), 'changefreq' => 'daily', 'priority' => '0.9']);
         $urls->push(['loc' => route('blog.index'), 'changefreq' => 'weekly', 'priority' => '0.6']);
 
-        // Статичні сторінки.
         foreach (['about', 'contacts', 'pages.delivery', 'pages.returns', 'pages.warranty', 'pages.privacy'] as $name) {
             $urls->push(['loc' => route($name), 'changefreq' => 'monthly', 'priority' => '0.5']);
         }
 
-        // Активні категорії каталогу (сторінки фільтра за категорією).
         Category::query()
             ->where('is_active', true)
             ->whereNotNull('slug')
@@ -40,7 +37,6 @@ class SitemapController extends Controller
                 'priority'   => '0.7',
             ]));
 
-        // Усі активні товари.
         Product::query()
             ->where('is_active', true)
             ->whereNotNull('slug')
@@ -55,7 +51,6 @@ class SitemapController extends Controller
                 ]);
             });
 
-        // Опубліковані статті блогу.
         Post::published()
             ->orderBy('id')
             ->get(['slug', 'updated_at'])

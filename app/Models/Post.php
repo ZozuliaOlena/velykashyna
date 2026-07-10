@@ -34,7 +34,7 @@ class Post extends Model implements HasMedia
 
     public function getSlugOptions(): SlugOptions
     {
-        // slug із заголовка лише при створенні; на оновленні - керує форма.
+        
         return SlugOptions::create()
             ->generateSlugsFrom(fn (self $model) => Translit::uk($model->title))
             ->saveSlugsTo('slug')
@@ -43,7 +43,7 @@ class Post extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        // одне головне фото статті
+        
         $this->addMediaCollection('image')->singleFile();
     }
 

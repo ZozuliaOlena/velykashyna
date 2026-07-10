@@ -10,23 +10,22 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('sku')->unique();                 // Артикул
+            $table->string('sku')->unique();                 
             $table->foreignId('product_type_id')->constrained();
-            $table->string('name');                          // Найменування
+            $table->string('name');                          
             $table->foreignId('brand_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('model')->nullable();              // Протектор / модель
+            $table->string('model')->nullable();              
 
-            // Типорозмір: рядок як є + розкладені поля під фільтр
-            $table->string('size_raw')->nullable();           // "710/70R38", "23.1-26"...
-            $table->decimal('size_width', 7, 2)->nullable();  // ширина
-            $table->decimal('size_profile', 7, 2)->nullable();// профіль (буває відсутній)
-            $table->decimal('rim_diameter', 7, 2)->nullable();// посадковий діаметр
+            $table->string('size_raw')->nullable();           
+            $table->decimal('size_width', 7, 2)->nullable();  
+            $table->decimal('size_profile', 7, 2)->nullable();
+            $table->decimal('rim_diameter', 7, 2)->nullable();
 
-            $table->string('rd_type', 1)->nullable();         // R / D
-            $table->string('tube_type', 2)->nullable();       // TT / TL
-            $table->string('ply_rating', 10)->nullable();     // PR
-            $table->string('load_speed_index', 30)->nullable(); // LI/SS
-            $table->string('specification')->nullable();      // STEEL BELTED і т.п.
+            $table->string('rd_type', 1)->nullable();         
+            $table->string('tube_type', 2)->nullable();       
+            $table->string('ply_rating', 10)->nullable();     
+            $table->string('load_speed_index', 30)->nullable(); 
+            $table->string('specification')->nullable();      
 
             $table->enum('stock_status', ['in_stock', 'on_order', 'inquiry'])
                 ->default('inquiry');
@@ -44,19 +43,17 @@ return new class extends Migration
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->string('seo_h1')->nullable();
-            $table->string('slug')->unique();                 // spatie/laravel-sluggable
+            $table->string('slug')->unique();                 
 
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
 
-            // фасетний фільтр (ширина+профіль+діаметр разом)
             $table->index(['size_width', 'size_profile', 'rim_diameter'], 'idx_size_filter');
             $table->index('stock_status');
             $table->index('merchant_enabled');
         });
 
-        // швидкий текстовий пошук по розміру/назві/артикулу (в т.ч. нестандартні формати)
         \Illuminate\Support\Facades\DB::statement(
             'ALTER TABLE products ADD FULLTEXT idx_products_search (sku, name, size_raw)'
         );

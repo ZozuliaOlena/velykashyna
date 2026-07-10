@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('attributes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_type_id')->nullable()
-                ->constrained()->nullOnDelete(); // null = спільний для всіх типів
+                ->constrained()->nullOnDelete(); 
             $table->string('code');
             $table->string('name');
             $table->enum('data_type', ['text', 'number', 'select', 'boolean']);

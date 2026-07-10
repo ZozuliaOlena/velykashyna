@@ -6,7 +6,6 @@
         <button wire:click="openCreate">{{ $addLabel }}</button>
     </div>
 
-
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук...">
     </div>

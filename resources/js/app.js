@@ -3,7 +3,6 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 document.addEventListener('alpine:init', () => {
-    // Глобальний UI-стан (мобільне меню + пошук).
     Alpine.store('ui', {
         menu: false,
         search: false,
@@ -28,7 +27,6 @@ document.addEventListener('alpine:init', () => {
         },
     });
 
-    // Кошик (гостьовий, у localStorage; оформлення → /api/leads).
     Alpine.store('cart', {
         items: JSON.parse(localStorage.getItem('cart') || '[]'),
         save() {
@@ -46,7 +44,6 @@ document.addEventListener('alpine:init', () => {
             if (ex) ex.qty += qty;
             else this.items.push({ ...item, qty });
             this.save();
-            // сповіщення (тост) про додавання
             window.dispatchEvent(new CustomEvent('cart-added', { detail: { ...item, qty } }));
         },
         setQty(id, qty) {
@@ -75,7 +72,6 @@ document.addEventListener('alpine:init', () => {
         },
     });
 
-    // Обране (гостьове, у localStorage).
     Alpine.store('fav', {
         items: JSON.parse(localStorage.getItem('fav') || '[]'),
         save() {
@@ -99,7 +95,6 @@ document.addEventListener('alpine:init', () => {
         },
     });
 
-    // Порівняння (гостьове, у localStorage). Максимум 4 шини.
     Alpine.store('compare', {
         items: JSON.parse(localStorage.getItem('compare') || '[]'),
         max: 3,
@@ -130,7 +125,6 @@ document.addEventListener('alpine:init', () => {
             this.items = this.items.filter((i) => i.id !== id);
             this.save();
         },
-        // Доповнюємо стор даними з сервера (коли заходять за прямим /compare?ids=).
         seed(cards) {
             if (this.items.length || !Array.isArray(cards)) return;
             this.items = cards.filter((c) => c && c.id);
@@ -151,14 +145,6 @@ document.addEventListener('alpine:init', () => {
         },
     });
 
-    /**
-     * Повноекранний hero-слайдер (відео/зображення) з автопрогортанням.
-     * Грає лише активне відео, решта - на паузі.
-     */
-    // Нескінченна карусель. У DOM стрічка з клонами:
-    // [клон останнього][реальні 0..n-1][клон першого]. pos - позиція у стрічці.
-    // Доїжджаємо на клон плавно, потім миттєво (noAnim) стрибаємо на реальний
-    // слайд - стик непомітний, тож немає ні чорного екрана, ні ривка.
     Alpine.data('heroSlider', (slides) => ({
         slides,
         pos: 1,
@@ -173,7 +159,6 @@ document.addEventListener('alpine:init', () => {
         get looped() {
             return this.n > 1;
         },
-        // Логічний індекс активного слайда (для тексту/прогрес-барів).
         get active() {
             if (!this.looped) return 0;
             return ((this.pos - 1) % this.n + this.n) % this.n;
@@ -206,7 +191,6 @@ document.addEventListener('alpine:init', () => {
             this.pos++;
             this.playActive();
             if (this.pos === this.n + 1) {
-                // з'їхали на клон першого - після переходу стрибаємо на реальний перший
                 setTimeout(() => { if (this.pos === this.n + 1) this._snap(1); }, 520);
             }
         },
@@ -223,7 +207,6 @@ document.addEventListener('alpine:init', () => {
             this.playActive();
             this.start();
         },
-        // Перетягування мишею/пальцем - стрічка їде за вказівником.
         dragStart(e) {
             this._startX = e.clientX;
             this.dragging = true;
@@ -245,8 +228,6 @@ document.addEventListener('alpine:init', () => {
             this.start();
         },
         playActive() {
-            // Відтворюємо відео слайда, що зараз у кадрі (за DOM-позицією pos,
-            // включно з клонами), решту ставимо на паузу.
             this.$root.querySelectorAll('.hs-slide').forEach((el, i) => {
                 const v = el.querySelector('video');
                 if (!v) return;
@@ -263,12 +244,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Стан UI каталогу. view (сітка/список) та згорнутість фільтрів
-     * зберігаються у localStorage, щоб не скидались під час пагінації
-     * (повне перезавантаження сторінки). filtersOpen (моб. шторка) - ні.
-     */
-    // Слайдер «до / після» для логотипу (перетягуй роздільник).
     Alpine.data('logoReveal', () => ({
         pos: 50,
         drag: false,
@@ -302,11 +277,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Живий лічильник результатів фільтра каталогу.
-     * ПК: біля щойно зміненого пункту спливає кнопка «Показати N товарів»
-     * (по кліку застосовує фільтр). Моб.: число оновлюється на нижній кнопці.
-     */
     Alpine.data('catalogFilter', (endpoint, initial) => ({
         count: initial,
         loading: false,
@@ -314,7 +284,6 @@ document.addEventListener('alpine:init', () => {
         pill: { show: false, x: 0, y: 0 },
 
         onChange(e) {
-            // реагуємо лише на чекбокси фільтрів (не на пошукові поля груп)
             if (e.target.type !== 'checkbox') return;
             this.loading = true; // одразу ховаємо стару цифру (показуємо «…»)
             this.positionPill(e);
@@ -343,17 +312,12 @@ document.addEventListener('alpine:init', () => {
                 });
                 this.count = (await res.json()).count;
             } catch (e) {
-                // тихо ігноруємо
             } finally {
                 this.loading = false;
             }
         },
     }));
 
-    /**
-     * Живий (випадаючий) пошук у навігації: на введення підвантажує
-     * товари-підказки й показує дропдаун. Enter - звичайний сабміт у каталог.
-     */
     Alpine.data('liveSearch', (endpoint, catalogUrl) => ({
         q: '',
         items: [],
@@ -400,9 +364,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Підтвердження видалення зі стора ($store[name]) через модалку.
-     */
     Alpine.data('removeConfirm', (storeName) => ({
         confirm: { open: false, id: null, name: '' },
         askRemove(i) {
@@ -417,11 +378,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Обране: підтягуємо повні каталожні картки з сервера за ID зі стору
-     * (localStorage), щоб обране виглядало так само, як каталог. Зняття
-     * «сердечка» ховає картку (x-show у розмітці фрагмента).
-     */
     Alpine.data('favCards', (endpoint) => ({
         confirm: { open: false, id: null, name: '' },
         async load() {
@@ -440,7 +396,6 @@ document.addEventListener('alpine:init', () => {
                 grid.innerHTML = '';
             }
         },
-        // Запит на видалення (з картки прилітає подія fav-remove з item).
         askRemove(item) {
             if (!item || !item.id) return;
             this.confirm = { open: true, id: item.id, name: (item.size + ' ' + (item.brand || '')).trim() };
@@ -454,10 +409,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Тост «додано в кошик»: вискакує на подію cart-added,
-     * пропонує перейти в кошик або продовжити покупки.
-     */
     Alpine.data('cartToast', (cartUrl) => ({
         cartUrl,
         open: false,
@@ -475,7 +426,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    // Тост «Додано до порівняння» (у стилі тосту кошика).
     Alpine.data('compareToast', () => ({
         open: false,
         limit: false,
@@ -500,9 +450,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Оформлення кошика в заявку (сторінка /cart → /api/leads).
-     */
     Alpine.data('cartCheckout', (endpoint) => ({
         sent: false,
         loading: false,
@@ -520,8 +467,6 @@ document.addEventListener('alpine:init', () => {
         },
 
         get isPickup() {
-            // Самовивіз визначаємо за словом у назві, а не за точним рядком -
-            // тоді спосіб доставки можна перейменувати в адмінці без поломки.
             return (this.form.delivery || '').toLowerCase().includes('самовивіз');
         },
         get deliveryCost() {
@@ -541,7 +486,6 @@ document.addEventListener('alpine:init', () => {
         async submit() {
             const items = this.$store.cart.items;
             if (!items.length) return;
-            // Телефон обов'язковий - перевіряємо реальні цифри (а не «+38»).
             const digits = this.form.phone.replace(/\D/g, '');
             if (!this.form.name.trim() || digits.length < 10) {
                 this.error = 'Вкажіть імʼя та коректний номер телефону.';
@@ -566,7 +510,6 @@ document.addEventListener('alpine:init', () => {
                 });
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) {
-                    // Показуємо конкретну помилку сервера (напр. про телефон).
                     this.error = data?.errors?.phone?.[0] || data?.errors?.customer_name?.[0]
                         || data?.message || 'Не вдалося оформити замовлення. Спробуйте ще раз або зателефонуйте нам.';
                     return;
@@ -574,8 +517,6 @@ document.addEventListener('alpine:init', () => {
                 this.orderId = data.lead_id;
                 this.sent = true;
                 this.$store.cart.clear();
-                // Прокручуємо до блоку «Дякуємо», щоб користувач одразу його бачив
-                // (інакше сторінка «стрибає» вниз, бо кошик зник).
                 this.$nextTick(() => {
                     this.$refs.done?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 });
@@ -587,10 +528,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Форма «Залишити заявку» (контакти): надсилає заявку-консультацію
-     * на публічний endpoint (source='consultation' → окремий тип в адмінці).
-     */
     Alpine.data('consultationForm', (endpoint) => ({
         sent: false,
         loading: false,
@@ -624,10 +561,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Горизонтальна стрічка вкладок зі стрілками.
-     * Стрілки показуються лише коли контент не вміщується.
-     */
     Alpine.data('tabsScroller', () => ({
         canLeft: false,
         canRight: false,
@@ -648,7 +581,6 @@ document.addEventListener('alpine:init', () => {
         scroll(dir) {
             this.$refs.track.scrollBy({ left: dir * 240, behavior: 'smooth' });
         },
-        // Свайп-перетягування мишею (тач лишаємо нативному скролу).
         dragStart(e) {
             if (e.pointerType === 'touch') return;
             this._down = true;
@@ -678,13 +610,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Фасетний фільтр на головній: тип техніки / категорія / бренд / розмір.
-     * Усі поля завжди активні й працюють у будь-який бік - можна почати з
-     * бренду, з розміру чи з техніки. Після зміни будь-якого поля з БД
-     * підвантажуються доступні опції для решти полів (з урахуванням вибору),
-     * а вибір, що став неможливим, скидається.
-     */
     Alpine.data('homeFilter', (init) => ({
         endpoint: init.endpoint,
         machinery: '',
@@ -697,7 +622,6 @@ document.addEventListener('alpine:init', () => {
         sizeOptions: init.sizes || [],
         loading: false,
 
-        // Відповідність поля → масив його опцій.
         optsOf(field) {
             return {
                 machinery: this.machineryOptions,
@@ -709,8 +633,6 @@ document.addEventListener('alpine:init', () => {
 
         async refresh(changed) {
             await this.load();
-            // Якщо якесь поле (окрім щойно зміненого) стало недоступним -
-            // скидаємо його й перезавантажуємо опції ще раз.
             if (this.prune(changed)) {
                 await this.load();
             }
@@ -733,7 +655,6 @@ document.addEventListener('alpine:init', () => {
                 this.brandOptions = data.brands || [];
                 this.sizeOptions = data.sizes || [];
             } catch (e) {
-                // тихо ігноруємо - селекти лишаються в поточному стані
             } finally {
                 this.loading = false;
             }
@@ -758,17 +679,12 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Горизонтальний скрол перетягуванням мишею (свайп, як на тачі).
-     * Тач лишаємо нативному скролу. Елемент зі скролом - x-ref="track".
-     */
     Alpine.data('dragScroll', () => ({
         _down: false,
         _startX: 0,
         _startLeft: 0,
         _moved: false,
 
-        // Прокрутка стрілками (крок ~ ширина видимої області).
         scroll(dir) {
             const t = this.$refs.track;
             const step = Math.max(240, Math.round(t.clientWidth * 0.8));
@@ -793,7 +709,6 @@ document.addEventListener('alpine:init', () => {
             this._down = false;
             this.$refs.track.classList.remove('is-dragging');
         },
-        // Якщо тягнули - не переходимо за посиланням картки.
         dragClick(e) {
             if (this._moved) {
                 e.preventDefault();
@@ -803,19 +718,12 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Select із пошуком усередині (для фільтрів з багатьма значеннями:
-     * розмір, бренд тощо). Керує лише станом відкриття/пошуку - самі опції
-     * та вибір лишаються у розмітці (щоб працювало і зі статичними
-     * посиланнями каталогу, і з реактивними опціями каскаду головної).
-     */
     Alpine.data('searchSelect', (config = {}) => ({
         open: false,
         term: '',
         placeholder: config.placeholder || 'Виберіть',
         options: config.options || null,
 
-        // Статичні опції, відфільтровані пошуком (для каталогу).
         filtered() {
             return (this.options || []).filter((o) => this.matches(o.label));
         },
@@ -836,7 +744,6 @@ document.addEventListener('alpine:init', () => {
             this.term = '';
             document.body.classList.remove('ssel-open');
         },
-        // Чи підходить підпис опції під поточний пошук (без регістру).
         matches(label) {
             const t = this.term.trim().toLowerCase();
             if (!t) return true;
@@ -844,18 +751,12 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Підсумковий лічильник: повна кількість РОКІВ / ДНІВ / ГОДИН
-     * з дати заснування (числа з пробілами-роздільниками).
-     */
     Alpine.data('experienceStats', (startIso) => ({
         years: 0,
         days: '0',
         hours: '0',
         _started: false,
         init() {
-            // Ефект: числа «набігають» від 0, коли блок з'являється у в'юпорті,
-            // після чого продовжують оновлюватись щосекунди.
             if (!('IntersectionObserver' in window)) {
                 this.startTick();
                 return;
@@ -910,11 +811,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /**
-     * Лічильник досвіду роботи компанії.
-     * Рахує точну кількість років / днів / годин / хвилин від дати
-     * заснування і оновлюється щосекунди.
-     */
     Alpine.data('experienceCounter', (startIso) => ({
         years: 0,
         days: 0,
@@ -964,7 +860,6 @@ document.addEventListener('DOMContentLoaded', () => {
         disable: window.innerWidth < 768,
     });
 
-    // Висота липкої шапки → CSS-змінна (для липких тулбара/фільтрів).
     const setHeaderH = () => {
         const h = document.querySelector('.site-header')?.offsetHeight || 0;
         document.documentElement.style.setProperty('--header-h', h + 'px');

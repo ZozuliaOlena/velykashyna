@@ -1,7 +1,6 @@
 <div>
     <h1>Імпорт / Експорт</h1>
 
-
     <fieldset style="margin-top:1rem">
         <legend><strong>Google Merchant (фід)</strong></legend>
         <p style="color:#666">

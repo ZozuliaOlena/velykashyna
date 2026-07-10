@@ -77,7 +77,6 @@ class ProductsSheet implements FromArray, WithHeadings, WithTitle
                 $p->catalogImage?->filename,
             ];
 
-            // значення характеристик за attribute_id
             $byAttr = $p->attributeValues->keyBy('attribute_id');
             foreach ($this->attributes as $attr) {
                 $v = $byAttr->get($attr->id);

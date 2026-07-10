@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('machinery_brands', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // John Deere, Case IH...
+            $table->string('name'); 
             $table->timestamps();
         });
     }

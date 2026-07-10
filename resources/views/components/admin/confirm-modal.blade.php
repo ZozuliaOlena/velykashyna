@@ -1,12 +1,3 @@
-{{--
-    Глобальна модалка підтвердження дій.
-    Працює в парі з атрибутом data-confirm та перехоплювачем у resources/js/admin.js:
-    клік по будь-якому елементу з [data-confirm] перехоплюється, показується ця
-    модалка, і лише після «Так» дія реально виконується (повторний клік).
-
-    Приклад:
-        <button wire:click="delete({{ $id }})" data-confirm="Ви дійсно хочете видалити товар?">Видалити</button>
---}}
 <div class="admin-modal admin-confirm" x-cloak style="display:none"
      x-data="{ show: false, message: '', accept: null }"
      x-show="show"

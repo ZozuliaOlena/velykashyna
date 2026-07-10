@@ -33,7 +33,7 @@ trait WithAdminToast
     public function exception($e, $stopPropagation): void
     {
         if ($e instanceof ValidationException) {
-            return; // валідація показує помилки під полями - не чіпаємо
+            return; 
         }
 
         report($e);

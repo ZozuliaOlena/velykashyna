@@ -54,12 +54,11 @@ class ProductPhotoArchive
     /** @return array{0: ?Product, 1: string} */
     private function match(string $filename): array
     {
-        // точний збіг імені = артикул → основне
+        
         if ($product = Product::where('sku', $filename)->first()) {
             return [$product, 'main'];
         }
 
-        // "<sku>_2" або "<sku>-2" → додаткове
         if (preg_match('/^(.*)[_-]\d+$/u', $filename, $m)) {
             if ($product = Product::where('sku', $m[1])->first()) {
                 return [$product, 'gallery'];

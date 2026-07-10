@@ -1,4 +1,3 @@
-{{-- resources/views/partials/header.blade.php --}}
 @php($c = config('site.contacts'))
 
 @php($phoneIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>')
@@ -11,7 +10,6 @@
     x-data="{ scrolled: false }" @scroll.window.throttle.50ms="scrolled = window.scrollY > 80"
     :class="{ 'is-scrolled': scrolled }">
     <div class="container">
-        {{-- ============== ДЕСКТОП: верхній ярус ============== --}}
         <div class="header-top">
             <a href="{{ route('home') }}" class="header-logo" aria-label="ВЕЛИКА ШИНА">
                 <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" />
@@ -54,7 +52,6 @@
             </div>
         </div>
 
-        {{-- ============== ДЕСКТОП: нижній ярус (навігація + категорії) ============== --}}
         <div class="header-bar">
             @php($typeActive = fn ($code) => request()->routeIs('catalog') && in_array($code, (array) request('type', []), true) ? 'is-active' : '')
             <nav class="header-nav">
@@ -79,7 +76,6 @@
             @endif
         </div>
 
-        {{-- ============== МОБІЛЬНИЙ ============== --}}
         <div class="header-mobile">
             <a href="{{ route('home') }}" class="hm-logo" aria-label="ВЕЛИКА ШИНА">
                 <img src="/images/logo.png" alt="ВЕЛИКА ШИНА" />

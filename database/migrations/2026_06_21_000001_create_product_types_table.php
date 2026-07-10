@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('product_types', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();   // tire, tube, disk, flap, valve, ring
-            $table->string('name');             // Шина, Камера, Диск, Флап...
+            $table->string('code')->unique();   
+            $table->string('name');             
             $table->timestamps();
         });
     }

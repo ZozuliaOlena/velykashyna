@@ -33,21 +33,18 @@ class AppServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        //
+        
     }
 
     public function boot(): void
     {
-        // Контакти й соцмережі, задані в адмінці, перекривають дефолти з
-        // config/site.php - тож усі в'юхи (config('site...')) показують
-        // актуальні значення без жодних змін у самих в'юхах.
+
+        
         $this->applySiteContacts();
 
-        // Пошта (SMTP), задана в адмінці, перекриває config/mail (і .env).
         \App\Support\MailSettings::apply();
 
-        // Дані меню каталогу (типи / техніка / категорії) для шапки й
-        // мобільного меню; $headerLinks - топ-3 техніки для чипів.
+        
         View::composer(['partials.header', 'partials.mobile-menu', 'partials.footer'], function ($view) {
             $menu = $this->catalogMenu();
             $view->with('catalogMenu', $menu);
@@ -62,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
      */
     private function applySiteContacts(): void
     {
-        // Не чіпаємо під час консольних команд/міграцій (БД може бути ще не готова).
+        
         if ($this->app->runningInConsole()) {
             return;
         }
@@ -94,15 +91,14 @@ class AppServiceProvider extends ServiceProvider
             config(['site.contacts.map_query' => $mq]);
         }
         if ($me = $val('contact_map_embed')) {
-            // Приймаємо і повний <iframe>, і лише src - витягуємо посилання.
+            
             if (preg_match('~src="([^"]+)"~', $me, $m)) {
                 $me = $m[1];
             }
             config(['site.contacts.map_embed' => $me]);
         }
 
-        // Соцмережі: значення з адмінки перекриває дефолт; порожнє або "#"
-        // нормалізуємо до null - щоб порожнє посилання не показувалось на сайті.
+        
         $socials = (array) config('site.socials', []);
         foreach (array_keys($socials) as $soc) {
             $link = $val("social_{$soc}") ?? $socials[$soc];
@@ -140,7 +136,6 @@ class AppServiceProvider extends ServiceProvider
                 'url' => route('catalog', ['category' => $c->slug]),
             ])->all();
 
-            // Чипи в шапці - головні підкатегорії «Шини» у фіксованому порядку.
             $chipSlugs = ['agroshyna', 'spetsshyna', 'vantazhni-shyny'];
             $chips = Category::query()
                 ->where('is_active', true)
