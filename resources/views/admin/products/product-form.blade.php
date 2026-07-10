@@ -17,7 +17,7 @@
 
             <div>
                 <label>Тип товару *</label><br>
-                <x-admin.select model="product_type_id" placeholder="— Оберіть —"
+                <x-admin.select model="product_type_id" placeholder="- Оберіть -"
                     :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
                 @error('product_type_id') <span style="color:red">{{ $message }}</span> @enderror
             </div>
@@ -30,7 +30,7 @@
 
             <div>
                 <label>Виробник</label><br>
-                <x-admin.select model="brand_id" placeholder="— Не вказано —" :live="false"
+                <x-admin.select model="brand_id" placeholder="- Не вказано -" :live="false"
                     :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
                 @error('brand_id') <span style="color:red">{{ $message }}</span> @enderror
             </div>
@@ -68,7 +68,7 @@
                 <div>
                     <label>R/D</label><br>
                     <select wire:model="rd_type" style="width:70px">
-                        <option value="">—</option>
+                        <option value="">-</option>
                         <option value="R">R</option>
                         <option value="D">D</option>
                     </select>
@@ -79,7 +79,7 @@
                 <div>
                     <label>TT/TL</label><br>
                     <select wire:model="tube_type" style="width:80px">
-                        <option value="">—</option>
+                        <option value="">-</option>
                         <option value="TT">TT</option>
                         <option value="TL">TL</option>
                     </select>
@@ -117,7 +117,7 @@
                         @switch($attr->data_type)
                             @case('select')
                                 <select wire:model="attrValues.{{ $attr->id }}">
-                                    <option value="">—</option>
+                                    <option value="">-</option>
                                     @foreach($attr->options as $opt)
                                         <option value="{{ $opt->id }}">{{ $opt->value }}</option>
                                     @endforeach
@@ -141,7 +141,7 @@
         <fieldset style="margin-top:1rem">
             <legend><strong>Опис товару</strong></legend>
             <p style="color:#666; margin:0 0 .75rem">
-                Заповніть розділи — заголовки фіксовані (їх не можна змінити). Зі вступу й розділів
+                Заповніть розділи - заголовки фіксовані (їх не можна змінити). Зі вступу й розділів
                 автоматично складеться готовий опис товару (для сайту та PDF).
             </p>
 
@@ -182,7 +182,7 @@
         </fieldset>
 
         <fieldset style="margin-top:1rem">
-            <legend><strong>Думка експерта «Велика Шина» / особливості</strong></legend>
+            <legend><strong>Думка експерта «ВЕЛИКА ШИНА» / особливості</strong></legend>
             <div class="is-full">
                 <textarea wire:model="expert_note" rows="5" style="width:100%; line-height:1.6"
                     placeholder="Особливості, нюанси застосування. Напр.: передня шина на екскаваторах JCB 3CX, чудово працює на твердому покритті, але на болоті забивається."></textarea>
@@ -246,7 +246,7 @@
                             <option value="amount">Сума (грн)</option>
                         </select>
                     </div>
-                    {{-- Поле розміру показуємо лише коли обрано тип — тож при
+                    {{-- Поле розміру показуємо лише коли обрано тип - тож при
                          «Без знижки» не лишається «зависла» цифра. --}}
                     @if($discount_type)
                         <div wire:key="discount-value-field">
@@ -258,18 +258,18 @@
                     @endif
                 </div>
             @else
-                <p style="color:#666">Ціна не показується — клієнт надсилає заявку менеджеру.</p>
+                <p style="color:#666">Ціна не показується - клієнт надсилає заявку менеджеру.</p>
             @endif
 
             <div style="margin-top:.75rem; display:flex; gap:1.5rem; flex-wrap:wrap">
                 <div>
                     <label>Бейдж акції / ціни</label><br>
-                    <x-admin.select model="promo_badge" :live="false" placeholder="— без бейджа"
+                    <x-admin.select model="promo_badge" :live="false" placeholder="- без бейджа"
                         :options="collect(\App\Models\Product::PROMO_BADGES)->map(fn ($b) => ['value' => $b, 'label' => $b])->all()" />
                 </div>
                 <div>
                     <label>Бейдж доставки</label><br>
-                    <x-admin.select model="shipping_badge" :live="false" placeholder="— без бейджа"
+                    <x-admin.select model="shipping_badge" :live="false" placeholder="- без бейджа"
                         :options="collect(\App\Models\Product::SHIPPING_BADGES)->map(fn ($b) => ['value' => $b, 'label' => $b])->all()" />
                 </div>
             </div>
@@ -298,15 +298,15 @@
                     <option value="{{ $c->id }}" style="{{ ($c->level === 1 || $c->is_branch) ? 'font-weight:700' : 'color:#6b7280' }}">{{ $c->tree_prefix }}{{ $c->name }}</option>
                 @endforeach
             </select>
-            <small style="color:#666">Ctrl/Cmd + клік — обрати декілька.</small>
+            <small style="color:#666">Ctrl/Cmd + клік - обрати декілька.</small>
             @error('categoryIds') <span style="color:red">{{ $message }}</span> @enderror
         </fieldset>
 
         <fieldset style="margin-top:1rem">
             <legend><strong>Сумісність з технікою</strong></legend>
             <small style="color:#666; display:block; margin-bottom:.6rem">
-                Для якої техніки підходить товар. «Тип техніки» — обов'язковий (саме він
-                показується як застосування на картці та в SEO). Решта — за бажанням.
+                Для якої техніки підходить товар. «Тип техніки» - обов'язковий (саме він
+                показується як застосування на картці та в SEO). Решта - за бажанням.
             </small>
 
             @forelse($compat as $i => $row)
@@ -315,7 +315,7 @@
                     <div>
                         <label style="font-size:12px; color:#666">Тип техніки *</label><br>
                         <select wire:model.live="compat.{{ $i }}.machinery_type_id" style="width:150px">
-                            <option value="">— оберіть —</option>
+                            <option value="">- оберіть -</option>
                             @foreach($machineryTypes as $mt)
                                 <option value="{{ $mt->id }}">{{ $mt->name }}</option>
                             @endforeach
@@ -331,7 +331,7 @@
                             ? $machineryBrands->whereIn('id', $typeBrandIds)
                             : $machineryBrands)
                         <select wire:model.live="compat.{{ $i }}.machinery_brand_id" style="width:150px">
-                            <option value="">— будь-який —</option>
+                            <option value="">- будь-який -</option>
                             @foreach($rowBrands as $mb)
                                 <option value="{{ $mb->id }}">{{ $mb->name }}</option>
                             @endforeach
@@ -343,7 +343,7 @@
                             ->when($row['machinery_brand_id'] ?? null, fn ($m) => $m->where('machinery_brand_id', $row['machinery_brand_id']))
                             ->when($row['machinery_type_id'] ?? null, fn ($m) => $m->where('machinery_type_id', $row['machinery_type_id'])))
                         <select wire:model="compat.{{ $i }}.machinery_model_id" style="width:160px">
-                            <option value="">— будь-яка —</option>
+                            <option value="">- будь-яка -</option>
                             @foreach($rowModels as $mm)
                                 <option value="{{ $mm->id }}">{{ $mm->name }}</option>
                             @endforeach
@@ -352,7 +352,7 @@
                     <div>
                         <label style="font-size:12px; color:#666">Позиція</label><br>
                         <select wire:model="compat.{{ $i }}.position_id" style="width:130px">
-                            <option value="">— будь-яка —</option>
+                            <option value="">- будь-яка -</option>
                             @foreach($machineryPositions as $mp)
                                 <option value="{{ $mp->id }}">{{ $mp->name }}</option>
                             @endforeach
@@ -372,10 +372,10 @@
             <legend><strong>Супутні товари</strong></legend>
             <select wire:model="relatedIds" multiple size="8" style="width:100%">
                 @foreach($allProducts as $p)
-                    <option value="{{ $p->id }}">{{ $p->sku }} — {{ $p->name }}</option>
+                    <option value="{{ $p->id }}">{{ $p->sku }} - {{ $p->name }}</option>
                 @endforeach
             </select>
-            <small style="color:#666">Пов'язані позиції (камери, диски, аналоги). Ctrl/Cmd + клік — декілька.</small>
+            <small style="color:#666">Пов'язані позиції (камери, диски, аналоги). Ctrl/Cmd + клік - декілька.</small>
             @error('relatedIds') <span style="color:red">{{ $message }}</span> @enderror
         </fieldset>
 
@@ -383,7 +383,7 @@
             <legend><strong>SEO</strong></legend>
             <div style="margin-bottom:.6rem">
                 <button type="button" wire:click="generateSeo">Згенерувати SEO з даних товару</button>
-                <small style="color:#666; display:block; margin-top:.25rem">Заповнить лише порожні поля. Щоб перегенерувати — очистіть поле й натисніть знову.</small>
+                <small style="color:#666; display:block; margin-top:.25rem">Заповнить лише порожні поля. Щоб перегенерувати - очистіть поле й натисніть знову.</small>
             </div>
             <div>
                 <label>Title</label><br>
@@ -399,7 +399,7 @@
             </div>
             <div>
                 <label>URL (slug)</label><br>
-                <input wire:model="slug" type="text" style="width:100%" placeholder="залиште порожнім — згенерується з назви">
+                <input wire:model="slug" type="text" style="width:100%" placeholder="залиште порожнім - згенерується з назви">
                 @error('slug') <span style="color:red">{{ $message }}</span> @enderror
             </div>
         </fieldset>
@@ -483,24 +483,24 @@
             <summary>PDF-картка (для Viber / Telegram)</summary>
             <div class="collapse-block__body">
             <p style="color:#666; margin:0 0 .5rem">
-                Кнопка відкриває готову PDF-картку товару в новій вкладці — на телефоні
-                тисніть «Поділитися» й оберіть Viber/Telegram. «Завантажити» — зберегти файл.
+                Кнопка відкриває готову PDF-картку товару в новій вкладці - на телефоні
+                тисніть «Поділитися» й оберіть Viber/Telegram. «Завантажити» - зберегти файл.
             </p>
             <ul style="color:#666; font-size:13px; margin:0 0 .9rem; padding-left:1.2rem">
-                <li><strong>Повна</strong> — фото, всі характеристики, опис, думка експерта, фото «в роботі».</li>
-                <li><strong>Коротка</strong> — лише головне: фото, основні характеристики, наявність.</li>
-                <li><strong>з ціною / без ціни</strong> — показувати ціну в картці чи ні.</li>
+                <li><strong>Повна</strong> - фото, всі характеристики, опис, думка експерта, фото «в роботі».</li>
+                <li><strong>Коротка</strong> - лише головне: фото, основні характеристики, наявність.</li>
+                <li><strong>з ціною / без ціни</strong> - показувати ціну в картці чи ні.</li>
             </ul>
 
             <div style="margin-bottom:.6rem">
                 <span style="font-size:13px; color:#555">Повна картка:</span><br>
-                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=1&mode=inline"><button type="button" class="btn-primary">Повна — з ціною</button></a>
-                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=0&mode=inline"><button type="button">Повна — без ціни</button></a>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=1&mode=inline"><button type="button" class="btn-primary">Повна - з ціною</button></a>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=0&mode=inline"><button type="button">Повна - без ціни</button></a>
             </div>
             <div>
                 <span style="font-size:13px; color:#555">Коротка картка:</span><br>
-                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=short&price=1&mode=inline"><button type="button" class="btn-primary">Коротка — з ціною</button></a>
-                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=short&price=0&mode=inline"><button type="button">Коротка — без ціни</button></a>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=short&price=1&mode=inline"><button type="button" class="btn-primary">Коротка - з ціною</button></a>
+                <a target="_blank" rel="noopener" href="{{ route('admin.products.pdf', $productId) }}?variant=short&price=0&mode=inline"><button type="button">Коротка - без ціни</button></a>
             </div>
             <div style="margin-top:.75rem; padding-top:.6rem; border-top:1px solid #eee">
                 <a href="{{ route('admin.products.pdf', $productId) }}?variant=full&price=1"><button type="button">⬇ Завантажити файл (повна з ціною)</button></a>
@@ -514,7 +514,7 @@
     @else
         <fieldset style="margin-top:1rem">
             <legend><strong>Фото «в роботі» (застосування)</strong></legend>
-            <p style="color:#666">Доступно після збереження товару — відкрийте товар на редагування, щоб додати фото з техніки.</p>
+            <p style="color:#666">Доступно після збереження товару - відкрийте товар на редагування, щоб додати фото з техніки.</p>
         </fieldset>
     @endif
 </div>

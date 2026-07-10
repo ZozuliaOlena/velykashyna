@@ -1,7 +1,7 @@
-{{-- resources/views/web/cart.blade.php — кошик (стан у localStorage) --}}
+{{-- resources/views/web/cart.blade.php - кошик (стан у localStorage) --}}
 @extends('layouts.app')
 
-@section('title', 'Кошик — ВЕЛИКА ШИНА')
+@section('title', 'Кошик - ВЕЛИКА ШИНА')
 
 @section('content')
 <section class="section cart-page" x-data="cartCheckout('{{ route('api.leads.store') }}')">
@@ -171,7 +171,7 @@
                             <b><span x-text="$store.cart.total.toLocaleString('uk-UA')"></span> грн</b>
                         </div>
                         <p class="cart-summary__note" x-show="$store.cart.hasInquiry" x-cloak>
-                            Деякі позиції — за запитом; точну ціну підтвердимо при оформленні.
+                            Деякі позиції - за запитом; точну ціну підтвердимо при оформленні.
                         </p>
                     </div>
 
@@ -180,7 +180,7 @@
                         <span x-show="loading" x-cloak>Оформлюємо…</span>
                     </button>
                     <p class="product-order__err" x-show="error" x-cloak x-text="error"></p>
-                    <p class="cart-summary__hint">Без онлайн-оплати. Вартість доставки — за тарифами перевізника,
+                    <p class="cart-summary__hint">Без онлайн-оплати. Вартість доставки - за тарифами перевізника,
                         самовивіз безкоштовний.</p>
                 </aside>
             </form>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Код для входу — Велика Шина</title>
+    <title>Код для входу - ВЕЛИКА ШИНА</title>
     <link rel="icon" href="{{ \App\Models\Setting::get('favicon') ?: '/favicon.ico' }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ \App\Models\Setting::get('favicon') ?: '/images/apple-touch-icon.png' }}">
     <style>
@@ -51,7 +51,7 @@
 <body>
     <main class="login-card">
         <div class="login-brand">
-            <img src="/images/logo.png" alt="Велика Шина">
+            <img src="/images/logo.png" alt="ВЕЛИКА ШИНА">
         </div>
 
         <h1>Підтвердження входу</h1>
@@ -76,7 +76,7 @@
             <div class="login-field">
                 <label for="code">Код з листа</label>
                 <input id="code" type="text" name="code" inputmode="numeric" autocomplete="one-time-code"
-                       maxlength="6" placeholder="——————" required autofocus>
+                       maxlength="6" placeholder="------" required autofocus>
             </div>
             <button type="submit" class="login-btn">Підтвердити</button>
         </form>

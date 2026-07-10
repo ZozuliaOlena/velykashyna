@@ -29,7 +29,7 @@
                     @if($item->iconUrl())
                         <img src="{{ $item->iconUrl() }}" alt="" class="mtype-icon" data-zoom>
                     @else
-                        <span style="color:#bbb">—</span>
+                        <span style="color:#bbb">-</span>
                     @endif
                 </td>
                 @endif

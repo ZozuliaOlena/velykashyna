@@ -1,8 +1,8 @@
-{{-- resources/views/web/in-work.blade.php — фото шин «в роботі» на техніці --}}
+{{-- resources/views/web/in-work.blade.php - фото шин «в роботі» на техніці --}}
 @extends('layouts.app')
 
-@section('title', 'Шини в роботі — ' . $label . ' | ВЕЛИКА ШИНА')
-@section('meta_description', 'Реальні фото встановлених шин на ' . $label . ' — приклади застосування з полів та інспекцій.')
+@section('title', 'Шини в роботі - ' . $label . ' | ВЕЛИКА ШИНА')
+@section('meta_description', 'Реальні фото встановлених шин на ' . $label . ' - приклади застосування з полів та інспекцій.')
 
 @section('content')
 <section class="section in-work" x-data="{ open: false, src: '', cap: '' }">
@@ -12,13 +12,13 @@
             <span class="sep">/</span>
             <a href="{{ route('catalog', ['machinery' => $model->type?->name]) }}">{{ $model->type?->name ?: 'Каталог' }}</a>
             <span class="sep">/</span>
-            <span class="current">{{ $label }} — в роботі</span>
+            <span class="current">{{ $label }} - в роботі</span>
         </nav>
 
         <div class="in-work__head">
             <span class="about-kicker">Реальні приклади</span>
-            <h1 class="section-title">Шини в роботі — <span>{{ $label }}</span></h1>
-            <p class="about-sub">Фото встановлених шин на цій техніці — з полів, складу та інспекцій. Натисніть фото, щоб збільшити.</p>
+            <h1 class="section-title">Шини в роботі - <span>{{ $label }}</span></h1>
+            <p class="about-sub">Фото встановлених шин на цій техніці - з полів, складу та інспекцій. Натисніть фото, щоб збільшити.</p>
         </div>
 
         @if ($photos->isNotEmpty())

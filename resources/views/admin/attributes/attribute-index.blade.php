@@ -7,7 +7,7 @@
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: назва, код...">
-        <x-admin.select model="filterType" placeholder="— Усі типи товарів —"
+        <x-admin.select model="filterType" placeholder="- Усі типи товарів -"
             :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
     </div>
 
@@ -23,9 +23,9 @@
                 <td data-label="Код">{{ $attr->code }}</td>
                 <td data-label="Тип товару">{{ $attr->productType?->name ?? 'Спільна' }}</td>
                 <td data-label="Тип даних">{{ $attr->data_type }}</td>
-                <td data-label="Од.">{{ $attr->unit ?? '—' }}</td>
+                <td data-label="Од.">{{ $attr->unit ?? '-' }}</td>
                 <td data-label="Фільтр">{{ $attr->is_filterable ? 'Так' : 'Ні' }}</td>
-                <td data-label="Варіантів">{{ $attr->data_type === 'select' ? $attr->options_count : '—' }}</td>
+                <td data-label="Варіантів">{{ $attr->data_type === 'select' ? $attr->options_count : '-' }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $attr->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
                     <button class="icon-btn" wire:click="delete({{ $attr->id }})" data-confirm="Ви дійсно хочете видалити характеристику?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
@@ -44,7 +44,7 @@
     <x-admin.modal :title="$editingId ? 'Редагувати характеристику' : 'Нова характеристика'" :wide="true">
         <div>
             <label>Тип товару</label>
-            <x-admin.select model="product_type_id" placeholder="— Спільна для всіх типів —" :live="false"
+            <x-admin.select model="product_type_id" placeholder="- Спільна для всіх типів -" :live="false"
                 :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
             @error('product_type_id') <span style="color:red">{{ $message }}</span> @enderror
         </div>

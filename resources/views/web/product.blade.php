@@ -1,29 +1,29 @@
-{{-- resources/views/web/product.blade.php — детальна картка товару --}}
+{{-- resources/views/web/product.blade.php - детальна картка товару --}}
 @extends('layouts.app')
 
 @php($title = $product->size_raw ?: $product->name)
 @php($subtitle = trim(($product->brand?->name ? $product->brand->name . ' ' : '') . $product->model))
-{{-- Тип товару (Шина / Диск / Камера…) — додаємо перед розміром у заголовку.
-     Лише коли заголовок — це типорозмір (інакше назва вже може містити тип). --}}
+{{-- Тип товару (Шина / Диск / Камера…) - додаємо перед розміром у заголовку.
+     Лише коли заголовок - це типорозмір (інакше назва вже може містити тип). --}}
 @php($typeName = $product->productType?->name)
 @php($typeCode = $product->productType?->code)
 @php($typePrefix = ($typeName && $product->size_raw) ? $typeName . ' ' : '')
 @php($fullName = trim($typePrefix . $title . ($subtitle ? ' ' . $subtitle : '')))
 {{-- Повне найменування (для заголовка): тип винесено окремим акцентом,
-     решта — рядком. --}}
+     решта - рядком. --}}
 @php($fullDesignation = $product->fullName())
 @php($fullRest = ($typeName && str_starts_with($fullDesignation, $typeName)) ? trim(mb_substr($fullDesignation, mb_strlen($typeName))) : $fullDesignation)
-{{-- Ціни на сайті — завжди у гривнях (валютні перераховуються за курсом exchange_rate;
-     якщо курс не заданий — показуємо «уточнюйте», а не некоректну суму). --}}
+{{-- Ціни на сайті - завжди у гривнях (валютні перераховуються за курсом exchange_rate;
+     якщо курс не заданий - показуємо «уточнюйте», а не некоректну суму). --}}
 @php($priceMode = $product->priceModeForSite())
 @php($price = $product->priceUah())
 @php($oldPrice = $product->oldPriceUah())
 @php($cur = 'грн')
-{{-- «Знижка» прибираємо — на фото показуємо бейдж відсотка («-20%»). --}}
+{{-- «Знижка» прибираємо - на фото показуємо бейдж відсотка («-20%»). --}}
 @php($promos = collect($product->cardPromos())->reject(fn ($x) => $x === 'Знижка')->values()->all())
 @php($discountBadge = $product->discount_type === 'percent' ? $product->discountLabel() : null)
 @php($promoStyles = ['Акція' => 'sale', 'Знижка' => 'discount', 'Запитуй знижку' => 'ask', 'Уточніть вашу ціну' => 'ask', 'Безкоштовна доставка' => 'ship', 'Можлива безкоштовна доставка' => 'ship'])
-{{-- Бейдж доставки — завжди зверху, як і в картці каталогу; далі відсоток, далі решта. --}}
+{{-- Бейдж доставки - завжди зверху, як і в картці каталогу; далі відсоток, далі решта. --}}
 @php($shippingBadge = collect($promos)->first(fn ($x) => in_array($x, \App\Models\Product::SHIPPING_BADGES, true)))
 @php($restPromos = array_values(array_filter($promos, fn ($x) => ! in_array($x, \App\Models\Product::SHIPPING_BADGES, true))))
 @php($brandLogos = ['Michelin' => 'michelin.svg', 'Continental' => 'continental.svg'])
@@ -44,7 +44,7 @@
 'stock' => $inStock,
 ])
 
-@section('title', $product->seo_title ?: $fullName . ' — ВЕЛИКА ШИНА')
+@section('title', $product->seo_title ?: $fullName . ' - ВЕЛИКА ШИНА')
 @section('meta_description', $product->seo_description ?: 'Купити ' . $fullName . ' у компанії ВЕЛИКА ШИНА. Підбір, консультація та доставка по Україні.')
 
 {{-- Соц-прев'ю: фото товару замість дефолтної картинки. --}}
@@ -157,7 +157,7 @@
                 @endif
 
                 {{-- Повноекранний перегляд: біле вікно із шапкою (назва + чіткий
-                     хрестик) — щоб на мобільному кнопку закриття було добре видно. --}}
+                     хрестик) - щоб на мобільному кнопку закриття було добре видно. --}}
                 @if (count($images))
                 <div class="product-lightbox" x-show="box" x-cloak x-transition.opacity
                     @click="box = false" @keydown.escape.window="box = false">
@@ -203,7 +203,7 @@
                     <span class="product-sku">Артикул: <b>{{ $product->sku }}</b></span>
                 </div>
 
-                {{-- Характеристики під назвою: показуємо перші 5, решту — за кнопкою --}}
+                {{-- Характеристики під назвою: показуємо перші 5, решту - за кнопкою --}}
                 @if (count($specs))
                 <div class="product-highlights-wrap" x-data="{ open: false }">
                     <ul class="product-highlights">
@@ -305,7 +305,7 @@
                     </div>
 
                     <a href="{{ route('cart') }}" class="product-buy__tocart" x-show="added" x-cloak x-transition>
-                        ✓ Додано — <b>перейти в кошик</b>
+                        ✓ Додано - <b>перейти в кошик</b>
                     </a>
                 </div>
             </div>
@@ -323,7 +323,7 @@
                 @if (!empty($db))
                     {{-- Рендеримо зі структурних блоків: чистимо рядки від
                          зайвих маркерів «•/-», галочки малюємо самі. --}}
-                    @php($clean = fn ($s) => trim(preg_replace('/^[\s•\-–·*]+/u', '', (string) $s)))
+                    @php($clean = fn ($s) => trim(preg_replace('/^[\s•\--·*]+/u', '', (string) $s)))
                     @php($paras = fn ($t) => collect(preg_split('/\r\n|\r|\n/', (string) $t))->map(fn ($l) => trim($l))->filter())
 
                     @foreach ($paras($db['intro'] ?? '') as $p)
@@ -358,7 +358,7 @@
                         @foreach ($paras($db['why_buy']) as $p)<p>{{ $p }}</p>@endforeach
                     @endif
                 @else
-                    {{-- Старий простий опис без блоків — текст із переносами. --}}
+                    {{-- Старий простий опис без блоків - текст із переносами. --}}
                     {!! nl2br(e($product->description)) !!}
                 @endif
             </div>
@@ -416,7 +416,7 @@
                 @php($thumb = $fp->imageUrl('thumb'))
                 @if ($thumb)
                 @php($mach = $fp->machineryLabel())
-                @php($label = trim($mach . ($fp->caption ? ($mach ? ' — ' : '') . $fp->caption : '')))
+                @php($label = trim($mach . ($fp->caption ? ($mach ? ' - ' : '') . $fp->caption : '')))
                 <figure class="field-photo">
                     <button type="button" class="field-photo__img"
                         @click="src = '{{ $fp->imageUrl('large') }}'; cap = @js($label); open = true">
@@ -456,7 +456,7 @@
         @endif
     </div>
 
-    {{-- АЛЬТЕРНАТИВНІ ШИНИ — швидкі переходи у каталог із фільтрами --}}
+    {{-- АЛЬТЕРНАТИВНІ ШИНИ - швидкі переходи у каталог із фільтрами --}}
     @if (count($alternatives))
     <div class="section" style="padding-bottom:0">
         <div class="container">

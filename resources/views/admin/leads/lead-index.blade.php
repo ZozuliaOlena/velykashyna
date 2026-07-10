@@ -18,10 +18,10 @@
 
     <div class="admin-filters">
         <input wire:model.live.debounce.300ms="search" placeholder="Пошук: ім'я, телефон...">
-        <x-admin.select model="filterStatus" placeholder="— Усі статуси —"
+        <x-admin.select model="filterStatus" placeholder="- Усі статуси -"
             wire:key="status-filter-{{ $tab }}"
             :options="collect($tabStatuses)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
-        <x-admin.select model="filterSource" placeholder="— Усі типи —"
+        <x-admin.select model="filterSource" placeholder="- Усі типи -"
             :options="collect($sources)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all()" />
     </div>
 
@@ -41,8 +41,8 @@
                 </td>
                 <td data-label="Клієнт">{{ $lead->customer_name }}</td>
                 <td data-label="Телефон">{{ $lead->phone }}</td>
-                <td data-label="Місто">{{ $lead->city ?? '—' }}</td>
-                <td data-label="Доставка">{{ trim(($lead->delivery_method ?? '') . ($lead->delivery_address ? ', ' . $lead->delivery_address : '')) ?: '—' }}</td>
+                <td data-label="Місто">{{ $lead->city ?? '-' }}</td>
+                <td data-label="Доставка">{{ trim(($lead->delivery_method ?? '') . ($lead->delivery_address ? ', ' . $lead->delivery_address : '')) ?: '-' }}</td>
                 <td data-label="Позицій">{{ $lead->items_count }}</td>
                 <td data-label="Статус">
                     <span class="lead-status lead-status--{{ $lead->status }}">{{ $statuses[$lead->status] ?? $lead->status }}</span>
@@ -81,7 +81,7 @@
         <div>
             <label>Спосіб доставки</label>
             <select wire:model="delivery_method" style="width:100%">
-                <option value="">— не вказано —</option>
+                <option value="">- не вказано -</option>
                 @foreach($deliveryMethods as $m)
                     <option value="{{ $m }}">{{ $m }}</option>
                 @endforeach
@@ -97,7 +97,7 @@
         <div>
             <label>Спосіб оплати</label>
             <select wire:model="payment_method" style="width:100%">
-                <option value="">— не вказано —</option>
+                <option value="">- не вказано -</option>
                 @foreach($paymentMethods as $m)
                     <option value="{{ $m }}">{{ $m }}</option>
                 @endforeach
@@ -136,7 +136,7 @@
                     <button type="button" class="lead-product-results__item"
                             wire:key="pr-{{ $p->id }}" wire:click="addProduct({{ $p->id }})">
                         <span>{{ $p->name }}</span>
-                        <small>{{ $p->sku ?? '—' }}</small>
+                        <small>{{ $p->sku ?? '-' }}</small>
                     </button>
                     @endforeach
                 </div>
@@ -157,7 +157,7 @@
                         @forelse($items as $i => $item)
                         <tr wire:key="item-{{ $item['product_id'] }}">
                             <td>{{ $item['name'] }}</td>
-                            <td>{{ $item['sku'] ?? '—' }}</td>
+                            <td>{{ $item['sku'] ?? '-' }}</td>
                             <td><input type="number" min="1" wire:model="items.{{ $i }}.qty"></td>
                             <td><input type="number" step="0.01" min="0" wire:model="items.{{ $i }}.price" placeholder="за запитом"></td>
                             <td>

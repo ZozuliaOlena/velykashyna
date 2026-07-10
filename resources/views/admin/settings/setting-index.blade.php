@@ -8,7 +8,7 @@
     <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
         <legend style="padding:0 8px"><strong>Google Аналітика та реклама</strong></legend>
         <p style="color:#666; margin:0 0 1rem">
-            Вставте <strong>ідентифікатор</strong> — код підключиться автоматично. Заповнюйте лише те, що потрібно.
+            Вставте <strong>ідентифікатор</strong> - код підключиться автоматично. Заповнюйте лише те, що потрібно.
         </p>
 
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px">
@@ -77,7 +77,7 @@
             <div>
                 <label>Пароль</label>
                 <input wire:model="mailPassword" type="password" style="width:100%"
-                    placeholder="{{ $mailPasswordSet ? '•••••••• (збережено — залиште порожнім, щоб не міняти)' : 'пароль скриньки' }}"
+                    placeholder="{{ $mailPasswordSet ? '•••••••• (збережено - залиште порожнім, щоб не міняти)' : 'пароль скриньки' }}"
                     autocomplete="new-password">
                 @error('mailPassword') <span style="color:red">{{ $message }}</span> @enderror
             </div>
@@ -86,7 +86,7 @@
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-top:12px">
             <div>
                 <label>Ім'я відправника (від кого)</label>
-                <input wire:model="mailFromName" type="text" style="width:100%" placeholder="Велика Шина">
+                <input wire:model="mailFromName" type="text" style="width:100%" placeholder="ВЕЛИКА ШИНА">
                 @error('mailFromName') <span style="color:red">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -108,14 +108,14 @@
         <legend style="padding:0 8px"><strong>Прев'ю при поширенні (соцмережі, месенджери) та фавіконка</strong></legend>
         <p style="color:#666; margin:0 0 1rem">
             Те, що бачать люди, коли діляться посиланням на сайт: заголовок, опис і картинка.
-            На сторінках товарів автоматично підставляється фото товару, тут — значення за замовчуванням для решти сторінок.
+            На сторінках товарів автоматично підставляється фото товару, тут - значення за замовчуванням для решти сторінок.
         </p>
 
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px">
             <div>
                 <label>Заголовок за замовчуванням</label>
                 <input wire:model="shareTitle" type="text" style="width:100%"
-                    placeholder="ВЕЛИКА ШИНА — шини для агро, спец та вантажної техніки">
+                    placeholder="ВЕЛИКА ШИНА - шини для агро, спец та вантажної техніки">
                 @error('shareTitle') <span style="color:red">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -194,7 +194,7 @@
     <fieldset style="margin:0 0 1.5rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
         <legend style="padding:0 8px"><strong>Telegram-сповіщення про заявки</strong></legend>
         <p style="color:#666; margin:0 0 1rem">
-            Бот надсилатиме повідомлення про кожну нову заявку з сайту — і з кошика, і консультації.
+            Бот надсилатиме повідомлення про кожну нову заявку з сайту - і з кошика, і консультації.
         </p>
 
         <div style="margin-bottom:14px">
@@ -208,7 +208,7 @@
             <textarea wire:model="tgChatIds" rows="2" style="width:100%"
                 placeholder="Напр.: 123456789, 987654321"></textarea>
             @error('tgChatIds') <span style="color:red">{{ $message }}</span> @enderror
-            <small style="color:#888; display:block">Кілька ID — через кому. Кожному приходитиме сповіщення.</small>
+            <small style="color:#888; display:block">Кілька ID - через кому. Кожному приходитиме сповіщення.</small>
         </div>
 
         <div style="margin-top:1rem; display:flex; gap:10px; flex-wrap:wrap">
@@ -220,8 +220,8 @@
             <strong>Як налаштувати:</strong>
             <ol style="margin:.4rem 0 0; padding-left:1.2rem">
                 <li>У Telegram напишіть <b>@BotFather</b> → <code>/newbot</code> → отримайте <b>токен</b> і вставте вище.</li>
-                <li>Кожен отримувач має знайти вашого бота й натиснути <b>«Запустити» (/start)</b> — інакше бот не зможе йому написати.</li>
-                <li>Щоб дізнатись свій <b>ID</b>: напишіть боту <b>@userinfobot</b> — він відповість числом. Це і є ID.</li>
+                <li>Кожен отримувач має знайти вашого бота й натиснути <b>«Запустити» (/start)</b> - інакше бот не зможе йому написати.</li>
+                <li>Щоб дізнатись свій <b>ID</b>: напишіть боту <b>@userinfobot</b> - він відповість числом. Це і є ID.</li>
             </ol>
         </div>
     </fieldset>

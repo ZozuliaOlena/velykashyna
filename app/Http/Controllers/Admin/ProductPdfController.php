@@ -10,9 +10,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * PDF-картка товару для пересилання клієнту (Viber/Telegram).
- *   ?variant=short|full   — коротка / повна
- *   ?price=1|0            — з ціною / без ціни
- *   ?mode=inline|download — відкрити у вкладці / завантажити файл
+ *   ?variant=short|full   - коротка / повна
+ *   ?price=1|0            - з ціною / без ціни
+ *   ?mode=inline|download - відкрити у вкладці / завантажити файл
  */
 class ProductPdfController extends Controller
 {
@@ -44,7 +44,7 @@ class ProductPdfController extends Controller
             'photo'     => $this->mainPhotoData($product),
             'fieldPhotos' => $variant === 'full'
                 ? $product->fieldPhotos->take(6)->map(fn ($fp) => [
-                    // квадратна мініатюра (crop) — у PDF не розтягується
+                    // квадратна мініатюра (crop) - у PDF не розтягується
                     'img'     => $this->dataUri($this->mediaPath($fp->getFirstMedia('photo'), 'thumb')),
                     'label'   => $fp->machineryLabel(),
                     'caption' => $fp->caption,

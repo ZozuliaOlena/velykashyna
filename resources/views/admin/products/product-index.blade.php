@@ -10,23 +10,23 @@
     <div class="admin-filters">
         <input wire:model.live.debounce.400ms="search" placeholder="Пошук: артикул, розмір (710/70R38)...">
 
-        <x-admin.select model="size" placeholder="— Типорозмір —"
+        <x-admin.select model="size" placeholder="- Типорозмір -"
             :options="collect($sizes)->map(fn ($s) => ['value' => $s, 'label' => $s])->all()" />
 
-        <x-admin.select model="type" placeholder="— Тип товару —"
+        <x-admin.select model="type" placeholder="- Тип товару -"
             :options="$productTypes->map(fn ($pt) => ['value' => $pt->id, 'label' => $pt->name])->all()" />
 
-        <x-admin.select model="brand" placeholder="— Виробник —"
+        <x-admin.select model="brand" placeholder="- Виробник -"
             :options="$brands->map(fn ($b) => ['value' => $b->id, 'label' => $b->name])->all()" />
 
-        <x-admin.select model="category" placeholder="— Категорія —"
+        <x-admin.select model="category" placeholder="- Категорія -"
             :options="$categories->map(fn ($c) => [
                 'value' => $c->id,
                 'label' => $c->tree_prefix . $c->name,
                 'style' => ($c->level === 1 || $c->is_branch) ? 'font-weight:700' : 'color:#6b7280',
             ])->all()" />
 
-        <x-admin.select model="stock" placeholder="— Наявність —"
+        <x-admin.select model="stock" placeholder="- Наявність -"
             :options="[
                 ['value' => 'in_stock', 'label' => 'В наявності'],
                 ['value' => 'on_order', 'label' => 'Під замовлення'],
@@ -41,14 +41,14 @@
         <span class="bulk-group">
             <select wire:model="bulkRateCurrency">
                 <option value="">Валюта товарів…</option>
-                <option value="USD">дол (USD) — {{ $currencyCounts['USD'] ?? 0 }} тов.</option>
-                <option value="EUR">євро (EUR) — {{ $currencyCounts['EUR'] ?? 0 }} тов.</option>
+                <option value="USD">дол (USD) - {{ $currencyCounts['USD'] ?? 0 }} тов.</option>
+                <option value="EUR">євро (EUR) - {{ $currencyCounts['EUR'] ?? 0 }} тов.</option>
             </select>
             <input wire:model="bulkRateValue" type="number" step="0.0001" min="0"
                 placeholder="курс, грн" style="width:110px" title="Скільки гривень за 1 одиницю валюти">
             <button wire:click="bulkSetExchangeRate">Застосувати курс усім</button>
         </span>
-        <small style="color:#666">Напр.: усім товарам у EUR — курс 45. Курс збережеться у полі «Курс» кожного такого товару.</small>
+        <small style="color:#666">Напр.: усім товарам у EUR - курс 45. Курс збережеться у полі «Курс» кожного такого товару.</small>
     </div>
 
     @if(count($selected))
@@ -179,13 +179,13 @@
                     @if($thumb)
                         <img src="{{ $thumb }}" alt="" class="product-thumb">
                     @else
-                        <span class="product-thumb product-thumb--empty">—</span>
+                        <span class="product-thumb product-thumb--empty">-</span>
                     @endif
                 </td>
                 <td data-label="Артикул">{{ $product->sku }}</td>
                 <td data-label="Найменування">{{ $product->name }}</td>
-                <td data-label="Типорозмір">{{ $product->size_raw ?? '—' }}</td>
-                <td data-label="Виробник">{{ $product->brand?->name ?? '—' }}</td>
+                <td data-label="Типорозмір">{{ $product->size_raw ?? '-' }}</td>
+                <td data-label="Виробник">{{ $product->brand?->name ?? '-' }}</td>
                 <td data-label="Наявність">
                     @switch($product->stock_status)
                         @case('in_stock') В наявності @break
@@ -210,7 +210,7 @@
                     @if($product->discountLabel())
                         <span class="badge-discount">{{ $product->discountLabel() }}</span>
                     @else
-                        <span style="color:#bbb">—</span>
+                        <span style="color:#bbb">-</span>
                     @endif
                 </td>
                 @php($promoShort = ['Акція' => 'Акція', 'Запитуй знижку' => 'Знижка?', 'Уточніть вашу ціну' => 'Ціна?'])
@@ -219,14 +219,14 @@
                     @if($product->promo_badge)
                         <span class="badge-tag" title="{{ $product->promo_badge }}">{{ $promoShort[$product->promo_badge] ?? $product->promo_badge }}</span>
                     @else
-                        <span style="color:#bbb">—</span>
+                        <span style="color:#bbb">-</span>
                     @endif
                 </td>
                 <td data-label="Доставка">
                     @if($product->shipping_badge)
                         <span class="badge-tag" title="{{ $product->shipping_badge }}">{{ $shipShort[$product->shipping_badge] ?? $product->shipping_badge }}</span>
                     @else
-                        <span style="color:#bbb">—</span>
+                        <span style="color:#bbb">-</span>
                     @endif
                 </td>
                 <td data-label="Merchant">

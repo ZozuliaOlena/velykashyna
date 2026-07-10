@@ -46,7 +46,7 @@
                 <div style="margin-top:.5rem">
                     <strong>Коди відновлення</strong>
                     <p style="color:#666; font-size:13px; margin:.25rem 0">
-                        Збережіть ці коди в безпечному місці. Кожен діє один раз — допоможе
+                        Збережіть ці коди в безпечному місці. Кожен діє один раз - допоможе
                         увійти, якщо втратите доступ до застосунку.
                     </p>
                     <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:6px 16px;

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Слайд головного hero-слайдера (керується в адмінці «Налаштування сайту»).
- * Фон слайда — завантажене фото/відео або відео з YouTube.
+ * Фон слайда - завантажене фото/відео або відео з YouTube.
  */
 class HeroSlide extends Model
 {

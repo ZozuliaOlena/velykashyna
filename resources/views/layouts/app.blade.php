@@ -6,18 +6,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    {{-- Значення за замовчуванням для заголовка/опису/картинки — налаштовуються
+    {{-- Значення за замовчуванням для заголовка/опису/картинки - налаштовуються
          в адмінці (Налаштування → Прев'ю при поширенні). Сторінки можуть
          перевизначати через @section('title' / 'meta_description' / 'og_*'). --}}
     @php
         $metaTitleDefault = \App\Models\Setting::get('share_title')
-            ?: 'ВЕЛИКА ШИНА — шини для агро, спец та вантажної техніки';
+            ?: 'ВЕЛИКА ШИНА - шини для агро, спец та вантажної техніки';
         $metaDescDefault = \App\Models\Setting::get('share_description')
-            ?: 'ВЕЛИКА ШИНА — каталог шин, камер та дисків для сільськогосподарської, спеціальної та вантажної техніки. Підбір за розміром, брендом і технікою з 2009 року.';
+            ?: 'ВЕЛИКА ШИНА - каталог шин, камер та дисків для сільськогосподарської, спеціальної та вантажної техніки. Підбір за розміром, брендом і технікою з 2009 року.';
         $shareImageUrl = url(\App\Models\Setting::get('share_image') ?: '/images/og-default.png');
         $faviconPngUrl = \App\Models\Setting::get('favicon') ?: '/images/apple-touch-icon.png';
         $siteNoindex = (bool) \App\Models\Setting::get('site_noindex');
-        // Канонічний URL за замовчуванням — поточний шлях без параметрів фільтрів.
+        // Канонічний URL за замовчуванням - поточний шлях без параметрів фільтрів.
         // Сторінки з «чистими» параметрами (напр. каталог з категорією) перевизначають @section('canonical').
         $canonicalDefault = url()->current();
     @endphp
@@ -28,7 +28,7 @@
     <link rel="canonical" href="@yield('canonical', $canonicalDefault)" />
 
     {{-- Індексація: глобальне «сховати сайт від пошуковиків» (для розробки),
-         інакше — те, що задала сторінка (напр. noindex для фільтрів каталогу). --}}
+         інакше - те, що задала сторінка (напр. noindex для фільтрів каталогу). --}}
     @if($siteNoindex)
         <meta name="robots" content="noindex, nofollow" />
     @elseif(View::hasSection('robots'))
@@ -45,7 +45,7 @@
     <link rel="apple-touch-icon" href="{{ $faviconPngUrl }}" />
     <meta name="theme-color" content="#d32f2f" />
 
-    {{-- Соц-прев'ю (Open Graph / Twitter) — текст, опис і картинка при поширенні
+    {{-- Соц-прев'ю (Open Graph / Twitter) - текст, опис і картинка при поширенні
          посилання в месенджерах і соцмережах. Сторінки можуть перевизначати
          og_title / og_description / og_image / og_type. --}}
     <meta property="og:site_name" content="ВЕЛИКА ШИНА" />
@@ -92,8 +92,9 @@
 
     @include('partials.footer')
 
-    {{-- Плаваюча кнопка зв'язку (на моб. з'являється після ~10% прокрутки) --}}
-    <a href="tel:{{ config('site.contacts.phone_href') }}" class="fab" aria-label="Зв'язатися з нами"
+    {{-- Плаваюча кнопка зв'язку - веде на сторінку «Контакти» (усі способи
+         зв'язку, форма, карта), а не одразу набирає номер. --}}
+    <a href="{{ route('contacts') }}" class="fab" aria-label="Зв'язатися з нами"
         x-data="{ show: false }" :class="{ 'is-visible': show }"
         @scroll.window.throttle.100ms="show = window.scrollY > (document.documentElement.scrollHeight - window.innerHeight) * 0.1">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

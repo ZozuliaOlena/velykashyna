@@ -2,7 +2,7 @@
      Картка товару (єдиний дизайн для каталогу та головної).
      $p: size, brand, model, constr, li, app, stock, price_mode, price, promos[].
      Зображення: img_url (готовий URL з БД) АБО img (ім'я файлу в /images/wheels).
-     Іконки/лого: app_icon_url, brand_logo_url — необов'язкові (перекривають дефолт).
+     Іконки/лого: app_icon_url, brand_logo_url - необов'язкові (перекривають дефолт).
      Необов'язково: $showCountry. --}}
 @php($brandLogos = ['Michelin' => 'michelin.svg', 'Continental' => 'continental.svg'])
 @php($brandCountries = [
@@ -44,8 +44,8 @@
 ])
 {{-- Мітки доставки (перша з них показується зверху зі своєю іконкою). --}}
 @php($shippingLabels = ['Безкоштовна доставка', 'Можлива безкоштовна доставка'])
-{{-- Безкоштовна доставка завжди першою (зверху), далі — решта.
-     «Знижка» прибираємо — замість неї показуємо бейдж відсотка («-10%»). --}}
+{{-- Безкоштовна доставка завжди першою (зверху), далі - решта.
+     «Знижка» прибираємо - замість неї показуємо бейдж відсотка («-10%»). --}}
 @php($promoOrder = ['Безкоштовна доставка' => 0, 'Можлива безкоштовна доставка' => 0, 'Акція' => 1, 'Знижка' => 2, 'Запитуй знижку' => 3, 'Уточніть вашу ціну' => 4])
 @php($promos = collect($p['promos'] ?? [])->reject(fn ($x) => $x === 'Знижка')->sortBy(fn ($x) => $promoOrder[$x] ?? 99)->values()->all())
 
@@ -97,7 +97,7 @@
         </div>
         @endif
 
-        {{-- На сторінці «Обране» ($favConfirm) — не знімаємо одразу, а просимо
+        {{-- На сторінці «Обране» ($favConfirm) - не знімаємо одразу, а просимо
              підтвердження через модалку (подія fav-remove). --}}
         @php($favClick = ($favConfirm ?? false) ? "\$dispatch('fav-remove', item)" : "\$store.fav.toggle(item)")
         <button type="button" class="cat-prod__fav" :class="{ active: $store.fav.has(item.id) }"
@@ -174,22 +174,22 @@
                 @if ($hasApp)<li class="cat-prod__app">{{ $p['app'] }}</li>@endif
             </ul>
 
-            {{-- Характеристики у вигляді колонок (прайс-таблиця) — видно лише
+            {{-- Характеристики у вигляді колонок (прайс-таблиця) - видно лише
                  у режимі списку. Набір колонок фіксований, щоб значення в усіх
                  рядках вишиковувались стовпчик під стовпчиком. --}}
             <div class="cat-prod__listspecs">
-                <div class="lf"><span class="lf-label">Артикул</span><span class="lf-val">{{ $p['sku'] ?: '—' }}</span></div>
-                <div class="lf"><span class="lf-label">Розмір</span><span class="lf-val">{{ $p['size'] ?: '—' }}</span></div>
-                <div class="lf"><span class="lf-label">Бренд</span><span class="lf-val">{{ $p['brand'] ?: '—' }}</span></div>
-                <div class="lf"><span class="lf-label">Профіль</span><span class="lf-val">{{ $p['model'] ?: '—' }}</span></div>
-                <div class="lf"><span class="lf-label">LI / SI / PR</span><span class="lf-val">{{ $p['li'] ?: '—' }}</span></div>
-                <div class="lf"><span class="lf-label">TL / TT</span><span class="lf-val">{{ $p['tube'] ?: '—' }}</span></div>
+                <div class="lf"><span class="lf-label">Артикул</span><span class="lf-val">{{ $p['sku'] ?: '-' }}</span></div>
+                <div class="lf"><span class="lf-label">Розмір</span><span class="lf-val">{{ $p['size'] ?: '-' }}</span></div>
+                <div class="lf"><span class="lf-label">Бренд</span><span class="lf-val">{{ $p['brand'] ?: '-' }}</span></div>
+                <div class="lf"><span class="lf-label">Профіль</span><span class="lf-val">{{ $p['model'] ?: '-' }}</span></div>
+                <div class="lf"><span class="lf-label">LI / SI / PR</span><span class="lf-val">{{ $p['li'] ?: '-' }}</span></div>
+                <div class="lf"><span class="lf-label">TL / TT</span><span class="lf-val">{{ $p['tube'] ?: '-' }}</span></div>
             </div>
         </div>
 
         @php($oldPrice = $p['old_price'] ?? null)
         <div class="cat-prod__buy">
-            {{-- Промо-бейджі (видно у режимі списку) — біля ціни; доставка перша. --}}
+            {{-- Промо-бейджі (видно у режимі списку) - біля ціни; доставка перша. --}}
             <div class="cat-prod__meta">
                 @if (!empty($promos))
                 @foreach ($promos as $promo)

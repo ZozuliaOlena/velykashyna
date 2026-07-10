@@ -70,7 +70,7 @@ class TelegramNotifier
             ]);
 
             if (! $res->successful()) {
-                // Не ламаємо оформлення заявки — лише пишемо в лог.
+                // Не ламаємо оформлення заявки - лише пишемо в лог.
                 logger()->warning('Telegram sendMessage failed', ['chat_id' => $chatId, 'response' => $res->body()]);
             }
 
@@ -113,9 +113,9 @@ class TelegramNotifier
             foreach ($lead->items->take(20) as $i) {
                 $name = $i->product?->name ?? ('#' . $i->product_id);
                 $sku = $i->product?->sku;
-                // Спершу артикул (у <code> — копіюється по тапу в Telegram), потім назва.
-                $prefix = $sku ? "<code>{$e($sku)}</code> — " : '';
-                $lines[] = "   • {$prefix}{$e($name)} — {$i->qty} шт";
+                // Спершу артикул (у <code> - копіюється по тапу в Telegram), потім назва.
+                $prefix = $sku ? "<code>{$e($sku)}</code> - " : '';
+                $lines[] = "   • {$prefix}{$e($name)} - {$i->qty} шт";
             }
 
             $lines[] = $total > 0
@@ -133,7 +133,7 @@ class TelegramNotifier
         $lines[] = '';
         $lines[] = '🔗 ' . route('admin.leads.index');
 
-        // Прибираємо порожні (null) рядки від умовних полів, зайві пусті — лишаємо для розділення.
+        // Прибираємо порожні (null) рядки від умовних полів, зайві пусті - лишаємо для розділення.
         return implode("\n", array_filter($lines, fn ($l) => $l !== null));
     }
 }

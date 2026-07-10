@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Адмін панель — Велика Шина</title>
+    <title>Адмін панель - ВЕЛИКА ШИНА</title>
 
-    {{-- Фавіконка — та сама, що й на сайті (налаштовується в Налаштування). --}}
+    {{-- Фавіконка - та сама, що й на сайті (налаштовується в Налаштування). --}}
     <link rel="icon" href="{{ \App\Models\Setting::get('favicon') ?: '/favicon.ico' }}" sizes="any">
     <link rel="icon" type="image/png" href="{{ \App\Models\Setting::get('favicon') ?: '/images/apple-touch-icon.png' }}">
     <link rel="apple-touch-icon" href="{{ \App\Models\Setting::get('favicon') ?: '/images/apple-touch-icon.png' }}">
@@ -40,7 +40,7 @@
                 <span x-show="sidebar" x-cloak>✕</span>
             </button>
             <a href="{{ route('admin.dashboard') }}" class="admin-sidebar__brand" wire:navigate x-show="sidebar" x-cloak>
-                <img src="/images/logo.png" alt="Велика Шина">
+                <img src="/images/logo.png" alt="ВЕЛИКА ШИНА">
             </a>
         </div>
 

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Застосовує налаштування пошти (SMTP), задані в адмінці, поверх config/mail.
- * Якщо host не заданий — нічого не чіпаємо (лишається .env / драйвер log).
+ * Якщо host не заданий - нічого не чіпаємо (лишається .env / драйвер log).
  * Пароль зберігається зашифрованим у таблиці settings.
  */
 class MailSettings
@@ -35,7 +35,7 @@ class MailSettings
             try {
                 $password = Crypt::decryptString($password);
             } catch (\Throwable) {
-                // Якщо значення випадково не зашифроване — використовуємо як є.
+                // Якщо значення випадково не зашифроване - використовуємо як є.
             }
         }
 

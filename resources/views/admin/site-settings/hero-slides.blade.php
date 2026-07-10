@@ -5,7 +5,7 @@
     </div>
 
     <p style="color:#666; margin:.25rem 0 1rem">
-        Слайдер у шапці головної сторінки. Для кожного слайда — заголовок, опис і фон
+        Слайдер у шапці головної сторінки. Для кожного слайда - заголовок, опис і фон
         (фото, завантажене відео або відео з YouTube). Порядок задається стрілками.
     </p>
 
@@ -41,11 +41,11 @@
                     @elseif($slide->bgUrl())
                         <img src="{{ $slide->bgUrl() }}" alt="" data-zoom style="width:100px; height:56px; object-fit:cover; border-radius:6px">
                     @else
-                        <span style="color:#bbb">—</span>
+                        <span style="color:#bbb">-</span>
                     @endif
                 </td>
-                <td data-label="Заголовок"><strong>{{ $slide->title ?: '—' }}</strong></td>
-                <td data-label="Опис">{{ $slide->subtitle ?: '—' }}</td>
+                <td data-label="Заголовок"><strong>{{ $slide->title ?: '-' }}</strong></td>
+                <td data-label="Опис">{{ $slide->subtitle ?: '-' }}</td>
                 <td data-label="Тип фону">{{ $bgTypes[$slide->bg_type] ?? $slide->bg_type }}</td>
                 <td data-label="Активний">
                     <button wire:click="toggleActive({{ $slide->id }})"

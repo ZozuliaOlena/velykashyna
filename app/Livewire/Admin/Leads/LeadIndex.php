@@ -115,7 +115,7 @@ class LeadIndex extends Component
 
         $this->items = $lead->items->map(fn ($i) => [
             'product_id' => $i->product_id,
-            'name'       => $i->product?->name ?? '— товар видалено —',
+            'name'       => $i->product?->name ?? '- товар видалено -',
             'sku'        => $i->product?->sku,
             'qty'        => $i->qty,
             'price'      => $i->price_at_request !== null ? (float) $i->price_at_request : null,

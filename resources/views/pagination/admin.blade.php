@@ -1,7 +1,7 @@
 @if ($paginator->hasPages())
     <nav role="navigation" aria-label="Пагінація" class="adm-pg">
         <span class="adm-pg__info">
-            {{ $paginator->firstItem() }}–{{ $paginator->lastItem() }} із {{ $paginator->total() }}
+            {{ $paginator->firstItem() }}-{{ $paginator->lastItem() }} із {{ $paginator->total() }}
         </span>
 
         <div class="adm-pg__list">

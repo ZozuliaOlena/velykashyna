@@ -48,7 +48,7 @@ class Product extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        // Тримаємо size_digits синхронізованим — лише цифри з типорозміру.
+        // Тримаємо size_digits синхронізованим - лише цифри з типорозміру.
         static::saving(function (self $product) {
             $product->size_digits = $product->size_raw
                 ? (preg_replace('/\D+/', '', $product->size_raw) ?: null)
@@ -59,7 +59,7 @@ class Product extends Model implements HasMedia
     public function getSlugOptions(): SlugOptions
     {
         // Авто-генерація з назви лише при створенні (якщо slug не заданий явно).
-        // На оновленні slug не чіпаємо — ним керує форма (редагований URL).
+        // На оновленні slug не чіпаємо - ним керує форма (редагований URL).
         return SlugOptions::create()
             ->generateSlugsFrom(fn (self $model) => Translit::uk($model->name))
             ->saveSlugsTo('slug')
@@ -175,7 +175,7 @@ class Product extends Model implements HasMedia
 
     /**
      * URL прев'ю товару: спершу власне «живе» фото (main → gallery),
-     * інакше — спільне каталожне фото. null, якщо немає жодного.
+     * інакше - спільне каталожне фото. null, якщо немає жодного.
      */
     public function thumbUrl(): ?string
     {
@@ -193,7 +193,7 @@ class Product extends Model implements HasMedia
 
     /**
      * Ціна з урахуванням знижки на поточний момент.
-     * Для режиму «за запитом» (inquiry) або без ціни повертає null —
+     * Для режиму «за запитом» (inquiry) або без ціни повертає null -
      * саме це значення фіксується в заявці як price_at_request.
      */
     public function effectivePrice(): ?float
@@ -229,7 +229,7 @@ class Product extends Model implements HasMedia
         return $eff !== null && $eff < (float) $this->price;
     }
 
-    /** Стара (закреслена) ціна — лише коли діє знижка. */
+    /** Стара (закреслена) ціна - лише коли діє знижка. */
     public function oldPrice(): ?float
     {
         return $this->hasDiscount() ? round((float) $this->price, 2) : null;
@@ -240,7 +240,7 @@ class Product extends Model implements HasMedia
      * Сайт показує лише грн, тож ціни у валюті (USD/EUR) перераховуються
      * автоматично. Курс масово виставляється в адмінці для всіх товарів
      * обраної валюти. Фід конвертує окремо (feedPrice), тому effectivePrice()
-     * лишаємо у валюті товару — інакше було б подвійне множення на курс.
+     * лишаємо у валюті товару - інакше було б подвійне множення на курс.
      */
     public function toUah(?float $amount): ?float
     {
@@ -251,7 +251,7 @@ class Product extends Model implements HasMedia
         if ($this->currency && $this->currency !== 'UAH') {
             $rate = (float) ($this->exchange_rate ?? 0);
 
-            // Валютний товар без курсу — коректно перерахувати не можемо,
+            // Валютний товар без курсу - коректно перерахувати не можемо,
             // тож повертаємо null (сайт покаже «Уточнюйте ціну»).
             return $rate > 0 ? round($amount * $rate, 2) : null;
         }
@@ -272,7 +272,7 @@ class Product extends Model implements HasMedia
     }
 
     /**
-     * Режим ціни для сайту. Якщо товар у валюті, але курс не заданий —
+     * Режим ціни для сайту. Якщо товар у валюті, але курс не заданий -
      * показуємо «уточнюйте» замість некоректної гривневої ціни.
      */
     public function priceModeForSite(): string
@@ -299,7 +299,7 @@ class Product extends Model implements HasMedia
             return "-{$value}%";
         }
 
-        // Сума знижки — переводимо у гривні (сайт лише в грн).
+        // Сума знижки - переводимо у гривні (сайт лише в грн).
         $amount = $this->toUah((float) $this->discount_value);
         $value = rtrim(rtrim(number_format((float) $amount, 2, '.', ''), '0'), '.');
 
@@ -329,15 +329,15 @@ class Product extends Model implements HasMedia
             return $query;
         }
 
-        // Розбиваємо запит на слова — КОЖНЕ має знайтись (AND між словами),
-        // але кожне — у будь-якому з полів (OR всередині слова). Завдяки цьому
+        // Розбиваємо запит на слова - КОЖНЕ має знайтись (AND між словами),
+        // але кожне - у будь-якому з полів (OR всередині слова). Завдяки цьому
         // працюють складені запити: «BKT Agrimax Procrop», «Steel Belted TL».
         $words = preg_split('/\s+/', $term, -1, PREG_SPLIT_NO_EMPTY);
 
         return $query->where(function ($outer) use ($words) {
             foreach ($words as $word) {
                 $norm = mb_strtolower(str_replace([' ', '-'], '', $word));
-                // Лише цифри — для пошуку типорозміру, стійкого до розділювачів
+                // Лише цифри - для пошуку типорозміру, стійкого до розділювачів
                 // (/, R, VF-префікс, пробіли, дефіси): «VF270/95R32», «270-95-32»,
                 // «270 95 32», «2709532», «vf2709532» → «2709532».
                 $digits = preg_replace('/\D+/', '', $word);
@@ -357,7 +357,7 @@ class Product extends Model implements HasMedia
                         ->orWhere('load_speed_index', 'like', "%{$word}%")
                         ->orWhere('specification', 'like', "%{$word}%")
                         ->orWhere('tube_type', 'like', "%{$word}%")
-                        // Розмір — без пробілів/дефісів і регістру.
+                        // Розмір - без пробілів/дефісів і регістру.
                         ->orWhereRaw("REPLACE(REPLACE(LOWER(size_raw), ' ', ''), '-', '') LIKE ?", ['%' . $norm . '%'])
                         ->orWhereHas('brand', fn ($b) => $b->where('name', 'like', "%{$word}%"))
                         // Тип товару: за назвою («Ущільнювальне», «кільце»)
@@ -380,7 +380,7 @@ class Product extends Model implements HasMedia
 
     /**
      * Камерність шини: TL → «Безкамерна», TT → «Камерна».
-     * Радіальна/Діагональна не пишемо — це видно з типорозміру
+     * Радіальна/Діагональна не пишемо - це видно з типорозміру
      * ("-" = діагональна, "R" = радіальна).
      */
     public function constructionLabel(): string
@@ -423,7 +423,7 @@ class Product extends Model implements HasMedia
     {
         $full = $this->fullName() ?: $this->name;
 
-        // Коротке тире (-), бренд великими літерами без лапок — це офіційна назва.
+        // Коротке тире (-), бренд великими літерами без лапок - це офіційна назва.
         $title = trim($full . ' - купити в Україні | ВЕЛИКА ШИНА');
 
         $descParts = array_filter([
@@ -455,7 +455,7 @@ class Product extends Model implements HasMedia
 
     /**
      * Фраза «для якої техніки» на основі сумісності (машинного типу).
-     * Родовий відмінок для типових типів; для решти — нейтральне формулювання.
+     * Родовий відмінок для типових типів; для решти - нейтральне формулювання.
      */
     private function machineryContext(): ?string
     {
@@ -495,7 +495,7 @@ class Product extends Model implements HasMedia
     /**
      * Нормалізація товару у масив для partials/product-card.blade.php.
      * Очікує (бажано) завантажені зв'язки brand, catalogImage,
-     * machineryCompatibility.machineryType — щоб уникнути N+1.
+     * machineryCompatibility.machineryType - щоб уникнути N+1.
      */
     public function toCard(): array
     {
@@ -524,11 +524,11 @@ class Product extends Model implements HasMedia
             'stock_label' => $this->stockLabel(),
             'img_url' => $this->thumbUrl(),
             'price_mode' => $this->priceModeForSite(),
-            // Ціни на сайті — завжди у гривнях (валютні перераховуються за курсом).
+            // Ціни на сайті - завжди у гривнях (валютні перераховуються за курсом).
             'price' => $this->priceUah(),
             'old_price' => $this->oldPriceUah(),
             // У картці показуємо бейдж лише для відсоткової знижки («-20%»),
-            // суму («-500 грн») не показуємо — є стара/нова ціна.
+            // суму («-500 грн») не показуємо - є стара/нова ціна.
             'discount' => $this->discount_type === 'percent' ? $this->discountLabel() : null,
             'save' => $this->toUah($this->savedAmount()),
             'cur' => 'грн',

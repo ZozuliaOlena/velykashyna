@@ -30,7 +30,7 @@
                     @if($thumb)
                         <img src="{{ $thumb }}" alt="" class="product-thumb">
                     @else
-                        <span class="product-thumb product-thumb--empty">—</span>
+                        <span class="product-thumb product-thumb--empty">-</span>
                     @endif
                 </td>
                 <td data-label="Заголовок">{{ $post->title }}</td>
@@ -40,7 +40,7 @@
                         {{ $post->is_published ? 'Так' : 'Ні' }}
                     </button>
                 </td>
-                <td data-label="Дата">{{ $post->published_at?->format('d.m.Y') ?? '—' }}</td>
+                <td data-label="Дата">{{ $post->published_at?->format('d.m.Y') ?? '-' }}</td>
                 <td class="cell-actions">
                     <a class="icon-btn" href="{{ route('admin.posts.edit', $post->id) }}" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></a>
                     <button class="icon-btn" wire:click="delete({{ $post->id }})"

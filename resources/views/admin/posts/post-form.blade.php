@@ -63,8 +63,8 @@
                     data-upload-url="{{ route('admin.posts.upload-image') }}"
                     class="trix-content"></trix-editor>
                 <small style="color:#666">
-                    Жирний, курсив, заголовки, списки, посилання та фото — на панелі редактора.
-                    Щоб вставити фото — натисніть значок скріпки або перетягніть зображення в текст.
+                    Жирний, курсив, заголовки, списки, посилання та фото - на панелі редактора.
+                    Щоб вставити фото - натисніть значок скріпки або перетягніть зображення в текст.
                 </small>
             </div>
             @error('content') <span style="color:red">{{ $message }}</span> @enderror
@@ -81,7 +81,7 @@
                     <input wire:model="published_at" type="datetime-local">
                 </div>
             </div>
-            <small style="color:#666; display:block; margin-top:.5rem">Якщо дату не вказано — підставиться момент першої публікації.</small>
+            <small style="color:#666; display:block; margin-top:.5rem">Якщо дату не вказано - підставиться момент першої публікації.</small>
         </fieldset>
 
         <fieldset style="margin-top:1rem">

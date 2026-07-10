@@ -27,11 +27,11 @@
                         <img src="{{ $brand->logoUrl() }}" alt="{{ $brand->name }}" data-zoom
                             style="height:38px; width:auto; object-fit:contain">
                     @else
-                        <span style="color:#bbb">—</span>
+                        <span style="color:#bbb">-</span>
                     @endif
                 </td>
                 <td data-label="Назва">{{ $brand->name }}</td>
-                <td data-label="Країна">{{ $brand->country ?? '—' }}</td>
+                <td data-label="Країна">{{ $brand->country ?? '-' }}</td>
                 <td data-label="Активний">
                     <button wire:click="toggleActive({{ $brand->id }})">
                         {{ $brand->is_active ? 'Так' : 'Ні' }}

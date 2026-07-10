@@ -49,7 +49,7 @@ class CatalogController extends Controller
             'productTypes' => ProductType::orderBy('id')->get(['code', 'name']),
             'selected' => $this->selected($request),
             'activeFilters' => $this->activeFilters($request),
-            // Власний CTA-блок у каталозі — стандартний банер футера вимикаємо.
+            // Власний CTA-блок у каталозі - стандартний банер футера вимикаємо.
             'showFooterCta' => false,
         ]);
     }
@@ -134,7 +134,7 @@ class CatalogController extends Controller
     }
 
     /**
-     * Застосовує фільтри запиту. $except — поля, які пропустити
+     * Застосовує фільтри запиту. $except - поля, які пропустити
      * (для фасетних списків: опції поля рахуються без урахування його самого).
      */
     private function applyFilters($query, Request $request, array $except = []): void
@@ -233,17 +233,18 @@ class CatalogController extends Controller
     /** Доступні діаметри з урахуванням решти фільтрів (фасет). */
     private function diameterFacet(Request $request): array
     {
+        // Лише цифра діаметра, без «R» (R - це радіальна конструкція шини).
         return $this->facetBase($request, 'diameter')
             ->whereNotNull('rim_diameter')->distinct()->orderBy('rim_diameter')
             ->pluck('rim_diameter')
-            ->map(fn ($d) => 'R' . (int) $d)
+            ->map(fn ($d) => (string) (int) $d)
             ->unique()->values()->all();
     }
 
     /**
      * Записи сумісності для товарів, що відповідають поточним фільтрам
-     * (без machinery-марки/моделі), звужені типом техніки (вкладки) і — за
-     * потреби — обраною маркою. База для каскадних фасетів марки/моделі.
+     * (без machinery-марки/моделі), звужені типом техніки (вкладки) і - за
+     * потреби - обраною маркою. База для каскадних фасетів марки/моделі.
      */
     private function machineryCompat(Request $request, bool $withBrand)
     {
@@ -292,7 +293,7 @@ class CatalogController extends Controller
         };
     }
 
-    /** Вкладки за технікою (перша — «Всі шини»). */
+    /** Вкладки за технікою (перша - «Всі шини»). */
     private function tabs(Request $request): array
     {
         $selected = array_filter((array) $request->query('machinery', []));

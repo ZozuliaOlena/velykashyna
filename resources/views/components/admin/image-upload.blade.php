@@ -7,12 +7,12 @@
 
     Використання (всередині Livewire-компонента):
         <x-admin.image-upload model="photo" />
-    де `photo` — публічна властивість WithFileUploads.
+    де `photo` - публічна властивість WithFileUploads.
 --}}
 <div wire:ignore x-data="{
         busy: false, pct: 0, preview: null,
         init() {
-            // Коли хост-компонент скидає файл (напр. після додавання) — прибираємо превʼю.
+            // Коли хост-компонент скидає файл (напр. після додавання) - прибираємо превʼю.
             $wire.$watch('{{ $model }}', (v) => {
                 if (! v && this.preview) { URL.revokeObjectURL(this.preview); this.preview = null; }
             });

@@ -69,7 +69,7 @@ class Category extends Model
 
     /**
      * Категорії, відсортовані обходом дерева: кожна йде одразу під своїм
-     * батьком, у межах одного батька — за sort_order, потім name.
+     * батьком, у межах одного батька - за sort_order, потім name.
      * Завдяки цьому відступ за рівнем (level) стає змістовним і в таблиці,
      * і у випадних списках. $cb дозволяє доповнити запит (напр. withCount).
      *
@@ -98,11 +98,11 @@ class Category extends Model
             foreach ($siblings as $i => $node) {
                 $isLast = $i === $last;
 
-                // «Гілка» — категорія, що має дітей (виділяється як заголовок).
+                // «Гілка» - категорія, що має дітей (виділяється як заголовок).
                 $node->is_branch = ! empty($byParent[$node->id]);
 
                 if ($node->parent_id === null) {
-                    $node->tree_prefix = '';      // корінь — без префікса (буде жирним)
+                    $node->tree_prefix = '';      // корінь - без префікса (буде жирним)
                     $childPrefix = '';
                 } else {
                     $node->tree_prefix = $ancestorPrefix . ($isLast ? '└─' . $nb : '├─' . $nb);

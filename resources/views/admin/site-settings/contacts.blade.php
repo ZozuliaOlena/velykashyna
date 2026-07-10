@@ -2,7 +2,7 @@
     <h1>Контакти сайту</h1>
     <p style="color:#666; margin:.25rem 0 1.25rem">
         Телефони, email, адреса та посилання на месенджери/соцмережі. Ці значення
-        показуються на сайті (шапка, футер, сторінка «Контакти»). Порожнє поле —
+        показуються на сайті (шапка, футер, сторінка «Контакти»). Порожнє поле -
         лишається значення за замовчуванням.
     </p>
 
@@ -55,7 +55,7 @@
 
     <fieldset style="margin:0 0 1.25rem; padding:16px; border:1px solid #e3e6ec; border-radius:10px">
         <legend style="padding:0 8px"><strong>Месенджери та соцмережі</strong></legend>
-        <p style="color:#888; margin:0 0 1rem">Вставте повне посилання (напр. https://t.me/...). Порожнє — не показується.</p>
+        <p style="color:#888; margin:0 0 1rem">Вставте повне посилання (напр. https://t.me/...). Порожнє - не показується.</p>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px">
             @foreach($socialLabels as $key => $label)
                 <div>
