@@ -48,6 +48,7 @@ class CatalogImage extends Model implements HasMedia
             ->background('ffffff')
             ->format('webp')
             ->quality(80)
+            ->nonOptimized()
             ->nonQueued();
 
         $this->addMediaConversion('uniform')
@@ -55,6 +56,7 @@ class CatalogImage extends Model implements HasMedia
             ->background('ffffff')
             ->format('webp')
             ->quality(80)
+            ->nonOptimized()
             ->nonQueued();
     }
 

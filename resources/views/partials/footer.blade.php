@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="fc-media">
-                <img src="/images/details/kara.png" alt="ВЕЛИКА ШИНА" loading="lazy" />
+                <img src="/images/details/back_wheels.jpg" alt="ВЕЛИКА ШИНА - підбір шин" loading="lazy" />
             </div>
         </div>
     </div>

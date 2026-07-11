@@ -1,4 +1,4 @@
-{!! '<?xml version="1.0" encoding="UTF-8"?>' !!}
+<?php echo '<?xml version="1.0" encoding="UTF-8"?>'."\n"; ?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
 <channel>
 <title>{{ $store }}</title>

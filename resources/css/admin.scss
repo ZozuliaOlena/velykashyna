@@ -45,6 +45,29 @@ body.admin-body {
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
         transition: width 0.2s ease, transform 0.25s ease;
 
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.16);
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.3);
+                background-clip: padding-box;
+            }
+        }
+
         &.is-open { transform: translateX(0); }
 
         &__top {
@@ -326,6 +349,29 @@ body.admin-body {
         min-height: 0;         // дозволяє flex-нащадку прокручуватись
         overflow: auto;
         padding: 0 24px 60px;
+
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.18);
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.32);
+                background-clip: padding-box;
+            }
+        }
 
         h1 {
             font-size: 24px;

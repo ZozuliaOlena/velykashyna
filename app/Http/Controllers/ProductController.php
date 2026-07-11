@@ -66,15 +66,16 @@ class ProductController extends Controller
     {
         $urls = [];
 
+        // Головне фото: власне (колекція main) або спільне каталожне.
+        // Галерея - це ДОДАТКОВІ фото, тож вона не підміняє головне.
         if ($main = $product->getFirstMedia('main')) {
             $urls[] = $this->mediaUrl($main);
-        }
-        foreach ($product->getMedia('gallery') as $g) {
-            $urls[] = $this->mediaUrl($g);
+        } elseif ($ci = $product->catalogImage?->imageUrl('uniform')) {
+            $urls[] = $ci;
         }
 
-        if (empty($urls) && ($ci = $product->catalogImage?->imageUrl('uniform'))) {
-            $urls[] = $ci;
+        foreach ($product->getMedia('gallery') as $g) {
+            $urls[] = $this->mediaUrl($g);
         }
 
         return array_values(array_filter($urls));

@@ -63,14 +63,17 @@ class ProductPdfController extends Controller
     /** Головне фото товару як data-URI: власне (main→gallery) або каталожне. */
     private function mainPhotoData(Product $product): ?string
     {
-        $media = $product->getFirstMedia('main') ?: $product->getFirstMedia('gallery');
-        if ($media) {
+        // Головне фото: власне → каталожне → галерея (запасний варіант).
+        if ($media = $product->getFirstMedia('main')) {
             return $this->dataUri($this->mediaPath($media, 'uniform'));
         }
 
-        if ($ci = $product->catalogImage) {
-            $cm = $ci->getFirstMedia('image');
-            return $cm ? $this->dataUri($this->mediaPath($cm, 'uniform')) : null;
+        if (($ci = $product->catalogImage) && ($cm = $ci->getFirstMedia('image'))) {
+            return $this->dataUri($this->mediaPath($cm, 'uniform'));
+        }
+
+        if ($media = $product->getFirstMedia('gallery')) {
+            return $this->dataUri($this->mediaPath($media, 'uniform'));
         }
 
         return null;

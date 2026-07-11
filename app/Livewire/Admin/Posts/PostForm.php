@@ -22,6 +22,9 @@ class PostForm extends Component
     public ?string $excerpt = null;
     public ?string $content = null;
 
+    // Поки slug не редагували вручну - він автоматично генерується із заголовка.
+    public bool $slugLocked = false;
+
     public bool $is_published = false;
     public ?string $published_at = null;
 
@@ -47,6 +50,24 @@ class PostForm extends Component
         $this->published_at    = $post->published_at?->format('Y-m-d\TH:i');
         $this->seo_title       = $post->seo_title;
         $this->seo_description = $post->seo_description;
+
+        // Для наявної статті slug уже задано - не змінюємо його автоматично
+        // при редагуванні заголовка, щоб не зламати існуючий URL.
+        $this->slugLocked = true;
+    }
+
+    /** Живе генерування slug із заголовка, поки його не редагували вручну. */
+    public function updatedTitle($value): void
+    {
+        if (! $this->slugLocked) {
+            $this->slug = Str::slug(Translit::uk((string) $value));
+        }
+    }
+
+    /** Ручне редагування slug блокує авто-генерацію; очищення - відновлює. */
+    public function updatedSlug($value): void
+    {
+        $this->slugLocked = filled($value);
     }
 
     protected function rules(): array

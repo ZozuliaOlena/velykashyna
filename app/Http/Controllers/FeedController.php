@@ -88,8 +88,8 @@ class FeedController extends Controller
 
     private function image(Product $p): ?string
     {
-        $media = $p->getFirstMedia('main') ?: $p->getFirstMedia('gallery');
-        if ($media) {
+        // Головне фото: власне → каталожне → галерея (запасний варіант).
+        if ($media = $p->getFirstMedia('main')) {
             $rel = $media->hasGeneratedConversion('uniform') ? $media->getUrl('uniform') : $media->getUrl();
 
             return url(MediaUrl::rel($rel));
@@ -97,6 +97,12 @@ class FeedController extends Controller
 
         if ($ci = $p->catalogImage?->imageUrl('uniform')) {
             return url($ci);
+        }
+
+        if ($media = $p->getFirstMedia('gallery')) {
+            $rel = $media->hasGeneratedConversion('uniform') ? $media->getUrl('uniform') : $media->getUrl();
+
+            return url(MediaUrl::rel($rel));
         }
 
         return null;

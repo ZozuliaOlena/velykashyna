@@ -33,8 +33,8 @@ class ProductFieldPhoto extends Model implements HasMedia
             return;
         }
 
-        $this->addMediaConversion('thumb')->fit(Fit::Crop, 300, 300)->format('webp')->quality(80)->nonQueued();
-        $this->addMediaConversion('large')->fit(Fit::Max, 1200, 1200)->format('webp')->quality(80)->nonQueued();
+        $this->addMediaConversion('thumb')->fit(Fit::Crop, 300, 300)->format('webp')->quality(80)->nonOptimized()->nonQueued();
+        $this->addMediaConversion('large')->fit(Fit::Max, 1200, 1200)->format('webp')->quality(80)->nonOptimized()->nonQueued();
     }
 
     public function imageUrl(string $conversion = 'thumb'): ?string

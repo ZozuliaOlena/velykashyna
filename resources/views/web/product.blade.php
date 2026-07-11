@@ -259,7 +259,7 @@
                             </svg>
                         </button>
 
-                        <button type="button" class="product-buy__icon" :class="{ active: $store.fav.has(item.id) }"
+                        <button type="button" class="product-buy__icon product-buy__icon--fav" :class="{ active: $store.fav.has(item.id) }"
                             @click="$store.fav.toggle(item)"
                             :aria-label="$store.fav.has(item.id) ? 'В обраному' : 'В обране'"
                             :title="$store.fav.has(item.id) ? 'В обраному' : 'В обране'">

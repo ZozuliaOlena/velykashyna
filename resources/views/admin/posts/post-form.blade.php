@@ -10,13 +10,13 @@
 
             <div class="is-full">
                 <label>Заголовок *</label>
-                <input wire:model="title" type="text" style="width:100%">
+                <input wire:model.live.debounce.400ms="title" type="text" style="width:100%">
                 @error('title') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 
             <div class="is-full">
                 <label>URL (slug)</label>
-                <input wire:model="slug" type="text" style="width:100%" placeholder="Згенерується із заголовка">
+                <input wire:model.live.debounce.500ms="slug" type="text" style="width:100%" placeholder="Згенерується із заголовка">
                 @error('slug') <span style="color:red">{{ $message }}</span> @enderror
             </div>
 

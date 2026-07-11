@@ -57,12 +57,14 @@ class Post extends Model implements HasMedia
             ->fit(Fit::Crop, 400, 260)
             ->format('webp')
             ->quality(80)
+            ->nonOptimized()
             ->nonQueued();
 
         $this->addMediaConversion('large')
             ->fit(Fit::Max, 1200, 800)
             ->format('webp')
             ->quality(80)
+            ->nonOptimized()
             ->nonQueued();
     }
 

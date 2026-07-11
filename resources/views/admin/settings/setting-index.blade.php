@@ -50,7 +50,7 @@
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px">
             <div>
                 <label>SMTP-сервер (host)</label>
-                <input wire:model="mailHost" type="text" style="width:100%" placeholder="s47.hostia.name">
+                <input wire:model="mailHost" type="text" style="width:100%" placeholder="smtp.вашхостинг.com">
                 @error('mailHost') <span style="color:red">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -70,7 +70,7 @@
             </div>
             <div>
                 <label>Логін (email)</label>
-                <input wire:model="mailUsername" type="text" style="width:100%" placeholder="info@lavika.in.ua">
+                <input wire:model="mailUsername" type="text" style="width:100%" placeholder="info@velykashyna.com.ua">
                 @error('mailUsername') <span style="color:red">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -90,7 +90,7 @@
             </div>
             <div>
                 <label>Email відправника</label>
-                <input wire:model="mailFromAddress" type="text" style="width:100%" placeholder="info@lavika.in.ua">
+                <input wire:model="mailFromAddress" type="text" style="width:100%" placeholder="info@velykashyna.com.ua">
                 <small style="color:#888">Зазвичай = логін скриньки.</small>
                 @error('mailFromAddress') <span style="color:red">{{ $message }}</span> @enderror
             </div>

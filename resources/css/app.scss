@@ -183,6 +183,14 @@ button {
     @media (max-width: $bp-md) {
         margin-bottom: 24px;
     }
+
+    // На вузьких екранах заголовок і посилання не вміщаються поруч -
+    // розкладаємо їх у стовпчик, щоб нічого не тіснилось.
+    @media (max-width: $bp-sm) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
 }
 
 .section-title {
@@ -1739,6 +1747,14 @@ button {
 
             @media (max-width: $bp-sm) {
                 flex-direction: column;
+
+                .btn {
+                    width: 100%;
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    white-space: normal;
+                    text-align: center;
+                }
             }
         }
     }
@@ -3919,11 +3935,15 @@ button {
         flex: 0 0 auto;
     }
 
+    // На малих екранах кнопки стають одна під одною на всю ширину —
+    // щоб довгий підпис («Консультація») не вилазив за межі.
     @media (max-width: $bp-sm) {
+        flex-direction: column;
+        align-items: stretch;
+
         .btn {
-            flex: 1 1 0;
-            padding-left: 12px;
-            padding-right: 12px;
+            width: 100%;
+            justify-content: center;
         }
     }
 }
@@ -5706,6 +5726,17 @@ button {
         box-shadow: $shadow-md;
         transform: translateY(-3px);
     }
+
+    // На вузьких екранах зменшуємо значення (email/телефон), щоб довгий email
+    // не ламався посеред слова.
+    @media (max-width: $bp-sm) {
+        padding: 16px;
+
+        &__value {
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+    }
 }
 
 .contact-schedule {
@@ -6411,16 +6442,31 @@ button {
         height: 46px;
     }
 
+    // Моб.: тримаємо один ряд, стискаємо лічильник та іконки, а кошик
+    // забирає весь вільний простір, щоб лишатись помітним.
     @media (max-width: $bp-sm) {
-        gap: 10px;
+        gap: 8px;
+
+        .qty {
+            flex: 0 0 auto;
+
+            button {
+                width: 34px;
+            }
+
+            input {
+                width: 34px;
+            }
+        }
 
         .product-buy__cart {
-            flex: 1;
+            flex: 1 1 auto;
+            min-width: 0;
             padding: 0;
         }
 
-        .product-buy__cart + .product-buy__icon {
-            margin-left: 0;
+        .product-buy__icon {
+            width: 42px;
         }
     }
 }
@@ -6556,6 +6602,11 @@ button {
     &.active {
         border-color: $red;
         color: $red;
+    }
+
+    // Обране: коли товар додано - заливаємо сердечко кольором.
+    &--fav.active svg {
+        fill: currentColor;
     }
 
     &.is-disabled {
@@ -8104,10 +8155,15 @@ button {
         margin: 0 0 30px;
         border-radius: $radius-lg;
         overflow: hidden;
+        // Фіксована пропорція - будь-яке завантажене фото (широке чи високе)
+        // показується однаковим банером, зайве обрізається.
+        aspect-ratio: 16 / 9;
+        background: $bg-soft;
 
         img {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: cover;
             display: block;
         }
     }

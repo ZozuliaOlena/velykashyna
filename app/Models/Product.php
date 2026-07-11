@@ -86,6 +86,7 @@ class Product extends Model implements HasMedia
             ->background('ffffff')
             ->format('webp')
             ->quality(80)
+            ->nonOptimized()
             ->nonQueued();
 
         $this->addMediaConversion('thumb')
@@ -93,6 +94,7 @@ class Product extends Model implements HasMedia
             ->background('ffffff')
             ->format('webp')
             ->quality(80)
+            ->nonOptimized()
             ->nonQueued();
     }
 
@@ -177,16 +179,25 @@ class Product extends Model implements HasMedia
      */
     public function thumbUrl(): ?string
     {
-        $media = $this->getFirstMedia('main') ?: $this->getFirstMedia('gallery');
-        if ($media) {
+        // Головне фото: власне (main) → спільне каталожне → і лише як
+        // запасний варіант перше фото галереї (галерея - додаткові фото).
+        if ($media = $this->getFirstMedia('main')) {
             return \App\Support\MediaUrl::rel(
-                $media->hasGeneratedConversion('thumb')
-                    ? $media->getUrl('thumb')
-                    : $media->getUrl()
+                $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : $media->getUrl()
             );
         }
 
-        return $this->catalogImage?->imageUrl('thumb');
+        if ($url = $this->catalogImage?->imageUrl('thumb')) {
+            return $url;
+        }
+
+        if ($media = $this->getFirstMedia('gallery')) {
+            return \App\Support\MediaUrl::rel(
+                $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : $media->getUrl()
+            );
+        }
+
+        return null;
     }
 
     /**

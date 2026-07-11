@@ -85,6 +85,9 @@
 
     <div class="mm-contacts">
         <a href="tel:{{ $c['phone_href'] }}" class="mm-phone">{{ $c['phone'] }}</a>
+        @if(!empty($c['phone2']))
+        <a href="tel:{{ $c['phone2_href'] }}" class="mm-phone">{{ $c['phone2'] }}</a>
+        @endif
         <p class="mm-note">Ми на зв'язку 24/7</p>
         <a href="{{ route('contacts') }}" class="btn btn--primary btn--block" style="margin-bottom:20px">Замовити дзвінок</a>
         <p style="font-size:12px;color:#9aa0a8;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Ми в

@@ -34,7 +34,7 @@
                         src="https://www.youtube.com/embed/{{ $s['src'] }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $s['src'] }}&playsinline=1&modestbranding=1&rel=0&showinfo=0&cc_load_policy=0&iv_load_policy=3&disablekb=1&fs=0"></iframe>
                     <span class="hs-yt-cover" style="background-image:url('https://i.ytimg.com/vi/{{ $s['src'] }}/maxresdefault.jpg')"></span>
                 @elseif(($s['type'] ?? 'image') === 'video' && ! empty($s['src']))
-                    <video class="hs-media" muted loop playsinline preload="none" @if(! empty($s['poster'])) poster="{{ $s['poster'] }}" @endif>
+                    <video class="hs-media" muted loop playsinline preload="metadata" @if(! empty($s['poster'])) poster="{{ $s['poster'] }}" @endif>
                         <source src="{{ $s['src'] }}" type="video/mp4" />
                     </video>
                 @elseif(! empty($s['src']))

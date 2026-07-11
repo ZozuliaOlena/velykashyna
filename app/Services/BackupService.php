@@ -21,6 +21,12 @@ class BackupService
     /** Створює резервну копію і повертає шлях до zip-файлу. */
     public function create(bool $includeMedia = true): string
     {
+        // Дамп БД будується в памʼяті одним рядком, а Livewire ще й
+        // base64-кодує готовий zip для віддачі - на дефолтних 128M це
+        // вичерпує памʼять. Піднімаємо ліміти на час операції.
+        @ini_set('memory_limit', '512M');
+        @set_time_limit(300);
+
         $work = storage_path('app/private/_backup_' . Str::random(10));
         File::ensureDirectoryExists($work);
 
@@ -57,6 +63,11 @@ class BackupService
     /** Відновлює сайт із раніше створеної копії. Повертає короткий звіт. */
     public function restore(string $zipPath): array
     {
+        // Відновлення читає весь SQL-дамп у памʼять і виконує його -
+        // так само тримаємо запас памʼяті/часу.
+        @ini_set('memory_limit', '512M');
+        @set_time_limit(300);
+
         $report = ['db' => false, 'media' => false, 'errors' => []];
 
         $dir = storage_path('app/private/_restore_' . Str::random(10));
