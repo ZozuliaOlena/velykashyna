@@ -32,6 +32,7 @@ class ProductController extends Controller
             'crumbs' => $this->breadcrumbs($product),
             'alternatives' => $this->alternatives($product),
             'accessories' => $this->accessories($product),
+            'showFooterCta' => false,
         ]);
     }
 

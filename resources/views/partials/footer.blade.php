@@ -6,7 +6,7 @@
             <div class="fc-text">
                 <div class="fc-line"></div>
                 <h3>Не впевнені, які шини потрібні?</h3>
-                <p>Наші спеціалісти допоможуть <b>підібрати</b> оптимальний варіант для вашої техніки.</p>
+                <p>Правильний підбір шин починається з розуміння вашої техніки та умов роботи. Ми допоможемо знайти правильне рішення.</p>
                 <div class="fc-actions">
                     <a href="{{ route('contacts') }}" class="btn btn--primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -203,10 +203,7 @@
         <div class="container fb-inner">
             <span>© {{ config('site.founded_year') }}-{{ now()->year }} ВЕЛИКА ШИНА</span>
             <a href="{{ route('pages.privacy') }}">Політика конфіденційності</a>
-            <a href="https://ksibe.dev" class="fb-powered" target="_blank" rel="noopener" aria-label="powered by ksibe.dev">
-                <span>powered by</span>
-                <img src="https://ksibe.dev/img/logo_for_site.svg" alt="ksibe.dev" loading="lazy" />
-            </a>
+            <span class="fb-made">Зроблено з <a href="https://ksibe.dev" class="fb-heart" target="_blank" rel="noopener" aria-label="ksibe.dev">❤️</a> в Україні</span>
         </div>
     </div>
 </footer>

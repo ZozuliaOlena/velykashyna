@@ -466,5 +466,9 @@
         </div>
     </div>
     @endif
+
+    <div class="container" style="margin-top:56px">
+        @include('partials.cta-band')
+    </div>
 </section>
 @endsection
