@@ -371,6 +371,12 @@ class ProductIndex extends Component
             'productTypes' => ProductType::orderBy('name')->get(),
             'brands'       => Brand::orderBy('name')->get(),
             'categories'   => Category::treeOrdered(),
+            'categoryCounts' => DB::table('product_categories')
+                ->join('products', 'products.id', '=', 'product_categories.product_id')
+                ->whereNull('products.deleted_at')
+                ->groupBy('product_categories.category_id')
+                ->selectRaw('product_categories.category_id as cid, COUNT(*) as c')
+                ->pluck('c', 'cid'),
             'sizes'        => Product::whereNotNull('size_raw')->where('size_raw', '!=', '')
                 ->distinct()->orderBy('size_raw')->pluck('size_raw'),
             'currencyCounts' => Product::query()

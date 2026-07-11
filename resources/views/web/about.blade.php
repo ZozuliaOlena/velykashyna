@@ -301,7 +301,10 @@
 
 <section class="about-trust">
     <div class="about-trust__bg">
-        <img src="/images/details/back_wheels.jpg" alt="Вивіска ВЕЛИКА ШИНА на складі" loading="lazy" />
+        <picture style="display:contents">
+            <source srcset="/images/details/back_wheels.webp" type="image/webp">
+            <img src="/images/details/back_wheels.jpg" alt="Вивіска ВЕЛИКА ШИНА на складі" loading="lazy" />
+        </picture>
     </div>
     <div class="about-trust__shade"></div>
     <div class="container about-trust__inner" data-aos="fade-up">

@@ -21,7 +21,8 @@
         <x-admin.select model="category" placeholder="- Категорія -"
             :options="$categories->map(fn ($c) => [
                 'value' => $c->id,
-                'label' => $c->tree_prefix . $c->name,
+                'label' => $c->tree_prefix . $c->name
+                    . (($categoryCounts[$c->id] ?? 0) > 0 ? ' (' . $categoryCounts[$c->id] . ' тов)' : ''),
                 'style' => ($c->level === 1 || $c->is_branch) ? 'font-weight:700' : 'color:#6b7280',
             ])->all()" />
 

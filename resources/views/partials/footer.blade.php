@@ -19,7 +19,10 @@
                 </div>
             </div>
             <div class="fc-media">
-                <img src="/images/details/back_wheels.jpg" alt="ВЕЛИКА ШИНА - підбір шин" loading="lazy" />
+                <picture style="display:contents">
+                    <source srcset="/images/details/back_wheels.webp" type="image/webp">
+                    <img src="/images/details/back_wheels.jpg" alt="ВЕЛИКА ШИНА - підбір шин" loading="lazy" />
+                </picture>
             </div>
         </div>
     </div>
