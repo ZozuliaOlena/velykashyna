@@ -27,8 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         // 301 зі старого ЧПУ товару на актуальний (після зміни slug), щоб старі
-        // посилання не отримували 404. Спрацьовує лише коли товар не знайдено.
-        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, Request $request) {
+        // посилання не отримували 404. Спрацьовує лише коли товар не знайдено
+        // (Laravel уже конвертує ModelNotFoundException у NotFoundHttpException).
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, Request $request) {
             if (! $request->is('product/*')) {
                 return null;
             }
