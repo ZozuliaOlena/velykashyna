@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Categories;
 
+use App\Livewire\Concerns\GuardsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use App\Models\Category;
 use Livewire\Component;
@@ -11,6 +12,7 @@ class CategoryIndex extends Component
 {
     use WithPagination;
     use WithAdminToast;
+    use GuardsDeletion;
 
     public string $search = '';
     public bool $showModal = false;
@@ -130,10 +132,11 @@ class CategoryIndex extends Component
 
     public function delete(int $id): void
     {
-        $cat = Category::withCount('children')->findOrFail($id);
+        $cat = Category::findOrFail($id);
 
-        if ($cat->children_count > 0) {
-            session()->flash('error', 'Спочатку видаліть або перенесіть підкатегорії');
+        if ($this->blockIfUsed($cat->name, [
+            'підкатегорії' => Category::where('parent_id', $id),
+        ])) {
             return;
         }
 

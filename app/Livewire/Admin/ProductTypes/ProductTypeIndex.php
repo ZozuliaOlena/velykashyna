@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Admin\ProductTypes;
 
+use App\Models\Product;
 use App\Models\ProductType;
+use App\Livewire\Concerns\GuardsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -12,6 +14,7 @@ class ProductTypeIndex extends Component
 {
     use WithPagination;
     use WithAdminToast;
+    use GuardsDeletion;
 
     public string $search = '';
     public bool $showModal = false;
@@ -64,10 +67,11 @@ class ProductTypeIndex extends Component
 
     public function delete(int $id): void
     {
-        $type = ProductType::withCount('products')->findOrFail($id);
+        $type = ProductType::findOrFail($id);
 
-        if ($type->products_count > 0) {
-            session()->flash('error', 'Неможливо видалити: є товари цього типу');
+        if ($this->blockIfUsed($type->name, [
+            'товари' => Product::where('product_type_id', $id),
+        ])) {
             return;
         }
 

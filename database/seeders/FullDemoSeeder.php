@@ -178,7 +178,7 @@ class FullDemoSeeder extends Seeder
         $defs = [
             [null, 'country', 'Країна виробництва', 'text', null, false, []],
             [null, 'warranty', 'Гарантія', 'number', 'міс', false, []],
-            [$tire, 'purpose', 'Призначення', 'select', null, true, ['Трактор', 'Комбайн', 'Обприскувач', 'Причіп', 'Навантажувач']],
+            // «Призначення» прибрано - дублювало «Сумісність з технікою» (яка потужніша).
             [$tire, 'tread', 'Тип малюнка', 'select', null, true, ['R-1', 'R-1W', 'R-2', 'R-3', 'R-4', 'I-3']],
             [$tire, 'tubeless', 'Безкамерна', 'boolean', null, true, []],
             [$tire, 'tread_depth', 'Глибина протектора', 'number', 'мм', false, []],

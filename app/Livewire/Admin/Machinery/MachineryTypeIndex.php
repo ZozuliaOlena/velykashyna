@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Admin\Machinery;
 
+use App\Livewire\Concerns\GuardsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use App\Models\MachineryType;
+use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -14,6 +16,7 @@ class MachineryTypeIndex extends Component
     use WithPagination;
     use WithFileUploads;
     use WithAdminToast;
+    use GuardsDeletion;
 
     public string $search = '';
     public bool $showModal = false;
@@ -87,6 +90,13 @@ class MachineryTypeIndex extends Component
     public function delete(int $id): void
     {
         $type = MachineryType::findOrFail($id);
+
+        if ($this->blockIfUsed($type->name, [
+            'товари (сумісність)' => Product::whereHas('machineryCompatibility', fn ($q) => $q->where('machinery_type_id', $id)),
+        ])) {
+            return;
+        }
+
         if ($type->icon) {
             Storage::disk('public')->delete($type->icon);
         }

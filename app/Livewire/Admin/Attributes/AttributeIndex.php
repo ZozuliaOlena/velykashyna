@@ -4,7 +4,9 @@ namespace App\Livewire\Admin\Attributes;
 
 use App\Models\Attribute;
 use App\Models\AttributeOption;
+use App\Models\Product;
 use App\Models\ProductType;
+use App\Livewire\Concerns\GuardsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -14,6 +16,7 @@ class AttributeIndex extends Component
 {
     use WithPagination;
     use WithAdminToast;
+    use GuardsDeletion;
 
     public string $search = '';
     public string $filterType = '';
@@ -114,10 +117,11 @@ class AttributeIndex extends Component
 
     public function delete(int $id): void
     {
-        $attr = Attribute::withCount('values')->findOrFail($id);
+        $attr = Attribute::findOrFail($id);
 
-        if ($attr->values_count > 0) {
-            session()->flash('error', 'Неможливо видалити: характеристика використовується в товарах');
+        if ($this->blockIfUsed($attr->name, [
+            'товари' => Product::whereHas('attributeValues', fn ($q) => $q->where('attribute_id', $id)),
+        ])) {
             return;
         }
 
