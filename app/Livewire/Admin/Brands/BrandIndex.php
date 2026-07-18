@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Admin\Brands;
 
+use App\Livewire\Concerns\ConfirmsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use App\Models\Brand;
+use App\Models\Product;
 use App\Support\Translit;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -17,6 +19,7 @@ class BrandIndex extends Component
     use WithPagination;
     use WithFileUploads;
     use WithAdminToast;
+    use ConfirmsDeletion;
 
     public string $search = '';
     public bool $showModal = false;
@@ -114,6 +117,7 @@ class BrandIndex extends Component
         }
 
         $brand->delete();
+        session()->flash('success', 'Видалено');
     }
 
     public function render()
@@ -125,7 +129,19 @@ class BrandIndex extends Component
             ->orderBy('name')
             ->paginate(20);
 
-        return view('admin.brands.brand-index', compact('brands'))
+        // Скільки товарів має кожен бренд (один запит) - для попередження перед видаленням.
+        $usage = Product::query()->whereNotNull('brand_id')
+            ->selectRaw('brand_id, COUNT(*) c')->groupBy('brand_id')
+            ->pluck('c', 'brand_id');
+
+        $confirm = $brands->mapWithKeys(fn ($b) => [$b->id => $this->confirmText(
+            $b->name,
+            ($n = (int) ($usage[$b->id] ?? 0)) > 0
+                ? "прив'язаний до товарів: {$n} (після видалення вони лишаться без бренду)"
+                : null,
+        )]);
+
+        return view('admin.brands.brand-index', compact('brands', 'confirm'))
             ->layout('admin.layouts.admin');
     }
 }

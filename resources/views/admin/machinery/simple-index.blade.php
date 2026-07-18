@@ -1,5 +1,6 @@
 @php($countKey = $countKey ?? null)
 @php($withIcon = $withIcon ?? false)
+@php($confirmMessages = $confirmMessages ?? [])
 <div>
     <div style="display:flex; justify-content:space-between; align-items:center">
         <h1>{{ $title }}</h1>
@@ -37,7 +38,7 @@
                 @if($countKey) <td data-label="{{ $countLabel ?? 'Використання' }}">{{ $item->{$countKey} }}</td> @endif
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete({{ $item->id }})" data-confirm="Ви дійсно хочете видалити запис?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $item->id }})" data-confirm="{{ $confirmMessages[$item->id] ?? 'Ви дійсно хочете видалити запис?' }}" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty

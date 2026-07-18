@@ -40,7 +40,7 @@
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $brand->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
                     <button class="icon-btn" wire:click="delete({{ $brand->id }})"
-                        data-confirm="Ви дійсно хочете видалити бренд?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                        data-confirm="{{ $confirm[$brand->id] ?? 'Ви дійсно хочете видалити бренд?' }}" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @endforeach

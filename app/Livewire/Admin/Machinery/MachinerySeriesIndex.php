@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Machinery;
 
+use App\Livewire\Concerns\ConfirmsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use App\Models\MachineryBrand;
 use App\Models\MachinerySeries;
@@ -12,6 +13,7 @@ class MachinerySeriesIndex extends Component
 {
     use WithPagination;
     use WithAdminToast;
+    use ConfirmsDeletion;
 
     public string $search = '';
     public string $filterBrand = '';
@@ -77,9 +79,17 @@ class MachinerySeriesIndex extends Component
             ->orderBy('name')
             ->paginate(25);
 
+        $confirm = $items->mapWithKeys(fn ($s) => [$s->id => $this->confirmText(
+            $s->name,
+            $s->models_count > 0
+                ? "має моделей: {$s->models_count} (вони лишаться без серії)"
+                : null,
+        )]);
+
         return view('admin.machinery.machinery-series-index', [
             'items'  => $items,
             'brands' => MachineryBrand::orderBy('name')->get(),
+            'confirm' => $confirm,
         ])->layout('admin.layouts.admin');
     }
 }

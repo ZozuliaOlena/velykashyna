@@ -6,6 +6,8 @@ use App\Models\MachineryBrand;
 use App\Models\MachineryModel;
 use App\Models\MachinerySeries;
 use App\Models\MachineryType;
+use App\Models\ProductMachineryCompatibility;
+use App\Livewire\Concerns\ConfirmsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,6 +16,7 @@ class MachineryModelIndex extends Component
 {
     use WithPagination;
     use WithAdminToast;
+    use ConfirmsDeletion;
 
     public string $search = '';
     public string $filterBrand = '';
@@ -86,11 +89,24 @@ class MachineryModelIndex extends Component
             ->orderBy('name')
             ->paginate(25);
 
+        // Скільки товарів використовують кожну модель у сумісності (один запит).
+        $usage = ProductMachineryCompatibility::query()->whereNotNull('machinery_model_id')
+            ->selectRaw('machinery_model_id, COUNT(DISTINCT product_id) c')->groupBy('machinery_model_id')
+            ->pluck('c', 'machinery_model_id');
+
+        $confirm = $items->mapWithKeys(fn ($m) => [$m->id => $this->confirmText(
+            $m->name,
+            ($n = (int) ($usage[$m->id] ?? 0)) > 0
+                ? "вживається в сумісності товарів: {$n} (цей зв'язок буде очищено)"
+                : null,
+        )]);
+
         return view('admin.machinery.machinery-model-index', [
             'items'  => $items,
             'brands' => MachineryBrand::orderBy('name')->get(),
             'types'  => MachineryType::orderBy('name')->get(),
             'series' => MachinerySeries::with('brand')->orderBy('name')->get(),
+            'confirm' => $confirm,
         ])->layout('admin.layouts.admin');
     }
 }

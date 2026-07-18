@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Admin\Machinery;
 
+use App\Livewire\Concerns\ConfirmsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use App\Models\MachineryPosition;
+use App\Models\ProductMachineryCompatibility;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -11,6 +13,7 @@ class MachineryPositionIndex extends Component
 {
     use WithPagination;
     use WithAdminToast;
+    use ConfirmsDeletion;
 
     public string $search = '';
     public bool $showModal = false;
@@ -63,10 +66,23 @@ class MachineryPositionIndex extends Component
             ->orderBy('name')
             ->paginate(20);
 
+        // Скільки товарів мають цю позицію в сумісності (один запит).
+        $usage = ProductMachineryCompatibility::query()->whereNotNull('position_id')
+            ->selectRaw('position_id, COUNT(DISTINCT product_id) c')->groupBy('position_id')
+            ->pluck('c', 'position_id');
+
+        $confirm = $items->mapWithKeys(fn ($p) => [$p->id => $this->confirmText(
+            $p->name,
+            ($n = (int) ($usage[$p->id] ?? 0)) > 0
+                ? "вживається в сумісності товарів: {$n} (цей зв'язок буде очищено)"
+                : null,
+        )]);
+
         return view('admin.machinery.simple-index', [
             'items'    => $items,
             'title'    => 'Позиції на техніці',
             'addLabel' => '+ Додати позицію',
+            'confirmMessages' => $confirm,
         ])->layout('admin.layouts.admin');
     }
 }

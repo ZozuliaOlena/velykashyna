@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Machinery;
 
+use App\Livewire\Concerns\ConfirmsDeletion;
 use App\Livewire\Concerns\WithAdminToast;
 use App\Models\MachineryBrand;
 use Livewire\Component;
@@ -11,6 +12,7 @@ class MachineryBrandIndex extends Component
 {
     use WithPagination;
     use WithAdminToast;
+    use ConfirmsDeletion;
 
     public string $search = '';
     public bool $showModal = false;
@@ -64,12 +66,21 @@ class MachineryBrandIndex extends Component
             ->orderBy('name')
             ->paginate(20);
 
+        // Видалення виробника КАСКАДНО видаляє його моделі - попереджаємо про це.
+        $confirm = $items->mapWithKeys(fn ($b) => [$b->id => $this->confirmText(
+            $b->name,
+            $b->models_count > 0
+                ? "має моделей: {$b->models_count} - їх буде видалено разом із виробником"
+                : null,
+        )]);
+
         return view('admin.machinery.simple-index', [
             'items'      => $items,
             'title'      => 'Виробники техніки',
             'addLabel'   => '+ Додати виробника',
             'countKey'   => 'models_count',
             'countLabel' => 'Моделей',
+            'confirmMessages' => $confirm,
         ])->layout('admin.layouts.admin');
     }
 }

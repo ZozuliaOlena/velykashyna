@@ -24,7 +24,7 @@
                 <td data-label="Моделей">{{ $item->models_count }}</td>
                 <td class="cell-actions">
                     <button class="icon-btn" wire:click="openEdit({{ $item->id }})" title="Редагувати" aria-label="Редагувати"><x-icon name="edit"/></button>
-                    <button class="icon-btn" wire:click="delete({{ $item->id }})" data-confirm="Ви дійсно хочете видалити серію?" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
+                    <button class="icon-btn" wire:click="delete({{ $item->id }})" data-confirm="{{ $confirm[$item->id] ?? 'Ви дійсно хочете видалити серію?' }}" title="Видалити" aria-label="Видалити"><x-icon name="trash"/></button>
                 </td>
             </tr>
             @empty
