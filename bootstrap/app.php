@@ -25,4 +25,19 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
+        // 301 зі старого ЧПУ товару на актуальний (після зміни slug), щоб старі
+        // посилання не отримували 404. Спрацьовує лише коли товар не знайдено.
+        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, Request $request) {
+            if (! $request->is('product/*')) {
+                return null;
+            }
+
+            $redirect = \App\Models\ProductSlugRedirect::where('old_slug', $request->segment(2))->first();
+            $target = $redirect?->product;
+
+            return $target && $target->is_active
+                ? redirect()->route('product', $target->slug, 301)
+                : null;
+        });
     })->create();
