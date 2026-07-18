@@ -14,6 +14,7 @@ use App\Models\ProductAttributeValue;
 use App\Models\ProductMachineryCompatibility;
 use App\Models\ProductType;
 use App\Livewire\Concerns\WithAdminToast;
+use App\Support\SizeSlug;
 use App\Support\Translit;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -376,7 +377,12 @@ class ProductForm extends Component
         $product->promo_badge = $this->promo_badge ?: null;
         $product->shipping_badge = $this->shipping_badge ?: null;
         $product->is_active = $this->is_active;
-        $product->slug = $this->buildUniqueSlug($this->slug ?: $this->name, $this->productId);
+        // Явно заданий URL лишаємо як є; за автогенерацією з назви - розділяємо
+        // типорозмір дефісами (23.5R25 → 23-5r25), інакше Str::slug його «склеїть».
+        $slugSource = filled($this->slug)
+            ? $this->slug
+            : SizeSlug::inSource($this->name, $this->size_raw);
+        $product->slug = $this->buildUniqueSlug($slugSource, $this->productId);
 
         try {
             $product->save();

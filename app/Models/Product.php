@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Support\SizeSlug;
 use App\Support\Translit;
 use Spatie\Image\Enums\Fit;
 use Spatie\Sluggable\HasSlug;
@@ -61,7 +62,7 @@ class Product extends Model implements HasMedia
         // Авто-генерація з назви лише при створенні (якщо slug не заданий явно).
         // На оновленні slug не чіпаємо - ним керує форма (редагований URL).
         return SlugOptions::create()
-            ->generateSlugsFrom(fn (self $model) => Translit::uk($model->name))
+            ->generateSlugsFrom(fn (self $model) => Translit::uk(SizeSlug::inSource($model->name, $model->size_raw)))
             ->saveSlugsTo('slug')
             ->doNotGenerateSlugsOnUpdate();
     }
