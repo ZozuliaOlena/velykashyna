@@ -78,6 +78,9 @@ class ProductForm extends Component
 
     public array $relatedIds = [];
 
+    /** Пошук у підборі супутніх товарів (за назвою/артикулом). */
+    public string $relatedSearch = '';
+
     public array $attrValues = [];
 
     public $mainPhoto = null;
@@ -199,6 +202,23 @@ class ProductForm extends Component
         } elseif (str_ends_with($key, '.machinery_brand_id')) {
             $this->compat[$i]['machinery_model_id'] = null;
         }
+    }
+
+    // ── Супутні товари (ручний підбір) ─────────────────────────────────
+    public function addRelated(int $id): void
+    {
+        if ($id !== $this->productId && ! in_array($id, $this->relatedIds, true)) {
+            $this->relatedIds[] = $id;
+        }
+        $this->relatedSearch = '';
+    }
+
+    public function removeRelated(int $id): void
+    {
+        $this->relatedIds = array_values(array_filter(
+            $this->relatedIds,
+            fn ($x) => (int) $x !== $id,
+        ));
     }
 
     public function generateSeo(): void
@@ -586,12 +606,32 @@ class ProductForm extends Component
             ? Product::with(['media', 'catalogImage.media'])->find($this->productId)
             : null;
 
+        $allProducts = Product::when($this->productId, fn ($q) => $q->whereKeyNot($this->productId))
+            ->orderBy('name')->get(['id', 'sku', 'name'])->keyBy('id');
+
+        // Обрані супутні товари - у порядку додавання.
+        $relatedSelected = collect($this->relatedIds)
+            ->map(fn ($id) => $allProducts->get((int) $id))
+            ->filter()
+            ->values();
+
+        // Кандидати для додавання: за пошуком, без уже обраних, максимум 15.
+        $term = trim(mb_strtolower($this->relatedSearch));
+        $relatedCandidates = $allProducts
+            ->reject(fn ($p) => in_array($p->id, $this->relatedIds, true))
+            ->when($term !== '', fn ($c) => $c->filter(
+                fn ($p) => str_contains(mb_strtolower($p->name.' '.$p->sku), $term)
+            ))
+            ->take(15)
+            ->values();
+
         return view('admin.products.product-form', [
             'productTypes' => ProductType::orderBy('name')->get(),
             'brands'       => Brand::orderBy('name')->get(),
             'categories'   => Category::treeOrdered(),
-            'allProducts'  => Product::when($this->productId, fn ($q) => $q->whereKeyNot($this->productId))
-                ->orderBy('name')->get(['id', 'sku', 'name']),
+            'allProducts'  => $allProducts,
+            'relatedSelected'   => $relatedSelected,
+            'relatedCandidates' => $relatedCandidates,
             'mainMedia'    => $product?->getFirstMedia('main'),
             'galleryMedia' => $product ? $product->getMedia('gallery') : collect(),
             'galleryMax'   => self::GALLERY_MAX,

@@ -204,43 +204,17 @@ class ProductController extends Controller
     }
 
     /**
-     * Супутні товари (камери, вентилі, флапи, кільця): спершу того самого
-     * розміру, потім того ж посадкового діаметра, далі - будь-які з цих типів.
+     * Супутні товари - виключно ручний підбір адміністратора (зв'язка
+     * relatedProducts). Без автоматичного формування: показуємо лише те, що
+     * додано в картці товару, і тільки активні позиції.
      */
     private function accessories(Product $product): array
     {
-        $codes = ['tube', 'valve', 'flap', 'ring'];
-        $with = ['brand', 'catalogImage', 'productType', 'machineryCompatibility.machineryType'];
-        $limit = 8;
-
-        $base = fn () => Product::query()
-            ->where('is_active', true)
-            ->where('id', '!=', $product->id)
-            ->whereHas('productType', fn ($q) => $q->whereIn('code', $codes))
-            ->with($with);
-
-        $items = collect();
-
-        // 1) той самий типорозмір
-        if ($product->size_raw) {
-            $items = $base()->where('size_raw', $product->size_raw)->take($limit)->get();
-        }
-
-        // 2) той самий посадковий діаметр
-        if ($items->count() < $limit && $product->rim_diameter) {
-            $more = $base()->whereNotIn('id', $items->pluck('id'))
-                ->where('rim_diameter', $product->rim_diameter)
-                ->take($limit - $items->count())->get();
-            $items = $items->concat($more);
-        }
-
-        // 3) будь-які супутні товари
-        if ($items->count() < $limit) {
-            $more = $base()->whereNotIn('id', $items->pluck('id'))
-                ->latest()->take($limit - $items->count())->get();
-            $items = $items->concat($more);
-        }
-
-        return $items->take($limit)->map->toCard()->all();
+        return $product->relatedProducts()
+            ->where('products.is_active', true)
+            ->with(['brand', 'catalogImage', 'productType', 'machineryCompatibility.machineryType'])
+            ->get()
+            ->map->toCard()
+            ->all();
     }
 }

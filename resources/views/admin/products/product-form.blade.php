@@ -370,12 +370,48 @@
 
         <fieldset style="margin-top:1rem">
             <legend><strong>Супутні товари</strong></legend>
-            <select wire:model="relatedIds" multiple size="8" style="width:100%">
-                @foreach($allProducts as $p)
-                    <option value="{{ $p->id }}">{{ $p->sku }} - {{ $p->name }}</option>
-                @endforeach
-            </select>
-            <small style="color:#666">Пов'язані позиції (камери, диски, аналоги). Ctrl/Cmd + клік - декілька.</small>
+            <small style="color:#666;display:block;margin-bottom:.5rem">
+                Ці позиції показуються в блоці «Супутні товари» на сторінці товару (у порядку додавання). Додавайте вручну - автопідбору немає.
+            </small>
+
+            {{-- Обрані --}}
+            @if($relatedSelected->isEmpty())
+                <p style="color:#999;margin:.25rem 0 .75rem">Ще нічого не додано.</p>
+            @else
+                <ul style="list-style:none;padding:0;margin:0 0 .75rem;display:flex;flex-direction:column;gap:.35rem">
+                    @foreach($relatedSelected as $p)
+                        <li style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#f4f6f8;border-radius:6px">
+                            <span style="flex:1">
+                                <strong style="color:#555">{{ $p->sku }}</strong> - {{ $p->name }}
+                            </span>
+                            <button type="button" wire:click="removeRelated({{ $p->id }})"
+                                    style="border:0;background:#e74c3c;color:#fff;border-radius:4px;padding:.2rem .55rem;cursor:pointer">
+                                Видалити
+                            </button>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+
+            {{-- Пошук та додавання --}}
+            <input type="text" wire:model.live.debounce.300ms="relatedSearch"
+                   placeholder="Пошук за назвою або артикулом..." style="width:100%;margin-bottom:.4rem">
+            @if(trim($relatedSearch) !== '')
+                @if($relatedCandidates->isEmpty())
+                    <p style="color:#999;margin:.25rem 0">Нічого не знайдено.</p>
+                @else
+                    <ul style="list-style:none;padding:0;margin:0;max-height:220px;overflow:auto;border:1px solid #e0e0e0;border-radius:6px">
+                        @foreach($relatedCandidates as $p)
+                            <li>
+                                <button type="button" wire:click="addRelated({{ $p->id }})"
+                                        style="width:100%;text-align:left;border:0;background:transparent;padding:.4rem .6rem;cursor:pointer;border-bottom:1px solid #f0f0f0">
+                                    + <strong style="color:#555">{{ $p->sku }}</strong> - {{ $p->name }}
+                                </button>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            @endif
             @error('relatedIds') <span style="color:red">{{ $message }}</span> @enderror
         </fieldset>
 
