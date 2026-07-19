@@ -1273,6 +1273,33 @@ body.admin-body {
             cursor: not-allowed;
         }
 
+        // На вузьких екранах вміст групи (селект + поле + кнопка) не вміщався
+        // в рядок і «вилазив» за межі панелі. Дозволяємо перенос усередині
+        // групи, а роздільник робимо горизонтальним.
+        @media (max-width: 640px) {
+            .bulk-group {
+                width: 100%;
+                flex-wrap: wrap;
+                padding-right: 0;
+                padding-bottom: 10px;
+                border-right: none;
+                border-bottom: 1px solid $border-color;
+
+                &:last-of-type {
+                    padding-bottom: 0;
+                    border-bottom: none;
+                }
+
+                > select,
+                > button {
+                    flex: 1 1 140px;
+                    min-width: 0;
+                }
+
+                > input { min-width: 0; }
+            }
+        }
+
         // ── Перемикачі в рядку таблиці (Merchant / Активний) ─────────────
         .row-toggle {
             min-width: 54px;
