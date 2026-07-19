@@ -53,12 +53,22 @@ class ProductPdfController extends Controller
             'contacts'  => config('site.contacts', []),
         ];
 
-        $pdf = Pdf::loadView('pdf.product-card', $data)->setPaper('a4');
         $filename = 'velykashyna-' . ($product->sku ?: $product->id) . '.pdf';
 
-        return $request->query('mode') === 'inline'
-            ? $pdf->stream($filename)
-            : $pdf->download($filename);
+        try {
+            $pdf = Pdf::loadView('pdf.product-card', $data)->setPaper('a4');
+
+            return $request->query('mode') === 'inline'
+                ? $pdf->stream($filename)
+                : $pdf->download($filename);
+        } catch (\Throwable $e) {
+            // Не показуємо користувачу сторінку помилки - повертаємо назад із тостом.
+            report($e);
+
+            return redirect()
+                ->to(url()->previous(route('admin.products.index')))
+                ->with('error', 'Не вдалося сформувати PDF-картку товару. Спробуйте ще раз.');
+        }
     }
 
     /** Головне фото товару як data-URI: власне (main→gallery) або каталожне. */

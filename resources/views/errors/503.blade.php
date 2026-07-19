@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code', 'ТЕХНІЧНІ РОБОТИ')
+@section('title', 'Сайт тимчасово недоступний')
+@section('message', 'Проводимо оновлення. Це ненадовго - спробуйте, будь ласка, за кілька хвилин.')
+@section('reload', 1)

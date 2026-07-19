@@ -52,6 +52,35 @@ function downscaleImage(file, maxDim = 1600, quality = 0.82) {
 // для стиснення фото перед завантаженням у Livewire.
 window.adminCompressImage = downscaleImage;
 
+// ── Тост із будь-якого місця (той самий, що й у Livewire) ─────────────────
+function adminToast(message, type = 'error') {
+    window.dispatchEvent(new CustomEvent('notify', { detail: { message, type } }));
+}
+window.adminToast = adminToast;
+
+// ── Мережеві збої Livewire ────────────────────────────────────────────────
+// За замовчуванням Livewire показує велике модальне вікно з «сирою» сторінкою
+// помилки. Замість нього - зрозумілий тост, щоб користувач не лякався.
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('request', ({ fail }) => {
+        fail(({ status, preventDefault }) => {
+            if (status === 419) {
+                adminToast('Сесія завершилась. Оновіть сторінку та увійдіть знову.');
+            } else if (status === 429) {
+                adminToast('Забагато запитів. Зачекайте хвилину й спробуйте ще раз.');
+            } else if (status === 403) {
+                adminToast('Недостатньо прав для цієї дії.');
+            } else if (status >= 500) {
+                adminToast('Щось пішло не так. Спробуйте ще раз.');
+            } else {
+                return; // інші статуси лишаємо Livewire (напр. валідація)
+            }
+
+            preventDefault();
+        });
+    });
+});
+
 // Завантаження зображень, вставлених прямо в текст статті (Trix attachments):
 // шлемо (стиснений) файл на сервер і підставляємо отриманий URL у контент.
 document.addEventListener('trix-attachment-add', (event) => {
@@ -95,7 +124,7 @@ document.addEventListener('trix-attachment-add', (event) => {
         .then((d) => attachment.setAttributes({ url: d.url }))
         .catch((err) => {
             attachment.remove();
-            alert(typeof err === 'string' ? err : 'Не вдалося завантажити зображення.');
+            adminToast(typeof err === 'string' ? err : 'Не вдалося завантажити зображення.');
         });
 });
 

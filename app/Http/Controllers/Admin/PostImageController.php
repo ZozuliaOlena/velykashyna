@@ -21,13 +21,23 @@ class PostImageController extends Controller
             'file' => ['required', 'image', 'max:5120'],
         ]);
 
-        $file = $request->file('file');
-        $name = Str::random(24) . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs('blog', $name, 'public');
+        try {
+            $file = $request->file('file');
+            $name = Str::random(24) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('blog', $name, 'public');
 
-        // Корене-відносний URL (/storage/...), щоб працювало незалежно від хоста.
-        return response()->json([
-            'url' => MediaUrl::rel(Storage::disk('public')->url($path)),
-        ]);
+            // Корене-відносний URL (/storage/...), щоб працювало незалежно від хоста.
+            return response()->json([
+                'url' => MediaUrl::rel(Storage::disk('public')->url($path)),
+            ]);
+        } catch (\Throwable $e) {
+            // Редактор покаже це повідомлення тостом замість «сирої» помилки.
+            report($e);
+
+            return response()->json(
+                ['message' => 'Не вдалося зберегти зображення. Спробуйте ще раз.'],
+                500,
+            );
+        }
     }
 }
